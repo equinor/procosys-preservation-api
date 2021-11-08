@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -26,8 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CompletePreservation
 
         public async Task<Result<IEnumerable<IdAndRowVersion>>> Handle(CompletePreservationCommand request, CancellationToken cancellationToken)
         {
-            var tags = await _projectRepository.GetTagsByTagIdsAsync(request.Tags.Select(x => x.Id));
-
+            var tags = await _projectRepository.GetTagsWithPreservationHistoryByTagIdsAsync(request.Tags.Select(x => x.Id));
             var stepIds = tags.Select(t => t.StepId).Distinct();
             var journeys = await _journeyRepository.GetJourneysByStepIdsAsync(stepIds);
 

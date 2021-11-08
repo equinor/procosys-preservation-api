@@ -16,7 +16,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
         private int _tagId = 2;
         private const string _projectName = "ProjectName";
         private const string _rowVersion = "AAAAAAAAABA=";
-        private Mock<IProjectRepository> _projectRepositoryMock;
         private DeleteTagCommand _command;
         private DeleteTagCommandHandler _dut;
         private Tag _tag;
@@ -33,8 +32,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
             _rdMock.SetupGet(rd => rd.Id).Returns(2);
             _rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            _projectRepositoryMock = new Mock<IProjectRepository>();
-
             var requirement = new TagRequirement(TestPlant, 2, _rdMock.Object);
             _tag = new Tag(TestPlant, TagType.Standard, "", "", _stepMock.Object, new List<TagRequirement> { requirement });
             _tag.SetProtectedIdForTesting(2);
@@ -43,12 +40,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
             _project = new Project(TestPlant, _projectName, "");
             _project.AddTag(_tag);
             
-            _projectRepositoryMock
-                .Setup(x => x.GetProjectByTagIdAsync(_tag.Id))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(x => x.GetProjectAndTagWithPreservationHistoryByTagIdAsync(_tag.Id))
                 .Returns(Task.FromResult(_project));
             _command = new DeleteTagCommand(_tagId, _rowVersion);
 
-            _dut = new DeleteTagCommandHandler(_projectRepositoryMock.Object, UnitOfWorkMock.Object);
+            _dut = new DeleteTagCommandHandler(projectRepositoryMock.Object, UnitOfWorkMock.Object);
         }
 
         [TestMethod]

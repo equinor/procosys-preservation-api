@@ -16,7 +16,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
     {
         private const string _route = "Tags";
 
-        public static async Task<TagResultDto> GetAllTagsAsync(
+        public static async Task<TagResultDto> GetPageOfTagsAsync(
             UserType userType,
             string plant,
             string projectName,
@@ -25,7 +25,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             var parameters = new ParameterCollection
             {
-                {"ProjectName", projectName}
+                {"ProjectName", projectName},
+                // use big page size. Default if not given is 20. 
+                // Positive tags tests create tags -> number of tags grows
+                {"Size", "1000"}
             };
             var url = $"{_route}{parameters}";
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
@@ -157,6 +160,36 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{tagId}/UpdateTagStepAndRequirements", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task<string> UpdateTagAsync(
+            UserType userType, 
+            string plant,
+            int tagId,
+            string remark,
+            string storageArea,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                remark,
+                storageArea,
+                rowVersion
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{tagId}", content);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (response.StatusCode != HttpStatusCode.OK)
@@ -667,6 +700,58 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<IdAndRowVersion>>(jsonString);
+        }
+
+        public static async Task<string> VoidTagAsync(
+            UserType userType, 
+            string plant,
+            int tagId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{tagId}/Void", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task<string> UnvoidTagAsync(
+            UserType userType, 
+            string plant,
+            int tagId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{tagId}/Unvoid", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

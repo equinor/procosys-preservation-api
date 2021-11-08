@@ -20,7 +20,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
 
         public async Task<Result<Unit>> Handle(StartPreservationCommand request, CancellationToken cancellationToken)
         {
-            var tags = await _projectRepository.GetTagsByTagIdsAsync(request.TagIds);
+            var tags = await _projectRepository.GetTagsWithPreservationHistoryByTagIdsAsync(request.TagIds);
+            
             foreach (var tag in tags)
             {
                 tag.StartPreservation();

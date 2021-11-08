@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule
 
         public async Task<Result<IEnumerable<IdAndRowVersion>>> Handle(RescheduleCommand request, CancellationToken cancellationToken)
         {
-            var tags = await _projectRepository.GetTagsByTagIdsAsync(request.Tags.Select(x => x.Id));
+            var tags = await _projectRepository.GetTagsWithPreservationHistoryByTagIdsAsync(request.Tags.Select(x => x.Id));
 
             foreach (var tag in tags)
             {

@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CreateAction
 
         public async Task<Result<int>> Handle(CreateActionCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagWithActionsByTagIdAsync(request.TagId);
 
             var actionToAdd = new Action(
                  _plantProvider.Plant,

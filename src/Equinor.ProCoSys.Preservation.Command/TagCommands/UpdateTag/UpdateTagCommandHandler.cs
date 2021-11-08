@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag
 
         public async Task<Result<string>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagOnlyByTagIdAsync(request.TagId);
 
             tag.StorageArea = request.StorageArea;
             tag.Remark = request.Remark;

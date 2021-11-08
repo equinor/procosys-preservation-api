@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag
 
         public async Task<Result<string>> Handle(VoidTagCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagOnlyByTagIdAsync(request.TagId);
 
             tag.IsVoided = true;
             tag.SetRowVersion(request.RowVersion);

@@ -28,8 +28,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
         private const int TwoWeeksInterval = 2;
         private const int FourWeeksInterval = 4;
 
-        private Mock<IProjectRepository> _projectRepoMock;
-        private Mock<IPersonRepository> _personRepoMock;
         private PreserveCommand _commandForTagWithForAllRequirements;
         private PreserveCommand _commandForTagInSupplierStep;
         private PreserveCommand _commandForTagInOtherStep;
@@ -91,13 +89,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
                 _reqForOtherInOtherStep
             });
 
-            _projectRepoMock = new Mock<IProjectRepository>();
-            _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagWithForAllRequirementsId)).Returns(Task.FromResult(_tagWithForAllRequirements));
-            _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagInOtherStepId)).Returns(Task.FromResult(_tagWithSupplierAndOtherRequirementsInOtherStep));
-            _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagInSupplierStepId)).Returns(Task.FromResult(_tagWithSupplierAndOtherRequirementsInSupplierStep));
+            var projectRepoMock = new Mock<IProjectRepository>();
+            projectRepoMock.Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(TagWithForAllRequirementsId))
+                .Returns(Task.FromResult(_tagWithForAllRequirements));
+            projectRepoMock.Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(TagInOtherStepId))
+                .Returns(Task.FromResult(_tagWithSupplierAndOtherRequirementsInOtherStep));
+            projectRepoMock.Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(TagInSupplierStepId))
+                .Returns(Task.FromResult(_tagWithSupplierAndOtherRequirementsInSupplierStep));
             
-            _personRepoMock = new Mock<IPersonRepository>();
-            _personRepoMock
+            var personRepoMock = new Mock<IPersonRepository>();
+            personRepoMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
                 .Returns(Task.FromResult(new Person(CurrentUserOid, "Test", "User")));
             _commandForTagWithForAllRequirements = new PreserveCommand(TagWithForAllRequirementsId);
@@ -109,8 +110,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
             _tagWithSupplierAndOtherRequirementsInSupplierStep.StartPreservation();
 
             _dut = new PreserveCommandHandler(
-                _projectRepoMock.Object,
-                _personRepoMock.Object,
+                projectRepoMock.Object,
+                personRepoMock.Object,
                 UnitOfWorkMock.Object,
                 CurrentUserProviderMock.Object);
         }

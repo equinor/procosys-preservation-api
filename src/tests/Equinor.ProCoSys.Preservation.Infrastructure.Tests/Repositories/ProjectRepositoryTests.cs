@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -127,16 +126,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetAllProjectsOnlyAsync_ShouldReturnProjectsWithoutTags()
-        {
-            var result = await _dut.GetAllProjectsOnlyAsync();
-
-            Assert.AreEqual(2, result.Count);
-            // Not able to test that Projects don't have Tag as children. BuildMockDbSet seem to build Set as a graph with all children
-            //Assert.IsTrue(result.All(p => p.Tags.Count == 0));
-        }
-
-        [TestMethod]
         public async Task GetProjectOnlyByNameAsync_UnknownProject_ShouldReturnNull()
         {
             var result = await _dut.GetProjectOnlyByNameAsync("XYZ");
@@ -145,26 +134,67 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetTagByTagId_ShouldReturnTag()
+        public async Task GetTagWithActionsByTagId_ShouldReturnTag()
         {
-            var result = await _dut.GetTagByTagIdAsync(StandardTagId1);
+            var result = await _dut.GetTagWithActionsByTagIdAsync(StandardTagId1);
 
             Assert.AreEqual(StandardTagId1, result.Id);
         }
 
         [TestMethod]
-        public async Task GetTagsByTagIdsAsync_KnownTag_ShouldReturnTag()
+        public async Task GetTagWithAttachmentsByTagId_ShouldReturnTag()
         {
-            var result = await _dut.GetTagsByTagIdsAsync(new List<int> {StandardTagId1});
+            var result = await _dut.GetTagWithAttachmentsByTagIdAsync(StandardTagId1);
+
+            Assert.AreEqual(StandardTagId1, result.Id);
+        }
+
+        [TestMethod]
+        public async Task GetTagOnlyByTagId_ShouldReturnTag()
+        {
+            var result = await _dut.GetTagOnlyByTagIdAsync(StandardTagId1);
+
+            Assert.AreEqual(StandardTagId1, result.Id);
+        }
+
+        [TestMethod]
+        public async Task GetTagWithPreservationHistoryByTagId_ShouldReturnTag()
+        {
+            var result = await _dut.GetTagWithPreservationHistoryByTagIdAsync(StandardTagId1);
+
+            Assert.AreEqual(StandardTagId1, result.Id);
+        }
+
+        [TestMethod]
+        public async Task GetTagsOnlyByTagIdsAsync_KnownTag_ShouldReturnTag()
+        {
+            var result = await _dut.GetTagsOnlyByTagIdsAsync(new List<int> {StandardTagId1});
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(StandardTagId1, result.First().Id);
         }
 
         [TestMethod]
-        public async Task GetTagsByTagIdsAsync_UnknownTag_ShouldReturnEmptyList()
+        public async Task GetTagsOnlyByTagIdsAsync_UnknownTag_ShouldReturnEmptyList()
         {
-            var result = await _dut.GetTagsByTagIdsAsync(new List<int> {9187});
+            var result = await _dut.GetTagsOnlyByTagIdsAsync(new List<int> {9187});
+
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public async Task GetTagsWithPreservationHistoryByTagIdsAsync_KnownTag_ShouldReturnTag()
+        {
+            var result = await _dut.GetTagsWithPreservationHistoryByTagIdsAsync(new List<int> {StandardTagId1});
+
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(StandardTagId1, result.First().Id);
+        }
+
+        [TestMethod]
+        public async Task GetTagsWithPreservationHistoryByTagIdsAsync_UnknownTag_ShouldReturnEmptyList()
+        {
+            var result = await _dut.GetTagsWithPreservationHistoryByTagIdsAsync(new List<int> {9187});
 
             Assert.AreEqual(0, result.Count);
         }
@@ -203,10 +233,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetProjectByTagIdAsync_KnownTag_ShouldReturnProjectIncludingTheTag()
+        public async Task GetProjectAndTagWithPreservationHistoryByTagIdAsync_KnownTag_ShouldReturnProjectIncludingTheTag()
         {
             // Act
-            var project = await _dut.GetProjectByTagIdAsync(StandardTagId1);
+            var project = await _dut.GetProjectAndTagWithPreservationHistoryByTagIdAsync(StandardTagId1);
 
             // Assert
             Assert.IsNotNull(project);
@@ -217,10 +247,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetProjectByTagIdAsync_UnknownTag_ShouldReturnNull()
+        public async Task GetProjectAndTagWithPreservationHistoryByTagIdAsync_UnknownTag_ShouldReturnNull()
         {
             // Act
-            var project = await _dut.GetProjectByTagIdAsync(234234);
+            var project = await _dut.GetProjectAndTagWithPreservationHistoryByTagIdAsync(234234);
 
             // Assert
             Assert.IsNull(project);

@@ -24,14 +24,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.UpdateActio
         private UpdateActionCommand _command;
         private UpdateActionCommandHandler _dut;
 
-        private Mock<IProjectRepository> _projectRepositoryMock;
         private Action _action;
 
         [TestInitialize]
         public void Setup()
         {
-            _projectRepositoryMock = new Mock<IProjectRepository>();
-
             var tagId = 2;
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
@@ -41,14 +38,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.UpdateActio
             _action.SetProtectedIdForTesting(actionId);
             tagMock.Object.AddAction(_action);
 
-            _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(tagId))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(r => r.GetTagWithActionsByTagIdAsync(tagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
             _command = new UpdateActionCommand(tagId, actionId, _newTitle, _newDescription, _newDueTimeUtc, _rowVersion);
 
             _dut = new UpdateActionCommandHandler(
-                _projectRepositoryMock.Object,
+                projectRepositoryMock.Object,
                 UnitOfWorkMock.Object
             );
         }

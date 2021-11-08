@@ -22,7 +22,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
         private DeleteActionAttachmentCommand _command;
         private DeleteActionAttachmentCommandHandler _dut;
 
-        private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IBlobStorage> _blobStorageMock;
         private Action _action;
 
@@ -31,7 +30,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
         {
             _command = new DeleteActionAttachmentCommand(1, 2, 3, _rowVersion);
 
-            _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
 
             var blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
@@ -56,12 +54,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
             attachment.SetProtectedIdForTesting(_command.AttachmentId);
             _action.AddAttachment(attachment);
 
-            _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_command.TagId))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(r => r.GetTagWithActionsByTagIdAsync(_command.TagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
             _dut = new DeleteActionAttachmentCommandHandler(
-                _projectRepositoryMock.Object,
+                projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 _blobStorageMock.Object,
                 blobStorageOptionsMock.Object);

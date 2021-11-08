@@ -28,9 +28,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
 
         private Mock<Step> _stepMock1;
         private Mock<Step> _stepMock2;
-        private Mock<IJourneyRepository> _journeyRepositoryMock;
-        private Mock<IProjectRepository> _projectRepositoryMock;
-        private Mock<IRequirementTypeRepository> _rtRepositoryMock;
         private Tag _areaTagWithOneRequirement;
         private Tag _standardTagWithOneRequirement;
         private Tag _standardTagWithTwoRequirements;
@@ -52,14 +49,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             _stepMock2.SetupGet(s => s.Id).Returns(StepId2);
             _stepMock2.SetupGet(s => s.Plant).Returns(TestPlant);
 
-            _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
+            var rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             var rdMock1 = new Mock<RequirementDefinition>();
             rdMock1.SetupGet(x => x.Id).Returns(ReqDefId1);
             rdMock1.SetupGet(x => x.Plant).Returns(TestPlant);
             var rdMock2 = new Mock<RequirementDefinition>();
             rdMock2.SetupGet(x => x.Id).Returns(ReqDefId2);
             rdMock2.SetupGet(x => x.Plant).Returns(TestPlant);
-            _rtRepositoryMock
+            rtRepositoryMock
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(ReqDefId2))
                 .Returns(Task.FromResult(rdMock2.Object));
 
@@ -86,23 +83,26 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 _tagRequirement1OnAreaTag
             });
 
-            _journeyRepositoryMock = new Mock<IJourneyRepository>();
-            _journeyRepositoryMock
+            var journeyRepositoryMock = new Mock<IJourneyRepository>();
+            journeyRepositoryMock
                 .Setup(x => x.GetStepByStepIdAsync(StepId1))
                 .Returns(Task.FromResult(_stepMock1.Object));
-            _journeyRepositoryMock
+            journeyRepositoryMock
                 .Setup(x => x.GetStepByStepIdAsync(StepId2))
                 .Returns(Task.FromResult(_stepMock2.Object));
 
-            _projectRepositoryMock = new Mock<IProjectRepository>();
-            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(StandardTagId1)).Returns(Task.FromResult(_standardTagWithOneRequirement));
-            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(StandardTagId2)).Returns(Task.FromResult(_standardTagWithTwoRequirements));
-            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(AreaTagId)).Returns(Task.FromResult(_areaTagWithOneRequirement));
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock.Setup(p => p.GetTagWithPreservationHistoryByTagIdAsync(StandardTagId1))
+                .Returns(Task.FromResult(_standardTagWithOneRequirement));
+            projectRepositoryMock.Setup(p => p.GetTagWithPreservationHistoryByTagIdAsync(StandardTagId2))
+                .Returns(Task.FromResult(_standardTagWithTwoRequirements));
+            projectRepositoryMock.Setup(p => p.GetTagWithPreservationHistoryByTagIdAsync(AreaTagId))
+                .Returns(Task.FromResult(_areaTagWithOneRequirement));
 
             _dut = new UpdateTagStepAndRequirementsCommandHandler(
-                _projectRepositoryMock.Object,
-                _journeyRepositoryMock.Object,
-                _rtRepositoryMock.Object,
+                projectRepositoryMock.Object,
+                journeyRepositoryMock.Object,
+                rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object);
 

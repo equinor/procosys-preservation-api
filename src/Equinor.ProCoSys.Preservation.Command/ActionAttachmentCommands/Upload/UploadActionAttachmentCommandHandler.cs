@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload
 
         public async Task<Result<int>> Handle(UploadActionAttachmentCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagWithActionsByTagIdAsync(request.TagId);
             var action = tag.Actions.Single(a => a.Id == request.ActionId);
 
             var attachment = action.GetAttachmentByFileName(request.FileName);

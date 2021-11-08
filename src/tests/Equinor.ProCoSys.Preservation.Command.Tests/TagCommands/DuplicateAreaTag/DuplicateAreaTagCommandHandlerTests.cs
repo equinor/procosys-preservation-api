@@ -16,11 +16,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
     [TestClass]
     public class DuplicateAreaTagCommandHandlerTests : CommandHandlerTestsBase
     {
-        private Mock<IProjectRepository> _projectRepoMock;
-        private Mock<IJourneyRepository> _journeyRepositoryMock;
-        private Mock<IRequirementTypeRepository> _rtRepositoryMock;
-        private Mock<IDisciplineApiService> _disciplineApiServiceMock;
-        private Mock<IAreaApiService> _areaApiServiceMock;
         private DuplicateAreaTagCommand _command;
         private Tag _sourceTag;
         private TagRequirement _req1;
@@ -48,8 +43,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             stepMock.SetupGet(s => s.Id).Returns(_stepId);
                         
-            _journeyRepositoryMock = new Mock<IJourneyRepository>();
-            _journeyRepositoryMock
+            var journeyRepositoryMock = new Mock<IJourneyRepository>();
+            journeyRepositoryMock
                 .Setup(x => x.GetStepByStepIdAsync(_stepId))
                 .Returns(Task.FromResult(stepMock.Object));
 
@@ -60,8 +55,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             _rd2Mock.SetupGet(rd => rd.Id).Returns(_rdId2);
             _rd2Mock.SetupGet(rd => rd.Plant).Returns(TestPlant);
             
-            _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
-            _rtRepositoryMock
+            var rtRepositoryMock = new Mock<IRequirementTypeRepository>();
+            rtRepositoryMock
                 .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {_rdId1, _rdId2}))
                 .Returns(Task.FromResult(new List<RequirementDefinition> {_rd1Mock.Object, _rd2Mock.Object}));
 
@@ -82,14 +77,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             _sourceTag.SetProtectedIdForTesting(_sourceTagId);
             _project.AddTag(_sourceTag);
 
-            _projectRepoMock = new Mock<IProjectRepository>();
-            _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(_sourceTagId)).Returns(Task.FromResult(_sourceTag));
-            _projectRepoMock
+            var projectRepoMock = new Mock<IProjectRepository>();
+            projectRepoMock.Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(_sourceTagId)).Returns(Task.FromResult(_sourceTag));
+            projectRepoMock
                 .Setup(r => r.GetProjectOnlyByTagIdAsync(_sourceTagId)).Returns(Task.FromResult(_project));
             
             var disciplineCode = "D";
-            _disciplineApiServiceMock = new Mock<IDisciplineApiService>();
-            _disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode))
+            var disciplineApiServiceMock = new Mock<IDisciplineApiService>();
+            disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode))
                 .Returns(Task.FromResult(new PCSDiscipline
                 {
                     Code = disciplineCode,
@@ -97,8 +92,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
                 }));
 
             var areaCode = "A";
-            _areaApiServiceMock = new Mock<IAreaApiService>();
-            _areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode))
+            var areaApiServiceMock = new Mock<IAreaApiService>();
+            areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode))
                 .Returns(Task.FromResult(new PCSArea
                 {
                     Code = areaCode,
@@ -108,13 +103,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             _command = new DuplicateAreaTagCommand(_sourceTagId,TagType.SiteArea, disciplineCode, areaCode, "-01", "Desc", "Rem", "SA");
 
             _dut = new DuplicateAreaTagCommandHandler(
-                _projectRepoMock.Object,
-                _journeyRepositoryMock.Object,
-                _rtRepositoryMock.Object,
+                projectRepoMock.Object,
+                journeyRepositoryMock.Object,
+                rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object,
-                _disciplineApiServiceMock.Object,
-                _areaApiServiceMock.Object);
+                disciplineApiServiceMock.Object,
+                areaApiServiceMock.Object);
         }
         
         [TestMethod]

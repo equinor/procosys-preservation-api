@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.UpdateAction
 
         public async Task<Result<string>> Handle(UpdateActionCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagWithActionsByTagIdAsync(request.TagId);
             var action = tag.Actions.Single(a => a.Id == request.ActionId);
 
             action.Title = request.Title;

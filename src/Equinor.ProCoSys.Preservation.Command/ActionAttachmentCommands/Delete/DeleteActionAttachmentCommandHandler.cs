@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete
 
         public async Task<Result<Unit>> Handle(DeleteActionAttachmentCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagWithActionsByTagIdAsync(request.TagId);
             var action = tag.Actions.Single(a => a.Id == request.ActionId);
             var attachment = action.Attachments.Single(a => a.Id == request.AttachmentId);
 

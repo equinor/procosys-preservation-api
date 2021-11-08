@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Upload;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.Extensions.Options;
@@ -23,7 +22,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         private UploadTagAttachmentCommand _commandWithoutOverwrite;
         private UploadTagAttachmentCommandHandler _dut;
 
-        private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IBlobStorage> _blobStorageMock;
         private Tag _tag;
         private readonly int _tagId = 2;
@@ -33,7 +31,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         {
             _commandWithoutOverwrite = new UploadTagAttachmentCommand(_tagId, _fileName, false, new MemoryStream());
 
-            _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
 
             var blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
@@ -55,12 +52,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
 
             _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement> { reqMock.Object });
 
-            _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_commandWithoutOverwrite.TagId))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(r => r.GetTagWithAttachmentsByTagIdAsync(_commandWithoutOverwrite.TagId))
                 .Returns(Task.FromResult(_tag));
 
             _dut = new UploadTagAttachmentCommandHandler(
-                _projectRepositoryMock.Object,
+                projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object,
                 _blobStorageMock.Object,

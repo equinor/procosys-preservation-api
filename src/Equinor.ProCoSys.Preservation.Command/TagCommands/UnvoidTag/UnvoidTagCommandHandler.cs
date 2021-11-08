@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag
 
         public async Task<Result<string>> Handle(UnvoidTagCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagOnlyByTagIdAsync(request.TagId);
 
             tag.IsVoided = false;
             tag.SetRowVersion(request.RowVersion);

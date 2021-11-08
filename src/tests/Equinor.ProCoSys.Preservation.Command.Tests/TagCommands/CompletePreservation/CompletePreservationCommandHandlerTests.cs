@@ -15,7 +15,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
     [TestClass]
     public class CompletePreservationCommandHandlerTests : CommandHandlerTestsBase
     {
-        private Mock<IProjectRepository> _projectRepoMock;
         private CompletePreservationCommand _command;
         private Tag _tag1;
         private Tag _tag2;
@@ -86,8 +85,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
             var tagIds = new List<int> { tagId1, tagId2 };
             var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2) };
 
-            _projectRepoMock = new Mock<IProjectRepository>();
-            _projectRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
+            var projectRepoMock = new Mock<IProjectRepository>();
+            projectRepoMock.Setup(r => r.GetTagsWithPreservationHistoryByTagIdsAsync(tagIds))
+                .Returns(Task.FromResult(tags));
 
             var journeyRepoMock = new Mock<IJourneyRepository>();
             journeyRepoMock
@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
             
             _command = new CompletePreservationCommand(tagIdsWithRowVersion);
 
-            _dut = new CompletePreservationCommandHandler(_projectRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
+            _dut = new CompletePreservationCommandHandler(projectRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
         }
 
         [TestMethod]

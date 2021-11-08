@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         [TestInitialize]
         public async Task TestInitialize()
         {
-            var result = await TagsControllerTestsHelper.GetAllTagsAsync(
+            var result = await TagsControllerTestsHelper.GetPageOfTagsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);
 

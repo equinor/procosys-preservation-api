@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
 
         public async Task<Result<int>> Handle(DuplicateAreaTagCommand request, CancellationToken cancellationToken)
         {
-            var sourceTag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var sourceTag = await _projectRepository.GetTagWithPreservationHistoryByTagIdAsync(request.TagId);
 
             var duplicatedTag = await DuplicateTagAsync(request, sourceTag);
 
