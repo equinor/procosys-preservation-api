@@ -363,6 +363,59 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 expectedMessageOnBadRequest:"Tag must be an area tag to update description!");
         }
         #endregion
+        
+        #region UpdateTag
+        [TestMethod]
+        public async Task UpdateTag_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.UpdateTagAsync(
+                UserType.Anonymous, TestFactory.UnknownPlant,
+                9999,
+                null,
+                null,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task UpdateTag_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UpdateTagAsync(
+                UserType.Hacker, TestFactory.UnknownPlant,
+                9999,
+                null,
+                null,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTag_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UpdateTagAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                9999,
+                null,
+                null,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task UpdateTag_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagAsync(
+                UserType.Hacker, TestFactory.PlantWithAccess,
+                9999,
+                null,
+                null,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTag_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagAsync(
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
+                9999,
+                null,
+                null,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+        #endregion
 
         #region GetAllTagAttachments
         [TestMethod]

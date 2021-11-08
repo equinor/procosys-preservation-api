@@ -298,6 +298,43 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
             Assert.AreEqual(otherStepId, tag.Step.Id);
         }
+        
+        [TestMethod]
+        public async Task UpdateTag_AsPreserver_ShouldChangeTag()
+        {
+            // Arrange
+            var tagIdUnderTest = await CreateAreaTagAsync(
+                AreaTagType.SiteArea, 
+                TwoStepJourneyWithTags.Steps.Last().Id,
+                null,
+                false);
+            var tag = await TagsControllerTestsHelper.GetTagAsync(
+                UserType.Planner, TestFactory.PlantWithAccess, 
+                tagIdUnderTest);
+            var oldRemark = tag.Remark;
+            var newRemark = Guid.NewGuid().ToString();
+            Assert.AreNotEqual(oldRemark, newRemark);
+            var oldStorageArea = tag.StorageArea;
+            var newStorageArea = Guid.NewGuid().ToString();
+            Assert.AreNotEqual(oldStorageArea, newStorageArea);
+            var currentRowVersion = tag.RowVersion;
+
+            // Act
+            var newRowVersion = await TagsControllerTestsHelper.UpdateTagAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                tag.Id,
+                newRemark,
+                newStorageArea,
+                tag.RowVersion);
+
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            tag = await TagsControllerTestsHelper.GetTagAsync(
+                UserType.Planner, TestFactory.PlantWithAccess, 
+                tagIdUnderTest);
+            Assert.AreEqual(newRemark, tag.Remark);
+            Assert.AreEqual(newStorageArea, tag.StorageArea);
+        }
 
         [TestMethod]
         public async Task GetAllTagAttachments_AsPreserver_ShouldGetAttachments()
