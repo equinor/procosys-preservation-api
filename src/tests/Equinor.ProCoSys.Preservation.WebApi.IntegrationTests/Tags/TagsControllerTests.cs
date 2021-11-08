@@ -321,7 +321,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             // Act
             var newRowVersion = await TagsControllerTestsHelper.UpdateTagAsync(
-                UserType.Planner, TestFactory.PlantWithAccess,
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 tag.Id,
                 newRemark,
                 newStorageArea,
