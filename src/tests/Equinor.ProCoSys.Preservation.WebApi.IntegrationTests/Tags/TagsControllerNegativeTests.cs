@@ -64,39 +64,39 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
         }
 
-        #region GetAllTags
+        #region GetPageOfTags
         [TestMethod]
-        public async Task GetAllTags_AsAnonymous_ShouldReturnUnauthorized()
-            => await TagsControllerTestsHelper.GetAllTagsAsync(
+        public async Task GetPageOfTags_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.GetPageOfTagsAsync(
                 UserType.Anonymous, TestFactory.UnknownPlant,
                 TestFactory.ProjectWithAccess,
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task GetAllTags_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
-            => await TagsControllerTestsHelper.GetAllTagsAsync(
+        public async Task GetPageOfTags_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.GetPageOfTagsAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 TestFactory.ProjectWithAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
-        public async Task GetAllTags_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
-            => await TagsControllerTestsHelper.GetAllTagsAsync(
+        public async Task GetPageOfTags_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.GetPageOfTagsAsync(
                 UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 TestFactory.ProjectWithAccess,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
         [TestMethod]
-        public async Task GetAllTags_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
-            => await TagsControllerTestsHelper.GetAllTagsAsync(
+        public async Task GetPageOfTags_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.GetPageOfTagsAsync(
                 UserType.Hacker, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
-        public async Task GetAllTags_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
-            => await TagsControllerTestsHelper.GetAllTagsAsync(
+        public async Task GetPageOfTags_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.GetPageOfTagsAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess,
                 HttpStatusCode.Forbidden);
@@ -1454,7 +1454,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task Transfer_AsPlanner_ShouldReturnBadRequest_WhenIllegalRowVersion()
         {
             // Arrange 
-            var tagResultDto = await TagsControllerTestsHelper.GetAllTagsAsync(
+            var tagResultDto = await TagsControllerTestsHelper.GetPageOfTagsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);
             var tagToTransfer = tagResultDto.Tags.FirstOrDefault(t => t.ReadyToBeTransferred);
@@ -1550,7 +1550,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 null);
             await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> {newTagId});
 
-            var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
+            var tagsResult = await TagsControllerTestsHelper.GetPageOfTagsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);
             var tagToCompletedPreservation = tagsResult.Tags.Single(t => t.Id == newTagId);
@@ -1853,6 +1853,108 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 9999,
                 HttpStatusCode.NotFound);
 
+        #endregion
+        
+        #region VoidTag
+        [TestMethod]
+        public async Task VoidTag_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.VoidTagAsync(
+                UserType.Anonymous, TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task VoidTag_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.VoidTagAsync(
+                UserType.Hacker, TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task VoidTag_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.VoidTagAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest:"is not a valid plant");
+
+        [TestMethod]
+        public async Task VoidTag_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.VoidTagAsync(
+                UserType.Hacker, TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task VoidTag_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.VoidTagAsync(
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task VoidTag_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.VoidTagAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+        #endregion
+        
+        #region UnvoidTag
+        [TestMethod]
+        public async Task UnvoidTag_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.UnvoidTagAsync(
+                UserType.Anonymous, TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task UnvoidTag_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UnvoidTagAsync(
+                UserType.Hacker, TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UnvoidTag_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UnvoidTagAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest:"is not a valid plant");
+
+        [TestMethod]
+        public async Task UnvoidTag_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UnvoidTagAsync(
+                UserType.Hacker, TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UnvoidTag_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UnvoidTagAsync(
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UnvoidTag_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UnvoidTagAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
         #endregion
     }
 }
