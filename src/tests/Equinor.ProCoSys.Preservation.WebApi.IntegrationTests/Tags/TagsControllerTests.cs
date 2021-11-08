@@ -862,7 +862,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
         
         [TestMethod]
-        public async Task VoidTag_AsAdmin_ShouldVoidTag()
+        public async Task VoidTag_AsPlanner_ShouldVoidTag()
         {
             // Arrange
             var tagIdUnderTest = await CreateAreaTagAsync(
@@ -887,7 +887,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
-        public async Task UnvoidTag_AsAdmin_ShouldUnvoidTag()
+        public async Task UnvoidTag_AsPlanner_ShouldUnvoidTag()
         {
             // Arrange
             var tagIdUnderTest = await CreateAreaTagAsync(
