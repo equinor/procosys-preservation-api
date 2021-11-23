@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -19,7 +19,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.WebApi\Equinor.ProCoSys.Preservation.WebApi.csproj" />
-    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Test.Common\Equinor.ProCoSys.Preservation.Test.Common.csproj" />
+    <ProjectReference
+      Include="..\Equinor.ProCoSys.Preservation.Test.Common\Equinor.ProCoSys.Preservation.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>
