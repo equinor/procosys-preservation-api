@@ -1,5 +1,4 @@
-﻿#define sqllite
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -13,7 +12,9 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.Infrastructure;
+using Equinor.ProCoSys.Preservation.Infrastructure.Repositories;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
@@ -29,6 +30,24 @@ using Moq;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 {
+    public class PlantProvider : IPlantProvider
+    {
+        string IPlantProvider.Plant => throw new NotImplementedException();
+
+        bool IPlantProvider.IsCrossPlantQuery => throw new NotImplementedException();
+    }
+
+    public class EventDispatcher : IEventDispatcher
+    {
+        public Task DispatchAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default) => Task.CompletedTask;
+    }
+
+    public class CurrentUserProvider : ICurrentUserProvider
+    {
+        public Guid GetCurrentUserOid() => new Guid("d08b52fa-18f6-4515-9450-f9acbd2bfc9f");
+        public bool HasCurrentUser() => true;
+    }
+
     [TestClass]
     public class SqlLiteBusReceiverServiceTests
     {
@@ -39,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private Mock<ITelemetryClient> _telemetryClient;
         private Responsible _responsible;
         private Mock<IResponsibleRepository> _responsibleRepository;
-        private Mock<IProjectRepository> _projectRepository;
+        private IProjectRepository _projectRepository;
         private Project _project1, _project2;
         private Mock<ITagFunctionRepository> _tagFunctionRepository;
         private TagFunction _tagFunction;
@@ -73,7 +92,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
         private IServiceCollection _serviceCollection;
         private readonly DbConnection _dbConnection;
-        private PreservationContext _preservationContext;
 
         private static DbConnection CreateInMemoryDatabase()
         {
@@ -94,14 +112,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public void Setup()
         {
             _serviceCollection = new ServiceCollection();
-            _serviceCollection.AddDbContext<PreservationContext>(o => o.UseSqlite(CreateInMemoryDatabase()));  
-                       
+            _serviceCollection.AddDbContext<PreservationContext>(o => o.UseSqlite(CreateInMemoryDatabase()));
+            _serviceCollection.AddScoped<IPlantProvider, PlantProvider>();
+            _serviceCollection.AddScoped<IEventDispatcher, EventDispatcher>();
+            _serviceCollection.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
+
+
             _plantSetter = new Mock<IPlantSetter>();
             _unitOfWork = new Mock<IUnitOfWork>();
             _telemetryClient = new Mock<ITelemetryClient>();
             _responsibleRepository = new Mock<IResponsibleRepository>();
-            _projectRepository = new Mock<IProjectRepository>();
             _tagFunctionRepository = new Mock<ITagFunctionRepository>();
+
+
+
 
             // Assert tags in preservation
             var rdMock = new Mock<RequirementDefinition>();
@@ -134,18 +158,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _project1 = new Project(Plant, Project1Name, Project1Description);
             _project1.AddTag(_tag1);
             _project1.AddTag(_tag2);
-            _projectRepository.Setup(p => p.GetStandardTagsInProjectOnlyAsync(Project1Name))
-                .Returns(Task.FromResult(tags));
-            _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(Project1Name))
-                .Returns(Task.FromResult(_project1));
-            _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project1Name))
-                .Returns(Task.FromResult(_project1));
+            //_projectRepository.Setup(p => p.GetStandardTagsInProjectOnlyAsync(Project1Name))
+            //    .Returns(Task.FromResult(tags));
+            //_projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(Project1Name))
+            //    .Returns(Task.FromResult(_project1));
+            //_projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project1Name))
+            //    .Returns(Task.FromResult(_project1));
             _project2 = new Project(Plant, Project2Name, Project2Description);
-            _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(Project2Name))
-                .Returns(Task.FromResult(_project2));
-            _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project2Name))
-                .Returns(Task.FromResult(_project2));
-            _projectRepository.Setup(p => p.Add(It.IsAny<Project>())).Callback((Project p) => _newProjectCreated = p);
+            //_projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(Project2Name))
+            //    .Returns(Task.FromResult(_project2));
+            //_projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project2Name))
+            //    .Returns(Task.FromResult(_project2));
+            //_projectRepository.Setup(p => p.Add(It.IsAny<Project>())).Callback((Project p) => _newProjectCreated = p);
 
             _tagFunction = new TagFunction(Plant, TagFunctionCode, TagFunctionDescription, RegisterCode);
             _tagFunctionRepository.Setup(t => t.GetByCodesAsync(TagFunctionCode, RegisterCode))
@@ -158,17 +182,42 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var projectApiService = new Mock<IProjectApiService>();
             projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation)).Returns(Task.FromResult(new PCSProject { Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation }));
 
-            _dut = new BusReceiverService(_plantSetter.Object,
-                                          _unitOfWork.Object,
-                                          _telemetryClient.Object,
-                                          _responsibleRepository.Object,
-                                          _projectRepository.Object,
-                                          _tagFunctionRepository.Object,
-                                          currentUserSetter.Object,
-                                          claimsProvider.Object,
-                                          new Mock<IAuthenticator>().Object,
-                                          options.Object,
-                                          projectApiService.Object);
+            var serviceProvider = _serviceCollection.BuildServiceProvider();
+
+            using (var scp = serviceProvider.CreateScope())
+            {
+                var context = scp.ServiceProvider.GetRequiredService<PreservationContext>();
+                context.Database.EnsureCreated();
+                context.Tags.Add(_tag1);
+                //context.Projects.Add(_project1);
+                //context.Projects.Add(_project2);
+
+                try
+                {
+                    context.SaveChanges();
+                }
+                catch (Exception e)
+                {
+
+                    throw;
+                }
+           
+
+                _projectRepository = new ProjectRepository(context);
+
+
+                _dut = new BusReceiverService(_plantSetter.Object,
+                                              _unitOfWork.Object,
+                                              _telemetryClient.Object,
+                                              _responsibleRepository.Object,
+                                              _projectRepository,
+                                              _tagFunctionRepository.Object,
+                                              currentUserSetter.Object,
+                                              claimsProvider.Object,
+                                              new Mock<IAuthenticator>().Object,
+                                              options.Object,
+                                              projectApiService.Object);
+            }
         }
         #endregion
 
@@ -185,7 +234,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
             _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
-            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(Project1Name), Times.Once);
+            //_projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(Project1Name), Times.Once);
             Assert.AreEqual(NewDescription, _project1.Description);
             Assert.AreEqual(true, _project1.IsClosed);
         }
@@ -204,8 +253,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
             _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
-            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(Project1Name), Times.Never);
-            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(unknownProjectName), Times.Once);
+            //_projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(Project1Name), Times.Never);
+            //_projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(unknownProjectName), Times.Once);
             Assert.AreNotEqual(unknownProjectDescription, _project1.Description);
             Assert.AreNotEqual(unknownProjectDescription, _project2.Description);
         }
@@ -435,15 +484,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
         #region CommPkg
 
-        # sqllite
         [TestMethod]
-        public async Task HandlingCommPkgTopic_Move_WithoutFailure_SqlInMem()
-        { 
-        
-        }
-
-
-            [TestMethod]
         public async Task HandlingCommPkgTopic_Move_WithoutFailure()
         {
             // Arrange & Assert
@@ -469,7 +510,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
 
             // Assert
-            _projectRepository.Verify(p => p.Add(It.IsAny<Project>()));
+            //_projectRepository.Verify(p => p.Add(It.IsAny<Project>()));
             Assert.IsTrue(_newProjectCreated.Tags.Contains(_tag1));
             Assert.IsFalse(_project1.Tags.Contains(_tag1));
         }
@@ -499,8 +540,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
 
             // Assert
-            _projectRepository.Verify(p => p.GetProjectWithTagsByNameAsync(unknownProject), Times.Once);
-            _projectRepository.Verify(p => p.GetProjectWithTagsByNameAsync(Project1Name), Times.Never);
+            //_projectRepository.Verify(p => p.GetProjectWithTagsByNameAsync(unknownProject), Times.Once);
+            //_projectRepository.Verify(p => p.GetProjectWithTagsByNameAsync(Project1Name), Times.Never);
         }
 
         [TestMethod]
