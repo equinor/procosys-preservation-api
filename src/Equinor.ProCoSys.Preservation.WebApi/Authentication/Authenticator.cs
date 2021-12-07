@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
         private string _applicationToken;
         private readonly string _secretInfo;
 
-        public Authenticator(IOptions<AuthenticatorOptions> options, ILogger<Authenticator> logger)
+        public Authenticator(IOptionsSnapshot<AuthenticatorOptions> options, ILogger<Authenticator> logger)
         {
             _options = options;
             _logger = logger;
