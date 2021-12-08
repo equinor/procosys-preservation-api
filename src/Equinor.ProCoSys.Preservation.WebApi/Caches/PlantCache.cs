@@ -14,13 +14,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
         private readonly ICacheManager _cacheManager;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IPlantApiService _plantApiService;
-        private readonly IOptionsMonitor<CacheOptions> _options;
+        private readonly IOptionsSnapshot<CacheOptions> _options;
 
         public PlantCache(
             ICacheManager cacheManager, 
             ICurrentUserProvider currentUserProvider, 
-            IPlantApiService plantApiService, 
-            IOptionsMonitor<CacheOptions> options)
+            IPlantApiService plantApiService,
+            IOptionsSnapshot<CacheOptions> options)
         {
             _cacheManager = cacheManager;
             _currentUserProvider = currentUserProvider;
@@ -72,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
                     return plants;
                 },
                 CacheDuration.Minutes,
-                _options.CurrentValue.PlantCacheMinutes);
+                _options.Value.PlantCacheMinutes);
 
         private string PlantsCacheKey(Guid userOid)
             => $"PLANTS_{userOid.ToString().ToUpper()}";

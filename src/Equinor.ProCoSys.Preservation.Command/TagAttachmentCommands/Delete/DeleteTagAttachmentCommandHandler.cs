@@ -15,12 +15,12 @@ namespace Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Delete
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBlobStorage _blobStorage;
-        private readonly IOptionsMonitor<BlobStorageOptions> _blobStorageOptions;
+        private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
         public DeleteTagAttachmentCommandHandler(
             IProjectRepository projectRepository,
             IUnitOfWork unitOfWork,
-            IBlobStorage blobStorage, IOptionsMonitor<BlobStorageOptions> blobStorageOptions)
+            IBlobStorage blobStorage, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Delete
             var attachment = tag.Attachments.Single(a => a.Id == request.AttachmentId);
             attachment.SetRowVersion(request.RowVersion);
 
-            var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.CurrentValue.BlobContainer);
+            var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
 
             await _blobStorage.DeleteAsync(fullBlobPath, cancellationToken);
             

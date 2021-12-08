@@ -5,7 +5,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
     public class UploadAttachmentForceOverwriteDtoValidator : UploadBaseDtoValidator<UploadAttachmentForceOverwriteDto>
     {
-        public UploadAttachmentForceOverwriteDtoValidator(IOptionsMonitor<BlobStorageOptions> options) : base(options)
+        public UploadAttachmentForceOverwriteDtoValidator(IOptionsSnapshot<BlobStorageOptions> options) : base(options)
         {
         }
     }

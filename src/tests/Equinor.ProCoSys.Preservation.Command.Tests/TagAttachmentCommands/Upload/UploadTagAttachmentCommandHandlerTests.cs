@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
 
             _blobStorageMock = new Mock<IBlobStorage>();
 
-            var blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
+            var blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
             {
                 MaxSizeMb = 2,
@@ -41,7 +41,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
                 BlockedFileSuffixes = new[] {".exe", ".zip"}
             };
             blobStorageOptionsMock
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(options);
 
             var stepMock = new Mock<Step>();

@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
         private Mock<IBlobStorage> _blobStorageMock;
         private Uri _uri;
         private string BlobContainer = "bc";
-        private Mock<IOptionsMonitor<BlobStorageOptions>> _blobStorageOptionsMock;
+        private Mock<IOptionsSnapshot<BlobStorageOptions>> _blobStorageOptionsMock;
 
         private int _requirementId;
         private int _tagId;
@@ -34,14 +34,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
             using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             _uri = new Uri("http://whatever/file.txt");
-            _blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
+            _blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
             {
                 BlobContainer = BlobContainer
             };
 
             _blobStorageOptionsMock
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(options);
 
             var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));

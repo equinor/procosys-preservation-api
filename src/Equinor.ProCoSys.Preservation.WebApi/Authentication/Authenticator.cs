@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
 {
     public class Authenticator : IBearerTokenProvider, IBearerTokenSetter, IAuthenticator
     {
-        private readonly IOptions<AuthenticatorOptions> _options;
+        private readonly IOptionsSnapshot<AuthenticatorOptions> _options;
         private readonly ILogger<Authenticator> _logger;
         private string _requestToken;
         private string _onBehalfOfUserToken;

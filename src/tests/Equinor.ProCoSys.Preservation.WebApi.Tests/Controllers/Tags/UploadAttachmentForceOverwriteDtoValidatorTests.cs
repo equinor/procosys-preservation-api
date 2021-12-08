@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
         [TestInitialize]
         public void Setup()
         {
-            var blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
+            var blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             _options = new BlobStorageOptions
             {
                 MaxSizeMb = 2,
@@ -28,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
                 BlockedFileSuffixes = new[] {".exe", ".zip"}
             };
             blobStorageOptionsMock
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(_options);
             _dut = new UploadAttachmentForceOverwriteDtoValidator(blobStorageOptionsMock.Object);
         }

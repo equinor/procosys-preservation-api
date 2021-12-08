@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.BlobStorage
         private readonly string _accountName;
         private readonly string _accountKey;
 
-        public AzureBlobService(IOptions<BlobStorageOptions> options)
+        public AzureBlobService(IOptionsSnapshot<BlobStorageOptions> options)
         {
             _connectionString = options.Value.ConnectionString;
             _accountName = Regex.Match(_connectionString, @"AccountName=(.+?)(;|\z)", RegexOptions.Singleline).Groups[1].Value;

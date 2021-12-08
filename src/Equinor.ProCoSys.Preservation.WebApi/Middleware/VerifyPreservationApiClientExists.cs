@@ -15,12 +15,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
     public class VerifyPreservationApiClientExists : IHostedService
     {
         private readonly IServiceScopeFactory _serviceProvider;
-        private readonly IOptions<AuthenticatorOptions> _options;
+        private readonly IOptionsSnapshot<AuthenticatorOptions> _options;
         private readonly ILogger<VerifyPreservationApiClientExists> _logger;
 
         public VerifyPreservationApiClientExists(
             IServiceScopeFactory serviceProvider,
-            IOptions<AuthenticatorOptions> options, 
+            IOptionsSnapshot<AuthenticatorOptions> options, 
             ILogger<VerifyPreservationApiClientExists> logger)
         {
             _serviceProvider = serviceProvider;

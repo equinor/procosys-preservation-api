@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
         private readonly IBlobStorage _blobStorage;
-        private readonly IOptionsMonitor<BlobStorageOptions> _blobStorageOptions;
+        private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
         public UploadFieldValueAttachmentCommandHandler(
             IProjectRepository projectRepository, 
@@ -27,7 +27,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
             IBlobStorage blobStorage,
-            IOptionsMonitor<BlobStorageOptions> blobStorageOptions)
+            IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
@@ -54,12 +54,12 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
             }
             else
             {
-                fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.CurrentValue.BlobContainer);
+                fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
                 await _blobStorage.DeleteAsync(fullBlobPath, cancellationToken);
                 attachment.SetFileName(request.FileName);
             }
 
-            fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.CurrentValue.BlobContainer);
+            fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
 
             await _blobStorage.UploadAsync(fullBlobPath, request.Content, true, cancellationToken);
 
