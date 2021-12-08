@@ -12,13 +12,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
     public class TimedSynchronization : IHostedService, IDisposable
     {
         private readonly ILogger<TimedSynchronization> _logger;
-        private readonly IOptionsSnapshot<SynchronizationOptions> _options;
+        private readonly IOptionsMonitor<SynchronizationOptions> _options;
         private readonly IServiceProvider _services;
         private System.Timers.Timer _timer;
 
         public TimedSynchronization(
             ILogger<TimedSynchronization> logger,
-            IOptionsSnapshot<SynchronizationOptions> options,
+            IOptionsMonitor<SynchronizationOptions> options,
             IServiceProvider services)
         {
             _logger = logger;
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             _timer = new System.Timers.Timer
             {
-                Interval = _options.Value.Interval.TotalMilliseconds,
+                Interval = _options.CurrentValue.Interval.TotalMilliseconds,
                 AutoReset = false
             };
             _timer.Elapsed += Timer_Elapsed;
