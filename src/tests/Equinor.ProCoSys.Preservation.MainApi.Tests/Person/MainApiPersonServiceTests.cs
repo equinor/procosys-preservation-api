@@ -21,9 +21,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Person
         public void Setup()
         {
             // Arrange
-            var mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
+            var mainApiOptions = new Mock<IOptionsSnapshot<MainApiOptions>>();
             mainApiOptions
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             var mainApiClient = new Mock<IBearerTokenApiClient>();
             _authenticator = new Mock<IAuthenticator>();

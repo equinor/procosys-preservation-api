@@ -34,9 +34,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         {
             TimeService.SetProvider(new ManualTimeProvider(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
 
-            var optionsMock = new Mock<IOptionsMonitor<CacheOptions>>();
+            var optionsMock = new Mock<IOptionsSnapshot<CacheOptions>>();
             optionsMock
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(new CacheOptions());
 
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();

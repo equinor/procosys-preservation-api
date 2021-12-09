@@ -22,14 +22,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
     {
         private GetTagsQuery _query;
         private int _tagIsNewHours = 12;
-        private Mock<IOptionsMonitor<TagOptions>> _apiOptionsMock;
+        private Mock<IOptionsSnapshot<TagOptions>> _apiOptionsMock;
         private TestDataSet _testDataSet;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            _apiOptionsMock = new Mock<IOptionsMonitor<TagOptions>>();
+            _apiOptionsMock = new Mock<IOptionsSnapshot<TagOptions>>();
             _apiOptionsMock
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(new TagOptions { IsNewHours = _tagIsNewHours });
 
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

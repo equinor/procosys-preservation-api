@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IClaimsTransformation _claimsTransformation;
         private readonly IAuthenticator _authenticator;
         private readonly IPlantCache _plantCache;
-        private readonly IOptionsMonitor<SynchronizationOptions> _options;
+        private readonly IOptionsSnapshot<SynchronizationOptions> _options;
         private readonly ICertificateApiService _certificateApiService;
 
         public SynchronizationService(
@@ -49,8 +49,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IClaimsTransformation claimsTransformation,
             IAuthenticator authenticator,
             IPlantCache plantCache,
-            IOptionsMonitor<SynchronizationOptions> options,
-            IOptionsMonitor<AuthenticatorOptions> authenticatorOptions,
+            IOptionsSnapshot<SynchronizationOptions> options,
+            IOptionsSnapshot<AuthenticatorOptions> authenticatorOptions,
             ICertificateApiService certificateApiService)
         {
             _logger = logger;
@@ -64,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _plantCache = plantCache;
             _options = options;
             _certificateApiService = certificateApiService;
-            _preservationApiOid = authenticatorOptions.CurrentValue.PreservationApiObjectId;
+            _preservationApiOid = authenticatorOptions.Value.PreservationApiObjectId;
         }
 
         public async Task Synchronize(CancellationToken cancellationToken)
@@ -88,7 +88,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     await _claimsTransformation.TransformAsync(currentUser);
 
                     var startTime = TimeService.UtcNow;
-                    if (_options.CurrentValue.AutoTransferTags)
+                    if (_options.Value.AutoTransferTags)
                     {
                         await AutoTransferTagsAsync(plant);
                     }

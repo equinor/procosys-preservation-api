@@ -21,24 +21,24 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
 
         public MainApiTagService(
             IBearerTokenApiClient mainApiClient,
-            IOptionsMonitor<MainApiOptions> options,
+            IOptionsSnapshot<MainApiOptions> options,
             ILogger<MainApiTagService> logger)
         {
             _mainApiClient = mainApiClient;
-            _apiVersion = options.CurrentValue.ApiVersion;
-            _baseAddress = new Uri(options.CurrentValue.BaseAddress);
-            if (options.CurrentValue.TagSearchPageSize < 1)
+            _apiVersion = options.Value.ApiVersion;
+            _baseAddress = new Uri(options.Value.BaseAddress);
+            if (options.Value.TagSearchPageSize < 1)
             {
-                throw new ArgumentOutOfRangeException(nameof(options.CurrentValue.TagSearchPageSize), "Must be a positive number.");
+                throw new ArgumentOutOfRangeException(nameof(options.Value.TagSearchPageSize), "Must be a positive number.");
             }
-            _tagSearchPageSize = options.CurrentValue.TagSearchPageSize;
+            _tagSearchPageSize = options.Value.TagSearchPageSize;
             if (_tagSearchPageSize < 100)
             {
                 logger.LogWarning("Tag search page size is set to a low value. This may impact the overall performance!");
             }
             if (_tagSearchPageSize <= 0)
             {
-                throw new Exception($"{nameof(options.CurrentValue.TagSearchPageSize)} can't be zero or negative");
+                throw new Exception($"{nameof(options.Value.TagSearchPageSize)} can't be zero or negative");
             }
         }
 

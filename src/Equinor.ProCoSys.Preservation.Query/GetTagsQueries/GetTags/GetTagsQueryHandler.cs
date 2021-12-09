@@ -24,10 +24,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
         private readonly int _tagIsNewHours;
         private readonly DateTime _utcNow;
 
-        public GetTagsQueryHandler(IReadOnlyContext context, IOptionsMonitor<TagOptions> options)
+        public GetTagsQueryHandler(IReadOnlyContext context, IOptionsSnapshot<TagOptions> options)
         {
             _context = context;
-            _tagIsNewHours = options.CurrentValue.IsNewHours;
+            _tagIsNewHours = options.Value.IsNewHours;
             _utcNow = TimeService.UtcNow;
         }
 

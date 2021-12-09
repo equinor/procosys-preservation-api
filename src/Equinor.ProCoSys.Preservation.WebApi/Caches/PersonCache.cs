@@ -11,13 +11,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
     {
         private readonly ICacheManager _cacheManager;
         private readonly IPersonApiService _personApiService;
-        private readonly IOptionsMonitor<CacheOptions> _options;
+        private readonly IOptionsSnapshot<CacheOptions> _options;
 
         public PersonCache(
             ICacheManager cacheManager, 
             ICurrentUserProvider currentUserProvider, 
-            IPersonApiService personApiService, 
-            IOptionsMonitor<CacheOptions> options)
+            IPersonApiService personApiService,
+            IOptionsSnapshot<CacheOptions> options)
         {
             _cacheManager = cacheManager;
             _personApiService = personApiService;
@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
                     return person;
                 },
                 CacheDuration.Minutes,
-                _options.CurrentValue.PersonCacheMinutes);
+                _options.Value.PersonCacheMinutes);
 
         public async Task<bool> ExistsAsync(Guid userOid)
         {

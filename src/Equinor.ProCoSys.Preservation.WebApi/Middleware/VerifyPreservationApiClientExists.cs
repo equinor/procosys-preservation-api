@@ -15,12 +15,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
     public class VerifyPreservationApiClientExists : IHostedService
     {
         private readonly IServiceScopeFactory _serviceProvider;
-        private readonly IOptions<AuthenticatorOptions> _options;
+        private readonly IOptionsMonitor<AuthenticatorOptions> _options;
         private readonly ILogger<VerifyPreservationApiClientExists> _logger;
 
         public VerifyPreservationApiClientExists(
             IServiceScopeFactory serviceProvider,
-            IOptions<AuthenticatorOptions> options, 
+            IOptionsMonitor<AuthenticatorOptions> options, 
             ILogger<VerifyPreservationApiClientExists> logger)
         {
             _serviceProvider = serviceProvider;
@@ -39,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
                 scope.ServiceProvider
                     .GetRequiredService<ICurrentUserSetter>();
 
-            var oid = _options.Value.PreservationApiObjectId;
+            var oid = _options.CurrentValue.PreservationApiObjectId;
             _logger.LogInformation($"Ensuring '{oid}' exists as Person");
             try
             {

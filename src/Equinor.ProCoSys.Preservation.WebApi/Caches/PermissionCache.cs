@@ -13,12 +13,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
     {
         private readonly ICacheManager _cacheManager;
         private readonly IPermissionApiService _permissionApiService;
-        private readonly IOptionsMonitor<CacheOptions> _options;
+        private readonly IOptionsSnapshot<CacheOptions> _options;
 
         public PermissionCache(
             ICacheManager cacheManager,
             IPermissionApiService permissionApiService,
-            IOptionsMonitor<CacheOptions> options)
+            IOptionsSnapshot<CacheOptions> options)
         {
             _cacheManager = cacheManager;
             _permissionApiService = permissionApiService;
@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
                 PermissionsCacheKey(plantId, userOid),
                 async () => await _permissionApiService.GetPermissionsAsync(plantId),
                 CacheDuration.Minutes,
-                _options.CurrentValue.PermissionCacheMinutes);
+                _options.Value.PermissionCacheMinutes);
 
         public async Task<IList<string>> GetProjectsForUserAsync(string plantId, Guid userOid)
         {
@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
                 ContentRestrictionsCacheKey(plantId, userOid),
                 async () => await _permissionApiService.GetContentRestrictionsAsync(plantId),
                 CacheDuration.Minutes,
-                _options.CurrentValue.PermissionCacheMinutes);
+                _options.Value.PermissionCacheMinutes);
 
         public void ClearAll(string plantId, Guid userOid)
         {
@@ -63,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
                 ProjectsCacheKey(plantId, userOid),
                 async () => await _permissionApiService.GetAllOpenProjectsAsync(plantId),
                 CacheDuration.Minutes,
-                _options.CurrentValue.PermissionCacheMinutes);
+                _options.Value.PermissionCacheMinutes);
 
         private string ProjectsCacheKey(string plantId, Guid userOid)
         {

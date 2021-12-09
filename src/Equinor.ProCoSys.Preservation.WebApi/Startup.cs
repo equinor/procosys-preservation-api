@@ -87,6 +87,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 x.MultipartBodyLengthLimit = int.MaxValue;
             });
 
+            if (Configuration.GetValue<bool>("UseAzureAppConfiguration"))
+            {
+                services.AddAzureAppConfiguration();
+            }
+
             services.AddControllers()
                 .AddFluentValidation(fv =>
                 {
@@ -103,6 +108,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 });
 
             var scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
@@ -176,6 +182,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            if (Configuration.GetValue<bool>("UseAzureAppConfiguration"))
+            {
+                app.UseAzureAppConfiguration();
+            }
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -210,7 +221,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             app.UsePlantValidator();
             app.UseVerifyOidInDb();
             app.UseAuthorization();
-
+            
             app.UseResponseCompression();
 
             app.UseEndpoints(endpoints =>

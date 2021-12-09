@@ -28,21 +28,21 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionAttachment
         private TestDataSet _testDataSet;
         private Mock<IBlobStorage> _blobStorageMock;
         private Uri _uri;
-        private Mock<IOptionsMonitor<BlobStorageOptions>> _blobStorageOptionsMock;
+        private Mock<IOptionsSnapshot<BlobStorageOptions>> _blobStorageOptionsMock;
         private string BlobContainer = "bc";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             _blobStorageMock = new Mock<IBlobStorage>();
             _uri = new Uri("http://whatever/file.txt");
-            _blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
+            _blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
             {
                 BlobContainer = BlobContainer
             };
 
             _blobStorageOptionsMock
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(options);
 
             using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
