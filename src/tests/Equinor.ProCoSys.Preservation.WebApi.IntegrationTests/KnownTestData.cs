@@ -19,10 +19,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public static string ReqTypeB => "TestRT-B";
         public static string ReqDefInReqTypeB => "TestRD-B";
         public static string TwoStepJourneyWithTags => "TestJourneyA";
-        public static string StepAInJourneyWithTags => "TestStepA";
-        public static string StepBInJourneyWithTags => "TestStepB";
-        public static string JourneyNotInUse => "TestJourneyB";
-        public static string StepInJourneyNotInUse => "TestStepB";
+        public static string StepAInJourneyWithTags => "TestStepA_A";
+        public static string StepBInJourneyWithTags => "TestStepA_B";
+        public static string TwoStepJourneyWithoutTags => "TestJourneyB";
+        public static string StepAInJourneyWithoutTags => "TestStepB_A";
+        public static string StepBInJourneyWithoutTags => "TestStepB_B";
+        public static string OneStepJourneyWithoutTags => "TestJourneyC";
+        public static string StepInJourneyWithoutTags => "TestStepC_A";
         public static string StandardTagNo => "Std-Test";
         public static string SiteTagNo => "#SITE-Test";
         public static string Action => "TestAction";

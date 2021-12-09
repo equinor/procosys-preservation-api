@@ -1526,7 +1526,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange 
             var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var stepId = TwoStepJourneyWithTags.Steps.Last().Id;
+            var stepId = TwoStepJourneyWithTags.Steps.Last(s => !s.IsVoided).Id;
 
             var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,

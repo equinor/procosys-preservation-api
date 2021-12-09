@@ -320,8 +320,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task UpdateStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                JourneyNotInUseIdUnderTest,
-                FirstStepInJourneyWithTagsIdUnderTest, // step in other Journey
+                JourneyId2UnderTest,
+                FirstStepIdInJourney1UnderTest, // step in other Journey
                 Guid.NewGuid().ToString(),
                 OtherModeIdUnderTest,
                 KnownTestData.ResponsibleCode,
@@ -400,8 +400,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task VoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.VoidStepAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                JourneyNotInUseIdUnderTest,
-                FirstStepInJourneyWithTagsIdUnderTest, // step in other Journey
+                JourneyId2UnderTest,
+                FirstStepIdInJourney1UnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Journey and/or step doesn't exist!");
@@ -476,8 +476,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task UnvoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                JourneyNotInUseIdUnderTest,
-                FirstStepInJourneyWithTagsIdUnderTest, // step in other Journey
+                JourneyId2UnderTest,
+                FirstStepIdInJourney1UnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Journey and/or step doesn't exist!");
@@ -552,8 +552,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task DeleteStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                JourneyNotInUseIdUnderTest,
-                FirstStepInJourneyWithTagsIdUnderTest, // step in other Journey
+                JourneyId2UnderTest,
+                FirstStepIdInJourney1UnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Journey and/or step doesn't exist!");
