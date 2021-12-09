@@ -33,9 +33,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
 
         public async ValueTask<string> GetBearerTokenAsync()
         {
-            _logger.LogInformation($"Global setting=[{_options.CurrentValue.GlobalSetting}]");
-            _logger.LogInformation($"Scoped setting=[{_options.CurrentValue.ScopedSetting}]");
-
             switch (AuthenticationType)
             {
                 case AuthenticationType.OnBehalfOf:
