@@ -10,10 +10,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         protected int OtherModeIdUnderTest;
         protected int SupModeAIdUnderTest;
         protected int SupModeBIdUnderTest;
-        protected int TwoStepJourneyWithTagsIdUnderTest;
-        protected int FirstStepInJourneyWithTagsIdUnderTest;
-        protected int JourneyNotInUseIdUnderTest;
-        protected int StepInJourneyNotInUseIdUnderTest;
+        protected int JourneyId1UnderTest;
+        protected int FirstStepIdInJourney1UnderTest;
+        protected int JourneyId2UnderTest;
+        protected int FirstStepIdInJourney2UnderTest;
 
         [TestInitialize]
         public async Task TestInitialize()
@@ -23,12 +23,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             SupModeBIdUnderTest = TestFactory.Instance.SeededData[KnownPlantData.PlantA].SupModeBId;
 
             var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var journeyWithTags = journeys.Single(j => j.Title == KnownTestData.TwoStepJourneyWithTags);
-            TwoStepJourneyWithTagsIdUnderTest = journeyWithTags.Id;
-            FirstStepInJourneyWithTagsIdUnderTest = journeyWithTags.Steps.First().Id;
-            var journeyNotInUse = journeys.Single(j => j.Title == KnownTestData.JourneyNotInUse);
-            JourneyNotInUseIdUnderTest = journeyNotInUse.Id;
-            StepInJourneyNotInUseIdUnderTest = journeyNotInUse.Steps.First().Id;
+            var journey = journeys.Single(j => j.Title == KnownTestData.TwoStepJourneyWithoutTags);
+            JourneyId1UnderTest = journey.Id;
+            FirstStepIdInJourney1UnderTest = journey.Steps.First().Id;
+            journey = journeys.Single(j => j.Title == KnownTestData.OneStepJourneyWithoutTags);
+            JourneyId2UnderTest = journey.Id;
+            FirstStepIdInJourney2UnderTest = journey.Steps.First().Id;
 
             TestFactory.Instance
                 .ResponsibleApiServiceMock
