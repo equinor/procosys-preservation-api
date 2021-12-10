@@ -1397,6 +1397,63 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region UndoStartPreservation
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldClearNextDueDate()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.UndoStartPreservation();
+
+            Assert.IsNull(dut.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldRemoveActivePeriod()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.UndoStartPreservation();
+
+            Assert.IsFalse(dut.HasActivePeriod);
+            Assert.IsNull(dut.ActivePeriod);
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldThrowException_WhenPreservationIsNotActive()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+
+            Assert.ThrowsException<Exception>(() => dut.UndoStartPreservation());
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldClearInUse_WhenNoPreservationsDone()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.UndoStartPreservation();
+
+            Assert.IsFalse(dut.IsInUse);
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldNotClearInUse_WhenPreservationsDone()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+            dut.Preserve(new Mock<Person>().Object, true);
+
+            dut.UndoStartPreservation();
+
+            Assert.IsTrue(dut.IsInUse);
+        }
+
+        #endregion
         #region privates
 
         private void RecordAndPreserve(
