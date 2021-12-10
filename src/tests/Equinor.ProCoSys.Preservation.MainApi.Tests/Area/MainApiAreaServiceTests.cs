@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
     public class MainApiAreaServiceTests
     {
         private const string _plant = "PCS$TESTPLANT";
-        private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
+        private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
         private MainApiAreaService _dut;
         private PCSArea _procosysArea;
@@ -19,9 +19,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
         [TestInitialize]
         public void Setup()
         {
-            _mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
+            _mainApiOptions = new Mock<IOptionsSnapshot<MainApiOptions>>();
             _mainApiOptions
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
 

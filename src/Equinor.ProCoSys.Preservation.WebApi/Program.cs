@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                                 .ConfigureRefresh(refreshOptions =>
                                 {
                                     refreshOptions.Register("Sentinel", true);
-                                    refreshOptions.SetCacheExpiration(TimeSpan.FromMinutes(5));
+                                    refreshOptions.SetCacheExpiration(TimeSpan.FromSeconds(30));
                                 });
                         });
                     }

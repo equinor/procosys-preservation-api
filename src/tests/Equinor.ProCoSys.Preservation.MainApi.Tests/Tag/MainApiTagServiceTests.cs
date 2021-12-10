@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
     public class MainApiTagServiceTests
     {
         private Mock<ILogger<MainApiTagService>> _logger;
-        private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
+        private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
         private PCSTagSearchResult _searchPage1WithThreeItems;
         private PCSTagSearchResult _searchPage2WithOneItem;
@@ -25,9 +25,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
         public void Setup()
         {
             _logger = new Mock<ILogger<MainApiTagService>>();
-            _mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
+            _mainApiOptions = new Mock<IOptionsSnapshot<MainApiOptions>>();
             _mainApiOptions
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com", TagSearchPageSize = 3 });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
 

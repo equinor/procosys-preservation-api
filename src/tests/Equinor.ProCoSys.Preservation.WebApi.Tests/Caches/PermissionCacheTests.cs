@@ -46,9 +46,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(TestPlant))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Restriction1, Restriction2}));
 
-            var optionsMock = new Mock<IOptionsMonitor<CacheOptions>>();
+            var optionsMock = new Mock<IOptionsSnapshot<CacheOptions>>();
             optionsMock
-                .Setup(x => x.CurrentValue)
+                .Setup(x => x.Value)
                 .Returns(new CacheOptions());
 
             _dut = new PermissionCache(new CacheManager(), _permissionApiServiceMock.Object, optionsMock.Object);
@@ -146,7 +146,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             var dut = new PermissionCache(
                 cacheManagerMock.Object,
                 _permissionApiServiceMock.Object,
-                new Mock<IOptionsMonitor<CacheOptions>>().Object);
+                new Mock<IOptionsSnapshot<CacheOptions>>().Object);
             // Act
             dut.ClearAll(TestPlant, Oid);
 

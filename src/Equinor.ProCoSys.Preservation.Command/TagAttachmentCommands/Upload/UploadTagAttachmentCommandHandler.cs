@@ -16,13 +16,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Upload
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
         private readonly IBlobStorage _blobStorage;
-        private readonly IOptionsMonitor<BlobStorageOptions> _blobStorageOptions;
+        private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
         public UploadTagAttachmentCommandHandler(
             IProjectRepository projectRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
-            IBlobStorage blobStorage, IOptionsMonitor<BlobStorageOptions> blobStorageOptions)
+            IBlobStorage blobStorage, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
@@ -51,7 +51,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Upload
                 tag.AddAttachment(attachment);
             }
 
-            var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.CurrentValue.BlobContainer);
+            var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
 
             await _blobStorage.UploadAsync(fullBlobPath, request.Content, request.OverwriteIfExists, cancellationToken);
 

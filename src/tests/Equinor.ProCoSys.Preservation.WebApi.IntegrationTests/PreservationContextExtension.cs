@@ -67,13 +67,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
             var reqTypeB = SeedReqType(dbContext, plant, KnownTestData.ReqTypeB);
             SeedReqDef(dbContext, reqTypeB, KnownTestData.ReqDefInReqTypeB);
+
+            var journey1 = SeedJourney(dbContext, plant, KnownTestData.TwoStepJourneyWithoutTags);
+            SeedStep(dbContext, journey1, KnownTestData.StepAInJourneyWithoutTags, supplierModeA, responsible);
+            SeedStep(dbContext, journey1, KnownTestData.StepBInJourneyWithoutTags, otherMode, responsible);
+
+            var journey2 = SeedJourney(dbContext, plant, KnownTestData.TwoStepJourneyWithTags);
+            var stepInJourneyWithTags = SeedStep(dbContext, journey2, KnownTestData.StepAInJourneyWithTags, supplierModeA, responsible);
+            SeedStep(dbContext, journey2, KnownTestData.StepBInJourneyWithTags, otherMode, responsible);
             
-            var journeyWithTags = SeedJourney(dbContext, plant, KnownTestData.TwoStepJourneyWithTags);
-            var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepAInJourneyWithTags, supplierModeA, responsible);
-            SeedStep(dbContext, journeyWithTags, KnownTestData.StepBInJourneyWithTags, otherMode, responsible);
-            
-            var journeyWithoutTags = SeedJourney(dbContext, plant, KnownTestData.JourneyNotInUse);
-            SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, supplierModeA, responsible);
+            var journey3 = SeedJourney(dbContext, plant, KnownTestData.OneStepJourneyWithoutTags);
+            SeedStep(dbContext, journey3, KnownTestData.StepInJourneyWithoutTags, supplierModeA, responsible);
 
             var project = SeedProject(dbContext, plant);
             var standardTagReadyForBulkPreserveNotStarted = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);

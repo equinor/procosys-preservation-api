@@ -13,11 +13,11 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Discipline
         private readonly IBearerTokenApiClient _mainApiClient;
 
         public MainApiDisciplineService(IBearerTokenApiClient mainApiClient,
-            IOptionsMonitor<MainApiOptions> options)
+            IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
-            _apiVersion = options.CurrentValue.ApiVersion;
-            _baseAddress = new Uri(options.CurrentValue.BaseAddress);
+            _apiVersion = options.Value.ApiVersion;
+            _baseAddress = new Uri(options.Value.BaseAddress);
         }
 
         public async Task<PCSDiscipline> TryGetDisciplineAsync(string plant, string code)
