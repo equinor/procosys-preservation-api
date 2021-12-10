@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
                     return new NotFoundResult<List<int>>($"Details for Tag {tagNo} not found in project {request.ProjectName}");
                 }
 
-                // Todo TECH This type of validation should be in validator not in handler.
+                // Hack TECH This type of validation should be in validator not in handler.
                 // Since we don't want to ask main api for same data both in validator and here, we do it here only
                 if (mode.ForSupplier && string.IsNullOrEmpty(tagDetails.PurchaseOrderNo))
                 {

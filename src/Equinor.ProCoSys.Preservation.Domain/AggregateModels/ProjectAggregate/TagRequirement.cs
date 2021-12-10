@@ -94,6 +94,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             PrepareNewPreservation();
         }
 
+        public void UndoStartPreservation()
+        {
+            if (!HasActivePeriod)
+            {
+                throw new Exception($"{nameof(TagRequirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't undo start");
+            }
+            RemoveActivePreservation();
+        }
+
         public void CompletePreservation() => NextDueTimeUtc = null;
 
         public void Preserve(Person preservedBy, bool bulkPreserved)
@@ -256,6 +265,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             NextDueTimeUtc = TimeService.UtcNow.AddWeeks(IntervalWeeks);
             var preservationPeriod = new PreservationPeriod(Plant, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
+        }
+
+        private void RemoveActivePreservation()
+        {
+            NextDueTimeUtc = null;
+            _preservationPeriods.Remove(ActivePeriod);
         }
 
         private void VerifyReadyForRecording(RequirementDefinition requirementDefinition)

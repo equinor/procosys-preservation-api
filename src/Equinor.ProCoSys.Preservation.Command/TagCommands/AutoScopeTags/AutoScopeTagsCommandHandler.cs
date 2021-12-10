@@ -80,7 +80,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
                     return new NotFoundResult<List<int>>($"TagFunction for {Key(tagDetails)} not found with requirements defined");
                 }
 
-                // Todo TECH This type of validation should be in validator not in handler.
+                // Hack This type of validation should be in validator not in handler.
                 // Since we don't want to ask main api for same data both in validator and here, we do it here only
                 if (mode.ForSupplier && string.IsNullOrEmpty(tagDetails.PurchaseOrderNo))
                 {
