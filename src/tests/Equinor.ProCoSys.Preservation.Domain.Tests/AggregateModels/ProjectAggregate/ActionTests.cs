@@ -18,16 +18,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private Mock<Person> _personMock;
         private Action _dut;
         private ManualTimeProvider _timeProvider;
+        private DateTime _utcNow;
 
         [TestInitialize]
         public void Setup()
         {
             _personMock = new Mock<Person>();
             _personMock.SetupGet(p => p.Id).Returns(PersonId);
-            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeProvider = new ManualTimeProvider(utcNow);
+            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            _timeProvider = new ManualTimeProvider(_utcNow);
             TimeService.SetProvider(_timeProvider);
-            _dut = new Action(TestPlant, "TitleA", "DescA", utcNow);
+            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
         }
 
         [TestMethod]
