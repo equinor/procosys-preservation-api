@@ -253,7 +253,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void StartPreservation_ShouldUpSrwPreservationPeriodWithCorrectDueDate_AfterUndoStart()
+        public void StartPreservation_ShouldUpdateCorrectNextDueDate_AfterUndoStart()
         {
             var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation();
@@ -264,6 +264,25 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.UndoStartPreservation();
             _timeProvider.Elapse(TimeSpan.FromDays(2));
             
+            dut.StartPreservation();
+
+            var expectedUpdatedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
+            Assert.AreEqual(expectedUpdatedNextDueTimeUtc, dut.NextDueTimeUtc);
+            Assert.AreNotEqual(expectedUpdatedNextDueTimeUtc, expectedNextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldUpdatePreservationPeriodWithCorrectDueDate_AfterUndoStart()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Single().DueTimeUtc);
+
+            dut.UndoStartPreservation();
+            _timeProvider.Elapse(TimeSpan.FromDays(2));
+
             dut.StartPreservation();
 
             var expectedUpdatedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);

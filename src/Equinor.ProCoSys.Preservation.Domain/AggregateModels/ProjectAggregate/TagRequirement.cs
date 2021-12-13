@@ -251,15 +251,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             // can have active period since it is possible to Undo Start
             if (HasActivePeriod)
             {
-                ActivePeriod.SetNewDueTimeUtc(IntervalWeeks);
+                ActivePeriod.SetDueTimeUtc(IntervalWeeks);
             }
             else
             {
-                NextDueTimeUtc = TimeService.UtcNow.AddWeeks(IntervalWeeks);
-                // todo Refactor PreservationPeriod ctor to take IntervalWeeks as param 2
-                var preservationPeriod = new PreservationPeriod(Plant, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
+                var preservationPeriod = new PreservationPeriod(Plant, IntervalWeeks, _initialPreservationPeriodStatus);
                 _preservationPeriods.Add(preservationPeriod);
             }
+
+            NextDueTimeUtc = ActivePeriod.DueTimeUtc;
         }
 
         private void VerifyReadyForRecording(RequirementDefinition requirementDefinition)
@@ -286,7 +286,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             IntervalWeeks = intervalWeeks;
             if (ActivePeriod != null)
             {
-                NextDueTimeUtc = ActivePeriod.SetNewDueTimeUtc(intervalWeeks);
+                NextDueTimeUtc = ActivePeriod.SetDueTimeUtc(intervalWeeks);
             }
         }
 
