@@ -85,23 +85,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool HasActivePeriod => ActivePeriod != null;
 
-        public void StartPreservation()
-        {
-            if (HasActivePeriod)
-            {
-                throw new Exception($"{nameof(TagRequirement)} {Id} already has an active {nameof(PreservationPeriod)}. Can't start");
-            }
-            PrepareNewPreservation();
-        }
+        public void StartPreservation() => PrepareNewPreservation();
 
-        public void UndoStartPreservation()
-        {
-            if (!HasActivePeriod)
-            {
-                throw new Exception($"{nameof(TagRequirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't undo start");
-            }
-            RemoveActivePreservation();
-        }
+        public void UndoStartPreservation() => NextDueTimeUtc = null;
 
         public void CompletePreservation() => NextDueTimeUtc = null;
 
@@ -262,15 +248,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void PrepareNewPreservation()
         {
-            NextDueTimeUtc = TimeService.UtcNow.AddWeeks(IntervalWeeks);
-            var preservationPeriod = new PreservationPeriod(Plant, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
-            _preservationPeriods.Add(preservationPeriod);
-        }
-
-        private void RemoveActivePreservation()
-        {
-            NextDueTimeUtc = null;
-            _preservationPeriods.Remove(ActivePeriod);
+            // can have active period since it is possible to Undo Start
+            if (HasActivePeriod)
+            {
+                ActivePeriod.SetNewDueTimeUtc(IntervalWeeks);
+            }
+            else
+            {
+                NextDueTimeUtc = TimeService.UtcNow.AddWeeks(IntervalWeeks);
+                // todo Refactor PreservationPeriod ctor to take IntervalWeeks as param 2
+                var preservationPeriod = new PreservationPeriod(Plant, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
+                _preservationPeriods.Add(preservationPeriod);
+            }
         }
 
         private void VerifyReadyForRecording(RequirementDefinition requirementDefinition)

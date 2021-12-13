@@ -126,7 +126,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Preservation on tag is not started!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Undo preservation start on tag can not be done!"));
         }
 
         [TestMethod]

@@ -16,7 +16,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private const int PersonId = 31;
         private const string TestPlant = "PCS$PlantA";
         private Mock<Person> _personMock;
-        private DateTime _utcNow;
         private Action _dut;
         private ManualTimeProvider _timeProvider;
 
@@ -25,10 +24,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _personMock = new Mock<Person>();
             _personMock.SetupGet(p => p.Id).Returns(PersonId);
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeProvider = new ManualTimeProvider(_utcNow);
+            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            _timeProvider = new ManualTimeProvider(utcNow);
             TimeService.SetProvider(_timeProvider);
-            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
+            _dut = new Action(TestPlant, "TitleA", "DescA", utcNow);
         }
 
         [TestMethod]

@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservatio
                     .MustAsync((_, tagId, _, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, tagId) => $"Tag is voided! Tag={tagId}")
                     .MustAsync((_, tagId, _, token) => IsReadyToBeUndoStartedAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Preservation on tag is not started! Tag={tagId}");
+                    .WithMessage((_, tagId) => $"Undo preservation start on tag can not be done! Tag={tagId}");
             });
 
             RuleFor(command => command.TagIds)
