@@ -52,10 +52,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
             {
                 _req1OnTag1, _req2OnTag1
             });
+            _tag1.StartPreservation();
             _tag2 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
             {
                 _req1OnTag2, _req2OnTag2
             });
+            _tag2.StartPreservation();
             var tags = new List<Tag>
             {
                 _tag1, _tag2
@@ -78,8 +80,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
             Assert.AreEqual(0, result.Errors.Count);
             Assert.IsInstanceOfType(result.Data, typeof(Unit));
 
-            Assert.AreEqual(PreservationStatus.Active, _tag1.Status);
-            Assert.AreEqual(PreservationStatus.Active, _tag2.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _tag1.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _tag2.Status);
         }
 
         [TestMethod]
@@ -87,14 +89,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
         {
             await _dut.Handle(_command, default);
 
-            var expectedNextDueTimeUtc = _utcNow.AddWeeks(_intervalWeeks);
-            Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag1.NextDueTimeUtc);
-            Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag1.NextDueTimeUtc);
-            Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag2.NextDueTimeUtc);
-            Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag2.NextDueTimeUtc);
+            Assert.IsFalse(_req1OnTag1.NextDueTimeUtc.HasValue);
+            Assert.IsFalse(_req2OnTag1.NextDueTimeUtc.HasValue);
+            Assert.IsFalse(_req1OnTag2.NextDueTimeUtc.HasValue);
+            Assert.IsFalse(_req2OnTag2.NextDueTimeUtc.HasValue);
 
-            Assert.AreEqual(expectedNextDueTimeUtc, _tag1.NextDueTimeUtc);
-            Assert.AreEqual(expectedNextDueTimeUtc, _tag2.NextDueTimeUtc);
+            Assert.IsFalse(_tag1.NextDueTimeUtc.HasValue);
+            Assert.IsFalse(_tag2.NextDueTimeUtc.HasValue);
         }
 
         [TestMethod]
