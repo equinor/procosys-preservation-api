@@ -29,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservatio
                     .WithMessage((_, tagId) => $"Tag doesn't exist! Tag={tagId}")
                     .MustAsync((_, tagId, _, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, tagId) => $"Tag is voided! Tag={tagId}")
-                    .MustAsync((_, tagId, _, token) => IsStartedAsync(tagId, token))
+                    .MustAsync((_, tagId, _, token) => IsReadyToBeUndoStartedAsync(tagId, token))
                     .WithMessage((_, tagId) => $"Preservation on tag is not started! Tag={tagId}");
             });
 
@@ -57,8 +57,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservatio
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> IsStartedAsync(int tagId, CancellationToken token)
-                => await tagValidator.IsStartedAsync(tagId, token);
+            async Task<bool> IsReadyToBeUndoStartedAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToBeUndoStartedAsync(tagId, token);
         }
     }
 }

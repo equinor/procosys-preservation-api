@@ -30,8 +30,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.IsStartedAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.IsStartedAsync(TagId2, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeUndoStartedAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeUndoStartedAsync(TagId2, default)).Returns(Task.FromResult(true));
             _command = new UndoStartPreservationCommand(_tagIds);
 
             _dut = new UndoStartPreservationCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
@@ -120,7 +120,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
         [TestMethod]
         public void Validate_ShouldFail_WhenNotStarted()
         {
-            _tagValidatorMock.Setup(r => r.IsStartedAsync(TagId1, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeUndoStartedAsync(TagId1, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 
