@@ -85,14 +85,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool HasActivePeriod => ActivePeriod != null;
 
-        public void StartPreservation()
-        {
-            if (HasActivePeriod)
-            {
-                throw new Exception($"{nameof(TagRequirement)} {Id} already has an active {nameof(PreservationPeriod)}. Can't start");
-            }
-            PrepareNewPreservation();
-        }
+        public void StartPreservation() => PrepareNewPreservation();
+
+        public void UndoStartPreservation() => NextDueTimeUtc = null;
 
         public void CompletePreservation() => NextDueTimeUtc = null;
 
@@ -253,9 +248,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void PrepareNewPreservation()
         {
-            NextDueTimeUtc = TimeService.UtcNow.AddWeeks(IntervalWeeks);
-            var preservationPeriod = new PreservationPeriod(Plant, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
-            _preservationPeriods.Add(preservationPeriod);
+            // can have active period since it is possible to Undo Start
+            if (HasActivePeriod)
+            {
+                ActivePeriod.SetDueTimeUtc(IntervalWeeks);
+            }
+            else
+            {
+                var preservationPeriod = new PreservationPeriod(Plant, IntervalWeeks, _initialPreservationPeriodStatus);
+                _preservationPeriods.Add(preservationPeriod);
+            }
+
+            NextDueTimeUtc = ActivePeriod.DueTimeUtc;
         }
 
         private void VerifyReadyForRecording(RequirementDefinition requirementDefinition)
@@ -282,7 +286,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             IntervalWeeks = intervalWeeks;
             if (ActivePeriod != null)
             {
-                NextDueTimeUtc = ActivePeriod.SetNewDueTimeUtc(intervalWeeks);
+                NextDueTimeUtc = ActivePeriod.SetDueTimeUtc(intervalWeeks);
             }
         }
 

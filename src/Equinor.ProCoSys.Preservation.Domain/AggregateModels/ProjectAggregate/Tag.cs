@@ -283,6 +283,22 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             AddDomainEvent(new PreservationStartedEvent(Plant, ObjectGuid));
         }
 
+        public void UndoStartPreservation()
+        {
+            if (!IsReadyToUndoStarted())
+            {
+                throw new Exception($"Can not undo start preservation on {nameof(Tag)} {Id}. Status = {Status}");
+            }
+            foreach (var requirement in Requirements)
+            {
+                requirement.UndoStartPreservation();
+            }
+
+            Status = PreservationStatus.NotStarted;
+            UpdateNextDueTimeUtc();
+            AddDomainEvent(new UndoPreservationStartedEvent(Plant, ObjectGuid));
+        }
+
         public void CompletePreservation(Journey journey)
         {
             if (!IsReadyToBeCompleted(journey))
@@ -445,6 +461,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool IsReadyToBeStarted()
             => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
+
+        public bool IsReadyToUndoStarted() => Status == PreservationStatus.Active;
 
         public TagAttachment GetAttachmentByFileName(string fileName) => _attachments.SingleOrDefault(a => a.FileName.ToUpper() == fileName.ToUpper());
 

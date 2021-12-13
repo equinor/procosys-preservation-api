@@ -20,11 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
                 .Must(ids => ids != null && ids.Any())
                 .WithMessage("At least 1 tag must be given!")
                 .Must(BeUniqueTags)
-                .WithMessage("Tags must be unique!")
-                .MustAsync(BeInSameProjectAsync)
-                .WithMessage("Tags must be in same project!")
-                .MustAsync(NotBeAClosedProjectForTagAsync)
-                .WithMessage("Project is closed!");
+                .WithMessage("Tags must be unique!");
 
             When(command => command.TagIds.Any() && BeUniqueTags(command.TagIds), () =>
             {
@@ -38,6 +34,12 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
                     .MustAsync((_, tagId, _, token) => HaveAtLeastOneNonVoidedRequirementAsync(tagId, token))
                     .WithMessage((_, tagId) => $"Tag do not have any non voided requirement! Tag={tagId}");
             });
+
+            RuleFor(command => command.TagIds)
+                .MustAsync(BeInSameProjectAsync)
+                .WithMessage("Tags must be in same project!")
+                .MustAsync(NotBeAClosedProjectForTagAsync)
+                .WithMessage("Project is closed!");
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
             {

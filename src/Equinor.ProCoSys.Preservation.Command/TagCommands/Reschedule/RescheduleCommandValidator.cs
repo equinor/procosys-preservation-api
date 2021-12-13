@@ -24,11 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule
                 .Must(ids => ids != null && ids.Any())
                 .WithMessage("At least 1 tag must be given!")
                 .Must(BeUniqueTags)
-                .WithMessage("Tags must be unique!")
-                .MustAsync(BeInSameProjectAsync)
-                .WithMessage("Tags must be in same project!")
-                .MustAsync(NotBeAClosedProjectForTagAsync)
-                .WithMessage("Project is closed!");
+                .WithMessage("Tags must be unique!");
             
             RuleFor(command => command.Weeks)
                 .InclusiveBetween(1, MaxRescheduleWeeks)
@@ -46,6 +42,12 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule
                     .Must(tag => HaveAValidRowVersion(tag.RowVersion))
                     .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });
+
+            RuleFor(command => command.Tags)
+                .MustAsync(BeInSameProjectAsync)
+                .WithMessage("Tags must be in same project!")
+                .MustAsync(NotBeAClosedProjectForTagAsync)
+                .WithMessage("Project is closed!");
 
             bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
             {

@@ -2,16 +2,15 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
 using FluentValidation;
 
-namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation
 {
-    public class BulkPreserveCommandValidator : AbstractValidator<BulkPreserveCommand>
+    public class UndoStartPreservationCommandValidator : AbstractValidator<UndoStartPreservationCommand>
     {
-        public BulkPreserveCommandValidator(
+        public UndoStartPreservationCommandValidator(
             IProjectValidator projectValidator,
             ITagValidator tagValidator)
         {
@@ -30,10 +29,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
                     .WithMessage((_, tagId) => $"Tag doesn't exist! Tag={tagId}")
                     .MustAsync((_, tagId, _, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, tagId) => $"Tag is voided! Tag={tagId}")
-                    .MustAsync((_, tagId, _, token) => PreservationIsStartedAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={tagId}")
-                    .MustAsync((_, tagId, _, token) => BeReadyToBePreservedAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag is not ready to be bulk preserved! Tag={tagId}");
+                    .MustAsync((_, tagId, _, token) => IsReadyToUndoStartedAsync(tagId, token))
+                    .WithMessage((_, tagId) => $"Undo preservation start on tag can not be done! Tag={tagId}");
             });
 
             RuleFor(command => command.TagIds)
@@ -60,11 +57,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> PreservationIsStartedAsync(int tagId, CancellationToken token)
-                => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
-            
-            async Task<bool> BeReadyToBePreservedAsync(int tagId, CancellationToken token)
-                => await tagValidator.IsReadyToBePreservedAsync(tagId, token);
+            async Task<bool> IsReadyToUndoStartedAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToUndoStartedAsync(tagId, token);
         }
     }
 }

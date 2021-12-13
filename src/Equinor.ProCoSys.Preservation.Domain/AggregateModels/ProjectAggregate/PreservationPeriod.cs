@@ -20,14 +20,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
         
-        public PreservationPeriod(string plant, DateTime dueTimeUtc, PreservationPeriodStatus status)
+        public PreservationPeriod(string plant, int intervalWeeks, PreservationPeriodStatus status)
             : base(plant)
         {
             if (status != PreservationPeriodStatus.NeedsUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
             {
                 throw new ArgumentException($"{status} is an illegal initial status for a {nameof(PreservationPeriod)}");
             }
-            DueTimeUtc = dueTimeUtc;
+            SetDueTimeUtc(intervalWeeks);
             Status = status;
         }
 
@@ -182,7 +182,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public FieldValue GetFieldValue(int fieldId)
             => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
         
-        public DateTime SetNewDueTimeUtc(int intervalWeeks)
+        public DateTime SetDueTimeUtc(int intervalWeeks)
         {
             DueTimeUtc = TimeService.UtcNow.AddWeeks(intervalWeeks);
             return DueTimeUtc;

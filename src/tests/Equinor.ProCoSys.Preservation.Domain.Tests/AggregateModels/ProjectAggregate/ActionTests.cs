@@ -16,9 +16,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private const int PersonId = 31;
         private const string TestPlant = "PCS$PlantA";
         private Mock<Person> _personMock;
-        private DateTime _utcNow;
         private Action _dut;
         private ManualTimeProvider _timeProvider;
+        private DateTime _utcNow;
 
         [TestInitialize]
         public void Setup()

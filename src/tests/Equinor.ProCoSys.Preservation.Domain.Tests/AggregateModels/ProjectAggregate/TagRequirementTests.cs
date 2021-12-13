@@ -39,7 +39,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private Mock<RequirementDefinition> _reqDefWithOneNumberFieldMock;
         private Mock<RequirementDefinition> _reqDefWithTwoNumberFieldsMock;
         private Mock<RequirementDefinition> _reqDefWithNumberAndCheckBoxFieldMock;
-        private DateTime _utcNow;
         private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
@@ -102,8 +101,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _reqDefWithTwoNumberFieldsMock.SetupGet(rd => rd.Id).Returns(50);
             _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(60);
             
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeProvider = new ManualTimeProvider(_utcNow);
+            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            _timeProvider = new ManualTimeProvider(utcNow);
             TimeService.SetProvider(_timeProvider);
         }
 
@@ -157,7 +156,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             dut.StartPreservation();
 
-            var expectedNextDueTimeUtc = _utcNow.AddWeeks(TwoWeeksInterval);
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
         }
 
@@ -203,25 +202,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void StartPreservation_ShouldThrowException_WhenPreservationAlreadyActive()
-        {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-
-            dut.StartPreservation();
-
-            Assert.ThrowsException<Exception>(() => dut.StartPreservation()
-            );
-        }
-
-        [TestMethod]
         public void StartPreservation_ShouldAddNewPreservationPeriodWithCorrectDueDate()
         {
             var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            var expectedNextDueTimeUtc = _utcNow.AddWeeks(TwoWeeksInterval);
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(1, dut.PreservationPeriods.Count);
-            Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.First().DueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Single().DueTimeUtc);
         }
 
         [TestMethod]
@@ -262,6 +250,44 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
 
             Assert.IsTrue(dut.IsInUse);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldUpdateCorrectNextDueDate_AfterUndoStart()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Single().DueTimeUtc);
+
+            dut.UndoStartPreservation();
+            _timeProvider.Elapse(TimeSpan.FromDays(2));
+            
+            dut.StartPreservation();
+
+            var expectedUpdatedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
+            Assert.AreEqual(expectedUpdatedNextDueTimeUtc, dut.NextDueTimeUtc);
+            Assert.AreNotEqual(expectedUpdatedNextDueTimeUtc, expectedNextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldUpdatePreservationPeriodWithCorrectDueDate_AfterUndoStart()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Single().DueTimeUtc);
+
+            dut.UndoStartPreservation();
+            _timeProvider.Elapse(TimeSpan.FromDays(2));
+
+            dut.StartPreservation();
+
+            var expectedUpdatedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
+            Assert.AreEqual(expectedUpdatedNextDueTimeUtc, dut.PreservationPeriods.Single().DueTimeUtc);
+            Assert.AreNotEqual(expectedUpdatedNextDueTimeUtc, expectedNextDueTimeUtc);
         }
 
         #endregion
@@ -424,7 +450,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var preservationRecord = dut.PreservationPeriods.First().PreservationRecord;
             Assert.IsNotNull(preservationRecord);
             Assert.AreEqual(51, preservationRecord.PreservedById);
-            Assert.AreEqual(_utcNow, preservationRecord.PreservedAtUtc);
+            Assert.AreEqual(_timeProvider.UtcNow, preservationRecord.PreservedAtUtc);
         }
 
         [TestMethod]
@@ -1397,6 +1423,32 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region UndoStartPreservation
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldClearNextDueDate()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.UndoStartPreservation();
+
+            Assert.IsNull(dut.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldKeepActivePeriod()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.UndoStartPreservation();
+
+            Assert.IsTrue(dut.HasActivePeriod);
+            Assert.IsNotNull(dut.ActivePeriod);
+        }
+
+        #endregion
         #region privates
 
         private void RecordAndPreserve(

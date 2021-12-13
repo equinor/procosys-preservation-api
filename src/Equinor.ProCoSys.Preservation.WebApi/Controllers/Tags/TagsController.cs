@@ -26,6 +26,7 @@ using Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
@@ -524,6 +525,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             [FromBody] List<int> tagIds)
         {
             var result = await _mediator.Send(new StartPreservationCommand(tagIds));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [HttpPut("UndoStartPreservation")]
+        public async Task<IActionResult> UndoStartPreservation(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromBody] List<int> tagIds)
+        {
+            var result = await _mediator.Send(new UndoStartPreservationCommand(tagIds));
             return this.FromResult(result);
         }
 

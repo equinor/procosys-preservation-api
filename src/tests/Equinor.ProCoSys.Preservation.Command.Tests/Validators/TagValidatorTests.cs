@@ -1028,7 +1028,29 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-     
+
+        [TestMethod]
+        public async Task IsReadyToUndoStartedAsync_StandardTagNotStarted_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToUndoStartedAsync(_standardTagNotStartedInFirstStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToUndoStartedAsync_StandardTagAlreadyStarted_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToUndoStartedAsync(_standardTagStartedAndInLastStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
         [TestMethod]
         public async Task IsReadyToBeRescheduledAsync_TagNotStarted_ShouldReturnFalse()
         {

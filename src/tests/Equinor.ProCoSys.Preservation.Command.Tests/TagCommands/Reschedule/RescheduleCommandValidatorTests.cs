@@ -164,14 +164,33 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
         [TestMethod]
         public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
+            _projectValidatorMock.Setup(p => p.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(false));
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tags must be in same project!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
+        {
+            var command = new RescheduleCommand(new List<IdAndRowVersion>
+            {
+                new IdAndRowVersion(1, RowVersion1),
+                new IdAndRowVersion(1, RowVersion2)
+            }, 
+            1, RescheduledDirection.Later, "Comment");
+            new RescheduleCommand(_tagIdsWithRowVersion, 1, RescheduledDirection.Later, "Comment");
+            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tags must be unique!"));
         }
 
         [TestMethod]

@@ -2018,5 +2018,64 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(newTagNo, _dutWithOneReqNotNeedInputTwoWeekInterval.TagNo);
         }
         #endregion
+
+        #region UndoStartPreservation
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldSetStatusNotStarted()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+            Assert.AreEqual(PreservationStatus.Active, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.UndoStartPreservation();
+
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldClearDueDateOnTagAndEachRequirement()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.StartPreservation();
+
+            dut.UndoStartPreservation();
+
+            Assert.IsFalse(dut.Requirements.ElementAt(0).NextDueTimeUtc.HasValue);
+            Assert.IsFalse(dut.Requirements.ElementAt(1).NextDueTimeUtc.HasValue);
+            Assert.IsFalse(dut.NextDueTimeUtc.HasValue);
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldSetStatusNotStartedOnVoidedRequirements()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.StartPreservation();
+            dut.Requirements.ElementAt(0).IsVoided = true;
+
+            dut.UndoStartPreservation();
+
+            Assert.IsFalse(dut.Requirements.ElementAt(0).NextDueTimeUtc.HasValue);
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldThrowException_IfNotStarted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+
+            Assert.ThrowsException<Exception>(() => dut.UndoStartPreservation());
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldAddUndoPreservationStartedEvent()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+            
+            _dutWithOneReqNotNeedInputTwoWeekInterval.UndoStartPreservation();
+
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(UndoPreservationStartedEvent));
+        }
+
+        #endregion
     }
 }
