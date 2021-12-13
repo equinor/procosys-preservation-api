@@ -285,7 +285,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void UndoStartPreservation()
         {
-            if (!IsReadyToBeUndoStarted())
+            if (!IsReadyToUndoStarted())
             {
                 throw new Exception($"Can not undo start preservation on {nameof(Tag)} {Id}. Status = {Status}");
             }
@@ -462,7 +462,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool IsReadyToBeStarted()
             => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
 
-        public bool IsReadyToBeUndoStarted() => Status == PreservationStatus.Active;
+        public bool IsReadyToUndoStarted() => Status == PreservationStatus.Active;
 
         public TagAttachment GetAttachmentByFileName(string fileName) => _attachments.SingleOrDefault(a => a.FileName.ToUpper() == fileName.ToUpper());
 

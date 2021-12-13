@@ -43,7 +43,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         Task<bool> IsReadyToBeStartedAsync(int tagId, CancellationToken token);
 
-        Task<bool> IsReadyToBeUndoStartedAsync(int tagId, CancellationToken token);
+        Task<bool> IsReadyToUndoStartedAsync(int tagId, CancellationToken token);
 
         Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken token);
         

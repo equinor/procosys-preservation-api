@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             Assert.IsTrue(_dut.ReadyToBeCompleted);
             Assert.IsTrue(_dut.ReadyToBeRescheduled);
             Assert.IsTrue(_dut.ReadyToBeDuplicated);
-            Assert.IsTrue(_dut.ReadyToBeUndoStarted);
+            Assert.IsTrue(_dut.ReadyToUndoStarted);
             Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
             Assert.IsNotNull(_dut.Requirements);
