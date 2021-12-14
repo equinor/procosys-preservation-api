@@ -6,23 +6,23 @@ using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation
 {
-    public class UndoStartPreservationCommand : IRequest<Result<Unit>>, ITagCommandRequest
+    public class UndoStartPreservationCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>, ITagCommandRequest
     {
-        public UndoStartPreservationCommand(IEnumerable<int> tagIds)
-            => TagIds = tagIds ?? new List<int>();
+        public UndoStartPreservationCommand(IEnumerable<IdAndRowVersion> tagIds)
+            => Tags = tagIds ?? new List<IdAndRowVersion>();
 
-        public IEnumerable<int> TagIds { get; }
+        public IEnumerable<IdAndRowVersion> Tags { get; }
         
         public int TagId
         {
             get
             {
-                if (!TagIds.Any())
+                if (!Tags.Any())
                 {
-                    throw new Exception($"At least 1 {nameof(TagIds)} must be given!");
+                    throw new Exception($"At least 1 {nameof(Tags)} must be given!");
                 }
 
-                return TagIds.First();
+                return Tags.First().Id;
             }
         }
     }

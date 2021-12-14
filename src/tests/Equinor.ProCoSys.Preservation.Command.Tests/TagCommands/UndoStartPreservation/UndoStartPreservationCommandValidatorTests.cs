@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation;
+using Equinor.ProCoSys.Preservation.Command.Validators;
 using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,19 +13,28 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
     [TestClass]
     public class UndoStartPreservationCommandValidatorTests
     {
+        private const int TagId1 = 7;
+        private const int TagId2 = 8;
+        private const string RowVersion1 = "AAAAAAAAABA=";
+        private const string RowVersion2 = "AAAAAAAABBA=";
         private UndoStartPreservationCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private UndoStartPreservationCommand _command;
 
-        private const int TagId1 = 7;
-        private const int TagId2 = 8;
         private List<int> _tagIds;
+        private List<IdAndRowVersion> _tagIdsWithRowVersion;
 
         [TestInitialize]
         public void Setup_OkState()
         {
             _tagIds = new List<int> {TagId1, TagId2};
+            _tagIdsWithRowVersion = new List<IdAndRowVersion>
+            {
+                new IdAndRowVersion(TagId1, RowVersion1),
+                new IdAndRowVersion(TagId2, RowVersion2)
+            };
             _projectValidatorMock = new Mock<IProjectValidator>();
             _projectValidatorMock.Setup(p => p.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(true));
             _tagValidatorMock = new Mock<ITagValidator>();
@@ -32,9 +42,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToUndoStartedAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToUndoStartedAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _command = new UndoStartPreservationCommand(_tagIds);
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion1)).Returns(true);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(true);
+            _command = new UndoStartPreservationCommand(_tagIdsWithRowVersion);
 
-            _dut = new UndoStartPreservationCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
+            _dut = new UndoStartPreservationCommandValidator(
+                _projectValidatorMock.Object,
+                _tagValidatorMock.Object,
+                _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -48,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
         [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new UndoStartPreservationCommand(new List<int>());
+            var command = new UndoStartPreservationCommand(new List<IdAndRowVersion>());
             
             var result = _dut.Validate(command);
 
@@ -60,7 +76,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
         [TestMethod]
         public void Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new UndoStartPreservationCommand(new List<int>{1, 1});
+            var command = new UndoStartPreservationCommand(
+                new List<IdAndRowVersion> { 
+                    new IdAndRowVersion(1, null), 
+                    new IdAndRowVersion(1, null) });
             
             var result = _dut.Validate(command);
 
@@ -145,7 +164,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
         [TestMethod]
         public void Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
-            var command = new UndoStartPreservationCommand(new List<int> { 1, 1 });
+            var command = new UndoStartPreservationCommand(
+                new List<IdAndRowVersion> {
+                    new IdAndRowVersion(1, null),
+                    new IdAndRowVersion(1, null) });
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(command);
@@ -153,6 +175,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tags must be unique!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(false);
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid row version!"));
         }
     }
 }

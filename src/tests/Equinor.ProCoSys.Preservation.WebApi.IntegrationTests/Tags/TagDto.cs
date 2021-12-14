@@ -26,6 +26,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public bool ReadyToBeCompleted { get; set; }
         public bool ReadyToBeRescheduled { get; set; }
         public bool ReadyToBeDuplicated { get; set; }
+        public bool ReadyToUndoStarted { get; set; }
         public IEnumerable<RequirementDto> Requirements { get; set; }
         public string ResponsibleCode { get; set; }
         public string ResponsibleDescription { get; set; }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Preservation.Command.Validators;
 using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
 using FluentValidation;
@@ -12,44 +13,47 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservatio
     {
         public UndoStartPreservationCommandValidator(
             IProjectValidator projectValidator,
-            ITagValidator tagValidator)
+            ITagValidator tagValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.Stop;
                         
-            RuleFor(command => command.TagIds)
+            RuleFor(command => command.Tags)
                 .Must(ids => ids != null && ids.Any())
                 .WithMessage("At least 1 tag must be given!")
                 .Must(BeUniqueTags)
                 .WithMessage("Tags must be unique!");
 
-            When(command => command.TagIds.Any() && BeUniqueTags(command.TagIds), () =>
+            When(command => command.Tags.Any() && BeUniqueTags(command.Tags), () =>
             {
-                RuleForEach(command => command.TagIds)
-                    .MustAsync((_, tagId, _, token) => BeAnExistingTagAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag doesn't exist! Tag={tagId}")
-                    .MustAsync((_, tagId, _, token) => NotBeAVoidedTagAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag is voided! Tag={tagId}")
-                    .MustAsync((_, tagId, _, token) => IsReadyToUndoStartedAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Undo preservation start on tag can not be done! Tag={tagId}");
+                RuleForEach(command => command.Tags)
+                    .MustAsync((_, tag, _, token) => BeAnExistingTagAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Tag doesn't exist! Tag={tag.Id}")
+                    .MustAsync((_, tag, _, token) => NotBeAVoidedTagAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Tag is voided! Tag={tag.Id}")
+                    .MustAsync((_, tag, _, token) => IsReadyToUndoStartedAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Undo preservation start on tag can not be done! Tag={tag.Id}")
+                    .Must(tag => HaveAValidRowVersion(tag.RowVersion))
+                    .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });
 
-            RuleFor(command => command.TagIds)
+            RuleFor(command => command.Tags)
                 .MustAsync(BeInSameProjectAsync)
                 .WithMessage("Tags must be in same project!")
                 .MustAsync(NotBeAClosedProjectForTagAsync)
                 .WithMessage("Project is closed!");
 
-            bool BeUniqueTags(IEnumerable<int> tagIds)
+            bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
             {
-                var ids = tagIds.ToList();
+                var ids = tags.Select(x => x.Id).ToList();
                 return ids.Distinct().Count() == ids.Count;
             }
             
-            async Task<bool> BeInSameProjectAsync(IEnumerable<int> tagIds, CancellationToken token)
-                => await projectValidator.AllTagsInSameProjectAsync(tagIds, token);
+            async Task<bool> BeInSameProjectAsync(IEnumerable<IdAndRowVersion> tags, CancellationToken token)
+                => await projectValidator.AllTagsInSameProjectAsync(tags.Select(t => t.Id), token);
             
-            async Task<bool> NotBeAClosedProjectForTagAsync(IEnumerable<int> tagIds, CancellationToken token)
-                => !await projectValidator.IsClosedForTagAsync(tagIds.First(), token);
+            async Task<bool> NotBeAClosedProjectForTagAsync(IEnumerable<IdAndRowVersion> tags, CancellationToken token)
+                => !await projectValidator.IsClosedForTagAsync(tags.First().Id, token);
 
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
@@ -59,6 +63,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservatio
 
             async Task<bool> IsReadyToUndoStartedAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsReadyToUndoStartedAsync(tagId, token);
+
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }
