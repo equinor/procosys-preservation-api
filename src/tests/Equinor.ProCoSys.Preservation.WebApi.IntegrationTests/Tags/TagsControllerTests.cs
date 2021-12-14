@@ -731,8 +731,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsNotNull(idAndRowVersions);
             Assert.AreEqual(1, idAndRowVersions.Count);
 
-            var requirementDetailDto = idAndRowVersions.Single();
-            AssertRowVersionChange(currentRowVersion, requirementDetailDto.RowVersion);
+            var idAndRowVersion = idAndRowVersions.Single();
+            AssertRowVersionChange(currentRowVersion, idAndRowVersion.RowVersion);
             await AssertInHistoryAsLatestEventAsync(tagToTransfer.Id, UserType.Planner, EventType.TransferredManually);
         }
 
@@ -857,8 +857,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsNotNull(idAndRowVersions);
             Assert.AreEqual(1, idAndRowVersions.Count);
 
-            var requirementDetailDto = idAndRowVersions.Single();
-            AssertRowVersionChange(currentRowVersion, requirementDetailDto.RowVersion);
+            var idAndRowVersion = idAndRowVersions.Single();
+            AssertRowVersionChange(currentRowVersion, idAndRowVersion.RowVersion);
             await AssertInHistoryAsLatestEventAsync(tagToReschedule.Id, UserType.Planner, EventType.Rescheduled);
         }
         
@@ -914,6 +914,40 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsFalse(mode.IsVoided);
         }
 
+        [TestMethod]
+        public async Task UndoStartPreservation_AsPlanner_ShouldUndoStartPreservationOnTags()
+        {
+            // Arrange 
+            var tagIdUnderTest = await CreateStandardTagAsync(TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id, true);
+
+            var tagsResult = await TagsControllerTestsHelper.GetPageOfTagsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToUndo = tagsResult.Tags.Single(t => t.Id == tagIdUnderTest);
+            Assert.IsTrue(tagToUndo.ReadyToUndoStarted, "Bad test setup: Didn't find tag ready to undo start");
+            var currentRowVersion = tagToUndo.RowVersion;
+
+            // Act
+            var idAndRowVersions = await TagsControllerTestsHelper.UndoStartPreservationAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagIdUnderTest,
+                        RowVersion = currentRowVersion
+                    }
+                });
+
+            // Assert
+            Assert.IsNotNull(idAndRowVersions);
+            Assert.AreEqual(1, idAndRowVersions.Count);
+
+            var idAndRowVersion = idAndRowVersions.Single();
+            AssertRowVersionChange(currentRowVersion, idAndRowVersion.RowVersion);
+            await AssertInHistoryAsLatestEventAsync(tagToUndo.Id, UserType.Planner, EventType.UndoPreservationStarted);
+        }
+
         private void AssertUser(TokenProfile profile, PersonDto personDto)
         {
             Assert.IsNotNull(personDto);
@@ -923,8 +957,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
         private void AssertCreatedBy(UserType userType, HistoryDto historyDto)
         {
-            var plannerProfile = TestFactory.Instance.GetTestProfile(userType);
-            AssertUser(plannerProfile, historyDto.CreatedBy);
+            var profile = TestFactory.Instance.GetTestProfile(userType);
+            AssertUser(profile, historyDto.CreatedBy);
         }
 
         private async Task AssertNewTagCreatedAsync(

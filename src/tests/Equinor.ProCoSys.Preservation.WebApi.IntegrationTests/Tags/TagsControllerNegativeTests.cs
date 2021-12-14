@@ -1476,7 +1476,78 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         #endregion
-        
+
+        #region UndoStartPreservation
+        [TestMethod]
+        public async Task UndoStartPreservation_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.UndoStartPreservationAsync(
+                UserType.Anonymous, TestFactory.UnknownPlant,
+                null,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task UndoStartPreservation_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UndoStartPreservationAsync(
+                UserType.Hacker, TestFactory.UnknownPlant,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UndoStartPreservation_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UndoStartPreservationAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task UndoStartPreservation_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UndoStartPreservationAsync(
+                UserType.Hacker, TestFactory.PlantWithAccess,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UndoStartPreservation_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UndoStartPreservationAsync(
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UndoStartPreservation_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UndoStartPreservationAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UndoStartPreservation_AsPlanner_ShouldReturnBadRequest_WhenIllegalRowVersion()
+        {
+            // Arrange 
+            var tagResultDto = await TagsControllerTestsHelper.GetPageOfTagsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToUndoStartPreservation = tagResultDto.Tags.FirstOrDefault(t => t.ReadyToUndoStarted);
+            Assert.IsNotNull(tagToUndoStartPreservation, "Bad test setup: Didn't find tag ready to undo start");
+
+            // Act
+            await TagsControllerTestsHelper.UndoStartPreservationAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagToUndoStartPreservation.Id,
+                        RowVersion = "invalidrowversion"
+                    }
+                },
+                HttpStatusCode.BadRequest,
+                "Not a valid row version!");
+        }
+
+        #endregion
+
         #region CompletePreservation
         [TestMethod]
         public async Task CompletePreservation_AsAnonymous_ShouldReturnUnauthorized()
