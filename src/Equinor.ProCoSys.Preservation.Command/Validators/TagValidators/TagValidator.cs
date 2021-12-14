@@ -87,37 +87,37 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> IsVoidedAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             return tag != null && tag.IsVoided;
         }
 
         public async Task<bool> VerifyPreservationStatusAsync(int tagId, PreservationStatus status, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             return tag != null && tag.Status == status;
         }
 
         public async Task<bool> VerifyTagTypeAsync(int tagId, TagType tagType, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             return tag != null && tag.TagType == tagType;
         }
 
         public async Task<bool> VerifyTagIsAreaTagAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             return tag != null && tag.IsAreaTag();
         }
 
         public async Task<bool> HasANonVoidedRequirementAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithRequirements(tagId, token);
+            var tag = await GetTagWithRequirementsAsync(tagId, token);
             return tag != null && tag.Requirements.Any(r => !r.IsVoided);
         }
 
         public async Task<bool> IsReadyToBePreservedAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithPreservationPeriods(tagId, token);
+            var tag = await GetTagWithPreservationPeriodsAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -128,7 +128,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> HasRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token)
         {
-            var tag = await GetTagWithPreservationPeriods(tagId, token);
+            var tag = await GetTagWithPreservationPeriodsAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -141,7 +141,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> RequirementIsReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken token)
         {
-            var tag = await GetTagWithPreservationPeriods(tagId, token);
+            var tag = await GetTagWithPreservationPeriodsAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -154,7 +154,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> IsReadyToBeStartedAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithRequirements(tagId, token);
+            var tag = await GetTagWithRequirementsAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -165,7 +165,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> IsReadyToUndoStartedAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -176,7 +176,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -191,7 +191,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> IsReadyToBeDuplicatedAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -202,7 +202,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -217,7 +217,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
         
         public async Task<bool> IsReadyToBeRescheduledAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -228,14 +228,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> AttachmentWithFilenameExistsAsync(int tagId, string fileName, CancellationToken token)
         {
-            var tag = await GetTagWithAttachments(tagId, token);
+            var tag = await GetTagWithAttachmentsAsync(tagId, token);
 
             return tag?.GetAttachmentByFileName(fileName) != null;
         }
 
         public async Task<bool> HasRequirementAsync(int tagId, int tagRequirementId, CancellationToken token)
         {
-            var tag = await GetTagWithRequirements(tagId, token);
+            var tag = await GetTagWithRequirementsAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -248,7 +248,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> AllRequirementsWillBeUniqueAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token)
         {
-            var tag = await GetTagWithRequirements(tagId, token);
+            var tag = await GetTagWithRequirementsAsync(tagId, token);
 
             if (tag == null)
             {
@@ -264,6 +264,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return allRequirementDefinitionIds.Count == allRequirementDefinitionIds.Distinct().Count();
         }
 
+        public async Task<bool> HasRequirementsForSuppliersAsync(int tagId, CancellationToken token)
+        {
+            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(tagId, token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return await _requirementDefinitionValidator.UsageCoversForSuppliersAsync(requirementDefinitionIds, token);
+        }
+
         public async Task<bool> RequirementUsageWillCoverForSuppliersAsync(
             int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
@@ -271,9 +283,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
         {
-            List<int> requirementDefinitionIds;
-            Tag tag;
-            (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIds(
+            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(
                 tagId,
                 tagRequirementIdsToBeUnvoided,
                 tagRequirementIdsToBeVoided,
@@ -287,7 +297,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
             return await _requirementDefinitionValidator.UsageCoversForSuppliersAsync(requirementDefinitionIds, token);
         }
-            
+
+
+        public async Task<bool> HasRequirementsForBothSupplierAndOtherAsync(int tagId, CancellationToken token)
+        {
+            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(tagId, token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return await _requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(requirementDefinitionIds, token);
+        }
 
         public async Task<bool> RequirementUsageWillCoverBothForSupplierAndOtherAsync(
             int tagId,
@@ -296,9 +318,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
         {
-            List<int> requirementDefinitionIds;
-            Tag tag;
-            (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIds(
+            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(
                 tagId,
                 tagRequirementIdsToBeUnvoided,
                 tagRequirementIdsToBeVoided,
@@ -313,6 +333,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return await _requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(requirementDefinitionIds, token);
         }
 
+        public async Task<bool> HasRequirementsForOtherThanSuppliersAsync(int tagId, CancellationToken token)
+        {
+            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(tagId, token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
+        }
+
         public async Task<bool> RequirementUsageWillCoverForOtherThanSuppliersAsync(
             int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
@@ -320,9 +352,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
         {
-            List<int> requirementDefinitionIds;
-            Tag tag;
-            (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIds(
+            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(
                 tagId,
                 tagRequirementIdsToBeUnvoided,
                 tagRequirementIdsToBeVoided,
@@ -343,9 +373,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
         {
-            List<int> requirementDefinitionIds;
-            Tag tag;
-            (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIds(
+            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(
                 tagId,
                 tagRequirementIdsToBeUnvoided,
                 tagRequirementIdsToBeVoided,
@@ -363,13 +391,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> VerifyTagDescriptionAsync(int tagId, string description, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             return tag != null && tag.Description == description;
         }
 
         public async Task<bool> IsRequirementVoidedAsync(int tagId, int requirementId, CancellationToken token)
         {
-            var tag = await GetTagWithRequirements(tagId, token);
+            var tag = await GetTagWithRequirementsAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -382,7 +410,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> HasRequirementCoverageInNextStepAsync(int tagId, CancellationToken token)
         {
-            var tag = await GetTagWithRequirements(tagId, token);
+            var tag = await GetTagWithRequirementsAsync(tagId, token);
             if (tag == null)
             {
                 return false;
@@ -426,11 +454,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> HasStepAsync(int tagId, int stepId, CancellationToken token)
         {
-            var tag = await GetTagWithoutIncludes(tagId, token);
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
             return tag != null && tag.StepId == stepId;
         }
 
-        private async Task<Tag> GetTagWithoutIncludes(int tagId, CancellationToken token)
+        private async Task<Tag> GetTagWithoutIncludesAsync(int tagId, CancellationToken token)
         {
             var tag = await (from t in _context.QuerySet<Tag>()
                 where t.Id == tagId
@@ -438,7 +466,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return tag;
         }
 
-        private async Task<Tag> GetTagWithRequirements(int tagId, CancellationToken token)
+        private async Task<Tag> GetTagWithRequirementsAsync(int tagId, CancellationToken token)
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
                 where t.Id == tagId
@@ -446,7 +474,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return tag;
         }
 
-        private async Task<Tag> GetTagWithPreservationPeriods(int tagId, CancellationToken token)
+        private async Task<Tag> GetTagWithPreservationPeriodsAsync(int tagId, CancellationToken token)
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
                     .ThenInclude(r => r.PreservationPeriods)
@@ -455,7 +483,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return tag;
         }
 
-        private async Task<Tag> GetTagWithAttachments(int tagId, CancellationToken token)
+        private async Task<Tag> GetTagWithAttachmentsAsync(int tagId, CancellationToken token)
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Attachments)
                 where t.Id == tagId
@@ -463,14 +491,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return tag;
         }
 
-        private async Task<(Tag, List<int>)> GetNonVoidedRequirementDefinitionIds(
+        private async Task<(Tag, List<int>)> GetNonVoidedRequirementDefinitionIdsAsync(
             int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
         {
-            var tag = await GetTagWithRequirements(tagId, token);
+            var tag = await GetTagWithRequirementsAsync(tagId, token);
             if (tag == null)
             {
                 return (null, new List<int>());
@@ -488,6 +516,27 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
                     .Where(r => nonVoidedTagRequirementIds.Contains(r.Id))
                     .Select(r => r.RequirementDefinitionId).ToList();
             nonVoidedRequirementDefinitionIds.AddRange(requirementDefinitionIdsToBeAdded);
+
+            return (tag, nonVoidedRequirementDefinitionIds);
+        }
+
+        private async Task<(Tag, List<int>)> GetNonVoidedRequirementDefinitionIdsAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithRequirementsAsync(tagId, token);
+            if (tag == null)
+            {
+                return (null, new List<int>());
+            }
+
+            var nonVoidedTagRequirementIds =
+                tag.Requirements
+                    .Where(r => !r.IsVoided)
+                    .Select(r => r.Id).ToList();
+
+            var nonVoidedRequirementDefinitionIds =
+                tag.Requirements
+                    .Where(r => nonVoidedTagRequirementIds.Contains(r.Id))
+                    .Select(r => r.RequirementDefinitionId).ToList();
 
             return (tag, nonVoidedRequirementDefinitionIds);
         }
