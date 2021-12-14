@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using ServiceResult;
 
@@ -15,22 +14,16 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagJourney
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
-        private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IPlantProvider _plantProvider;
 
         public UpdateTagJourneyCommandHandler(
             IProjectRepository projectRepository, 
             IJourneyRepository journeyRepository, 
-            IRequirementTypeRepository requirementTypeRepository, 
-            IUnitOfWork unitOfWork, 
-            IPlantProvider plantProvider)
+            IUnitOfWork unitOfWork)
         {
             _projectRepository = projectRepository;
             _journeyRepository = journeyRepository;
-            _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
-            _plantProvider = plantProvider;
         }
 
         public async Task<Result<IEnumerable<IdAndRowVersion>>> Handle(UpdateTagJourneyCommand request, CancellationToken cancellationToken)
