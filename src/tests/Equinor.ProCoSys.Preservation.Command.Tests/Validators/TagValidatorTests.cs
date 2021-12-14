@@ -23,6 +23,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         private const string ProjectName = "P";
         private const string TagNo = "PA-13";
         private const string _tagDescription = "Tag description";
+        private int _tagWithOtherReqsOnlyId;
+        private int _tagWithSupplierReqsOnlyId;
         private int _tagWithOneReqsId;
         private int _tagWithTwoReqsId;
         private int _tagWithAllReqsId;
@@ -160,8 +162,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 _standardTagStartedAndInLastStepId = _tagWithOneReqsId = standardTagStartedInLastStep.Id;
                 _tagWithTwoReqsId = standardTagWithTwoReqsInLastStep.Id;
                 _preAreaTagNotStartedInFirstSupplierStepId = _preAreaTagAllRequirementsInFirstSupplierStepId = preAreaTagNotStartedInFirstSupplierStep.Id;
-                _preAreaTagSupplierOnlyRequirementInFirstSupplierStepId = preAreaTagSupplierOnlyRequirementInFirstSupplierStep.Id;
-                _preAreaTagOtherRequirementOnlyInFirstOtherStepId = preAreaTagOtherRequirementOnlyInFirstOtherStep.Id;
+                _tagWithSupplierReqsOnlyId = _preAreaTagSupplierOnlyRequirementInFirstSupplierStepId = preAreaTagSupplierOnlyRequirementInFirstSupplierStep.Id;
+                _tagWithOtherReqsOnlyId = _preAreaTagOtherRequirementOnlyInFirstOtherStepId = preAreaTagOtherRequirementOnlyInFirstOtherStep.Id;
                 _preAreaTagAllRequirementsInFirstOtherStepId = preAreaTagAllRequirementsInFirstOtherStep.Id;
                 _preAreaTagStartedInFirstSupplierStepId = preAreaTagStartedInFirstSupplierStep.Id;
                 _siteAreaTagNotStartedId = siteAreaTagNotStarted.Id;
@@ -1202,6 +1204,42 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var dut = new TagValidator(context, null);
                 var result = await dut.AllRequirementsWillBeUniqueAsync(tag.Id, new List<int>{_reqDefForAll2Id}, default);
                 Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasRequirementsForBothSupplierAndOtherAsync_ShouldReturnTrue_WhenRequirementsCoversAll()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
+                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
+                var result = await dut.HasRequirementsForBothSupplierAndOtherAsync(tag.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasRequirementsForBothSupplierAndOtherAsync_ShouldReturnFalse_WhenRequirementsCoversOthersOnly()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithOtherReqsOnlyId);
+                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
+                var result = await dut.HasRequirementsForBothSupplierAndOtherAsync(tag.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasRequirementsForBothSupplierAndOtherAsync_ShouldReturnFalse_WhenRequirementsCoversSupplierOny()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithSupplierReqsOnlyId);
+                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
+                var result = await dut.HasRequirementsForBothSupplierAndOtherAsync(tag.Id, default);
+                Assert.IsFalse(result);
             }
         }
 
