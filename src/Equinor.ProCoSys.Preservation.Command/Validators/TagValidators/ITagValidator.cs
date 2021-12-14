@@ -64,12 +64,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token);
 
+        Task<bool> RequirementUsageCoversForSuppliersAsync(int tagId, CancellationToken token);
+
         Task<bool> RequirementUsageWillCoverBothForSupplierAndOtherAsync(
             int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token);
+
+        Task<bool> RequirementUsageCoversBothForSupplierAndOtherAsync(int tagId, CancellationToken token);
 
         Task<bool> RequirementUsageWillCoverForOtherThanSuppliersAsync(
             int tagId,
@@ -78,18 +82,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token);
 
-        Task<bool> RequirementHasAnyForOtherThanSuppliersUsageAsync(
+        Task<bool> RequirementUsageCoversForOtherThanSuppliersAsync(int tagId, CancellationToken token);
+
+        Task<bool> RequirementWillGetAnyForOtherThanSuppliersUsageAsync(
             int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token);
 
-        Task<bool> HasRequirementsForBothSupplierAndOtherAsync(int tagId, CancellationToken token);
-
-        Task<bool> HasRequirementsForSuppliersAsync(int tagId, CancellationToken token);
-
-        Task<bool> HasRequirementsForOtherThanSuppliersAsync(int tagId, CancellationToken token);
+        Task<bool> RequirementHasAnyForOtherThanSuppliersUsageAsync(int tagId, CancellationToken token);
 
         Task<bool> IsInUseAsync(long tagId, CancellationToken token);
         

@@ -264,18 +264,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return allRequirementDefinitionIds.Count == allRequirementDefinitionIds.Distinct().Count();
         }
 
-        public async Task<bool> HasRequirementsForSuppliersAsync(int tagId, CancellationToken token)
-        {
-            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(tagId, token);
-
-            if (tag == null)
-            {
-                return false;
-            }
-
-            return await _requirementDefinitionValidator.UsageCoversForSuppliersAsync(requirementDefinitionIds, token);
-        }
-
         public async Task<bool> RequirementUsageWillCoverForSuppliersAsync(
             int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
@@ -298,8 +286,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return await _requirementDefinitionValidator.UsageCoversForSuppliersAsync(requirementDefinitionIds, token);
         }
 
-
-        public async Task<bool> HasRequirementsForBothSupplierAndOtherAsync(int tagId, CancellationToken token)
+        public async Task<bool> RequirementUsageCoversForSuppliersAsync(int tagId, CancellationToken token)
         {
             var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(tagId, token);
 
@@ -308,7 +295,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
                 return false;
             }
 
-            return await _requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(requirementDefinitionIds, token);
+            return await _requirementDefinitionValidator.UsageCoversForSuppliersAsync(requirementDefinitionIds, token);
         }
 
         public async Task<bool> RequirementUsageWillCoverBothForSupplierAndOtherAsync(
@@ -333,7 +320,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return await _requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(requirementDefinitionIds, token);
         }
 
-        public async Task<bool> HasRequirementsForOtherThanSuppliersAsync(int tagId, CancellationToken token)
+        public async Task<bool> RequirementUsageCoversBothForSupplierAndOtherAsync(int tagId, CancellationToken token)
         {
             var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(tagId, token);
 
@@ -342,7 +329,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
                 return false;
             }
 
-            return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
+            return await _requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(requirementDefinitionIds, token);
         }
 
         public async Task<bool> RequirementUsageWillCoverForOtherThanSuppliersAsync(
@@ -367,7 +354,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
         }
 
-        public async Task<bool> RequirementHasAnyForOtherThanSuppliersUsageAsync(int tagId,
+        public async Task<bool> RequirementUsageCoversForOtherThanSuppliersAsync(int tagId, CancellationToken token)
+        {
+            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(tagId, token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
+        }
+
+        public async Task<bool> RequirementWillGetAnyForOtherThanSuppliersUsageAsync(int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
@@ -387,7 +386,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
             return await _requirementDefinitionValidator.HasAnyForForOtherThanSuppliersUsageAsync(requirementDefinitionIds, token);
         }
-            
+
+        public async Task<bool> RequirementHasAnyForOtherThanSuppliersUsageAsync(int tagId, CancellationToken token)
+        {
+            var (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIdsAsync(tagId, token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return await _requirementDefinitionValidator.HasAnyForForOtherThanSuppliersUsageAsync(requirementDefinitionIds, token);
+        }
 
         public async Task<bool> VerifyTagDescriptionAsync(int tagId, string description, CancellationToken token)
         {
