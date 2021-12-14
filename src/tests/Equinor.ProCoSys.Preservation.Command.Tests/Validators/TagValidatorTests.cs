@@ -1220,7 +1220,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasRequirementsForBothSupplierAndOtherAsync_ShouldReturnFalse_WhenRequirementsCoversOthersOnly()
+        public async Task HasRequirementsForBothSupplierAndOtherAsync_ShouldReturnFalse_WhenRequirementsCoversOtherOnly()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -1339,7 +1339,43 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsTrue(result);
             }
         }
-        
+
+        [TestMethod]
+        public async Task HasRequirementsForSuppliersAsync_ShouldReturnTrue_WhenRequirementsCoversAll()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
+                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
+                var result = await dut.HasRequirementsForSuppliersAsync(tag.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasRequirementsForSuppliersAsync_ShouldReturnTrue_WhenRequirementsCoversSupplierOnly()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithSupplierReqsOnlyId);
+                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
+                var result = await dut.HasRequirementsForSuppliersAsync(tag.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasRequirementsForSuppliersAsync_ShouldReturnFalse_WhenRequirementsCoversOtherOnly()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithOtherReqsOnlyId);
+                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
+                var result = await dut.HasRequirementsForSuppliersAsync(tag.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
         [TestMethod]
         public async Task RequirementUsageWillCoverForSuppliersAsync_ShouldReturnTrue_WhenRequirementsCoversAll()
         {
@@ -1404,6 +1440,42 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     new List<int>{_tagReqForAll1Id, _tagReqForSupplierId}, 
                     new List<int>{_reqDefForAll2Id}, 
                     default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasRequirementsForOtherThanSuppliersAsync_ShouldReturnTrue_WhenRequirementsCoversAll()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
+                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
+                var result = await dut.HasRequirementsForOtherThanSuppliersAsync(tag.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasRequirementsForOtherThanSuppliersAsync_ShouldReturnFalse_WhenRequirementsCoversSupplierOnly()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithSupplierReqsOnlyId);
+                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
+                var result = await dut.HasRequirementsForOtherThanSuppliersAsync(tag.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasRequirementsForOtherThanSuppliersAsync_ShouldReturnTrue_WhenRequirementsCoversOtherOnly()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithOtherReqsOnlyId);
+                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
+                var result = await dut.HasRequirementsForOtherThanSuppliersAsync(tag.Id, default);
                 Assert.IsTrue(result);
             }
         }
