@@ -530,13 +530,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("UndoStartPreservation")]
-        public async Task<IActionResult> UndoStartPreservation(
+        public async Task<ActionResult<List<IdAndRowVersion>>> UndoStartPreservation(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
-            [FromBody] List<int> tagIds)
+            [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
-            var result = await _mediator.Send(new UndoStartPreservationCommand(tagIds));
+            var tags = tagDtos?.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
+            var result = await _mediator.Send(new UndoStartPreservationCommand(tags));
             return this.FromResult(result);
         }
 
