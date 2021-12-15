@@ -1987,5 +1987,38 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
+
+        [TestMethod]
+        public async Task IsInASupplierStepAsync_UnknownTagId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsInASupplierStepAsync(126234, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsInASupplierStepAsync_TagIdInSupplierStep_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsInASupplierStepAsync(_preAreaTagStartedInFirstSupplierStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsInASupplierStepAsync_TagIdInOtherStep_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsInASupplierStepAsync(_preAreaTagOtherRequirementOnlyInFirstOtherStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
     }
 }
