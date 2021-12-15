@@ -279,6 +279,84 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 HttpStatusCode.Forbidden);
         #endregion
         
+        #region UpdateTagRequirements
+        [TestMethod]
+        public async Task UpdateTagRequirements_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.UpdateTagRequirementsAsync(
+                UserType.Anonymous, TestFactory.UnknownPlant,
+                9999,
+                null,
+                TestFactory.AValidRowVersion,
+                expectedStatusCode:HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task UpdateTagRequirements_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UpdateTagRequirementsAsync(
+                UserType.Hacker, TestFactory.UnknownPlant,
+                9999,
+                null,
+                TestFactory.AValidRowVersion,
+                expectedStatusCode:HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagRequirements_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UpdateTagRequirementsAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                9999,
+                null,
+                TestFactory.AValidRowVersion,
+                expectedStatusCode:HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest:"is not a valid plant");
+
+        [TestMethod]
+        public async Task UpdateTagRequirements_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagRequirementsAsync(
+                UserType.Hacker, TestFactory.PlantWithAccess,
+                9999,
+                null,
+                TestFactory.AValidRowVersion,
+                expectedStatusCode:HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagRequirements_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagRequirementsAsync(
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
+                9999,
+                null,
+                TestFactory.AValidRowVersion,
+                expectedStatusCode:HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagRequirements_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagRequirementsAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                9999,
+                null,
+                TestFactory.AValidRowVersion,
+                expectedStatusCode:HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagRequirements_AsPlanner_ShouldReturnBadRequest_WhenChangeDescriptionOnStandardTag()
+        {
+            // Arrange
+            var tag = await TagsControllerTestsHelper.GetTagAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                _tagId1_WithAttachment);
+            var oldDescription = tag.Description;
+            var newDescription = Guid.NewGuid().ToString();
+            Assert.AreNotEqual(oldDescription, newDescription);
+
+            // Act
+            await TagsControllerTestsHelper.UpdateTagRequirementsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                tag.Id,
+                newDescription,
+                tag.RowVersion,
+                expectedStatusCode:HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest:"Tag must be an area tag to update description!");
+        }
+        #endregion
+
         #region UpdateTagStepAndRequirements
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsAnonymous_ShouldReturnUnauthorized()
@@ -288,7 +366,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 1111,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Unauthorized);
+                expectedStatusCode: HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
@@ -298,7 +376,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 1111,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -308,8 +386,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 1111,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.BadRequest,
-                expectedMessageOnBadRequest:"is not a valid plant");
+                expectedStatusCode: HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest: "is not a valid plant");
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
@@ -319,7 +397,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 5555,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
@@ -329,7 +407,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 5555,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
@@ -339,7 +417,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 5555,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldReturnBadRequest_WhenChangeDescriptionOnStandardTag()
@@ -359,12 +437,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 newDescription,
                 tag.Step.Id,
                 tag.RowVersion,
-                expectedStatusCode:HttpStatusCode.BadRequest,
-                expectedMessageOnBadRequest:"Tag must be an area tag to update description!");
+                expectedStatusCode: HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest: "Tag must be an area tag to update description!");
         }
         #endregion
 
-        #region UpdateTagStepAndRequirements
+        #region UpdateTagStepAsync
         [TestMethod]
         public async Task UpdateTagStep_AsAnonymous_ShouldReturnUnauthorized()
             => await TagsControllerTestsHelper.UpdateTagStepAsync(
