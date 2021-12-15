@@ -29,6 +29,7 @@ using Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.ProCoSys.Preservation.Domain;
@@ -359,6 +360,22 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
                 newRequirements,
                 deletedRequirements,
                 dto.RowVersion);
+
+            var result = await _mediator.Send(command);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [HttpPut("UpdateTagStep")]
+        public async Task<ActionResult<string>> UpdateTagStep(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromBody] UpdateTagStepDto dto)
+        {
+            var command = new UpdateTagStepCommand(
+                dto.TagDtos?.Select(t => new IdAndRowVersion(t.Id, t.RowVersion)),
+                dto.StepId);
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);

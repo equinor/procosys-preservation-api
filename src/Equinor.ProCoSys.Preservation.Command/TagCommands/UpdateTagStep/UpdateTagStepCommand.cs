@@ -8,9 +8,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
 {
     public class UpdateTagStepCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>, ITagCommandRequest
     {
-        public UpdateTagStepCommand(IEnumerable<IdAndRowVersion> tagIds, int stepId)
+        public UpdateTagStepCommand(IEnumerable<IdAndRowVersion> tags, int stepId)
         {
-            Tags = tagIds ?? new List<IdAndRowVersion>();
+            Tags = tags ?? new List<IdAndRowVersion>();
             StepId = stepId;
         }
 
