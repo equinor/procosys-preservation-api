@@ -226,6 +226,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return tag.IsReadyToBeRescheduled();
         }
 
+        public async Task<bool> IsReadyToBeEditedAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return tag.IsReadyToBeEdited();
+        }
+
         public async Task<bool> AttachmentWithFilenameExistsAsync(int tagId, string fileName, CancellationToken token)
         {
             var tag = await GetTagWithAttachmentsAsync(tagId, token);
