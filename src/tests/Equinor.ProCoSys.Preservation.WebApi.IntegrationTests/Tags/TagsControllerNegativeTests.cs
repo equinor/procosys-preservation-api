@@ -363,7 +363,58 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 expectedMessageOnBadRequest:"Tag must be an area tag to update description!");
         }
         #endregion
-        
+
+        #region UpdateTagStepAndRequirements
+        [TestMethod]
+        public async Task UpdateTagStep_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.UpdateTagStepAsync(
+                UserType.Anonymous, TestFactory.UnknownPlant,
+                null,
+                1111,
+                expectedStatusCode: HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task UpdateTagStep_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UpdateTagStepAsync(
+                UserType.Hacker, TestFactory.UnknownPlant,
+                null,
+                1111,
+                expectedStatusCode: HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UpdateTagStepAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                null,
+                1111,
+                expectedStatusCode: HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest: "is not a valid plant");
+
+        [TestMethod]
+        public async Task UpdateTagStep_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagStepAsync(
+                UserType.Hacker, TestFactory.PlantWithAccess,
+                null,
+                5555,
+                expectedStatusCode: HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagStep_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagStepAsync(
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
+                null,
+                5555,
+                expectedStatusCode: HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagStep_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagStepAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                null,
+                5555,
+                expectedStatusCode: HttpStatusCode.Forbidden);
+        #endregion
+
         #region UpdateTag
         [TestMethod]
         public async Task UpdateTag_AsAnonymous_ShouldReturnUnauthorized()

@@ -299,7 +299,48 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
             Assert.AreEqual(otherStepId, tag.Step.Id);
         }
-        
+
+        [TestMethod]
+        public async Task UpdateTagStep_AsPlanner_ShouldUpdateStep()
+        {
+            // Arrange
+            var supplierStepId = TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided && s.Mode.ForSupplier).Id;
+            var tagIdUnderTest = await CreateAreaTagAsync(
+                AreaTagType.PreArea,
+                supplierStepId,
+                null,
+                false);
+            var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var currentRowVersion = tag.RowVersion;
+
+            var otherStepId = TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided && !s.Mode.ForSupplier).Id;
+
+            // Act
+            var idAndRowVersions = await TagsControllerTestsHelper.UpdateTagStepAsync(
+                UserType.Planner, 
+                TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagIdUnderTest,
+                        RowVersion = currentRowVersion
+                    }
+                },
+                otherStepId);
+
+            // Assert
+            tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
+            Assert.AreEqual(otherStepId, tag.Step.Id);
+
+            Assert.IsNotNull(idAndRowVersions);
+            Assert.AreEqual(1, idAndRowVersions.Count);
+
+            var idAndRowVersion = idAndRowVersions.Single();
+            AssertRowVersionChange(currentRowVersion, idAndRowVersion.RowVersion);
+            await AssertInHistoryAsLatestEventAsync(tagIdUnderTest, UserType.Planner, EventType.StepChanged);
+        }
+
         [TestMethod]
         public async Task UpdateTag_AsPreserver_ShouldChangeTag()
         {
