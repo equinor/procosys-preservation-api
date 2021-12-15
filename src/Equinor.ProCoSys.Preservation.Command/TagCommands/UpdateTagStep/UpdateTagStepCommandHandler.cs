@@ -8,15 +8,15 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagJourney
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
 {
-    public class UpdateTagJourneyCommandHandler : IRequestHandler<UpdateTagJourneyCommand, Result<IEnumerable<IdAndRowVersion>>>
+    public class UpdateTagStepCommandHandler : IRequestHandler<UpdateTagStepCommand, Result<IEnumerable<IdAndRowVersion>>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateTagJourneyCommandHandler(
+        public UpdateTagStepCommandHandler(
             IProjectRepository projectRepository, 
             IJourneyRepository journeyRepository, 
             IUnitOfWork unitOfWork)
@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagJourney
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<IEnumerable<IdAndRowVersion>>> Handle(UpdateTagJourneyCommand request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<IdAndRowVersion>>> Handle(UpdateTagStepCommand request, CancellationToken cancellationToken)
         {
             var tags = await _projectRepository.GetTagsOnlyByTagIdsAsync(request.Tags.Select(x => x.Id));
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);

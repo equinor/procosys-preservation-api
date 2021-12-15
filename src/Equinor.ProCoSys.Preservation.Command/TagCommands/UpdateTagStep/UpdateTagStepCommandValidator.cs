@@ -9,11 +9,11 @@ using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
-namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagJourney
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
 {
-    public class UpdateTagJourneyCommandValidator : AbstractValidator<UpdateTagJourneyCommand>
+    public class UpdateTagStepCommandValidator : AbstractValidator<UpdateTagStepCommand>
     {
-        public UpdateTagJourneyCommandValidator(
+        public UpdateTagStepCommandValidator(
              IProjectValidator projectValidator,
              ITagValidator tagValidator,
              IStepValidator stepValidator,

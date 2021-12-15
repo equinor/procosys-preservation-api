@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagJourney;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Command.Validators;
 using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.StepValidators;
@@ -9,10 +9,10 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourney
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
 {
     [TestClass]
-    public class UpdateTagJourneyCommandValidatorTests
+    public class UpdateTagStepCommandValidatorTests
     {
         private const int StepId = 1;
         private const int TagId1 = 7;
@@ -20,12 +20,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourn
         private const string RowVersion1 = "AAAAAAAAABA=";
         private const string RowVersion2 = "AAAAAAAABBA=";
 
-        private UpdateTagJourneyCommandValidator _dut;
+        private UpdateTagStepCommandValidator _dut;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IStepValidator> _stepValidatorMock;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
-        private UpdateTagJourneyCommand _command;
+        private UpdateTagStepCommand _command;
 
         private List<int> _tagIds;
         private List<IdAndRowVersion> _tagIdsWithRowVersion;
@@ -58,13 +58,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourn
             _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion1)).Returns(true);
             _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(true);
 
-            _dut = new UpdateTagJourneyCommandValidator(
+            _dut = new UpdateTagStepCommandValidator(
                 _projectValidatorMock.Object,
                 _tagValidatorMock.Object,
                 _stepValidatorMock.Object,
                 _rowVersionValidatorMock.Object);
 
-            _command = new UpdateTagJourneyCommand(_tagIdsWithRowVersion, StepId);
+            _command = new UpdateTagStepCommand(_tagIdsWithRowVersion, StepId);
         }
 
         [TestMethod]
@@ -186,7 +186,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourn
         [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new UpdateTagJourneyCommand(new List<IdAndRowVersion>(), StepId);
+            var command = new UpdateTagStepCommand(new List<IdAndRowVersion>(), StepId);
 
             var result = _dut.Validate(command);
 
@@ -198,7 +198,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourn
         [TestMethod]
         public void Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new UpdateTagJourneyCommand(
+            var command = new UpdateTagStepCommand(
                 new List<IdAndRowVersion> { 
                     new IdAndRowVersion(1, null), 
                     new IdAndRowVersion(1, null) }, StepId);

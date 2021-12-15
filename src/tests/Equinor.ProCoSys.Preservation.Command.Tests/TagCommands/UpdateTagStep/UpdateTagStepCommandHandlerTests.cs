@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagJourney;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -10,10 +10,10 @@ using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourney
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
 {
     [TestClass]
-    public class UpdateTagJourneyCommandHandlerTests : CommandHandlerTestsBase
+    public class UpdateTagStepCommandHandlerTests : CommandHandlerTestsBase
     {
         private const int FromStepId = 1;
         private const int ToStepId = 2;
@@ -21,12 +21,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourn
         private const string RowVersion1 = "AAAAAAAAABA=";
         private const string RowVersion2 = "AAAAAAAABBA=";
 
-        private UpdateTagJourneyCommand _command;
+        private UpdateTagStepCommand _command;
 
         private Tag _stdTag;
         private Tag _poAreaTag;
 
-        private UpdateTagJourneyCommandHandler _dut;
+        private UpdateTagStepCommandHandler _dut;
         private Mock<Step> _toStepMock;
 
         [TestInitialize]
@@ -73,9 +73,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourn
                 .Setup(r => r.GetTagsOnlyByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(new List<Tag> { _stdTag, _poAreaTag }));
 
-            _command = new UpdateTagJourneyCommand(tagIdsWithRowVersion, ToStepId);
+            _command = new UpdateTagStepCommand(tagIdsWithRowVersion, ToStepId);
 
-            _dut = new UpdateTagJourneyCommandHandler(
+            _dut = new UpdateTagStepCommandHandler(
                 projectRepositoryMock.Object,
                 journeyRepositoryMock.Object,
                 UnitOfWorkMock.Object);
@@ -84,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourn
         }
 
         [TestMethod]
-        public async Task HandlingUpdateTagJourneyCommand_ShouldSetNewStepOnAllTags_WhenUpdateToSupplierStep()
+        public async Task HandlingUpdateTagStepCommand_ShouldSetNewStepOnAllTags_WhenUpdateToSupplierStep()
         {
             // Act
             var result = await _dut.Handle(_command, default);
@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagJourn
         }
 
         [TestMethod]
-        public async Task HandlingUpdateTagJourneyCommand_ShouldThrowException_WhenUpdatePoTagToNonSupplierStep()
+        public async Task HandlingUpdateTagStepCommand_ShouldThrowException_WhenUpdatePoTagToNonSupplierStep()
         {
             _toStepMock.SetupGet(s => s.IsSupplierStep).Returns(false);
             

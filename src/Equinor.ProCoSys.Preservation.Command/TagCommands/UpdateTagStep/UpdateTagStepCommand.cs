@@ -4,11 +4,11 @@ using System.Linq;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagJourney
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
 {
-    public class UpdateTagJourneyCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>, ITagCommandRequest
+    public class UpdateTagStepCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>, ITagCommandRequest
     {
-        public UpdateTagJourneyCommand(IEnumerable<IdAndRowVersion> tagIds, int stepId)
+        public UpdateTagStepCommand(IEnumerable<IdAndRowVersion> tagIds, int stepId)
         {
             Tags = tagIds ?? new List<IdAndRowVersion>();
             StepId = stepId;
