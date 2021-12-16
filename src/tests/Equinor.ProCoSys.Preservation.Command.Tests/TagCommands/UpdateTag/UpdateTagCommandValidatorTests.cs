@@ -30,6 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTag
 
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeEditedAsync(_tagId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
@@ -68,6 +69,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTag
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenTagCantBeEdited()
+        {
+            _tagValidatorMock.Setup(r => r.IsReadyToBeEditedAsync(_tagId, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag can't be edited!"));
         }
 
         [TestMethod]

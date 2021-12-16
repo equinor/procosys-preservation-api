@@ -21,6 +21,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
                 .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
+                .MustAsync((command, token) => BeReadyForEditingAsync(command.TagId, token))
+                .WithMessage(command => $"Tag can't be edited! Tag={command.TagId}")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
@@ -28,6 +30,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
+            async Task<bool> BeReadyForEditingAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToBeEditedAsync(tagId, token);
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
