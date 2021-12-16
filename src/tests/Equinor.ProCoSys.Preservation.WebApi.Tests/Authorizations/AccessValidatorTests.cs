@@ -1467,7 +1467,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             Assert.IsFalse(result);
         }
         #endregion
-
         
         #endregion
 
