@@ -566,7 +566,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.RequirementHasAnyForOtherThanSuppliersUsageAsync(
+            _tagValidatorMock.Setup(t => t.RequirementWillGetAnyForOtherThanSuppliersUsageAsync(
                     _tagId,
                     new List<int>(),
                     new List<int>(),

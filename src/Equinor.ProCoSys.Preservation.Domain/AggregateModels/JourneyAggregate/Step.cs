@@ -54,7 +54,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         public string Title { get; set; }
         public int ModeId { get; private set; }
-        public bool IsSupplierStep { get; private set; }
+        public virtual bool IsSupplierStep { get; private set; }
 
         public AutoTransferMethod AutoTransferMethod { get; set; }
 
