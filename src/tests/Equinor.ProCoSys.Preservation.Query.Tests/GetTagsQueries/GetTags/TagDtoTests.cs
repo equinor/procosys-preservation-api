@@ -34,6 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             true,
             true,
             true,
+            true,
             "PoNo",
             new List<RequirementDto> {new RequirementDto(0, null, RequirementTypeIcon.Other, default, default, false)},
             "Resp",
@@ -61,6 +62,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             Assert.AreEqual("Mode", _dut.Mode);
             Assert.AreEqual("NextMode", _dut.NextMode);
             Assert.AreEqual("NextResp", _dut.NextResponsibleCode);
+            Assert.IsTrue(_dut.ReadyToBeEdited);
             Assert.IsTrue(_dut.ReadyToBePreserved);
             Assert.IsTrue(_dut.ReadyToBeStarted);
             Assert.IsTrue(_dut.ReadyToBeTransferred);
