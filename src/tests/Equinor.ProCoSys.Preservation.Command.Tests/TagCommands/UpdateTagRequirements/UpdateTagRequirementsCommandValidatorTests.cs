@@ -640,5 +640,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
 
             Assert.IsTrue(result.IsValid);
         }
+
+        [TestMethod]
+        public void Validate_ShouldIncludeTagNoInMessage()
+        {
+            _tagValidatorMock.Setup(r => r.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(true));
+            var tagNo = "Tag X";
+            _tagValidatorMock.Setup(r => r.GetTagDetailsAsync(_tagId, default)).Returns(Task.FromResult(tagNo));
+
+            var result = _dut.Validate(_addTwoReqsCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(tagNo));
+        }
     }
 }

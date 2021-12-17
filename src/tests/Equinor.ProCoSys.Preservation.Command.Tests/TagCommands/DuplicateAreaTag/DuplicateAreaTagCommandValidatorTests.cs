@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Source tag doesn't exist!"));
         }
         
         [TestMethod]
@@ -83,7 +83,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag can not be duplicated!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Source tag can not be duplicated!"));
         }
 
         [TestMethod]
@@ -97,6 +97,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldIncludeTagNoInMessage()
+        {
+            _tagValidatorMock.Setup(r => r.IsReadyToBeDuplicatedAsync(TagId, default)).Returns(Task.FromResult(false));
+            var tagNo = "Tag X";
+            _tagValidatorMock.Setup(r => r.GetTagDetailsAsync(TagId, default)).Returns(Task.FromResult(tagNo));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(tagNo));
         }
     }
 }
