@@ -2000,7 +2000,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsInASupplierStepAsync_TagIdInSupplierStep_ShouldReturnTrue()
+        public async Task IsInASupplierStepAsync_TagInSupplierStep_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -2011,7 +2011,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsInASupplierStepAsync_TagIdInOtherStep_ShouldReturnFalse()
+        public async Task IsInASupplierStepAsync_TagInOtherStep_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
