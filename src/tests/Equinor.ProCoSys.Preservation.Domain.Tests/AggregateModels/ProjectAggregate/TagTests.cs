@@ -531,12 +531,69 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region IsReadyToBeRescheduled
         
         [TestMethod]
+        public void IsReadyToBeRescheduled_ShouldBeFalse_WhenNotStarted()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            
+            // Act
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBeRescheduled());
+        }
+
+        [TestMethod]
         public void IsReadyToBeRescheduled_ShouldBeTrue_WhenStarted()
         {
             Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
 
+            // Act
             Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBeRescheduled());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeRescheduled_ShouldBeFalse_WhenCompleted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.CompletePreservation(_journey);
+            Assert.AreEqual(PreservationStatus.Completed, dut.Status);
+            
+            // Act
+            Assert.IsFalse(dut.IsReadyToBeRescheduled());
+        }
+
+        #endregion
+
+        #region IsReadyToBeEdited
+
+        [TestMethod]
+        public void IsReadyToBeEdited_ShouldBeTrue_WhenNotStarted()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+
+            // Act
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBeEdited());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeEdited_ShouldBeTrue_WhenStarted()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+
+            // Act
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBeEdited());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeEdited_ShouldBeFalse_WhenCompleted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.CompletePreservation(_journey);
+            Assert.AreEqual(PreservationStatus.Completed, dut.Status);
+
+            // Act
+            Assert.IsFalse(dut.IsReadyToBeEdited());
         }
 
         #endregion

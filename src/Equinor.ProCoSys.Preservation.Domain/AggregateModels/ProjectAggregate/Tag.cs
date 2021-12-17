@@ -322,6 +322,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool IsReadyToBeRescheduled()
             => Status == PreservationStatus.Active;
 
+        public bool IsReadyToBeEdited()
+            => Status != PreservationStatus.Completed;
+
         public bool IsReadyToBeDuplicated()
             => TagType == TagType.PreArea || TagType == TagType.SiteArea;
 

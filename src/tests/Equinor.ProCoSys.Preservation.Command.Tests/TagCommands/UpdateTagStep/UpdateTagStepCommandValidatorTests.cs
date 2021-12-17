@@ -45,6 +45,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(t => t.ExistsAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(t => t.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeEditedAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeEditedAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(t => t.RequirementUsageCoversBothForSupplierAndOtherAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(t => t.RequirementUsageCoversBothForSupplierAndOtherAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(t => t.RequirementUsageCoversForSuppliersAsync(TagId1, default)).Returns(Task.FromResult(true));
@@ -244,6 +246,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenAnyTagCantBeEdited()
+        {
+            _tagValidatorMock.Setup(r => r.IsReadyToBeEditedAsync(TagId2, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag can't be edited!"));
         }
 
         [TestMethod]

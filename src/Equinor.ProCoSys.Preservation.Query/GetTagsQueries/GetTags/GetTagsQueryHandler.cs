@@ -135,6 +135,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
                     .ToList();
 
                 var isNew = IsNew(tagWithRequirements);
+                var isReadyToBeEdited = tagWithRequirements.IsReadyToBeEdited();
                 var isReadyToBePreserved = tagWithRequirements.IsReadyToBePreserved();
                 var isReadyToBeStarted = tagWithRequirements.IsReadyToBeStarted();
                 var isReadyToBeTransferred = tagWithRequirements.IsReadyToBeTransferred(dto.JourneyWithSteps);
@@ -163,6 +164,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
                     dto.ModeTitle,
                     nextMode?.Title,
                     nextResponsible?.Code,
+                    isReadyToBeEdited,
                     isReadyToBePreserved,
                     isReadyToBeStarted,
                     isReadyToBeTransferred,

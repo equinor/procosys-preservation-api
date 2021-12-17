@@ -19,6 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             string mode,
             string nextMode,
             string nextResponsibleCode,
+            bool readyToBeEdited,
             bool readyToBePreserved,
             bool readyToBeStarted,
             bool readyToBeTransferred,
@@ -58,6 +59,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             ReadyToBeRescheduled = readyToBeRescheduled;
             ReadyToBeDuplicated = readyToBeDuplicated;
             ReadyToUndoStarted = readyToUndoStarted;
+            ReadyToBeEdited = readyToBeEdited;
             PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
             ResponsibleCode = responsibleCode;
@@ -84,6 +86,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
         public string NextMode { get; }
         public string NextResponsibleCode { get; }
         public string PurchaseOrderNo { get; }
+        public bool ReadyToBeEdited { get; }
         public bool ReadyToBePreserved { get; }
         public bool ReadyToBeStarted { get; }
         public bool ReadyToBeTransferred { get; }

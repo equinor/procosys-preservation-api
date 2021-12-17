@@ -38,6 +38,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
                 RuleForEach(command => command.Tags)
                     .MustAsync((_, tag, _, token) => BeAnExistingTagAsync(tag.Id, token))
                     .WithMessage((_, tag) => $"Tag doesn't exist! Tag={tag.Id}")
+                    .MustAsync((_, tag, _, token) => BeReadyForEditingAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Tag can't be edited! Tag={tag.Id}")
                     .MustAsync((_, tag, _, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, tag) => $"Tag is voided! Tag={tag.Id}")
                     .Must(tag => HaveAValidRowVersion(tag.RowVersion))
@@ -109,7 +111,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
 
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
-            
+
+            async Task<bool> BeReadyForEditingAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToBeEditedAsync(tagId, token);
+
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
             

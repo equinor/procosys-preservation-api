@@ -135,6 +135,39 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             return JsonConvert.DeserializeObject<int>(jsonString);
         }
 
+        public static async Task<string> UpdateTagRequirementsAsync(
+            UserType userType, string plant,
+            int tagId,
+            string description,
+            string rowVersion,
+            List<TagRequirementDto> newRequirements = null,
+            List<UpdatedTagRequirementDto> updatedRequirements = null,
+            List<DeletedTagRequirementDto> deletedRequirements = null,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                description,
+                rowVersion,
+                newRequirements,
+                updatedRequirements,
+                deletedRequirements
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{tagId}/UpdateTagRequirements", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
         public static async Task<string> UpdateTagStepAndRequirementsAsync(
             UserType userType, string plant,
             int tagId,

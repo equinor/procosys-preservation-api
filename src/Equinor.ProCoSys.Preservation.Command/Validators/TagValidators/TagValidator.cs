@@ -226,6 +226,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return tag.IsReadyToBeRescheduled();
         }
 
+        public async Task<bool> IsReadyToBeEditedAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return tag.IsReadyToBeEdited();
+        }
+
         public async Task<bool> AttachmentWithFilenameExistsAsync(int tagId, string fileName, CancellationToken token)
         {
             var tag = await GetTagWithAttachmentsAsync(tagId, token);
@@ -466,6 +477,21 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
         {
             var tag = await GetTagWithoutIncludesAsync(tagId, token);
             return tag != null && tag.StepId == stepId;
+        }
+
+        public async Task<bool> IsInASupplierStepAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
+            if (tag == null)
+            {
+                return false;
+            }
+
+            var step = await (from s in _context.QuerySet<Step>()
+                              where s.Id == tag.StepId
+                              select s).SingleOrDefaultAsync(token);
+
+            return step != null && step.IsSupplierStep;
         }
 
         private async Task<Tag> GetTagWithoutIncludesAsync(int tagId, CancellationToken token)

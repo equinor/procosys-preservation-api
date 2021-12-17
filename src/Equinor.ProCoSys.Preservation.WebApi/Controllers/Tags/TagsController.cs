@@ -30,7 +30,7 @@ using Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirements;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Query.CheckAreaTagNo;
@@ -334,6 +334,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        // todo To Be Deleted PRE 87761 Deploy
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/UpdateTagStepAndRequirements")]
         public async Task<ActionResult<string>> UpdateTagStepAndRequirements(
@@ -347,15 +348,45 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
                 Select(r => new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks)).ToList();
 
             var updatedRequirements = dto.UpdatedRequirements?.Select(r =>
+                new Command.TagCommands.UpdateTagStepAndRequirements.UpdateRequirementForCommand(r.RequirementId, r.IntervalWeeks, r.IsVoided, r.RowVersion)).ToList();
+
+            var deletedRequirements = dto.DeletedRequirements?.Select(r =>
+                new Command.TagCommands.UpdateTagStepAndRequirements.DeleteRequirementForCommand(r.RequirementId, r.RowVersion)).ToList();
+
+            var command = new Command.TagCommands.UpdateTagStepAndRequirements.UpdateTagStepAndRequirementsCommand(
+                id,
+                dto.Description,
+                dto.StepId,
+                updatedRequirements,
+                newRequirements,
+                deletedRequirements,
+                dto.RowVersion);
+
+            var result = await _mediator.Send(command);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [HttpPut("{id}/UpdateTagRequirements")]
+        public async Task<ActionResult<string>> UpdateTagRequirements(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] UpdateTagRequirementsDto dto)
+        {
+            var newRequirements = dto.NewRequirements?.
+                Select(r => new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks)).ToList();
+
+            var updatedRequirements = dto.UpdatedRequirements?.Select(r =>
                 new UpdateRequirementForCommand(r.RequirementId, r.IntervalWeeks, r.IsVoided, r.RowVersion)).ToList();
 
             var deletedRequirements = dto.DeletedRequirements?.Select(r =>
                 new DeleteRequirementForCommand(r.RequirementId, r.RowVersion)).ToList();
 
-            var command = new UpdateTagStepAndRequirementsCommand(
+            var command = new UpdateTagRequirementsCommand(
                 id,
                 dto.Description,
-                dto.StepId,
                 updatedRequirements,
                 newRequirements,
                 deletedRequirements,
