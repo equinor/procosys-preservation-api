@@ -14,13 +14,15 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
-                .WithMessage(command => $"Project is closed! Tag={command.TagId}")
+                .WithMessage(command => $"Project is closed! Tag='{GetTagDetails(command.TagId)}'")
                 .MustAsync((command, token) => BeAnExistingSourceTagAsync(command.TagId, token))
-                .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
+                .WithMessage(command => $"Source tag doesn't exist! TagId={command.TagId}")
                 .MustAsync((command, token) => NotBeAnExistingTagWithinProjectAsync(command.GetTagNo(), command.TagId, token))
                 .WithMessage(command => $"Tag already exists in scope for project! Tag={command.GetTagNo()}")
                 .MustAsync((command, token) => IsReadyToBeDuplicatedAsync(command.TagId, token))
-                .WithMessage(command => $"Tag can not be duplicated! Tag={command.TagId}");
+                .WithMessage(command => $"Source tag can not be duplicated! Tag='{GetTagDetails(command.TagId)}'");
+
+            string GetTagDetails(int tagId) => tagValidator.GetTagDetailsAsync(tagId, default).Result;
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);

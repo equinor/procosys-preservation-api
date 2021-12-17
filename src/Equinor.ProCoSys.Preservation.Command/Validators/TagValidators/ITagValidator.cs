@@ -106,5 +106,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
         Task<bool> HasRequirementCoverageInNextStepAsync(int tagId, CancellationToken token);
         
         Task<bool> IsInASupplierStepAsync(int tagId, CancellationToken token);
+        
+        Task<string> GetTagDetailsAsync(int tagId, CancellationToken token);
     }
 }

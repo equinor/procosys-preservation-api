@@ -494,6 +494,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return step != null && step.IsSupplierStep;
         }
 
+        public async Task<string> GetTagDetailsAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
+            return tag != null ? tag.TagNo : string.Empty;
+        }
+
         private async Task<Tag> GetTagWithoutIncludesAsync(int tagId, CancellationToken token)
         {
             var tag = await (from t in _context.QuerySet<Tag>()

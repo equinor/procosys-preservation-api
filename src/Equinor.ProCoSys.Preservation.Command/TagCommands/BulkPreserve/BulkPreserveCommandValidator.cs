@@ -27,13 +27,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
             {
                 RuleForEach(command => command.TagIds)
                     .MustAsync((_, tagId, _, token) => BeAnExistingTagAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag doesn't exist! Tag={tagId}")
+                    .WithMessage((_, tagId) => $"Tag doesn't exist! TagId={tagId}")
                     .MustAsync((_, tagId, _, token) => NotBeAVoidedTagAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag is voided! Tag={tagId}")
+                    .WithMessage((_, tagId) => $"Tag is voided! Tag='{GetTagDetails(tagId)}'")
                     .MustAsync((_, tagId, _, token) => PreservationIsStartedAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={tagId}")
+                    .WithMessage((_, tagId) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag='{GetTagDetails(tagId)}'")
                     .MustAsync((_, tagId, _, token) => BeReadyToBePreservedAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag is not ready to be bulk preserved! Tag={tagId}");
+                    .WithMessage((_, tagId) => $"Tag is not ready to be bulk preserved! Tag='{GetTagDetails(tagId)}'");
             });
 
             RuleFor(command => command.TagIds)
@@ -41,6 +41,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
                 .WithMessage("Tags must be in same project!")
                 .MustAsync(NotBeAClosedProjectForTagAsync)
                 .WithMessage("Project is closed!");
+
+            string GetTagDetails(int tagId) => tagValidator.GetTagDetailsAsync(tagId, default).Result;
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
             {

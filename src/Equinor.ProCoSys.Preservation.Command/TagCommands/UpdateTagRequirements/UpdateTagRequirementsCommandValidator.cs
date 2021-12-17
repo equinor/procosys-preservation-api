@@ -89,13 +89,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirement
                         token))
                 .WithMessage(_ => "Requirements must be unique!")
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
-                .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
+                .WithMessage(command => $"Project for tag is closed! Tag='{GetTagDetails(command.TagId)}'")
                 .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
-                .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
+                .WithMessage(command => $"Tag doesn't exist! TagId={command.TagId}")
                 .MustAsync((command, token) => BeReadyForEditingAsync(command.TagId, token))
-                .WithMessage(command => $"Tag can't be edited! Tag={command.TagId}")
+                .WithMessage(command => $"Tag can't be edited! Tag='{GetTagDetails(command.TagId)}'")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
-                .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
+                .WithMessage(command => $"Tag is voided! Tag='{GetTagDetails(command.TagId)}'")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
@@ -120,6 +120,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirement
                 .MustAsync((_, req, _, token) => NotBeAVoidedRequirementDefinitionAsync(req.RequirementDefinitionId, token))
                 .WithMessage((_, req) =>
                     $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
+
+            string GetTagDetails(int tagId) => tagValidator.GetTagDetailsAsync(tagId, default).Result;
 
             async Task<bool> RequirementsMustBeUniqueAfterUpdateAsync(
                 int tagId,
@@ -179,7 +181,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirement
                     tagRequirementIdsToBeVoided, 
                     requirementDefinitionIdsToBeAdded, 
                     token);
-            
+
             async Task<bool> TagIsInASupplierStepAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsInASupplierStepAsync(tagId, token);
             

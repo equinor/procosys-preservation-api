@@ -17,16 +17,18 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve
             
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
-                .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
+                .WithMessage(command => $"Project for tag is closed! Tag='{GetTagDetails(command.TagId)}'")
                 .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
-                .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
+                .WithMessage(command => $"Tag doesn't exist! TagId={command.TagId}")
                 .MustAsync((command, token) => NotBeAVoidedTag(command.TagId, token))
-                .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
+                .WithMessage(command => $"Tag is voided! Tag='{GetTagDetails(command.TagId)}'")
                 .MustAsync((command, token) => PreservationIsStartedAsync(command.TagId, token))
-                .WithMessage(command => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={command.TagId}")
+                .WithMessage(command => $"Tag must have status {PreservationStatus.Active} to preserve! Tag='{GetTagDetails(command.TagId)}'")
                 .MustAsync((command, token) => BeReadyToBePreservedAsync(command.TagId, token))
-                .WithMessage(command => $"Tag is not ready to be preserved! Tag={command.TagId}");
-            
+                .WithMessage(command => $"Tag is not ready to be preserved! Tag='{GetTagDetails(command.TagId)}'");
+
+            string GetTagDetails(int tagId) => tagValidator.GetTagDetailsAsync(tagId, default).Result;
+
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
