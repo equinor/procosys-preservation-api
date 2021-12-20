@@ -37,11 +37,11 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
             {
                 RuleForEach(command => command.Tags)
                     .MustAsync((_, tag, _, token) => BeAnExistingTagAsync(tag.Id, token))
-                    .WithMessage((_, tag) => $"Tag doesn't exist! Tag={tag.Id}")
+                    .WithMessage((_, tag) => $"Tag doesn't exist! TagId={tag.Id}")
                     .MustAsync((_, tag, _, token) => BeReadyForEditingAsync(tag.Id, token))
-                    .WithMessage((_, tag) => $"Tag can't be edited! Tag={tag.Id}")
+                    .WithMessage((_, tag) => $"Tag can't be edited! Tag='{GetTagDetails(tag.Id)}'")
                     .MustAsync((_, tag, _, token) => NotBeAVoidedTagAsync(tag.Id, token))
-                    .WithMessage((_, tag) => $"Tag is voided! Tag={tag.Id}")
+                    .WithMessage((_, tag) => $"Tag is voided! Tag='{GetTagDetails(tag.Id)}'")
                     .Must(tag => HaveAValidRowVersion(tag.RowVersion))
                     .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
 
@@ -51,22 +51,22 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
                     {
                         RuleForEach(command => command.Tags)
                             .MustAsync((_, tag, _, token) => RequirementUsageCoversBothForSupplierAndOtherAsync(tag.Id, token))
-                            .WithMessage((_, tag) => $"Requirements for tag must include requirements to be used both for supplier and other than suppliers! Tag={tag.Id}");
+                            .WithMessage((_, tag) => $"Requirements for tag must include requirements to be used both for supplier and other than suppliers! Tag='{GetTagDetails(tag.Id)}'");
                     }).Otherwise(() =>
                     {
                         RuleForEach(command => command.Tags)
                             .MustAsync((_, tag, _, token) => RequirementUsageCoversForSuppliersAsync(tag.Id, token))
-                            .WithMessage((_, tag) => $"Requirements for tag must include requirements to be used for supplier! Tag={tag.Id}")
+                            .WithMessage((_, tag) => $"Requirements for tag must include requirements to be used for supplier! Tag='{GetTagDetails(tag.Id)}'")
                             .MustAsync((_, tag, _, token) => NotHaveRequirementsForOtherThanSupplierAsync(tag.Id, token))
-                            .WithMessage((_, tag) => $"Requirements for tag can not include requirements for other than suppliers! Tag={tag.Id}");
+                            .WithMessage((_, tag) => $"Requirements for tag can not include requirements for other than suppliers! Tag='{GetTagDetails(tag.Id)}'");
                     });
                 }).Otherwise(() =>
                 {
                     RuleForEach(command => command.Tags)
                         .MustAsync((_, tag, _, token) => NotBeAPoAreaTagAsync(tag.Id, token))
-                        .WithMessage((_, tag) => $"Step for a {TagType.PoArea.GetTagNoPrefix()} tag needs to be for supplier! Tag={tag.Id}")
+                        .WithMessage((_, tag) => $"Step for a {TagType.PoArea.GetTagNoPrefix()} tag needs to be for supplier! Tag='{GetTagDetails(tag.Id)}'")
                         .MustAsync((_, tag, _, token) => RequirementUsageCoversForOtherThanSuppliersAsync(tag.Id, token))
-                        .WithMessage((_, tag) => $"Requirements for tag must include requirements to be used for other than suppliers! Tag={tag.Id}");
+                        .WithMessage((_, tag) => $"Requirements for tag must include requirements to be used for other than suppliers! Tag='{GetTagDetails(tag.Id)}'");
                 });
             });
 
@@ -81,6 +81,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
                 var ids = tags.Select(x => x.Id).ToList();
                 return ids.Distinct().Count() == ids.Count;
             }
+
+            string GetTagDetails(int tagId) => tagValidator.GetTagDetailsAsync(tagId, default).Result;
 
             async Task<bool> BeAnExistingStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.ExistsAsync(stepId, token);

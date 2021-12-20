@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve;
 using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -114,6 +113,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldIncludeTagNoInMessage()
+        {
+            _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
+            var tagNo = "Tag X";
+            _tagValidatorMock.Setup(r => r.GetTagDetailsAsync(TagId, default)).Returns(Task.FromResult(tagNo));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(tagNo));
         }
     }
 }

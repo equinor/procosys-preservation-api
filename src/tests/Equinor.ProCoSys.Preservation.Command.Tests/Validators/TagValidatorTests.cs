@@ -2020,5 +2020,27 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
+
+        [TestMethod]
+        public async Task GetTagDetailsAsync_KnownTag_ShouldReturnTagNo()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.GetTagDetailsAsync(_standardTagNotStartedInFirstStepId, default);
+                Assert.AreEqual(TagNo, result);
+            }
+        }
+
+        [TestMethod]
+        public async Task GetTagDetailsAsync_UnknownTag_ShouldReturnEmptyString()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.GetTagDetailsAsync(0, default);
+                Assert.AreEqual(string.Empty, result);
+            }
+        }
     }
 }

@@ -93,5 +93,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid row version!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldIncludeTagNoInMessage()
+        {
+            _tagValidatorMock.Setup(r => r.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(false));
+            var tagNo = "Tag X";
+            _tagValidatorMock.Setup(r => r.GetTagDetailsAsync(_tagId, default)).Returns(Task.FromResult(tagNo));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(tagNo));
+        }
     }
 }

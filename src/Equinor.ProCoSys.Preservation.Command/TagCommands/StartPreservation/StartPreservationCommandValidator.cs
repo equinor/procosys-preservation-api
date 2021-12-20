@@ -26,13 +26,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
             {
                 RuleForEach(command => command.TagIds)
                     .MustAsync((_, tagId, _, token) => BeAnExistingTagAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag doesn't exist! Tag={tagId}")
+                    .WithMessage((_, tagId) => $"Tag doesn't exist! TagId={tagId}")
                     .MustAsync((_, tagId, _, token) => NotBeAVoidedTagAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag is voided! Tag={tagId}")
+                    .WithMessage((_, tagId) => $"Tag is voided! Tag='{GetTagDetails(tagId)}'")
                     .MustAsync((_, tagId, _, token) => IsReadyToBeStartedAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Preservation on tag can not be started! Tag={tagId}")
+                    .WithMessage((_, tagId) => $"Preservation on tag can not be started! Tag='{GetTagDetails(tagId)}'")
                     .MustAsync((_, tagId, _, token) => HaveAtLeastOneNonVoidedRequirementAsync(tagId, token))
-                    .WithMessage((_, tagId) => $"Tag do not have any non voided requirement! Tag={tagId}");
+                    .WithMessage((_, tagId) => $"Tag do not have any non voided requirement! Tag='{GetTagDetails(tagId)}'");
             });
 
             RuleFor(command => command.TagIds)
@@ -40,6 +40,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
                 .WithMessage("Tags must be in same project!")
                 .MustAsync(NotBeAClosedProjectForTagAsync)
                 .WithMessage("Project is closed!");
+
+            string GetTagDetails(int tagId) => tagValidator.GetTagDetailsAsync(tagId, default).Result;
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
             {

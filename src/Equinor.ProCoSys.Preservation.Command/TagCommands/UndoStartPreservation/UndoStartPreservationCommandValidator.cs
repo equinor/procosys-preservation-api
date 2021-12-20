@@ -28,11 +28,11 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservatio
             {
                 RuleForEach(command => command.Tags)
                     .MustAsync((_, tag, _, token) => BeAnExistingTagAsync(tag.Id, token))
-                    .WithMessage((_, tag) => $"Tag doesn't exist! Tag={tag.Id}")
+                    .WithMessage((_, tag) => $"Tag doesn't exist! TagId={tag.Id}")
                     .MustAsync((_, tag, _, token) => NotBeAVoidedTagAsync(tag.Id, token))
-                    .WithMessage((_, tag) => $"Tag is voided! Tag={tag.Id}")
+                    .WithMessage((_, tag) => $"Tag is voided! Tag='{GetTagDetails(tag.Id)}'")
                     .MustAsync((_, tag, _, token) => IsReadyToUndoStartedAsync(tag.Id, token))
-                    .WithMessage((_, tag) => $"Undo preservation start on tag can not be done! Tag={tag.Id}")
+                    .WithMessage((_, tag) => $"Undo preservation start on tag can not be done! Tag='{GetTagDetails(tag.Id)}'")
                     .Must(tag => HaveAValidRowVersion(tag.RowVersion))
                     .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });
@@ -42,6 +42,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservatio
                 .WithMessage("Tags must be in same project!")
                 .MustAsync(NotBeAClosedProjectForTagAsync)
                 .WithMessage("Project is closed!");
+
+            string GetTagDetails(int tagId) => tagValidator.GetTagDetailsAsync(tagId, default).Result;
 
             bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
             {
