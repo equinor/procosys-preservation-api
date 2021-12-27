@@ -91,6 +91,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
         {
             await DispatchEventsAsync(cancellationToken);
             await SetAuditDataAsync();
+            UpdateConcurrencyToken();
+
             try
             {
                 return await base.SaveChangesAsync(cancellationToken);
@@ -98,6 +100,23 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             catch (DbUpdateConcurrencyException concurrencyException)
             {
                 throw new ConcurrencyException("Data store operation failed. Data may have been modified or deleted since entities were loaded.", concurrencyException);
+            }
+        }
+
+        private void UpdateConcurrencyToken()
+        {
+            var modifiedEntries = ChangeTracker
+                .Entries<EntityBase>()
+                .Where(x => x.State == EntityState.Modified || x.State == EntityState.Deleted);
+
+            foreach (var entry in modifiedEntries)
+            {
+                var currentRowVersion = entry.CurrentValues.GetValue<byte[]>(nameof(EntityBase.RowVersion));
+                var originalRowVersion = entry.OriginalValues.GetValue<byte[]>(nameof(EntityBase.RowVersion));
+                for (var i = 0; i < currentRowVersion.Length; i++)
+                {
+                    originalRowVersion[i] = currentRowVersion[i];
+                }
             }
         }
 
