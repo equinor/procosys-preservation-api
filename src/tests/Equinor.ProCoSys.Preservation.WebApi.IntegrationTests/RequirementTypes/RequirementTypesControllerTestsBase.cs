@@ -28,6 +28,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             
             var reqTypeB = requirementTypes.Single(j => j.Code == KnownTestData.ReqTypeB);
             ReqTypeBIdUnderTest = reqTypeB.Id;
-            ReqDefInReqTypeBIdUnderTest = reqTypeB.RequirementDefinitions.First().Id;        }
+            ReqDefInReqTypeBIdUnderTest = reqTypeB.RequirementDefinitions.First().Id;
+        }
     }
 }

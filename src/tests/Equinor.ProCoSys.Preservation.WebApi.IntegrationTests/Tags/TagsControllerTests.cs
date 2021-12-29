@@ -142,7 +142,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateTagRequirements_AsPlanner_ShouldUpdateAndAddRequirements()
         {
             // Arrange
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            var newReqDefId = await CreateRequirementDefinitionAsync(TestFactory.PlantWithAccess);
 
             var tag = await CreateAndGetAreaTagAsync(AreaTagType.PreArea,
                 TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id,
@@ -200,7 +200,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateTagRequirements_AsPlanner_ShouldDeleteRequirement()
         {
             // Arrange
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            var newReqDefId = await CreateRequirementDefinitionAsync(TestFactory.PlantWithAccess);
 
             var tag = await CreateAndGetAreaTagAsync(AreaTagType.PreArea,
                 TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id,
@@ -320,7 +320,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldUpdateAndAddRequirements()
         {
             // Arrange
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            var newReqDefId = await CreateRequirementDefinitionAsync(TestFactory.PlantWithAccess);
 
             var tag = await CreateAndGetAreaTagAsync(AreaTagType.PreArea,
                 TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id,
@@ -380,7 +380,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldDeleteRequirement()
         {
             // Arrange
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            var newReqDefId = await CreateRequirementDefinitionAsync(TestFactory.PlantWithAccess);
 
             var tag = await CreateAndGetAreaTagAsync(AreaTagType.PreArea,
                 TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id,
@@ -1197,7 +1197,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             int stepId,
             bool startPreservation)
         {
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            var newReqDefId = await CreateRequirementDefinitionAsync(TestFactory.PlantWithAccess);
 
             var tagNo = Guid.NewGuid().ToString();
             MockMainApiDataForTag(tagNo);

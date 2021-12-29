@@ -6,7 +6,6 @@ using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
 using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys;
-using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
@@ -97,21 +96,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             return await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
         }
 
-        protected async Task<int> CreateRequirementDefinitionAsync(UserType userType, string plant)
-        {
-            var reqTypes = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(userType, plant);
-            var newReqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                userType, plant, reqTypes.First().Id, Guid.NewGuid().ToString());
-            return newReqDefId;
-        }
-
         protected async Task<int> CreateAreaTagAsync(
             AreaTagType areaTagType,
             int stepId,
             string purchaseOrderCalloffCode,
             bool startPreservation)
         {
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            var newReqDefId = await CreateRequirementDefinitionAsync(TestFactory.PlantWithAccess);
 
             var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
                 UserType.Planner,
