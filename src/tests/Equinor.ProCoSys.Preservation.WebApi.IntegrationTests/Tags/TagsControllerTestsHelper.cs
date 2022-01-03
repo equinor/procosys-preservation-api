@@ -545,18 +545,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
         }
 
-        public static async Task<GetTagRequirementInfo> GetTagRequirementInfoAsync(UserType userType, string plant, int tagId)
-        {
-            var requirementDetailDtos = await GetTagRequirementsAsync(userType, plant, tagId);
-            var requirementDetailDto = requirementDetailDtos.First();
-            Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup: Preservation not started");
-            Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup: Expect to find 1 requirement on tag under test");
-            return new GetTagRequirementInfo(
-                requirementDetailDto.Id,
-                requirementDetailDto.NextDueTimeUtc.Value,
-                requirementDetailDto.Fields);
-        }
-
         public static async Task PreserveRequirementAsync(
             UserType userType, string plant,
             int tagId,
@@ -836,6 +824,94 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             }
 
             return await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task DeleteTagAsync(
+            UserType userType,
+            string plant,
+            int tagId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{_route}/{tagId}")
+            {
+                Content = new StringContent(serializePayload, Encoding.UTF8, "application/json")
+            };
+
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).SendAsync(request);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static void GetActionAttachmentAsync()
+        {
+            // todo
+        }
+
+        public static void MigrateTagsAsync()
+        {
+            // todo
+        }
+
+        public static void AutoScopeAsync()
+        {
+            // todo
+        }
+
+        public static void CheckAreaTagNoAsync()
+        {
+            // todo
+        }
+
+        public static void PreserveTagAsync()
+        {
+            // todo
+        }
+
+        public static void BulkPreserveTagsAsync()
+        {
+            // todo
+        }
+
+        public static void AutoTransferAsync()
+        {
+            // todo
+        }
+
+        public static void DeleteFieldValueAttachmentAsync()
+        {
+            // todo
+        }
+
+        public static void GetFieldValueAttachmentAsync()
+        {
+            // todo
+        }
+
+
+        public static void UploadTagAttachmentAsync()
+        {
+            // todo
+        }
+
+        public static void GetTagAttachmentAsync()
+        {
+            // todo
+        }
+
+        public static void GetPreservationRecordAsync()
+        {
+            // todo
+        }
+
+        public static void GetHistoricalFieldValueAttachmentAsync()
+        {
+            // todo
         }
     }
 }

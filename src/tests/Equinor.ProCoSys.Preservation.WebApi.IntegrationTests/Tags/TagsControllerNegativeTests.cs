@@ -615,6 +615,75 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
         #endregion
 
+        #region Delete
+        [TestMethod]
+        public async Task Delete_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.Anonymous,
+                TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task Delete_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.Hacker,
+                TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Delete_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.LibraryAdmin,
+                TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Delete_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.Hacker,
+                TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Delete_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Delete_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange
+            var tag = await CreateAndGetAreaTagAsync(
+                AreaTagType.PreArea,
+                TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id,
+                null,
+                false);
+
+            await TagsControllerTestsHelper.VoidTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tag.Id, tag.RowVersion);
+
+            // Act
+            await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                tag.Id,
+                TestFactory.WrongButValidRowVersion,
+                HttpStatusCode.Conflict);
+        }
+        #endregion
+
         #region GetAllTagAttachments
         [TestMethod]
         public async Task GetAllTagAttachments_AsAnonymous_ShouldReturnUnauthorized()
@@ -1451,7 +1520,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
@@ -1469,7 +1538,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
@@ -1487,7 +1556,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
@@ -1550,7 +1619,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(
+            var requirement = await GetTagRequirementInfoAsync(
                 UserType.Preserver,
                 TestFactory.PlantWithAccess,
                 tagIdUnderTest);
@@ -1638,7 +1707,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.RecordCbValueAsync(
@@ -1657,7 +1726,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.RecordCbValueAsync(
@@ -1676,7 +1745,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.RecordCbValueAsync(

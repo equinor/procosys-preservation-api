@@ -16,8 +16,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         protected readonly string KnownAreaCode = "A";
         protected readonly string KnownDisciplineCode = "D";
 
-        protected int InitialTagsCount;
-        
         protected int TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
         protected int TagIdUnderTest_ForStandardTagWithInfoRequirement_Started;
         protected int TagIdUnderTest_ForStandardTagWithCbRequirement_Started;
@@ -40,9 +38,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             Assert.IsNotNull(result);
 
-            InitialTagsCount = result.MaxAvailable;
-            Assert.IsTrue(InitialTagsCount > 0, "Bad test setup: Didn't find any tags at startup");
-            Assert.AreEqual(InitialTagsCount, result.Tags.Count);
+            var initialTagsCount = result.MaxAvailable;
+            Assert.IsTrue(initialTagsCount > 0, "Bad test setup: Didn't find any tags at startup");
+            Assert.AreEqual(initialTagsCount, result.Tags.Count);
 
             var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
             TwoStepJourneyWithTags = journeys.Single(j => j.Title == KnownTestData.TwoStepJourneyWithTags);
@@ -131,6 +129,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> { newTagId });
             }
             return newTagId;
+        }
+
+        public async Task<GetTagRequirementInfo> GetTagRequirementInfoAsync(UserType userType, string plant, int tagId)
+        {
+            var requirementDetailDtos = await TagsControllerTestsHelper.GetTagRequirementsAsync(userType, plant, tagId);
+            var requirementDetailDto = requirementDetailDtos.First();
+            Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup: Preservation not started");
+            Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup: Expect to find 1 requirement on tag under test");
+            return new GetTagRequirementInfo(
+                requirementDetailDto.Id,
+                requirementDetailDto.NextDueTimeUtc.Value,
+                requirementDetailDto.Fields);
         }
     }
 }
