@@ -639,21 +639,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
-        [HttpPut("{id}/CompletePreservation")]
-        public async Task<IActionResult> CompletePreservation(
-            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
-            [Required]
-            string plant,
-            [FromRoute] int id,
-            [FromBody] CompletePreservationDto dto)
-        {
-            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(id, dto.RowVersion) });
-
-            var result = await _mediator.Send(command);
-            return this.FromResult(result);
-        }
-
-        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("CompletePreservation")]
         public async Task<ActionResult<List<IdAndRowVersion>>> CompletePreservation(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -891,7 +876,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Requirements/{tagRequirementId}/PreservationRecord/{preservationRecordGuid}")]
-        public async Task<ActionResult<PreservationRecordDto>>GetPreservationRecord(
+        public async Task<ActionResult<PreservationRecordDto>> GetPreservationRecord(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
