@@ -10,6 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'equinor'
+    ref: 'dotnet62ndtry'
 
 # Global variables for the pipeline
 variables:
