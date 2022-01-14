@@ -91,6 +91,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 case PcsTopic.Tag:
                     await ProcessTagEvent(messageJson);
                     break;
+                case PcsTopic.Certificate:
+                    await ProcessCertificateEvent(messageJson);
+                    break;
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
