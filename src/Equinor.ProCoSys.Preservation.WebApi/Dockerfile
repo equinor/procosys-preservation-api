@@ -32,7 +32,7 @@ WORKDIR "/src/Equinor.ProCoSys.Preservation.WebApi"
 RUN dotnet publish "Equinor.ProCoSys.Preservation.WebApi.csproj" -c Release --no-restore -o /app/publish
 
 # Define the image used for the final result
-FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 
 # Install System.Drawing native dependencies (added because of Excel export (ClosedXML library) support).
 RUN apt-get update
