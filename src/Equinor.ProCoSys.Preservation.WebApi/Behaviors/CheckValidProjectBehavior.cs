@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Behaviors
 {
-    public class CheckValidProjectBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> 
+    public class CheckValidProjectBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {
         private readonly ILogger<CheckValidProjectBehavior<TRequest, TResponse>> _logger;
         private readonly IProjectChecker _projectChecker;

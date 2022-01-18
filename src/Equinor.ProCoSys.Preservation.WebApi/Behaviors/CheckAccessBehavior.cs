@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Behaviors
 {
-    public class CheckAccessBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> 
+    public class CheckAccessBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {
         private readonly ILogger<CheckAccessBehavior<TRequest, TResponse>> _logger;
         private readonly IAccessValidator _accessValidator;
