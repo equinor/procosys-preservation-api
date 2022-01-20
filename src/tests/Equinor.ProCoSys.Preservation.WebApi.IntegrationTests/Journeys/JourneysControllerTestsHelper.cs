@@ -80,6 +80,84 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             return JsonConvert.DeserializeObject<JourneyDetailsDto>(jsonString);
         }
 
+        public static async Task<string> UpdateJourneyAsync(
+            UserType userType,
+            string plant,
+            int journeyId,
+            string title,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                title,
+                rowVersion
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{journeyId}", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task<string> VoidJourneyAsync(
+            UserType userType,
+            string plant,
+            int journeyId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+            => await VoidUnvoidJourneyAsync(TestFactory.Instance.GetHttpClient(userType, plant),
+                journeyId,
+                rowVersion,
+                "Void",
+                expectedStatusCode,
+                expectedMessageOnBadRequest);
+
+        public static async Task<string> UnvoidJourneyAsync(
+            UserType userType,
+            string plant,
+            int journeyId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+            => await VoidUnvoidJourneyAsync(TestFactory.Instance.GetHttpClient(userType, plant),
+                journeyId,
+                rowVersion,
+                "Unvoid",
+                expectedStatusCode,
+                expectedMessageOnBadRequest);
+
+        public static async Task DeleteJourneyAsync(
+            UserType userType,
+            string plant,
+            int journeyId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{_route}/{journeyId}")
+            {
+                Content = new StringContent(serializePayload, Encoding.UTF8, "application/json")
+            };
+
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).SendAsync(request);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
         public static async Task<int> CreateStepAsync(
             UserType userType,
             string plant,
@@ -229,6 +307,32 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<StepIdAndRowVersion>>(jsonString);
 
+        }
+
+        private static async Task<string> VoidUnvoidJourneyAsync(
+            HttpClient client,
+            int journeyId,
+            string rowVersion,
+            string action,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_route}/{journeyId}/{action}", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
         }
 
         private static async Task<string> VoidUnvoidStepAsync(

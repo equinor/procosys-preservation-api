@@ -11,6 +11,50 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
     public class RequirementTypesControllerTests : RequirementTypesControllerTestsBase
     {
         [TestMethod]
+        public async Task CreateRequirementType_AsAdmin_ShouldCreateRequirementType()
+        {
+            // Arrange
+            var title = Guid.NewGuid().ToString();
+
+            // Act
+            var reqType = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                title);
+
+            // Assert
+            Assert.AreEqual(title, reqType.Title);
+        }
+
+        [TestMethod]
+        public async Task UpdateRequirementType_AsAdmin_ShouldUpdateRequirementType()
+        {
+            // Arrange
+            var reqType = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
+            var currentRowVersion = reqType.RowVersion;
+            var newTitle = Guid.NewGuid().ToString();
+
+            // Act
+            var newRowVersion = await RequirementTypesControllerTestsHelper.UpdateRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqType.Id, 
+                newTitle,
+                reqType.RowVersion);
+
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            reqType = await RequirementTypesControllerTestsHelper.GetRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqType.Id);
+            Assert.AreEqual(newTitle, reqType.Title);
+        }
+
+        [TestMethod]
         public async Task GetRequirementTypes_AsAdmin_ShouldGetRequirementTypesWithReqDefs()
         {
             // Act
@@ -22,6 +66,107 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             Assert.AreNotEqual(0, reqTypes.Count);
             var reqDef = reqTypes.First().RequirementDefinitions.FirstOrDefault();
             Assert.IsNotNull(reqDef);
+        }
+
+        [TestMethod]
+        public async Task GetRequirementType_AsAdmin_ShouldGetRequirementTypeWithReqDefs()
+        {
+            // Act
+            var reqType = await RequirementTypesControllerTestsHelper.GetRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                ReqTypeAIdUnderTest);
+
+            // Assert
+            Assert.IsNotNull(reqType);
+            var reqDef = reqType.RequirementDefinitions.FirstOrDefault();
+            Assert.IsNotNull(reqDef);
+        }
+
+        [TestMethod]
+        public async Task VoidRequirementType_AsAdmin_ShouldVoidRequirementType()
+        {
+            // Arrange
+            var reqType = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
+            var currentRowVersion = reqType.RowVersion;
+
+            // Act
+            var newRowVersion = await RequirementTypesControllerTestsHelper.VoidRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqType.Id,
+                currentRowVersion);
+
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            reqType = await RequirementTypesControllerTestsHelper.GetRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqType.Id);
+            Assert.IsTrue(reqType.IsVoided);
+        }
+
+        [TestMethod]
+        public async Task UnvoidRequirementType_AsAdmin_ShouldUnvoidRequirementType()
+        {
+            // Arrange
+            var reqType = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
+
+            var currentRowVersion = await RequirementTypesControllerTestsHelper.VoidRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqType.Id,
+                reqType.RowVersion);
+
+            // Act
+            var newRowVersion = await RequirementTypesControllerTestsHelper.UnvoidRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqType.Id,
+                currentRowVersion);
+
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            reqType = await RequirementTypesControllerTestsHelper.GetRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqType.Id);
+            Assert.IsFalse(reqType.IsVoided);
+        }
+
+        [TestMethod]
+        public async Task DeleteRequirementType_AsAdmin_ShouldDeleteRequirementType()
+        {
+            // Arrange
+            var reqType = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
+
+            var currentRowVersion = await RequirementTypesControllerTestsHelper.VoidRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqType.Id,
+                reqType.RowVersion);
+
+            // Act
+            await RequirementTypesControllerTestsHelper.DeleteRequirementTypeAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqType.Id,
+                currentRowVersion);
+
+            // Assert
+            var reqTypes = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess);
+            Assert.IsNull(reqTypes.SingleOrDefault(m => m.Id == reqType.Id));
         }
 
         [TestMethod]
@@ -90,14 +235,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
         {
             // Arrange
             var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
-            var reqDefIdUnderTest = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                reqTypeIdUnderTest,
-                Guid.NewGuid().ToString());
-            var reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                reqTypeIdUnderTest,
-                reqDefIdUnderTest);
+            var reqDef = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementDefinitionAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqTypeIdUnderTest);
             var currentRowVersion = reqDef.RowVersion;
             var newTitle = Guid.NewGuid().ToString();
 
@@ -115,7 +256,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                reqDefIdUnderTest);
+                reqDef.Id);
             Assert.AreEqual(newTitle, reqDef.Title);
         }
 
@@ -124,10 +265,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
         {
             // Arrange
             var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
-            var reqDefIdUnderTest = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
+            var reqDef = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementDefinitionAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                Guid.NewGuid().ToString(),
                 new List<FieldDto>
                 {
                     new FieldDto
@@ -137,10 +278,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                         SortKey = 20
                     }
                 });
-            var reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                reqTypeIdUnderTest,
-                reqDefIdUnderTest);
             
             var fieldDetailsDto = reqDef.Fields.Single();
             var oldFieldRowVersion = fieldDetailsDto.RowVersion;
@@ -161,7 +298,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                reqDefIdUnderTest);
+                reqDef.Id);
             fieldDetailsDto = reqDef.Fields.Single();
             AssertRowVersionChange(oldFieldRowVersion, fieldDetailsDto.RowVersion);
             Assert.AreEqual(newFieldLabel, fieldDetailsDto.Label);
@@ -172,14 +309,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
         {
             // Arrange
             var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
-            var reqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                reqTypeIdUnderTest,
-                Guid.NewGuid().ToString());
-            var reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                reqTypeIdUnderTest,
-                reqDefId);
+            var reqDef = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementDefinitionAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqTypeIdUnderTest);
             var currentRowVersion = reqDef.RowVersion;
             Assert.IsFalse(reqDef.IsVoided);
 
@@ -187,7 +320,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             var newRowVersion = await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                reqDefId,
+                reqDef.Id,
                 currentRowVersion);
 
             // Assert
@@ -195,7 +328,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                reqDefId);
+                reqDef.Id);
             Assert.IsTrue(reqDef.IsVoided);
         }
 
@@ -204,29 +337,30 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
         {
             // Arrange
             var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
-            var reqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                reqTypeIdUnderTest,
-                Guid.NewGuid().ToString());
-            var reqDef =
-                await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                    reqTypeIdUnderTest, reqDefId);
+            var reqDef = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementDefinitionAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqTypeIdUnderTest);
             var currentRowVersion = await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                reqDefId,
+                reqDef.Id,
                 reqDef.RowVersion);
 
             // Act
             var newRowVersion = await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                reqDefId,
+                reqDef.Id,
                 currentRowVersion);
 
             // Assert
             AssertRowVersionChange(currentRowVersion, newRowVersion);
-            reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, reqTypeIdUnderTest, reqDefId);
+            reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqTypeIdUnderTest,
+                reqDef.Id);
             Assert.IsFalse(reqDef.IsVoided);
         }
 
@@ -235,32 +369,28 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
         {
             // Arrange
             var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
-            var reqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                reqTypeIdUnderTest,
-                Guid.NewGuid().ToString());
-            var reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                reqTypeIdUnderTest,
-                reqDefId);
+            var reqDef = await RequirementTypesControllerTestsHelper.CreateAndGetRequirementDefinitionAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                reqTypeIdUnderTest);
             var currentRowVersion = await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                reqDefId,
+                reqDef.Id,
                 reqDef.RowVersion);
 
             // Act
             await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                reqDefId,
+                reqDef.Id,
                 currentRowVersion);
 
             // Assert
             reqDef = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
-                reqDefId);
+                reqDef.Id);
             Assert.IsNull(reqDef);
         }
     }

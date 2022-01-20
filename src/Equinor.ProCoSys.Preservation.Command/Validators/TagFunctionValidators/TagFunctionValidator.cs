@@ -13,16 +13,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagFunctionValidators
 
         public TagFunctionValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(string tagFunctionCode, CancellationToken token) =>
+        public async Task<bool> ExistsAsync(string tagFunctionCode, string registerCode, CancellationToken token) =>
             await (from tf in _context.QuerySet<TagFunction>()
-                where tf.Code == tagFunctionCode
+                where tf.Code == tagFunctionCode && tf.RegisterCode == registerCode
                    select tf).AnyAsync(token);
 
-        public async Task<bool> IsVoidedAsync(string tagFunctionCode, CancellationToken token)
+        public async Task<bool> IsVoidedAsync(string tagFunctionCode, string registerCode, CancellationToken token)
         {
             var tagFunction = await (from tf in _context.QuerySet<TagFunction>()
-                where tf.Code == tagFunctionCode
-                select tf).SingleOrDefaultAsync(token);
+                where tf.Code == tagFunctionCode && tf.RegisterCode == registerCode
+                    select tf).SingleOrDefaultAsync(token);
             return tagFunction != null && tagFunction.IsVoided;
         }
     }

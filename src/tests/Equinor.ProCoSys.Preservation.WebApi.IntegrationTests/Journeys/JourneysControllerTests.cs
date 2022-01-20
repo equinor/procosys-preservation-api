@@ -62,26 +62,145 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         }
 
         [TestMethod]
-        public async Task CreateStep_AsAdmin_ShouldCreateStep()
+        public async Task UpdateJourney_AsAdmin_ShouldUpdateJourney()
         {
             // Arrange
-            var journeyIdUnderTest = await JourneysControllerTestsHelper.CreateJourneyAsync(
+            var journeyId = await JourneysControllerTestsHelper.CreateJourneyAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 Guid.NewGuid().ToString());
+            var newTitle = Guid.NewGuid().ToString();
+            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            var currentRowVersion = journey.RowVersion;
+
+            // Act
+            var newRowVersion = await JourneysControllerTestsHelper.UpdateJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId,
+                newTitle,
+                currentRowVersion);
+            
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            
+            journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            Assert.IsNotNull(journey);
+            Assert.AreEqual(newTitle, journey.Title);
+        }
+
+        [TestMethod]
+        public async Task VoidJourney_AsAdmin_ShouldVoidJourney()
+        {
+            // Arrange
+            var journeyId = await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
+            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            var currentRowVersion = journey.RowVersion;
+
+            // Act
+            var newRowVersion = await JourneysControllerTestsHelper.VoidJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId,
+                currentRowVersion);
+
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+
+            journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            Assert.IsTrue(journey.IsVoided);
+        }
+
+        [TestMethod]
+        public async Task UnvoidJourney_AsAdmin_ShouldUnvoidJourney()
+        {
+            // Arrange
+            var journeyId = await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
+            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            var currentRowVersion = await JourneysControllerTestsHelper.VoidJourneyAsync(
+               UserType.LibraryAdmin,
+               TestFactory.PlantWithAccess,
+               journeyId,
+               journey.RowVersion);
+
+            // Act
+            var newRowVersion = await JourneysControllerTestsHelper.UnvoidJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId,
+                currentRowVersion);
+
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+
+            journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            Assert.IsFalse(journey.IsVoided);
+        }
+
+        [TestMethod]
+        public async Task DeleteJourney_AsAdmin_ShouldDeleteJourney()
+        {
+            // Arrange
+            var journeyId = await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
+            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            var currentRowVersion = await JourneysControllerTestsHelper.VoidJourneyAsync(
+               UserType.LibraryAdmin,
+               TestFactory.PlantWithAccess,
+               journeyId,
+               journey.RowVersion);
+
+            // Act
+            await JourneysControllerTestsHelper.DeleteJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId,
+                currentRowVersion);
+
+            // Assert
+            var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            Assert.IsNull(journeys.SingleOrDefault(j => j.Id == journeyId));
+        }
+
+        [TestMethod]
+        public async Task CreateStep_AsAdmin_ShouldCreateStep()
+        {
+            // Arrange
             var title = Guid.NewGuid().ToString();
 
             // Act
-            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                journeyIdUnderTest,
-                title,
-                OtherModeIdUnderTest,
-                KnownTestData.ResponsibleCode);
+            var (_, step) = await CreateStepAsync(title, OtherModeIdUnderTest);
 
             // Assert
-            var step = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
             Assert.IsNotNull(step);
             Assert.AreEqual(title, step.Title);
         }
@@ -90,17 +209,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task CreateStep_AsAdmin_ShouldCreateTwoSupplierSteps()
         {
             // Arrange
-            var journeyIdUnderTest = await JourneysControllerTestsHelper.CreateJourneyAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                Guid.NewGuid().ToString());
-            var stepAId = await JourneysControllerTestsHelper.CreateStepAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                journeyIdUnderTest,
-                Guid.NewGuid().ToString(),
-                SupModeAIdUnderTest,
-                KnownTestData.ResponsibleCode);
+            var (journeyIdUnderTest, stepA) = await CreateStepAsync(Guid.NewGuid().ToString(), SupModeAIdUnderTest);
 
             // Act
             var stepBId = await JourneysControllerTestsHelper.CreateStepAsync(
@@ -112,7 +221,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 KnownTestData.ResponsibleCode);
 
             // Assert
-            await AssertStepIsForSupplier(journeyIdUnderTest, stepAId);
+            await AssertStepIsForSupplier(journeyIdUnderTest, stepA.Id);
             await AssertStepIsForSupplier(journeyIdUnderTest, stepBId);
         }
 
@@ -120,9 +229,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task UpdateStep_AsAdmin_ShouldUpdateStepAndRowVersion()
         {
             // Arrange
-            var journeyIdUnderTest = JourneyId1UnderTest;
-            var stepIdUnderTest = FirstStepIdInJourney1UnderTest;
-            var step = await GetStepDetailsAsync(journeyIdUnderTest, stepIdUnderTest);
+            var (journeyIdUnderTest, step) = await CreateStepAsync(Guid.NewGuid().ToString(), OtherModeIdUnderTest);
             var currentRowVersion = step.RowVersion;
             var newTitle = Guid.NewGuid().ToString();
 
@@ -139,7 +246,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 
             // Assert
             AssertRowVersionChange(currentRowVersion, newRowVersion);
-            step = await GetStepDetailsAsync(journeyIdUnderTest, stepIdUnderTest);
+            step = await GetStepDetailsAsync(journeyIdUnderTest, step.Id);
             Assert.AreEqual(newTitle, step.Title);
         }
 
@@ -147,17 +254,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task UpdateStep_AsAdmin_ShouldUpdateSecondStepToBeSupplier()
         {
             // Arrange
-            var journeyIdUnderTest = await JourneysControllerTestsHelper.CreateJourneyAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                Guid.NewGuid().ToString());
-            var firstStepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                journeyIdUnderTest,
-                Guid.NewGuid().ToString(),
-                SupModeAIdUnderTest,
-                KnownTestData.ResponsibleCode);
+            var (journeyIdUnderTest, firstStep) = await CreateStepAsync(Guid.NewGuid().ToString(), SupModeAIdUnderTest);
             var secondStepId = await JourneysControllerTestsHelper.CreateStepAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
@@ -182,7 +279,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 
             // Assert
             AssertRowVersionChange(currentRowVersion, newRowVersion);
-            await AssertStepIsForSupplier(journeyIdUnderTest, firstStepId);
+            await AssertStepIsForSupplier(journeyIdUnderTest, firstStep.Id);
             await AssertStepIsForSupplier(journeyIdUnderTest, secondStep.Id);
         }
 
@@ -190,15 +287,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task VoidStep_AsAdmin_ShouldVoidStep_AndUpdateRowVersion()
         {
             // Arrange
-            var journeyIdUnderTest = JourneyId1UnderTest;
-            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                journeyIdUnderTest,
-                Guid.NewGuid().ToString(),
-                OtherModeIdUnderTest,
-                KnownTestData.ResponsibleCode);
-            var step = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            var (journeyIdUnderTest, step) = await CreateStepAsync(Guid.NewGuid().ToString(), OtherModeIdUnderTest);
             var currentRowVersion = step.RowVersion;
             Assert.IsFalse(step.IsVoided);
 
@@ -207,12 +296,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
-                stepId,
+                step.Id,
                 currentRowVersion);
 
             // Assert
             AssertRowVersionChange(currentRowVersion, newRowVersion);
-            step = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            step = await GetStepDetailsAsync(journeyIdUnderTest, step.Id);
             Assert.IsTrue(step.IsVoided);
         }
 
@@ -220,20 +309,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task UnvoidStep_AsAdmin_ShouldUnvoidStep_AndUpdateRowVersion()
         {
             // Arrange
-            var journeyIdUnderTest = JourneyId1UnderTest;
-            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                journeyIdUnderTest,
-                Guid.NewGuid().ToString(),
-                OtherModeIdUnderTest,
-                KnownTestData.ResponsibleCode);
-            var step = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            var (journeyIdUnderTest, step) = await CreateStepAsync(Guid.NewGuid().ToString(), OtherModeIdUnderTest);
             var currentRowVersion = await JourneysControllerTestsHelper.VoidStepAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
-                stepId,
+                step.Id,
                 step.RowVersion);
 
             // Act
@@ -241,12 +322,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
-                stepId,
+                step.Id,
                 currentRowVersion);
 
             // Assert
             AssertRowVersionChange(currentRowVersion, newRowVersion);
-            step = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            step = await GetStepDetailsAsync(journeyIdUnderTest, step.Id);
             Assert.IsFalse(step.IsVoided);
         }
 
@@ -254,20 +335,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task DeleteStep_AsAdmin_ShouldDeleteStep()
         {
             // Arrange
-            var journeyIdUnderTest = JourneyId2UnderTest;
-            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                journeyIdUnderTest,
-                Guid.NewGuid().ToString(),
-                OtherModeIdUnderTest,
-                KnownTestData.ResponsibleCode);
-            var step = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            var (journeyIdUnderTest, step) = await CreateStepAsync(Guid.NewGuid().ToString(), OtherModeIdUnderTest);
             var currentRowVersion = await JourneysControllerTestsHelper.VoidStepAsync(
                 UserType.LibraryAdmin, 
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
-                stepId,
+                step.Id,
                 step.RowVersion);
 
             // Act
@@ -275,11 +348,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
-                stepId,
+                step.Id,
                 currentRowVersion);
 
             // Assert
-            step = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            step = await GetStepDetailsAsync(journeyIdUnderTest, step.Id);
             Assert.IsNull(step);
         }
         
@@ -287,20 +360,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task SwapSteps_AsAdmin_ShouldSwapSteps_AndUpdateRowVersions()
         {
             // Arrange
-            var journeyIdUnderTest = await JourneysControllerTestsHelper.CreateJourneyAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                Guid.NewGuid().ToString());
-            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                journeyIdUnderTest,
-                Guid.NewGuid().ToString(),
-                SupModeAIdUnderTest,
-                KnownTestData.ResponsibleCode);
-            var originalFirstStep = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            var (journeyIdUnderTest, originalFirstStep) = await CreateStepAsync(Guid.NewGuid().ToString(), SupModeAIdUnderTest);
             Assert.IsTrue(originalFirstStep.Mode.ForSupplier);
-            stepId = await JourneysControllerTestsHelper.CreateStepAsync(
+
+            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
@@ -345,15 +408,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 
             Assert.AreEqual(updatedFirstStepRowVersion, newRowVersions.Single(r => r.Id == originalFirstStep.Id).RowVersion);
             Assert.AreEqual(updatedSecondStepRowVersion, newRowVersions.Single(r => r.Id == originalSecondStep.Id).RowVersion);
-        }
-
-        private async Task<StepDetailsDto> GetStepDetailsAsync(int journeyId, int stepId)
-        {
-            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
-                journeyId);
-            return journey.Steps.SingleOrDefault(s => s.Id == stepId);
         }
 
         private async Task AssertStepIsForSupplier(int journeyId, int stepId)

@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.VoidTa
         public void Setup_OkState()
         {
             _tagFunctionValidatorMock = new Mock<ITagFunctionValidator>();
-            _tagFunctionValidatorMock.Setup(r => r.ExistsAsync(_tagFunctionCode, default)).Returns(Task.FromResult(true));
+            _tagFunctionValidatorMock.Setup(r => r.ExistsAsync(_tagFunctionCode, _registerCode, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
@@ -43,7 +43,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.VoidTa
         [TestMethod]
         public void Validate_ShouldFail_WhenTagFunctionNotExists()
         {
-            _tagFunctionValidatorMock.Setup(r => r.ExistsAsync(_tagFunctionCode, default)).Returns(Task.FromResult(false));
+            _tagFunctionValidatorMock.Setup(r => r.ExistsAsync(_tagFunctionCode, _registerCode, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 
@@ -55,7 +55,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.VoidTa
         [TestMethod]
         public void Validate_ShouldFail_WhenTagFunctionIsVoided()
         {
-            _tagFunctionValidatorMock.Setup(r => r.IsVoidedAsync(_tagFunctionCode, default)).Returns(Task.FromResult(true));
+            _tagFunctionValidatorMock.Setup(r => r.IsVoidedAsync(_tagFunctionCode, _registerCode, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 
