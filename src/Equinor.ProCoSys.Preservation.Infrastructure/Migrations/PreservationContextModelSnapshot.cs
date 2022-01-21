@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
@@ -15,16 +17,18 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.11")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate.History", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -72,15 +76,16 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.ToTable("History");
 
-                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','TagDeleted','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed','Rescheduled','UndoPreservationStarted')");
+                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed','Rescheduled','UndoPreservationStarted')");
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -119,8 +124,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Plant")
-                        .HasDatabaseName("IX_Journeys_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc", "Title" });
+                        .HasDatabaseName("IX_Journeys_Plant_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Plant"), new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc", "Title" });
 
                     b.ToTable("Journeys");
                 });
@@ -129,8 +135,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AutoTransferMethod")
                         .IsRequired()
@@ -194,8 +201,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Plant")
-                        .HasDatabaseName("IX_Steps_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc", "SortKey", "Title" });
+                        .HasDatabaseName("IX_Steps_Plant_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Plant"), new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc", "SortKey", "Title" });
 
                     b.HasIndex("ResponsibleId");
 
@@ -208,8 +216,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -251,8 +260,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Plant")
-                        .HasDatabaseName("IX_Modes_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc", "Title" });
+                        .HasDatabaseName("IX_Modes_Plant_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Plant"), new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc", "Title" });
 
                     b.ToTable("Modes");
                 });
@@ -261,8 +271,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
@@ -302,8 +313,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -355,8 +367,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("ClosedAtUtc")
                         .HasColumnType("datetime2");
@@ -419,8 +432,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -470,8 +484,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Comment")
                         .HasMaxLength(2048)
@@ -521,8 +536,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Plant")
-                        .HasDatabaseName("IX_PreservationPeriods_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "Comment", "CreatedAtUtc", "DueTimeUtc", "ModifiedAtUtc", "Status" });
+                        .HasDatabaseName("IX_PreservationPeriods_Plant_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Plant"), new[] { "Comment", "CreatedAtUtc", "DueTimeUtc", "ModifiedAtUtc", "Status" });
 
                     b.HasIndex("PreservationRecordId");
 
@@ -537,8 +553,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<bool>("BulkPreserved")
                         .HasColumnType("bit");
@@ -581,8 +598,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -626,12 +644,14 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Name")
-                        .HasDatabaseName("IX_Projects_Name_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "Plant" });
+                        .HasDatabaseName("IX_Projects_Name_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Name"), new[] { "Plant" });
 
                     b.HasIndex("Plant")
-                        .HasDatabaseName("IX_Projects_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "Name", "IsClosed", "CreatedAtUtc", "ModifiedAtUtc" });
+                        .HasDatabaseName("IX_Projects_Plant_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Plant"), new[] { "Name", "IsClosed", "CreatedAtUtc", "ModifiedAtUtc" });
 
                     b.ToTable("Projects");
                 });
@@ -640,8 +660,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AreaCode")
                         .HasMaxLength(255)
@@ -750,40 +771,47 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Calloff")
-                        .HasDatabaseName("IX_Tags_Calloff_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasDatabaseName("IX_Tags_Calloff_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Calloff"), new[] { "AreaCode", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("CommPkgNo")
-                        .HasDatabaseName("IX_Tags_CommPkgNo_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasDatabaseName("IX_Tags_CommPkgNo_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("CommPkgNo"), new[] { "AreaCode", "Calloff", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("McPkgNo")
-                        .HasDatabaseName("IX_Tags_McPkgNo_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "Description", "CommPkgNo", "CreatedAtUtc", "DisciplineCode", "IsVoided", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasDatabaseName("IX_Tags_McPkgNo_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("McPkgNo"), new[] { "AreaCode", "Calloff", "Description", "CommPkgNo", "CreatedAtUtc", "DisciplineCode", "IsVoided", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Plant")
-                        .HasDatabaseName("IX_Tags_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "TagNo" });
+                        .HasDatabaseName("IX_Tags_Plant_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Plant"), new[] { "TagNo" });
 
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("PurchaseOrderNo")
-                        .HasDatabaseName("IX_Tags_PurchaseOrderNo_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasDatabaseName("IX_Tags_PurchaseOrderNo_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("PurchaseOrderNo"), new[] { "AreaCode", "Calloff", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("StepId");
 
                     b.HasIndex("StorageArea")
-                        .HasDatabaseName("IX_Tags_StorageArea_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasDatabaseName("IX_Tags_StorageArea_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("StorageArea"), new[] { "AreaCode", "Calloff", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("TagNo")
-                        .HasDatabaseName("IX_Tags_TagNo_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagType" });
+                        .HasDatabaseName("IX_Tags_TagNo_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("TagNo"), new[] { "AreaCode", "Calloff", "CommPkgNo", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagType" });
 
                     b.HasIndex("Plant", "TagNo", "ProjectId")
                         .IsUnique();
@@ -799,8 +827,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -874,8 +903,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -943,8 +973,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -999,8 +1030,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Plant")
-                        .HasDatabaseName("IX_RequirementDefinitions_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "IsVoided", "CreatedAtUtc", "ModifiedAtUtc", "SortKey", "Title" });
+                        .HasDatabaseName("IX_RequirementDefinitions_Plant_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Plant"), new[] { "IsVoided", "CreatedAtUtc", "ModifiedAtUtc", "SortKey", "Title" });
 
                     b.HasIndex("RequirementTypeId");
 
@@ -1013,8 +1045,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1074,8 +1107,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1119,8 +1153,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Plant")
-                        .HasDatabaseName("IX_Responsibles_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc", "Description" });
+                        .HasDatabaseName("IX_Responsibles_Plant_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Plant"), new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc", "Description" });
 
                     b.ToTable("Responsibles");
                 });
@@ -1129,8 +1164,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1159,8 +1195,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1217,8 +1254,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -1261,8 +1299,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.HasIndex("Plant")
-                        .HasDatabaseName("IX_TagFunctionRequirements_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc" });
+                        .HasDatabaseName("IX_TagFunctionRequirements_Plant_ASC");
+
+                    SqlServerIndexBuilderExtensions.IncludeProperties(b.HasIndex("Plant"), new[] { "CreatedAtUtc", "IsVoided", "ModifiedAtUtc" });
 
                     b.HasIndex("RequirementDefinitionId");
 
@@ -1275,8 +1314,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AttachmentType")
                         .IsRequired()
@@ -1323,6 +1363,18 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasDiscriminator<string>("AttachmentType").HasValue("Attachment");
                 });
 
+            modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.ActionAttachment", b =>
+                {
+                    b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.Attachment");
+
+                    b.Property<int>("ActionId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("ActionId");
+
+                    b.HasDiscriminator().HasValue("ActionAttachment");
+                });
+
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.AttachmentValue", b =>
                 {
                     b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue");
@@ -1337,6 +1389,13 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("CheckBoxChecked");
                 });
 
+            modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValueAttachment", b =>
+                {
+                    b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.Attachment");
+
+                    b.HasDiscriminator().HasValue("FieldValueAttachment");
+                });
+
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.NumberValue", b =>
                 {
                     b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue");
@@ -1345,25 +1404,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.HasDiscriminator().HasValue("NumberValue");
-                });
-
-            modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.ActionAttachment", b =>
-                {
-                    b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.Attachment");
-
-                    b.Property<int>("ActionId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("ActionId");
-
-                    b.HasDiscriminator().HasValue("ActionAttachment");
-                });
-
-            modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValueAttachment", b =>
-                {
-                    b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.Attachment");
-
-                    b.HasDiscriminator().HasValue("FieldValueAttachment");
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.TagAttachment", b =>
