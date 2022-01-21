@@ -13,7 +13,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 table: "History");
 
             migrationBuilder.AddCheckConstraint(
-                name: "constraint_history_check_valid_event_type",
+                // keep new contraint name created by EF 6.0: https://docs.microsoft.com/en-us/ef/core/what-is-new/ef-core-6.0/breaking-changes#unique-check-constraints
+                name: "CK_History_constraint_history_check_valid_event_type",
                 table: "History",
                 sql: "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed','Rescheduled','UndoPreservationStarted')");
         }
@@ -21,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropCheckConstraint(
-                name: "constraint_history_check_valid_event_type",
+                name: "CK_History_constraint_history_check_valid_event_type",
                 table: "History");
 
             migrationBuilder.AddCheckConstraint(
