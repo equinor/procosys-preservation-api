@@ -4,6 +4,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
     public interface ICertificateEventProcessorService
     {
-        Task ProcessCertificateEvent(string messageJson);
+        Task ProcessCertificateEventAsync(string messageJson);
     }
 }

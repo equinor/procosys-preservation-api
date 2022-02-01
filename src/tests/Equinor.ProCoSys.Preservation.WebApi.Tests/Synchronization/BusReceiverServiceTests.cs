@@ -737,5 +737,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         #endregion
+
+        #region Certificate
+        //TODO: ADD TESTS
+        #endregion
     }
 }

@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     await ProcessTagEvent(messageJson);
                     break;
                 case PcsTopic.Certificate:
-                    await _certificateEventProcessorService.ProcessCertificateEvent(messageJson);
+                    await _certificateEventProcessorService.ProcessCertificateEventAsync(messageJson);
                     break;
             }
 

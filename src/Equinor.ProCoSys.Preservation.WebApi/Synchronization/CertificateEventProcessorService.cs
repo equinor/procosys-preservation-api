@@ -55,9 +55,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _preservationApiOid = authenticatorOptions.Value.PreservationApiObjectId;
         }
 
-        public async Task ProcessCertificateEvent(string messageJson)
+        //TODO: ADD TESTS FOR THIS CLASS
+
+        public async Task ProcessCertificateEventAsync(string messageJson)
         {
-            var certificateEvent = JsonSerializer.Deserialize<Equinor.ProCoSys.Preservation.WebApi.Synchronization.CertificateTopic>(messageJson);
+            var certificateEvent = JsonSerializer.Deserialize<CertificateTopic>(messageJson);
 
             if (certificateEvent != null && (
                 certificateEvent.Plant.IsEmpty() ||
@@ -69,23 +71,21 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             TrackCertificateEvent(certificateEvent);
 
-            await HandleAutoTransferIfRelevant(certificateEvent);
+            await HandleAutoTransferIfRelevantAsync(certificateEvent);
         }
 
-        private async Task HandleAutoTransferIfRelevant(CertificateTopic certificateEvent)
+        private async Task HandleAutoTransferIfRelevantAsync(CertificateTopic certificateEvent)
         {
-
             if (certificateEvent.CertificateType == "RFOC" || certificateEvent.CertificateType == "RFCC")
             {
-                await SetUserContext(certificateEvent.Plant);
+                await SetUserContextAsync(certificateEvent.Plant);
                 var result = await _mediator.Send(new AutoTransferCommand(certificateEvent.ProjectName, certificateEvent.CertificateNo, certificateEvent.CertificateType.ToString()));
 
                 LogAutoTransferResult(certificateEvent, result);
-               
             }
         }
 
-        private async Task SetUserContext(string plant)
+        private async Task SetUserContextAsync(string plant)
         {
             _authenticator.AuthenticationType = AuthenticationType.AsApplication;
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
@@ -108,7 +108,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {"Type", "Autotransfer tags"},
                 {"ProjectName", certificateEvent.ProjectName},
                 {"CertificateNo", certificateEvent.CertificateNo},
-                {"CertificateType", certificateEvent.CertificateType.ToString()}
+                {"CertificateType", certificateEvent.CertificateType}
             };
 
             _telemetryClient.TrackEvent("Synchronization Status", telemetryDictionary);
@@ -120,7 +120,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {
                     {"Event", TagTopic.TopicName},
                     {nameof(certificateTopic.CertificateNo), certificateTopic.CertificateNo},
-                    {nameof(certificateTopic.CertificateType), certificateTopic.CertificateType.ToString()},
+                    {nameof(certificateTopic.CertificateType), certificateTopic.CertificateType},
                     {nameof(certificateTopic.CertificateStatus), certificateTopic.CertificateStatus.ToString()},
                     {nameof(certificateTopic.Plant), NormalizePlant(certificateTopic.Plant)},
                     {nameof(certificateTopic.ProjectName), NormalizeProjectName(certificateTopic.ProjectName)}
