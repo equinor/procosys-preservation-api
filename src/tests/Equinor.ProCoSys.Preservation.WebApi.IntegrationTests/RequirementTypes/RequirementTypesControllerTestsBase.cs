@@ -6,6 +6,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
 {
     public class RequirementTypesControllerTestsBase : TestBase
     {
+        protected int InitialReqTypesCount;
         protected int ReqTypeAIdUnderTest;
         protected int ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA;
         protected int ReqDefIdUnderTest_ForReqDefWithCbField_InReqTypeA;
@@ -16,7 +17,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
         public async Task TestInitialize()
         {
             var requirementTypes = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            
+            InitialReqTypesCount = requirementTypes.Count;
+
             var reqTypeA = requirementTypes.Single(j => j.Code == KnownTestData.ReqTypeA);
             ReqTypeAIdUnderTest = reqTypeA.Id;
             ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA
@@ -26,6 +28,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             
             var reqTypeB = requirementTypes.Single(j => j.Code == KnownTestData.ReqTypeB);
             ReqTypeBIdUnderTest = reqTypeB.Id;
-            ReqDefInReqTypeBIdUnderTest = reqTypeB.RequirementDefinitions.First().Id;        }
+            ReqDefInReqTypeBIdUnderTest = reqTypeB.RequirementDefinitions.First().Id;
+        }
     }
 }

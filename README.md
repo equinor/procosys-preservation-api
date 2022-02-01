@@ -14,7 +14,7 @@ Typical settings that should be moved to secrets.json are:
 ### Environment
 Set the runtime environment by setting the environment variable ASPNETCORE_ENVIRONMENT on your machine to one of the following:
 * Development
-* Staging
+* Test
 * Production
 
 If this variable is not set, it will default to Production.

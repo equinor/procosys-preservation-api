@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys;
-using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
@@ -15,8 +16,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         protected readonly string KnownAreaCode = "A";
         protected readonly string KnownDisciplineCode = "D";
 
-        protected int InitialTagsCount;
-        
         protected int TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
         protected int TagIdUnderTest_ForStandardTagWithInfoRequirement_Started;
         protected int TagIdUnderTest_ForStandardTagWithCbRequirement_Started;
@@ -39,9 +38,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             Assert.IsNotNull(result);
 
-            InitialTagsCount = result.MaxAvailable;
-            Assert.IsTrue(InitialTagsCount > 0, "Bad test setup: Didn't find any tags at startup");
-            Assert.AreEqual(InitialTagsCount, result.Tags.Count);
+            var initialTagsCount = result.MaxAvailable;
+            Assert.IsTrue(initialTagsCount > 0, "Bad test setup: Didn't find any tags at startup");
+            Assert.AreEqual(initialTagsCount, result.Tags.Count);
 
             var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
             TwoStepJourneyWithTags = journeys.Single(j => j.Title == KnownTestData.TwoStepJourneyWithTags);
@@ -79,12 +78,69 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 }));
         }
 
-        protected async Task<int> CreateRequirementDefinitionAsync(UserType userType, string plant)
+
+        protected async Task<TagDetailsDto> CreateAndGetAreaTagAsync(
+            AreaTagType areaTagType,
+            int stepId,
+            string purchaseOrderCalloffCode,
+            bool startPreservation)
         {
-            var reqTypes = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(userType, plant);
-            var newReqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                userType, plant, reqTypes.First().Id, Guid.NewGuid().ToString());
-            return newReqDefId;
+            var tagIdUnderTest = await CreateAreaTagAsync(
+                areaTagType,
+                stepId,
+                purchaseOrderCalloffCode,
+                startPreservation);
+            
+            return await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
+        }
+
+        protected async Task<int> CreateAreaTagAsync(
+            AreaTagType areaTagType,
+            int stepId,
+            string purchaseOrderCalloffCode,
+            bool startPreservation)
+        {
+            var newReqDefId = await CreateRequirementDefinitionAsync(TestFactory.PlantWithAccess);
+
+            var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                areaTagType,
+                KnownDisciplineCode,
+                KnownAreaCode,
+                $"Title_{Guid.NewGuid()}",
+                new List<TagRequirementDto>
+                {
+                    new TagRequirementDto
+                    {
+                        IntervalWeeks = 4,
+                        RequirementDefinitionId = newReqDefId
+                    }
+                },
+                stepId,
+                $"Desc_{Guid.NewGuid()}",
+                null,
+                null,
+                purchaseOrderCalloffCode);
+
+            if (startPreservation)
+            {
+                await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> { newTagId });
+            }
+            return newTagId;
+        }
+
+        public async Task<GetTagRequirementInfo> GetTagRequirementInfoAsync(UserType userType, string plant, int tagId)
+        {
+            var requirementDetailDtos = await TagsControllerTestsHelper.GetTagRequirementsAsync(userType, plant, tagId);
+            var requirementDetailDto = requirementDetailDtos.First();
+            Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup: Preservation not started");
+            Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup: Expect to find 1 requirement on tag under test");
+            return new GetTagRequirementInfo(
+                requirementDetailDto.Id,
+                requirementDetailDto.NextDueTimeUtc.Value,
+                requirementDetailDto.Fields);
         }
     }
 }

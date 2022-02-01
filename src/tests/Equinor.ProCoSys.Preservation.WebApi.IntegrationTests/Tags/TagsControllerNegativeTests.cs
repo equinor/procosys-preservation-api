@@ -355,6 +355,27 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 expectedStatusCode:HttpStatusCode.BadRequest,
                 expectedMessageOnBadRequest:"Tag must be an area tag to update description!");
         }
+
+        [TestMethod]
+        public async Task UpdateTagRequirements_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange
+            var stepId = TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id;
+            var tag = await CreateAndGetAreaTagAsync(
+                AreaTagType.PreArea,
+                stepId,
+                null,
+                false);
+
+            // Act
+            await TagsControllerTestsHelper.UpdateTagRequirementsAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                tag.Id,
+                Guid.NewGuid().ToString(),
+                TestFactory.WrongButValidRowVersion,
+                expectedStatusCode: HttpStatusCode.Conflict);
+        }
         #endregion
 
         #region UpdateTagStepAndRequirements
@@ -491,6 +512,34 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 5555,
                 expectedStatusCode: HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagStep_AsPreserver_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            var supplierStepId = TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided && s.Mode.ForSupplier).Id;
+            var tag = await CreateAndGetAreaTagAsync(
+                AreaTagType.PreArea,
+                supplierStepId,
+                null,
+                false);
+
+            var otherStepId = TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided && !s.Mode.ForSupplier).Id;
+
+            // Act
+            var idAndRowVersions = await TagsControllerTestsHelper.UpdateTagStepAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tag.Id,
+                        RowVersion = TestFactory.WrongButValidRowVersion
+                    }
+                },
+                otherStepId,
+                HttpStatusCode.Conflict);
+        }
         #endregion
 
         #region UpdateTag
@@ -544,6 +593,95 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTag_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            var stepId = TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id;
+            var tag = await CreateAndGetAreaTagAsync(
+                AreaTagType.PreArea,
+                stepId,
+                null,
+                false);
+
+            await TagsControllerTestsHelper.UpdateTagAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                tag.Id,
+                Guid.NewGuid().ToString(),
+                null,
+                TestFactory.WrongButValidRowVersion,
+                HttpStatusCode.Conflict);
+        }
+        #endregion
+
+        #region Delete
+        [TestMethod]
+        public async Task Delete_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.Anonymous,
+                TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task Delete_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.Hacker,
+                TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Delete_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.LibraryAdmin,
+                TestFactory.UnknownPlant,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Delete_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.Hacker,
+                TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Delete_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Delete_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange
+            var tag = await CreateAndGetAreaTagAsync(
+                AreaTagType.PreArea,
+                TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id,
+                null,
+                false);
+
+            await TagsControllerTestsHelper.VoidTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tag.Id, tag.RowVersion);
+
+            // Act
+            await TagsControllerTestsHelper.DeleteTagAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                tag.Id,
+                TestFactory.WrongButValidRowVersion,
+                HttpStatusCode.Conflict);
+        }
         #endregion
 
         #region GetAllTagAttachments
@@ -658,8 +796,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Tag and/or attachment doesn't exist!");
+
+        [TestMethod]
+        public async Task DeleteTagAttachment_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
+            var attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var tagAttachmentId = attachmentDtos.First().Id;
+            await TagsControllerTestsHelper.DeleteTagAttachmentAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest,
+                tagAttachmentId,
+                TestFactory.WrongButValidRowVersion,
+                HttpStatusCode.Conflict);
+        }
         #endregion
-        
+
         #region GetAllActionAttachments
         [TestMethod]
         public async Task GetAllActionAttachments_AsAnonymous_ShouldReturnUnauthorized()
@@ -805,8 +960,35 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 HttpStatusCode.BadRequest,
                 "Tag, action and/or attachment doesn't exist!");
 
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsPreserver_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
+            var actionsDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var actionId = actionsDtos.First().Id;
+            var actionAttachmentDtos = await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest,
+                actionId);
+            var actionAttachmentId = actionAttachmentDtos.First().Id;
+            
+            // Act
+            await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest,
+                actionId,
+                actionAttachmentId,
+                TestFactory.WrongButValidRowVersion,
+                HttpStatusCode.Conflict);
+        }
         #endregion
-        
+
         #region GetAllActions
         [TestMethod]
         public async Task GetAllActions_AsAnonymous_ShouldReturnUnauthorized()
@@ -860,8 +1042,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 8888,
-                null,
-                null,
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Unauthorized);
 
@@ -871,8 +1053,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 8888,
-                null,
-                null,
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -882,8 +1064,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 8888,
-                null,
-                null,
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
@@ -894,8 +1076,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 UserType.Hacker, TestFactory.PlantWithAccess,
                 9999, 
                 8888,
-                null,
-                null,
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -905,8 +1087,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess, 
                 9999, 
                 8888,
-                null,
-                null,
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -916,8 +1098,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 9999, 
                 _tagActionId2,
-                "TestTitle",
-                "TestDescription",
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Tag and/or action doesn't exist!");
@@ -926,15 +1108,38 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
             => await TagsControllerTestsHelper.UpdateActionAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted,
                 _tagActionId1,   // known actionId, but under other Tag
-                "TestTitle",
-                "TestDescription",
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Tag and/or action doesn't exist!");
+
+        [TestMethod]
+        public async Task UpdateAction_AsPreserver_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
+            var actionsDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var actionId = actionsDtos.First().Id;
+            
+            // Act
+            await TagsControllerTestsHelper.UpdateActionAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest,
+                actionId,
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
+                TestFactory.WrongButValidRowVersion,
+                HttpStatusCode.Conflict);
+        }
         #endregion
-        
+
         #region GetAction
         [TestMethod]
         public async Task GetAction_AsAnonymous_ShouldReturnUnauthorized()
@@ -1056,13 +1261,34 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task CloseAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
             => await TagsControllerTestsHelper.CloseActionAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted,
                 _tagActionId1,   // known actionId, but under other Tag
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Tag and/or action doesn't exist!");
+
+        [TestMethod]
+        public async Task CloseAction_AsPreserver_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
+            var actionsDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var actionId = actionsDtos.First(a => !a.IsClosed).Id;
+            
+            // Act
+            await TagsControllerTestsHelper.CloseActionAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest,
+                actionId,
+                TestFactory.WrongButValidRowVersion,
+                HttpStatusCode.Conflict);
+        }
         #endregion
-        
+
         #region UploadActionAttachment
         [TestMethod]
         public async Task UploadActionAttachment_AsAnonymous_ShouldReturnUnauthorized()
@@ -1125,13 +1351,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UploadActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
             => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted,
                 _tagActionId1,   // known actionId, but under other Tag
                 FileToBeUploaded,
                 HttpStatusCode.BadRequest,
                 "Tag and/or action doesn't exist!");
         #endregion
-        
+
         #region CreateAction
         [TestMethod]
         public async Task CreateAction_AsAnonymous_ShouldReturnUnauthorized()
@@ -1185,8 +1411,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             => await TagsControllerTestsHelper.CreateActionAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 9999, 
-                "TestTitle",
-                "TestDescription",
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString(),
                 HttpStatusCode.BadRequest,
                 "Tag doesn't exist!");
         #endregion
@@ -1294,7 +1520,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
@@ -1312,7 +1538,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
@@ -1330,7 +1556,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
@@ -1393,7 +1619,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(
+            var requirement = await GetTagRequirementInfoAsync(
                 UserType.Preserver,
                 TestFactory.PlantWithAccess,
                 tagIdUnderTest);
@@ -1481,7 +1707,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.RecordCbValueAsync(
@@ -1500,7 +1726,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.RecordCbValueAsync(
@@ -1519,7 +1745,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
-            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var requirement = await GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.RecordCbValueAsync(
@@ -1591,7 +1817,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             
             // Act
             await TagsControllerTestsHelper.TransferAsync(
-                UserType.Planner, TestFactory.PlantWithAccess,
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
                 new List<IdAndRowVersion>
                 {
                     new IdAndRowVersion
@@ -1604,6 +1831,31 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 "Not a valid row version!");
         }
 
+
+        [TestMethod]
+        public async Task Transfer_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange 
+            var tagResultDto = await TagsControllerTestsHelper.GetPageOfTagsAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToTransfer = tagResultDto.Tags.FirstOrDefault(t => t.ReadyToBeTransferred);
+            Assert.IsNotNull(tagToTransfer, "Bad test setup: Didn't find tag ready to be transferred");
+
+            // Act
+            await TagsControllerTestsHelper.TransferAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagToTransfer.Id,
+                        RowVersion = TestFactory.WrongButValidRowVersion
+                    }
+                },
+                HttpStatusCode.Conflict);
+        }
         #endregion
 
         #region UndoStartPreservation
@@ -1675,6 +1927,31 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 "Not a valid row version!");
         }
 
+        [TestMethod]
+        public async Task UndoStartPreservation_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange 
+            var tagResultDto = await TagsControllerTestsHelper.GetPageOfTagsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToUndoStartPreservation = tagResultDto.Tags.FirstOrDefault(t => t.ReadyToUndoStarted);
+            Assert.IsNotNull(tagToUndoStartPreservation, "Bad test setup: Didn't find tag ready to undo start");
+
+            // Act
+            await TagsControllerTestsHelper.UndoStartPreservationAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagToUndoStartPreservation.Id,
+                        RowVersion = TestFactory.WrongButValidRowVersion
+                    }
+                },
+                HttpStatusCode.Conflict);
+        }
+
         #endregion
 
         #region CompletePreservation
@@ -1725,45 +2002,21 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task CompletePreservation_AsPlanner_ShouldReturnBadRequest_WhenIllegalRowVersion()
         {
             // Arrange 
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var stepId = TwoStepJourneyWithTags.Steps.Last(s => !s.IsVoided).Id;
-
-            var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
-                UserType.Planner, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
+            var newTag = await CreateAndGetAreaTagAsync(
                 AreaTagType.PreArea,
-                KnownDisciplineCode,
-                KnownAreaCode,
-                Guid.NewGuid().ToString(),
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                },
-                stepId,
-                "Desc",
+                TwoStepJourneyWithTags.Steps.Last(s => !s.IsVoided).Id,
                 null,
-                null,
-                null);
-            await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> {newTagId});
-
-            var tagsResult = await TagsControllerTestsHelper.GetPageOfTagsAsync(
-                UserType.Planner, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess);
-            var tagToCompletedPreservation = tagsResult.Tags.Single(t => t.Id == newTagId);
-            Assert.IsTrue(tagToCompletedPreservation.ReadyToBeCompleted, "Bad test setup: Didn't find tag ready to be completed");
+                true);
             
             // Act
             await TagsControllerTestsHelper.CompletePreservationAsync(
-                UserType.Planner, TestFactory.PlantWithAccess,
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
                 new List<IdAndRowVersion>
                 {
                     new IdAndRowVersion
                     {
-                        Id = tagToCompletedPreservation.Id,
+                        Id = newTag.Id,
                         RowVersion = "invalidrowversion"
                     }
                 },
@@ -1771,8 +2024,33 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 "Not a valid row version!");
         }
 
+        [TestMethod]
+        public async Task CompletePreservation_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange 
+            var newTag = await CreateAndGetAreaTagAsync(
+                AreaTagType.PreArea,
+                TwoStepJourneyWithTags.Steps.Last(s => !s.IsVoided).Id,
+                null,
+                true);
+
+            // Act
+            await TagsControllerTestsHelper.CompletePreservationAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = newTag.Id,
+                        RowVersion = TestFactory.WrongButValidRowVersion
+                    }
+                },
+                HttpStatusCode.Conflict);
+        }
+
         #endregion
-        
+
         #region StartPreservation
         [TestMethod]
         public async Task StartPreservation_AsAnonymous_ShouldReturnUnauthorized()
@@ -2104,8 +2382,27 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task VoidTag_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange
+            var newTagId = await CreateAreaTagAsync(
+                AreaTagType.PreArea,
+                TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id,
+                null,
+                true);
+
+            // Act
+            await TagsControllerTestsHelper.VoidTagAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                newTagId,
+                TestFactory.WrongButValidRowVersion,
+                HttpStatusCode.Conflict);
+        }
         #endregion
-        
+
         #region UnvoidTag
         [TestMethod]
         public async Task UnvoidTag_AsAnonymous_ShouldReturnUnauthorized()
@@ -2155,6 +2452,128 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UnvoidTag_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange
+            var tag = await CreateAndGetAreaTagAsync(
+                AreaTagType.PreArea,
+                TwoStepJourneyWithTags.Steps.First().Id,
+                null,
+                true);
+            await TagsControllerTestsHelper.VoidTagAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                tag.Id,
+                tag.RowVersion);
+
+            // Act
+            await TagsControllerTestsHelper.UnvoidTagAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                tag.Id,
+                TestFactory.WrongButValidRowVersion,
+                HttpStatusCode.Conflict);
+        }
+        #endregion
+
+        #region Reschedule
+        [TestMethod]
+        public async Task Reschedule_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.RescheduleAsync(
+                UserType.Anonymous, 
+                TestFactory.UnknownPlant,
+                null,
+                1,
+                Domain.Events.RescheduledDirection.Later,
+                Guid.NewGuid().ToString(),
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task Reschedule_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.RescheduleAsync(
+                UserType.Hacker, 
+                TestFactory.UnknownPlant,
+                null,
+                1,
+                Domain.Events.RescheduledDirection.Later,
+                Guid.NewGuid().ToString(),
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Reschedule_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.RescheduleAsync(
+                UserType.LibraryAdmin, 
+                TestFactory.UnknownPlant,
+                null,
+                1,
+                Domain.Events.RescheduledDirection.Later,
+                Guid.NewGuid().ToString(),
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Reschedule_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.RescheduleAsync(
+                UserType.Hacker,
+                TestFactory.PlantWithAccess,
+                null,
+                1,
+                Domain.Events.RescheduledDirection.Later,
+                Guid.NewGuid().ToString(),
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Reschedule_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.RescheduleAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                null,
+                1,
+                Domain.Events.RescheduledDirection.Later,
+                Guid.NewGuid().ToString(),
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Reschedule_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.RescheduleAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                null,
+                1,
+                Domain.Events.RescheduledDirection.Later,
+                Guid.NewGuid().ToString(),
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Reschedule_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange 
+            var tag = await CreateAndGetAreaTagAsync(
+                AreaTagType.PreArea,
+                TwoStepJourneyWithTags.Steps.First().Id,
+                null,
+                true);
+
+            // Act
+            await TagsControllerTestsHelper.RescheduleAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tag.Id,
+                        RowVersion = TestFactory.WrongButValidRowVersion
+                    }
+                },
+                52,
+                Domain.Events.RescheduledDirection.Later,
+                Guid.NewGuid().ToString(),
+                HttpStatusCode.Conflict);
+        }
+
         #endregion
     }
 }

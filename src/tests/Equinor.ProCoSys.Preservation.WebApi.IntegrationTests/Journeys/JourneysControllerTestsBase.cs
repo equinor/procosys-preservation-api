@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -37,6 +38,35 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 {
                     Code = KnownTestData.ResponsibleCode, Description = KnownTestData.ResponsibleDescription
                 }));
+        }
+
+        internal async Task<StepDetailsDto> GetStepDetailsAsync(int journeyId, int stepId)
+        {
+            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            return journey.Steps.SingleOrDefault(s => s.Id == stepId);
+        }
+
+        internal async Task<(int, StepDetailsDto)> CreateStepAsync(string stepTitle, int modeId)
+        {
+            var journeyIdUnderTest = await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
+
+            // Act
+            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyIdUnderTest,
+                stepTitle,
+                modeId,
+                KnownTestData.ResponsibleCode);
+
+            var step = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            return (journeyIdUnderTest, step);
         }
     }
 }

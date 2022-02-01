@@ -20,8 +20,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
         TagUnvoided,
         [Description("Tag created")]
         TagCreated,
-        [Description("Tag deleted")]
-        TagDeleted,
         [Description("Preservation started")]
         PreservationStarted,
         [Description("Preservation completed")]
@@ -42,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
         ActionClosed,
         [Description("Rescheduled")]
         Rescheduled,
-        [Description("Undo preservation started")]
+        [Description("Undo \"Preservation started\"")]
         UndoPreservationStarted
     }
 }
