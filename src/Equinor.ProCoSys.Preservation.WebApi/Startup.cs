@@ -175,7 +175,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     .WithSubscription(PcsTopic.Project, "preservation_project")
                     .WithSubscription(PcsTopic.CommPkg, "preservation_commpkg")
                     .WithSubscription(PcsTopic.McPkg, "preservation_mcpkg")
-                    .WithSubscription(PcsTopic.Responsible, "preservation_responsible"));
+                    .WithSubscription(PcsTopic.Responsible, "preservation_responsible")
+                    .WithSubscription(PcsTopic.Certificate, "preservation_certificate"));
             }
             services.AddHostedService<VerifyPreservationApiClientExists>();
         }

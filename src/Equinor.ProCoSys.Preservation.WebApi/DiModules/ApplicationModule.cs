@@ -42,17 +42,17 @@ using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Caches;
+using Equinor.ProCoSys.Preservation.WebApi.Excel;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
+using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
-using Equinor.ProCoSys.Preservation.WebApi.Excel;
-using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
@@ -66,7 +66,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.Configure<TagOptions>(configuration.GetSection("TagOptions"));
             services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
-            services.Configure<SynchronizationOptions>(configuration.GetSection("Synchronization"));
             services.Configure<AuthenticatorOptions>(configuration.GetSection("Authenticator"));
 
             services.AddDbContext<PreservationContext>(options =>
@@ -77,9 +76,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             services.AddHttpContextAccessor();
             services.AddHttpClient();
-
-            // Hosted services
-            services.AddHostedService<TimedSynchronization>();
 
             // Transient - Created each time it is requested from the service container
 
@@ -106,7 +102,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
             services.AddScoped<IReadOnlyContext, PreservationContext>();
-            services.AddScoped<ISynchronizationService, SynchronizationService>();
 
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();
@@ -135,6 +130,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<ICertificateApiService, MainApiCertificateService>();
             services.AddScoped<IBlobStorage, AzureBlobService>();
             services.AddScoped<IBusReceiverService, BusReceiverService>();
+            services.AddScoped<ICertificateEventProcessorService, CertificateEventProcessorService>();
 
             services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
             services.AddScoped<ITagValidator, TagValidator>();

@@ -13,11 +13,11 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Project;
+using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
-using Equinor.ProCoSys.Preservation.MainApi.Project;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
@@ -34,6 +34,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IClaimsProvider _claimsProvider;
         private readonly IAuthenticator _authenticator;
         private readonly IProjectApiService _projectApiService;
+        private readonly ICertificateEventProcessorService _certificateEventProcessorService;
         private Guid _preservationApiOid;
         private const string PreservationBusReceiverTelemetryEvent = "Preservation Bus Receiver";
 
@@ -47,7 +48,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IClaimsProvider claimsProvider,
             IAuthenticator authenticator,
             IOptionsSnapshot<AuthenticatorOptions> options,
-            IProjectApiService projectApiService)
+            IProjectApiService projectApiService,
+            ICertificateEventProcessorService certificateEventProcessorService)
         {
             _plantSetter = plantSetter;
             _unitOfWork = unitOfWork;
@@ -59,6 +61,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _claimsProvider = claimsProvider;
             _authenticator = authenticator;
             _projectApiService = projectApiService;
+            _certificateEventProcessorService = certificateEventProcessorService;
+
             _preservationApiOid = options.Value.PreservationApiObjectId;
         }
 
@@ -91,10 +95,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 case PcsTopic.Tag:
                     await ProcessTagEvent(messageJson);
                     break;
+                case PcsTopic.Certificate:
+                    await _certificateEventProcessorService.ProcessCertificateEventAsync(messageJson);
+                    break;
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
+
 
         private async Task ProcessTagEvent(string messageJson)
         {
@@ -127,7 +135,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             if (tagToUpdate != null)
             {
-                if (tagToUpdate.TagNo!=tagEvent.TagNo)
+                if (tagToUpdate.TagNo != tagEvent.TagNo)
                 {
                     tagToUpdate.Rename(tagEvent.TagNo);
                 }
@@ -344,7 +352,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {
                     {"Event", ResponsibleTopic.TopicName},
                     {nameof(responsibleEvent.Code), responsibleEvent.Code},
-                    {nameof(responsibleEvent.Plant), responsibleEvent.Plant[4..]},
+                    {nameof(responsibleEvent.Plant), responsibleEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
                 });
 
         private void TrackCommPkgEvent(CommPkgTopic commPkgEvent) =>
@@ -353,9 +361,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {
                     {"Event", IpoTopic.TopicName},
                     {nameof(commPkgEvent.CommPkgNo), commPkgEvent.CommPkgNo},
-                    {nameof(commPkgEvent.Plant), commPkgEvent.Plant[4..]},
-                    {nameof(commPkgEvent.ProjectName), commPkgEvent.ProjectName.Replace('$', '_')},
-                    {nameof(commPkgEvent.ProjectNameOld), commPkgEvent.ProjectNameOld.Replace('$', '_')}
+                    {nameof(commPkgEvent.Plant), commPkgEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
+                    {nameof(commPkgEvent.ProjectName), commPkgEvent.ProjectName.Replace('$', '_')}, //TODO: DRY, replace with NormalizeProjectName
+                    {nameof(commPkgEvent.ProjectNameOld), commPkgEvent.ProjectNameOld.Replace('$', '_')} //TODO: DRY, replace with NormalizeProjectName
                 });
 
         private void TrackTagFunctionEvent(TagFunctionTopic tagFunctionEvent) =>
@@ -366,7 +374,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     {nameof(tagFunctionEvent.Code), tagFunctionEvent.Code},
                     {nameof(tagFunctionEvent.RegisterCode), tagFunctionEvent.RegisterCode},
                     {nameof(tagFunctionEvent.IsVoided), tagFunctionEvent.IsVoided.ToString()},
-                    {nameof(tagFunctionEvent.Plant), tagFunctionEvent.Plant[4..]},
+                    {nameof(tagFunctionEvent.Plant), tagFunctionEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
                 });
 
         private void TrackProjectEvent(ProjectTopic projectEvent) =>
@@ -376,7 +384,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     {"Event", ProjectTopic.TopicName},
                     {nameof(projectEvent.ProjectName), projectEvent.ProjectName},
                     {nameof(projectEvent.IsClosed), projectEvent.IsClosed.ToString()},
-                    {nameof(projectEvent.Plant), projectEvent.Plant[4..]},
+                    {nameof(projectEvent.Plant), projectEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
                 });
 
         private void TrackMcPkgEvent(McPkgTopic mcPkgEvent) =>
@@ -385,8 +393,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {
                     {"Event", McPkgTopic.TopicName},
                     {nameof(mcPkgEvent.McPkgNo), mcPkgEvent.McPkgNo},
-                    {nameof(mcPkgEvent.Plant), mcPkgEvent.Plant[4..]},
-                    {nameof(mcPkgEvent.ProjectName), mcPkgEvent.ProjectName.Replace('$', '_')}
+                    {nameof(mcPkgEvent.Plant), mcPkgEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
+                    {nameof(mcPkgEvent.ProjectName), mcPkgEvent.ProjectName.Replace('$', '_')} //TODO: DRY, replace with NormalizeProjectName
                 });
 
         private void TrackTagEvent(TagTopic tagEvent) =>
@@ -395,8 +403,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {
                     {"Event", TagTopic.TopicName},
                     {nameof(tagEvent.TagNo), tagEvent.TagNo},
-                    {nameof(tagEvent.Plant), tagEvent.Plant[4..]},
-                    {nameof(tagEvent.ProjectName), tagEvent.ProjectName.Replace('$', '_')}
+                    {nameof(tagEvent.Plant), tagEvent.Plant[4..]},  //TODO: DRY, replace with NormalizePlant
+                    {nameof(tagEvent.ProjectName), tagEvent.ProjectName.Replace('$', '_')} //TODO: DRY, replace with NormalizeProjectName
                 });
     }
 }

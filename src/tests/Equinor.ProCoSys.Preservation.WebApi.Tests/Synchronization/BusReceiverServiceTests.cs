@@ -37,6 +37,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private Project _project1, _project2;
         private Mock<ITagFunctionRepository> _tagFunctionRepository;
         private TagFunction _tagFunction;
+        private Mock<ICertificateEventProcessorService> _certificationEventProcessorService;
 
         private const string Plant = "PCS$HEIMDAL";
         private const string Code = "Resp_Code";
@@ -71,9 +72,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _plantSetter = new Mock<IPlantSetter>();
             _unitOfWork = new Mock<IUnitOfWork>();
             _telemetryClient = new Mock<ITelemetryClient>();
+          
             _responsibleRepository = new Mock<IResponsibleRepository>();
             _projectRepository = new Mock<IProjectRepository>();
             _tagFunctionRepository = new Mock<ITagFunctionRepository>();
+            _certificationEventProcessorService = new Mock<ICertificateEventProcessorService>();
 
             // Assert tags in preservation
             var rdMock = new Mock<RequirementDefinition>();
@@ -140,7 +143,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           claimsProvider.Object,
                                           new Mock<IAuthenticator>().Object,
                                           options.Object,
-                                          projectApiService.Object);
+                                          projectApiService.Object,
+                                          _certificationEventProcessorService.Object);
         }
         #endregion
 
@@ -732,6 +736,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.IsTrue(_newProjectCreated.Tags.Contains(_tag1));
         }
 
+        #endregion
+
+        #region Certificate
+        //TODO: ADD TESTS
         #endregion
     }
 }
