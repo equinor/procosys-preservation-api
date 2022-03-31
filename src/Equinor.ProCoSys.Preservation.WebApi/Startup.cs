@@ -177,10 +177,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     .WithSubscription(PcsTopic.McPkg, "preservation_mcpkg")
                     .WithSubscription(PcsTopic.Responsible, "preservation_responsible")
                     .WithSubscription(PcsTopic.Certificate, "preservation_certificate")
-                    //WithUseDeadLetterQueue SHOULD BE FALSE IN NORMAL OPERATION.
+                    //THIS METHOD SHOULD BE FALSE IN NORMAL OPERATION.
                     //ONLY SET TO TRUE WHEN A LARGE NUMBER OF MESSAGES HAVE FAILED AND ARE COPIED TO DEAD LETTER.
                     //WHEN SET TO TRUE, MESSAGES ARE READ FROM DEAD LETTER QUEUE INSTEAD OF NORMAL QUEUE
-                    .WithUseDeadLetterQueue(Configuration.GetValue<bool>("ServiceBus:ReadFromDeadLetterQueue"))); 
+                    .WithReadFromDeadLetterQueue(Configuration.GetValue<bool>("ServiceBus:ReadFromDeadLetterQueue"))); 
                 
             }
             services.AddHostedService<VerifyPreservationApiClientExists>();
