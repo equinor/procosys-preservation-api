@@ -165,7 +165,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 // Url will be validated during startup of service bus intergration and give a
                 // Uri exception if invalid.
                 var leaderElectorUrl = "http://" + (Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE") ?? Configuration["ServiceBus:LeaderElectorUrl"]) + ":3003";
-
+               
                 services.AddPcsServiceBusIntegration(options => options
                     .UseBusConnection(Configuration.GetConnectionString("ServiceBus"))
                     .WithLeaderElector(leaderElectorUrl)
@@ -176,7 +176,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     .WithSubscription(PcsTopic.CommPkg, "preservation_commpkg")
                     .WithSubscription(PcsTopic.McPkg, "preservation_mcpkg")
                     .WithSubscription(PcsTopic.Responsible, "preservation_responsible")
-                    .WithSubscription(PcsTopic.Certificate, "preservation_certificate"));
+                    .WithSubscription(PcsTopic.Certificate, "preservation_certificate")
+                    //WithUseDeadLetterQueue SHOULD BE FALSE IN NORMAL OPERATION.
+                    //ONLY SET TO TRUE WHEN A LARGE NUMBER OF MESSAGES HAVE FAILED AND ARE COPIED TO DEAD LETTER.
+                    //WHEN SET TO TRUE, MESSAGES ARE READ FROM DEAD LETTER QUEUE INSTEAD OF NORMAL QUEUE
+                    .WithUseDeadLetterQueue(Configuration.GetValue<bool>("ServiceBus:ReadFromDeadLetterQueue"))); 
+                
             }
             services.AddHostedService<VerifyPreservationApiClientExists>();
         }
