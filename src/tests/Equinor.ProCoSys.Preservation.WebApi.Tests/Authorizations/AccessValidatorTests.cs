@@ -1497,34 +1497,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             Assert.IsTrue(result);
         }
         #endregion
-
-        #region AutoTransferCommand
-        [TestMethod]
-        public async Task ValidateAsync_OnAutoTransferCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
-        {
-            // Arrange
-            var command = new AutoTransferCommand(ProjectWithAccess, null, null);
-            
-            // act
-            var result = await _dut.ValidateAsync(command);
-
-            // Assert
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        public async Task ValidateAsync_OnAutoTransferCommand_ShouldReturnFalse_WhenNoAccessToProject()
-        {
-            // Arrange
-            var command = new AutoTransferCommand(ProjectWithoutAccess, null, null);
-            
-            // act
-            var result = await _dut.ValidateAsync(command);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-        #endregion
         
         #endregion
 
