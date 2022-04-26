@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.PcsServiceBus.Topics;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
@@ -63,7 +62,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             if (certificateEvent != null && (
                 certificateEvent.Plant.IsEmpty() ||
-                certificateEvent.ProjectName.IsEmpty() ||
                 certificateEvent.CertificateNo.IsEmpty()))
             {
                 throw new ArgumentNullException($"Deserialized JSON is not a valid CertificateEvent {messageJson}");
@@ -106,7 +104,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {"Status", resultOk ? "Succeeded" : "Failed"},
                 {"Plant", certificateEvent.Plant},
                 {"Type", "Autotransfer tags"},
-                {"ProjectName", certificateEvent.ProjectName},
+                {"ProjectName", String.IsNullOrWhiteSpace(certificateEvent.ProjectName) ? "null or empty" : certificateEvent.ProjectName},
                 {"CertificateNo", certificateEvent.CertificateNo},
                 {"CertificateType", certificateEvent.CertificateType}
             };
@@ -118,7 +116,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {"Event", TagTopic.TopicName},
+                    {"Event", PcsServiceBus.Topics.CertificateTopic.TopicName},
                     {nameof(certificateTopic.CertificateNo), certificateTopic.CertificateNo},
                     {nameof(certificateTopic.CertificateType), certificateTopic.CertificateType},
                     {nameof(certificateTopic.CertificateStatus), certificateTopic.CertificateStatus.ToString()},
@@ -128,6 +126,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private string NormalizePlant(string plant) => plant[4..];
 
-        private string NormalizeProjectName(string projectName) => projectName.Replace('$', '_');
+        private string NormalizeProjectName(string projectName) => String.IsNullOrWhiteSpace(projectName) ? null : projectName.Replace('$', '_');
     }
 }
