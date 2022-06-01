@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.4" />
     <PackageReference Include="Equinor.ProCoSys.PcsServiceBus" Version="1.8.0" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.0.2" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.5.0" />
