@@ -18,8 +18,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule
             ITagValidator tagValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
-                        
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            ClassLevelCascadeMode = CascadeMode.Stop;
+
             RuleFor(command => command.Tags)
                 .Must(ids => ids != null && ids.Any())
                 .WithMessage("At least 1 tag must be given!")

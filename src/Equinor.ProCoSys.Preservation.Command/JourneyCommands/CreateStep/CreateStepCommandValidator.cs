@@ -15,7 +15,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep
             IModeValidator modeValidator,
             IResponsibleValidator responsibleValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourney(command.JourneyId, token))

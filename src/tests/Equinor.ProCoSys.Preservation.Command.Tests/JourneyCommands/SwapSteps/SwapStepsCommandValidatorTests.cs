@@ -45,19 +45,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepANotExists()
+        public async Task Validate_ShouldFail_WhenStepANotExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepAId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -65,11 +65,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepBNotExists()
+        public async Task Validate_ShouldFail_WhenStepBNotExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -77,11 +77,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepAAndStepBAreNotAdjacent()
+        public async Task Validate_ShouldFail_WhenStepAAndStepBAreNotAdjacent()
         {
             _journeyValidatorMock.Setup(r => r.AreAdjacentStepsInAJourneyAsync(_journeyId, _stepAId, _stepBId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -89,12 +89,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersionForStepB()
+        public async Task Validate_ShouldFail_WhenInvalidRowVersionForStepB()
         {
             var command = new SwapStepsCommand(_journeyId, _stepAId, _stepARowVersion, _stepBId, _invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(_invalidRowVersion)).Returns(false);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

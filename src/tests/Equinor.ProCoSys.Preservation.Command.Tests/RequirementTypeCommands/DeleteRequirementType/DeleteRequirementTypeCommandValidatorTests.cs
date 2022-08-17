@@ -34,19 +34,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementTypeNotExists()
+        public async Task Validate_ShouldFail_WhenRequirementTypeNotExists()
         {
             _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -54,11 +54,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementTypeNotVoided()
+        public async Task Validate_ShouldFail_WhenRequirementTypeNotVoided()
         {
             _requirementTypeValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -66,11 +66,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementTypeHasDefinitions()
+        public async Task Validate_ShouldFail_WhenRequirementTypeHasDefinitions()
         {
             _requirementTypeValidatorMock.Setup(r => r.AnyRequirementDefinitionExistsAsync(_id, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -78,14 +78,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
 
             var command = new DeleteRequirementTypeCommand(_id, invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

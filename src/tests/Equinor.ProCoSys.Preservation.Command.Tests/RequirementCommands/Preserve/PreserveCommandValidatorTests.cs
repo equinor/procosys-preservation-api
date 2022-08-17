@@ -33,19 +33,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagOrReqNotExists()
+        public async Task Validate_ShouldFail_WhenTagOrReqNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -53,11 +53,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagIsVoided()
+        public async Task Validate_ShouldFail_WhenTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -65,11 +65,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenProjectForTagIsClosed()
+        public async Task Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -77,11 +77,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenPreservationIsNotActiveForTag()
+        public async Task Validate_ShouldFail_WhenPreservationIsNotActiveForTag()
         {
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -89,11 +89,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementNotReadyToBePreserved()
+        public async Task Validate_ShouldFail_WhenRequirementNotReadyToBePreserved()
         {
             _tagValidatorMock.Setup(r => r.RequirementIsReadyToBePreservedAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -101,12 +101,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
+        public async Task Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

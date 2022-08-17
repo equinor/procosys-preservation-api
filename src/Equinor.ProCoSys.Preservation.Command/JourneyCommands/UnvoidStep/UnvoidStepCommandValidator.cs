@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UnvoidStep
             IStepValidator stepValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.JourneyId, command.StepId, token))

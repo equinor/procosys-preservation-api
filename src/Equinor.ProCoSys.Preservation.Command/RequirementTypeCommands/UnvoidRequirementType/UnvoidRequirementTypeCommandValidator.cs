@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UnvoidRe
             IRequirementTypeValidator requirementTypeValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))

@@ -19,7 +19,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
              IStepValidator stepValidator,
              IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command.Tags)
                 .Must(ids => ids != null && ids.Any())

@@ -11,7 +11,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
     {
         public UploadBaseDtoValidator(IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x)
                 .NotNull();

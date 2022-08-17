@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.VoidTagFunct
             ITagFunctionValidator tagFunctionValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingTagFunctionAsync(command.TagFunctionCode, command.RegisterCode, token))

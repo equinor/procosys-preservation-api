@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve
     {
         public PreserveCommandValidator(IProjectValidator projectValidator, ITagValidator tagValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
             
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))

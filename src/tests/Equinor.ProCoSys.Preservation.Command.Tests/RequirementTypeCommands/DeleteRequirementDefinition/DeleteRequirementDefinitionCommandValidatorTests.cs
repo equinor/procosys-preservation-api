@@ -44,21 +44,21 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionDoesNotExists()
+        public async Task Validate_ShouldFail_WhenRequirementDefinitionDoesNotExists()
         {
             _requirementTypeValidatorMock
                 .Setup(r => r.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default))
                 .Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -66,11 +66,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionNotVoided()
+        public async Task Validate_ShouldFail_WhenRequirementDefinitionNotVoided()
         {
             _requirementDefinitionValidatorMock.Setup(r => r.IsVoidedAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -78,11 +78,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionExistsOnTagRequirement()
+        public async Task Validate_ShouldFail_WhenRequirementDefinitionExistsOnTagRequirement()
         {
             _requirementDefinitionValidatorMock.Setup(r => r.TagRequirementsExistAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -90,11 +90,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionExistsOnTagFunctionRequirement()
+        public async Task Validate_ShouldFail_WhenRequirementDefinitionExistsOnTagFunctionRequirement()
         {
             _requirementDefinitionValidatorMock.Setup(r => r.TagFunctionRequirementsExistAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -102,11 +102,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionHasFields()
+        public async Task Validate_ShouldFail_WhenRequirementDefinitionHasFields()
         {
             _requirementDefinitionValidatorMock.Setup(r => r.HasAnyFieldsAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -114,14 +114,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
 
             var command = new DeleteRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

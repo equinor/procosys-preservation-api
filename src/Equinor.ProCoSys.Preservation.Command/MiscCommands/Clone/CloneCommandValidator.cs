@@ -11,7 +11,8 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
 
         public CloneCommandValidator(IPlantCache plantCache)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command.SourcePlant)
                 .MustAsync((_, sourcePlant, token) => UserHaveAccessToPlantAsync(sourcePlant.ToUpperInvariant()))

@@ -49,11 +49,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagOrReqNotExists()
+        public async Task Validate_ShouldFail_WhenTagOrReqNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -61,13 +61,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenFieldNotExistsForRequirement()
+        public async Task Validate_ShouldFail_WhenFieldNotExistsForRequirement()
         {
             _tagValidatorMock
                 .Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, AttachmentFieldId, default))
                 .Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -75,11 +75,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagIsVoided()
+        public async Task Validate_ShouldFail_WhenTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -87,11 +87,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenProjectForTagIsClosed()
+        public async Task Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -99,11 +99,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDontHaveActivePeriod()
+        public async Task Validate_ShouldFail_WhenRequirementDontHaveActivePeriod()
         {
             _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -111,11 +111,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenFieldNotForAttachment()
+        public async Task Validate_ShouldFail_WhenFieldNotForAttachment()
         {
             _fieldValidatorMock.Setup(r => r.IsValidForAttachmentAsync(AttachmentFieldId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -123,12 +123,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
+        public async Task Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

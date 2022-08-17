@@ -33,20 +33,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenSavedFilterWithSameTitleForPersonAlreadyExistsInProject()
+        public async Task Validate_ShouldFail_WhenSavedFilterWithSameTitleForPersonAlreadyExistsInProject()
         {
             _savedFilterValidatorMock.Setup(r => r.ExistsWithSameTitleForPersonInProjectAsync(_title, _projectName, default)).Returns(Task.FromResult(true));
             _projectValidatorMock.Setup(p => p.ExistsAsync(_projectName, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -54,11 +54,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenProjectNotExists()
+        public async Task Validate_ShouldFail_WhenProjectNotExists()
         {
             _projectValidatorMock.Setup(p => p.ExistsAsync(_projectName, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

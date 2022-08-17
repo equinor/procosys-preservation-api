@@ -16,7 +16,8 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRe
             IRequirementDefinitionValidator requirementDefinitionValidator,
             IFieldValidator fieldValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync(BeAnExistingRequirementDefinitionAsync)

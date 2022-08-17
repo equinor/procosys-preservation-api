@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.UpdateSavedFilter
             ISavedFilterValidator savedFilterValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingSavedFilterAsync(command.SavedFilterId, token))

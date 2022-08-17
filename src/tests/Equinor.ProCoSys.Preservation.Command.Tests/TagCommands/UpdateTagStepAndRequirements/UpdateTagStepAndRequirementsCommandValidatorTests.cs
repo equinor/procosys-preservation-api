@@ -100,30 +100,30 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_ForSupplierStep_WhenAddingNewUniqueRequirements()
+        public async Task Validate_ShouldBeValid_ForSupplierStep_WhenAddingNewUniqueRequirements()
         {
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_ForOtherStep_WhenAddingNewUniqueRequirements()
+        public async Task Validate_ShouldBeValid_ForOtherStep_WhenAddingNewUniqueRequirements()
         {
             // Arrange
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
             
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_ForSupplierStep_WhenNeitherUpdateOrAdd()
+        public async Task Validate_ShouldBeValid_ForSupplierStep_WhenNeitherUpdateOrAdd()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.RequirementUsageWillCoverBothForSupplierAndOtherAsync(
@@ -143,14 +143,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 RowVersion);
 
             // Act
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             // Assert
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_ForOtherStep_WhenNeitherUpdateOrAdd()
+        public async Task Validate_ShouldBeValid_ForOtherStep_WhenNeitherUpdateOrAdd()
         {
             // Arrange
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
@@ -171,14 +171,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 RowVersion);
 
             // Act
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             // Assert
             Assert.IsTrue(result.IsValid);
         }
         
         [TestMethod]
-        public void Validate_ShouldBeValid_ForSupplierStep_WhenVoidingAllRequirementsButAddingNew()
+        public async Task Validate_ShouldBeValid_ForSupplierStep_WhenVoidingAllRequirementsButAddingNew()
         {
             // Arrange
             _rdValidatorMock.Setup(r => r.ExistsAsync(_reqDef3Id, default)).Returns(Task.FromResult(true));
@@ -207,14 +207,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 RowVersion);
 
             // Act
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             // Assert
             Assert.IsTrue(result.IsValid);
         }
         
         [TestMethod]
-        public void Validate_ShouldBeValid_ForOtherStep_WhenVoidingAllRequirementsButAddingNew()
+        public async Task Validate_ShouldBeValid_ForOtherStep_WhenVoidingAllRequirementsButAddingNew()
         {
             // Arrange
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
@@ -240,20 +240,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 RowVersion);
 
             // Act
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             // Assert
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyRequirementAlreadyExists()
+        public async Task Validate_ShouldFail_WhenAnyRequirementAlreadyExists()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.AllRequirementsWillBeUniqueAsync(_tagId, new List<int>{_rdForSupplierId, _rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(false));
 
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -262,7 +262,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementToUpdateNotExists()
+        public async Task Validate_ShouldFail_WhenRequirementToUpdateNotExists()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.HasRequirementAsync(_tagId, _tagReqForSupplierId, default)).Returns(Task.FromResult(false));
@@ -290,7 +290,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 RowVersion);
 
             // Act
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -299,7 +299,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementToDeleteNotExists()
+        public async Task Validate_ShouldFail_WhenRequirementToDeleteNotExists()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.HasRequirementAsync(_tagId, _tagReqForSupplierId, default)).Returns(Task.FromResult(false));
@@ -326,7 +326,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 RowVersion);
 
             // Act
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -335,7 +335,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementToDeleteNotVoided()
+        public async Task Validate_ShouldFail_WhenRequirementToDeleteNotVoided()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.AllRequirementsWillBeUniqueAsync(_tagId, new List<int>{_rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(true));
@@ -362,7 +362,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 RowVersion);
 
             // Act
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -371,7 +371,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenRequirementToDelete_IsVoidedInAdvance()
+        public async Task Validate_ShouldBeValid_WhenRequirementToDelete_IsVoidedInAdvance()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.AllRequirementsWillBeUniqueAsync(_tagId, new List<int>{_rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(true));
@@ -399,14 +399,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 RowVersion);
 
             // Act
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             // Assert
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenRequirementToDelete_WillBeVoidedInSameCommand()
+        public async Task Validate_ShouldBeValid_WhenRequirementToDelete_WillBeVoidedInSameCommand()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.AllRequirementsWillBeUniqueAsync(_tagId, new List<int>{_rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(true));
@@ -436,20 +436,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 RowVersion);
 
             // Act
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             // Assert
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagIsVoided()
+        public async Task Validate_ShouldFail_WhenTagIsVoided()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(true));
 
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -458,12 +458,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
         
         [TestMethod]
-        public void Validate_ShouldFail_WhenChangeToAVoidedStep()
+        public async Task Validate_ShouldFail_WhenChangeToAVoidedStep()
         {
             _tagValidatorMock.Setup(r => r.HasStepAsync(_tagId, _stepId, default)).Returns(Task.FromResult(false));
             _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -471,23 +471,23 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
         
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenExistingStepIsVoided()
+        public async Task Validate_ShouldBeValid_WhenExistingStepIsVoided()
         {
             _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenProjectIsClosed()
+        public async Task Validate_ShouldFail_WhenProjectIsClosed()
         {
             // Arrange
             _projectValidatorMock.Setup(p => p.IsClosedForTagAsync(_tagId, default)).Returns(Task.FromResult(true));
 
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -496,13 +496,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
+        public async Task Validate_ShouldFail_WhenTagNotExists()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.ExistsAsync(_tagId, default)).Returns(Task.FromResult(false));
 
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -511,14 +511,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_ForPoAreaTag_WhenTargetStepNotForSupplier()
+        public async Task Validate_ShouldFail_ForPoAreaTag_WhenTargetStepNotForSupplier()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
 
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -527,20 +527,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_ForPoAreaTag_WhenTargetStepForSupplier()
+        public async Task Validate_ShouldBeValid_ForPoAreaTag_WhenTargetStepForSupplier()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
 
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_ForPoAreaTag_WhenNoRequirementForSupplier()
+        public async Task Validate_ShouldFail_ForPoAreaTag_WhenNoRequirementForSupplier()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
@@ -553,7 +553,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 .Returns(Task.FromResult(false));
 
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -562,7 +562,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_ForPoAreaTag_WhenRequirementForOtherThanSupplier()
+        public async Task Validate_ShouldFail_ForPoAreaTag_WhenRequirementForOtherThanSupplier()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
@@ -575,7 +575,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 .Returns(Task.FromResult(true));
 
             // Act
-            var result = _dut.Validate(_addTwoReqsCommand);
+            var result = await _dut.ValidateAsync(_addTwoReqsCommand);
 
             // Assert
             Assert.IsFalse(result.IsValid);
@@ -584,7 +584,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
 
@@ -602,7 +602,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -610,7 +610,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenDescriptionIsBlankForAreaTag()
+        public async Task Validate_ShouldFail_WhenDescriptionIsBlankForAreaTag()
         {
             _tagValidatorMock.Setup(t => t.VerifyTagIsAreaTagAsync(_tagId, default)).Returns(Task.FromResult(true));
             var command = new UpdateTagStepAndRequirementsCommand(
@@ -626,7 +626,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 null, 
                 RowVersion);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -634,7 +634,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenSettingDescriptionOnAreaTag()
+        public async Task Validate_ShouldBeValid_WhenSettingDescriptionOnAreaTag()
         {
             _tagValidatorMock.Setup(t => t.VerifyTagIsAreaTagAsync(_tagId, default)).Returns(Task.FromResult(true));
             var command = new UpdateTagStepAndRequirementsCommand(
@@ -650,13 +650,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 null, 
                 RowVersion);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenSettingDescriptionOnOtherThanAreaTag()
+        public async Task Validate_ShouldFail_WhenSettingDescriptionOnOtherThanAreaTag()
         {
             var command = new UpdateTagStepAndRequirementsCommand(
                 _tagId,
@@ -671,7 +671,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 null, 
                 RowVersion);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -679,7 +679,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenKeepingSameDescriptionOnOtherThanAreaTag()
+        public async Task Validate_ShouldBeValid_WhenKeepingSameDescriptionOnOtherThanAreaTag()
         {
             var description = "Desc";
             _tagValidatorMock.Setup(t => t.VerifyTagDescriptionAsync(_tagId, description, default)).Returns(Task.FromResult(true));
@@ -696,7 +696,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 null, 
                 RowVersion);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsTrue(result.IsValid);
         }

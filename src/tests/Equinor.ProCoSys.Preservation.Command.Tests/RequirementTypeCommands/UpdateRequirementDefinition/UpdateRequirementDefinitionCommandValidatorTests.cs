@@ -75,21 +75,21 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionDoesNotExists()
+        public async Task Validate_ShouldFail_WhenRequirementDefinitionDoesNotExists()
         {
             _reqTypeValidatorMock
                 .Setup(r => r.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default))
                 .Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -97,13 +97,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenFieldDoesNotExists()
+        public async Task Validate_ShouldFail_WhenFieldDoesNotExists()
         {
             _reqTypeValidatorMock
                 .Setup(r => r.FieldExistsAsync(_requirementTypeId, _requirementDefinitionId, _updateFieldId, default))
                 .Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -111,11 +111,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionIsVoided()
+        public async Task Validate_ShouldFail_WhenRequirementDefinitionIsVoided()
         {
             _reqDefinitionValidatorMock.Setup(r => r.IsVoidedAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -123,7 +123,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionTitleIsNotUniqueOnType()
+        public async Task Validate_ShouldFail_WhenRequirementDefinitionTitleIsNotUniqueOnType()
         {
             var fieldTypes1 = _updatedFields.Select(f => f.FieldType).ToList();
             var fieldTypes2 = _newFields.Select(f => f.FieldType).ToList();
@@ -137,7 +137,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
                     fieldTypesConcatenated,
                     default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -145,11 +145,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenFieldToUpdateNotExists()
+        public async Task Validate_ShouldFail_WhenFieldToUpdateNotExists()
         {
             _fieldValidatorMock.Setup(f => f.VerifyFieldTypeAsync(_updateFieldId, _fieldType, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -157,13 +157,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenFieldToDeleteIsNotVoided()
+        public async Task Validate_ShouldFail_WhenFieldToDeleteIsNotVoided()
         {
             _reqDefinitionValidatorMock
                 .Setup(r => r.AllExcludedFieldsAreVoidedAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
                 .Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -171,13 +171,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenFieldToDeleteIsInUse()
+        public async Task Validate_ShouldFail_WhenFieldToDeleteIsInUse()
         {
             _reqDefinitionValidatorMock
                 .Setup(r => r.AnyExcludedFieldsIsInUseAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
                 .Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

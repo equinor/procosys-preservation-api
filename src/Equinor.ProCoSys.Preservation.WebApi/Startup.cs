@@ -9,6 +9,7 @@ using Equinor.ProCoSys.Preservation.Query;
 using Equinor.ProCoSys.Preservation.WebApi.DIModules;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using Equinor.ProCoSys.Preservation.WebApi.Seeding;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -92,20 +93,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 services.AddAzureAppConfiguration();
             }
 
-            services.AddControllers()
-                .AddFluentValidation(fv =>
-                {
-                    fv.RegisterValidatorsFromAssemblies
-                    (
-                        new List<Assembly>
-                        {
-                            typeof(IQueryMarker).GetTypeInfo().Assembly,
-                            typeof(ICommandMarker).GetTypeInfo().Assembly,
-                            typeof(Startup).Assembly,
-                        }
-                    );
-                    fv.DisableDataAnnotationsValidation = true;
-                });
+            services.AddFluentValidationAutoValidation(fv =>
+            {
+                fv.DisableDataAnnotationsValidation = true;
+            });
+            services.AddValidatorsFromAssemblies(new List<Assembly>
+            {
+                typeof(IQueryMarker).GetTypeInfo().Assembly,
+                typeof(ICommandMarker).GetTypeInfo().Assembly,
+                typeof(Startup).Assembly
+            });
 
             var scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
 

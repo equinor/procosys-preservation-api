@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
     {
         public DuplicateAreaTagCommandValidator(ITagValidator tagValidator, IProjectValidator projectValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))

@@ -27,19 +27,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenModeAlreadyExists()
+        public async Task Validate_ShouldFail_WhenModeAlreadyExists()
         {
             _modeValidatorMock.Setup(r => r.ExistsWithSameTitleAsync(_title, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -47,11 +47,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnotherModeForSupplierAlreadyExists_AndCreatingModeForSupplier()
+        public async Task Validate_ShouldFail_WhenAnotherModeForSupplierAlreadyExists_AndCreatingModeForSupplier()
         {
             _modeValidatorMock.Setup(r => r.ExistsModeForSupplierAsync(default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -59,11 +59,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenAnotherModeForSupplierAlreadyExists_AndNotCreatingModeForSupplier()
+        public async Task Validate_ShouldBeValid_WhenAnotherModeForSupplierAlreadyExists_AndNotCreatingModeForSupplier()
         {
             _modeValidatorMock.Setup(r => r.ExistsModeForSupplierAsync(default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
             Assert.AreEqual(0, result.Errors.Count);

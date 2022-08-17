@@ -83,29 +83,29 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_ForPreArea_InSupplierStep()
+        public async Task Validate_ShouldBeValid_ForPreArea_InSupplierStep()
         {
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsTrue(result.IsValid);
         }
         
         [TestMethod]
-        public void Validate_ShouldBeValid_ForPreArea_InNonSupplierStep()
+        public async Task Validate_ShouldBeValid_ForPreArea_InNonSupplierStep()
         {
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsTrue(result.IsValid);
         }
         
         [TestMethod]
-        public void Validate_ShouldFail_ForPreArea_InSupplierStep_WhenRequirementUsageIsNotForAllJourneys()
+        public async Task Validate_ShouldFail_ForPreArea_InSupplierStep_WhenRequirementUsageIsNotForAllJourneys()
         {
             _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -113,12 +113,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
         
         [TestMethod]
-        public void Validate_ShouldFail_ForPreArea_InNonSupplierStep_WhenRequirementUsageIsNotForJourneysWithoutSupplier()
+        public async Task Validate_ShouldFail_ForPreArea_InNonSupplierStep_WhenRequirementUsageIsNotForJourneysWithoutSupplier()
         {
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
             _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -126,12 +126,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
         
         [TestMethod]
-        public void Validate_ShouldFail_ForPreArea_InNonSupplierStep_WhenAnyRequirementForSupplierOnlyGiven()
+        public async Task Validate_ShouldFail_ForPreArea_InNonSupplierStep_WhenAnyRequirementForSupplierOnlyGiven()
         {
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
             _rdValidatorMock.Setup(r => r.HasAnyForSupplierOnlyUsageAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -139,19 +139,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_ForPoArea_InSupplierStep()
+        public async Task Validate_ShouldBeValid_ForPoArea_InSupplierStep()
         {
-            var result = _dut.Validate(_createPoAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPoAreaTagCommand);
 
             Assert.IsTrue(result.IsValid);
         }
         
         [TestMethod]
-        public void Validate_ShouldFail_ForPoArea_InSupplierStep_WhenRequirementUsageIsNotForSupplier()
+        public async Task Validate_ShouldFail_ForPoArea_InSupplierStep_WhenRequirementUsageIsNotForSupplier()
         {
             _rdValidatorMock.Setup(r => r.UsageCoversForSuppliersAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_createPoAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPoAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -159,11 +159,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_ForPoArea_InSupplierStep_WhenRequirementUsageIsForOtherThanSupplier()
+        public async Task Validate_ShouldFail_ForPoArea_InSupplierStep_WhenRequirementUsageIsForOtherThanSupplier()
         {
             _rdValidatorMock.Setup(r => r.HasAnyForForOtherThanSuppliersUsageAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_createPoAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPoAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -171,11 +171,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_ForPoArea_InNonSupplierStep()
+        public async Task Validate_ShouldFail_ForPoArea_InNonSupplierStep()
         {
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_createPoAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPoAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -183,11 +183,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyTagAlreadyExists()
+        public async Task Validate_ShouldFail_WhenAnyTagAlreadyExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(_createPreAreaTagCommand.GetTagNo(), _projectName, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -195,11 +195,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenProjectExistsButClosed()
+        public async Task Validate_ShouldFail_WhenProjectExistsButClosed()
         {
             _projectValidatorMock.Setup(r => r.IsExistingAndClosedAsync(_projectName, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -207,11 +207,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepNotExists()
+        public async Task Validate_ShouldFail_WhenStepNotExists()
         {
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -219,11 +219,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepIsVoided()
+        public async Task Validate_ShouldFail_WhenStepIsVoided()
         {
             _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -231,11 +231,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
+        public async Task Validate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
         {
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rdId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -243,11 +243,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyRequirementDefinitionIsVoided()
+        public async Task Validate_ShouldFail_WhenAnyRequirementDefinitionIsVoided()
         {
             _rdValidatorMock.Setup(r => r.IsVoidedAsync(_rdId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -255,7 +255,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementsNotUnique()
+        public async Task Validate_ShouldFail_WhenRequirementsNotUnique()
         {
             _rdValidatorMock
                 .Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(
@@ -279,7 +279,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 "RemarkA",
                 "SA_A");
             
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -287,24 +287,24 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
+        public async Task Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(false));
             _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
+        public async Task Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(_createPreAreaTagCommand.GetTagNo(), _projectName, default)).Returns(Task.FromResult(true));
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rdId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_createPreAreaTagCommand);
+            var result = await _dut.ValidateAsync(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
