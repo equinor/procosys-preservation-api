@@ -11,7 +11,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequir
     {
         public UpdateRequirementsCommandValidator(IRequirementDefinitionValidator requirementDefinitionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            ClassLevelCascadeMode = CascadeMode.Stop;
 
             When(command => command.Requirements.Any(), () =>
             {

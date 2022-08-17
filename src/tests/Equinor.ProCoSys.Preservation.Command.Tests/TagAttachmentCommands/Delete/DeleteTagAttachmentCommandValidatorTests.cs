@@ -41,19 +41,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command); 
+            var result = await _dut.ValidateAsync(_command); 
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenProjectForTagIsClosed()
+        public async Task Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(_command.TagId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -61,11 +61,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAttachmentNotExists()
+        public async Task Validate_ShouldFail_WhenAttachmentNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsTagAttachmentAsync(_command.TagId, _command.AttachmentId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -73,11 +73,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagIsVoided()
+        public async Task Validate_ShouldFail_WhenTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(_command.TagId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -85,14 +85,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
 
             var command = new DeleteTagAttachmentCommand(_tagId, _attachmentId, invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

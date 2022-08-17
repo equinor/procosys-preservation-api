@@ -19,8 +19,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             IProjectValidator projectValidator,
             IRequirementDefinitionValidator requirementDefinitionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
-            
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            ClassLevelCascadeMode = CascadeMode.Stop;
+
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
             {
                 RuleFor(command => command)

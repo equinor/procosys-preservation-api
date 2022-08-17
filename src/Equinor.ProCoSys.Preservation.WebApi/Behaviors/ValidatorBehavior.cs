@@ -27,8 +27,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Behaviors
             _logger.LogInformation("----- Validating command {CommandType}", typeName);
 
             var failures = _validators
-                .Select(v => v.Validate(request))
-                .SelectMany(result => result.Errors)
+                .Select(async v => await v.ValidateAsync(request, cancellationToken))
+                .SelectMany(result => result.Result.Errors)
                 .Where(error => error != null)
                 .ToList();
 

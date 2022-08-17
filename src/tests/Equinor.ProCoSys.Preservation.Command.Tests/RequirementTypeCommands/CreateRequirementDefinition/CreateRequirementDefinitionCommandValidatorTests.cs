@@ -37,20 +37,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionWithSameTitleAlreadyExistsOnRequirementType()
+        public async Task Validate_ShouldFail_WhenRequirementDefinitionWithSameTitleAlreadyExistsOnRequirementType()
         {
             var fieldTypes = _fields.Select(f => f.FieldType).ToList();
             _requirementTypeValidatorMock.Setup(r => r.AnyRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId, _title, fieldTypes, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -58,11 +58,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementTypeIsVoided()
+        public async Task Validate_ShouldFail_WhenRequirementTypeIsVoided()
         {
             _requirementTypeValidatorMock.Setup(r => r.IsVoidedAsync(_reqTypeId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -70,11 +70,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementTypeDoesNotExist()
+        public async Task Validate_ShouldFail_WhenRequirementTypeDoesNotExist()
         {
             _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(_reqTypeId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

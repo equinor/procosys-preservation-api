@@ -9,7 +9,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney
     {
         public CreateJourneyCommandValidator(IJourneyValidator journeyValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => HaveUniqueJourneyTitleAsync(command.Title, token))

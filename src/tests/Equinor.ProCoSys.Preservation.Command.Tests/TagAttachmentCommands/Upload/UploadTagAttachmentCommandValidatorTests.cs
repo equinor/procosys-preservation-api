@@ -32,19 +32,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_commandWithoutOverwrite); 
+            var result = await _dut.ValidateAsync(_commandWithoutOverwrite); 
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenProjectForTagIsClosed()
+        public async Task Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(_commandWithoutOverwrite.TagId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_commandWithoutOverwrite);
+            var result = await _dut.ValidateAsync(_commandWithoutOverwrite);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -52,11 +52,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
+        public async Task Validate_ShouldFail_WhenTagNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(_commandWithoutOverwrite.TagId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_commandWithoutOverwrite);
+            var result = await _dut.ValidateAsync(_commandWithoutOverwrite);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -64,11 +64,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagIsVoided()
+        public async Task Validate_ShouldFail_WhenTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(_commandWithoutOverwrite.TagId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_commandWithoutOverwrite);
+            var result = await _dut.ValidateAsync(_commandWithoutOverwrite);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -76,12 +76,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenFilenameExistsAndNotOverwrite()
+        public async Task Validate_ShouldFail_WhenFilenameExistsAndNotOverwrite()
         {
             _tagValidatorMock.Setup(r => r.AttachmentWithFilenameExistsAsync(_commandWithoutOverwrite.TagId, _commandWithoutOverwrite.FileName, default))
                 .Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_commandWithoutOverwrite);
+            var result = await _dut.ValidateAsync(_commandWithoutOverwrite);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -89,13 +89,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenFilenameExistsAndOverwrite()
+        public async Task Validate_ShouldBeValid_WhenFilenameExistsAndOverwrite()
         {
             var commandWithOverwrite = new UploadTagAttachmentCommand(2, _fileName, true, new MemoryStream());
             _tagValidatorMock.Setup(r => r.AttachmentWithFilenameExistsAsync(commandWithOverwrite.TagId, commandWithOverwrite.FileName, default))
                 .Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(commandWithOverwrite);
+            var result = await _dut.ValidateAsync(commandWithOverwrite);
 
             Assert.IsTrue(result.IsValid);
         }

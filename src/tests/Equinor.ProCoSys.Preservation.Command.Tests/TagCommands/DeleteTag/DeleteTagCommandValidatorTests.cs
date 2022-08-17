@@ -36,19 +36,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
+        public async Task Validate_ShouldFail_WhenTagNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -56,11 +56,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotVoided()
+        public async Task Validate_ShouldFail_WhenTagNotVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -68,11 +68,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagIsInUse()
+        public async Task Validate_ShouldFail_WhenTagIsInUse()
         {
             _tagValidatorMock.Setup(r => r.IsInUseAsync(_tagId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -80,14 +80,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
 
             var command = new DeleteTagCommand(_tagId, invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -95,13 +95,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
         }
 
         [TestMethod]
-        public void Validate_ShouldIncludeTagNoInMessage()
+        public async Task Validate_ShouldIncludeTagNoInMessage()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(false));
             var tagNo = "Tag X";
             _tagValidatorMock.Setup(r => r.GetTagDetailsAsync(_tagId, default)).Returns(Task.FromResult(tagNo));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

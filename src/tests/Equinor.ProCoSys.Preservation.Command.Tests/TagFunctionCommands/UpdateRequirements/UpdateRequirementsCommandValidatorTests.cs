@@ -35,28 +35,28 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WithoutRequirements()
+        public async Task Validate_ShouldBeValid_WithoutRequirements()
         {
             var command = new UpdateRequirementsCommand("", "", new List<RequirementForCommand>());
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
+        public async Task Validate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
         {
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -65,12 +65,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementUsageForSupplierNotGiven()
+        public async Task Validate_ShouldFail_WhenRequirementUsageForSupplierNotGiven()
         {
             _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(false));
             _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -78,11 +78,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyRequirementDefinitionIsVoided()
+        public async Task Validate_ShouldFail_WhenAnyRequirementDefinitionIsVoided()
         {
             _rdValidatorMock.Setup(r => r.IsVoidedAsync(_rd2Id, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -91,7 +91,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementsNotUnique()
+        public async Task Validate_ShouldFail_WhenRequirementsNotUnique()
         {
             var command = new UpdateRequirementsCommand("", "",
                 new List<RequirementForCommand>
@@ -100,7 +100,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
                     new RequirementForCommand(_rd1Id, 1)
                 });
             
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -108,12 +108,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith1Error_When2ErrorsWithinSameRule()
+        public async Task Validate_ShouldFailWith1Error_When2ErrorsWithinSameRule()
         {
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(false));
             _rdValidatorMock.Setup(r => r.IsVoidedAsync(_rd2Id, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

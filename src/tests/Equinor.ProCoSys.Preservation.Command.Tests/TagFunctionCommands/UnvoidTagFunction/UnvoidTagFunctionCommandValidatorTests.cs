@@ -35,19 +35,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagFunctionNotExists()
+        public async Task Validate_ShouldFail_WhenTagFunctionNotExists()
         {
             _tagFunctionValidatorMock.Setup(r => r.ExistsAsync(_tagFunctionCode, _registerCode, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -55,11 +55,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagFunctionIsNotVoided()
+        public async Task Validate_ShouldFail_WhenTagFunctionIsNotVoided()
         {
             _tagFunctionValidatorMock.Setup(r => r.IsVoidedAsync(_tagFunctionCode, _registerCode, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -67,14 +67,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
 
             var command = new UnvoidTagFunctionCommand(_tagFunctionCode, _registerCode, invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

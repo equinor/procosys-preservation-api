@@ -47,19 +47,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenProjectForTagIsClosed()
+        public async Task Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(_tagId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -67,11 +67,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagIsVoided()
+        public async Task Validate_ShouldFail_WhenTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -79,11 +79,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenActionIsClosed()
+        public async Task Validate_ShouldFail_WhenActionIsClosed()
         {
             _actionValidatorMock.Setup(r => r.IsClosedAsync(_actionId, default)).Returns(Task.FromResult(true));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -91,11 +91,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenActionNotExists()
+        public async Task Validate_ShouldFail_WhenActionNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsActionAsync(_tagId, _actionId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -103,14 +103,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
 
             var command = new CloseActionCommand(_tagId, _actionId, invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

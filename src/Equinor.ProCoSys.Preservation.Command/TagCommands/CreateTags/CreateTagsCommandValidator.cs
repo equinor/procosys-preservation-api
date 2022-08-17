@@ -18,7 +18,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
             IProjectValidator projectValidator,
             IRequirementDefinitionValidator requirementDefinitionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
+            ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command.TagNos)
                 .Must(r => r.Any())

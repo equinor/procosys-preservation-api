@@ -34,19 +34,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyNotExists()
+        public async Task Validate_ShouldFail_WhenJourneyNotExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -54,11 +54,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyNotVoided()
+        public async Task Validate_ShouldFail_WhenJourneyNotVoided()
         {
             _journeyValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -66,11 +66,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyIsInUse()
+        public async Task Validate_ShouldFail_WhenJourneyIsInUse()
         {
             _journeyValidatorMock.Setup(r => r.IsInUseAsync(_id, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -78,14 +78,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
 
             var command = new DeleteJourneyCommand(_id, invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
-            var result = _dut.Validate(command);
+            var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

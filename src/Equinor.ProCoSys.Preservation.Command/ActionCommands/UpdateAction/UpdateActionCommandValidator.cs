@@ -16,7 +16,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.UpdateAction
             IActionValidator actionValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.Stop;
+            RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))

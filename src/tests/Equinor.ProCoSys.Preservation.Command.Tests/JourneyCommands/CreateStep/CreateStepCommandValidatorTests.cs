@@ -37,19 +37,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenOkState()
+        public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyNotExists()
+        public async Task Validate_ShouldFail_WhenJourneyNotExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -57,11 +57,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenModeNotExists()
+        public async Task Validate_ShouldFail_WhenModeNotExists()
         {
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -69,11 +69,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyIsVoided()
+        public async Task Validate_ShouldFail_WhenJourneyIsVoided()
         {
             _journeyValidatorMock.Setup(r => r.IsVoidedAsync(_journeyId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -81,11 +81,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenModeIsVoided()
+        public async Task Validate_ShouldFail_WhenModeIsVoided()
         {
             _modeValidatorMock.Setup(r => r.IsVoidedAsync(_modeId, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -93,11 +93,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenResponsibleExistsAndIsVoided()
+        public async Task Validate_ShouldFail_WhenResponsibleExistsAndIsVoided()
         {
             _responsibleValidatorMock.Setup(r => r.ExistsAndIsVoidedAsync(_responsibleCode, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -105,11 +105,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepExistsWithTitle()
+        public async Task Validate_ShouldFail_WhenStepExistsWithTitle()
         {
             _journeyValidatorMock.Setup(r => r.AnyStepExistsWithSameTitleAsync(_journeyId, _stepTitle, default)).Returns(Task.FromResult(true));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -117,26 +117,26 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
+        public async Task Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(false));
             _responsibleValidatorMock.Setup(r => r.ExistsAndIsVoidedAsync(_responsibleCode, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenSettingSameAutoTransferMethod_AsAExistingStep()
+        public async Task Validate_ShouldFail_WhenSettingSameAutoTransferMethod_AsAExistingStep()
         {
             var autoTransferMethod = AutoTransferMethod.OnRfccSign;
             _journeyValidatorMock.Setup(r => r.HasAnyStepWithAutoTransferMethodAsync(_journeyId, autoTransferMethod, default)).Returns(Task.FromResult(true));
             
             _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, autoTransferMethod);
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -144,13 +144,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenSettingNoneAutoTransferMethod_AndAExistingStepHasNone()
+        public async Task Validate_ShouldBeValid_WhenSettingNoneAutoTransferMethod_AndAExistingStepHasNone()
         {
             var autoTransferMethod = AutoTransferMethod.None;
             _journeyValidatorMock.Setup(r => r.HasAnyStepWithAutoTransferMethodAsync(_journeyId, autoTransferMethod, default)).Returns(Task.FromResult(true));
             
             _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, autoTransferMethod);
-            var result = _dut.Validate(_command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }
