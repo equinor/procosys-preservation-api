@@ -1174,6 +1174,73 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             await AssertInHistoryAsLatestEventAsync(tagToUndo.Id, UserType.Planner, EventType.UndoPreservationStarted);
         }
 
+        [TestMethod]
+        public async Task CompletePreservation_AsPlanner_ShouldCompletePreservationOnTags()
+        {
+            // Arrange 
+            var tagIdUnderTest = await CreateStandardTagAsync(TwoStepJourneyWithTags.Steps.Last(s => !s.IsVoided).Id, true);
+            var tagsResult = await TagsControllerTestsHelper.GetPageOfTagsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToComplete = tagsResult.Tags.Single(t => t.Id == tagIdUnderTest);
+            Assert.IsTrue(tagToComplete.ReadyToBeCompleted, "Bad test setup: Didn't find tag ready to complete");
+            var currentRowVersion = tagToComplete.RowVersion;
+
+            // Act
+            var idAndRowVersions = await TagsControllerTestsHelper.CompletePreservationAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagIdUnderTest,
+                        RowVersion = currentRowVersion
+                    }
+                });
+
+            // Assert
+            Assert.IsNotNull(idAndRowVersions);
+            Assert.AreEqual(1, idAndRowVersions.Count);
+
+            var idAndRowVersion = idAndRowVersions.Single();
+            AssertRowVersionChange(currentRowVersion, idAndRowVersion.RowVersion);
+            await AssertInHistoryAsLatestEventAsync(tagToComplete.Id, UserType.Planner, EventType.PreservationCompleted);
+        }
+
+        [TestMethod]
+        public async Task StartPreservationAfterCompletePreservation_AsPlanner_ShouldStartPreservationOnTags()
+        {
+            // Arrange 
+            var tagIdUnderTest = await CreateStandardTagAsync(TwoStepJourneyWithTags.Steps.Last(s => !s.IsVoided).Id, true);
+            var tagsResult = await TagsControllerTestsHelper.GetPageOfTagsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToTest = tagsResult.Tags.Single(t => t.Id == tagIdUnderTest);
+            Assert.IsTrue(tagToTest.ReadyToBeCompleted, "Bad test setup: Didn't find tag ready to complete");
+
+            await TagsControllerTestsHelper.CompletePreservationAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagIdUnderTest,
+                        RowVersion = tagToTest.RowVersion
+                    }
+                });
+
+            // Act
+            await TagsControllerTestsHelper.StartPreservationAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                new List<int>
+                {
+                        tagIdUnderTest
+                });
+
+            // Assert
+            await AssertInHistoryAsLatestEventAsync(tagToTest.Id, UserType.Planner, EventType.PreservationStarted);
+        }
+
         private void AssertUser(TokenProfile profile, PersonDto personDto)
         {
             Assert.IsNotNull(personDto);
@@ -1254,6 +1321,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             if (startPreservation)
             {
                 await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, newTagIds);
+                await AssertInHistoryAsLatestEventAsync(newTagIds.Single(), UserType.Planner, EventType.PreservationStarted);
             }
             return newTagIds.Single();
         }
