@@ -463,7 +463,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public bool IsReadyToBeStarted()
-            => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
+            => (Status == PreservationStatus.NotStarted || Status == PreservationStatus.Completed)
+                && Requirements.Any(r => !r.IsVoided);
 
         public bool IsReadyToUndoStarted() => Status == PreservationStatus.Active;
 

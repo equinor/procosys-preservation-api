@@ -231,14 +231,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 Assert.IsFalse(stdTagActiveDto.ReadyToBeEdited);
                 Assert.IsFalse(stdTagActiveDto.ReadyToBeTransferred);
                 Assert.IsFalse(stdTagActiveDto.ReadyToBeRescheduled);
-                Assert.IsFalse(stdTagActiveDto.ReadyToBeStarted);
+                Assert.IsTrue(stdTagActiveDto.ReadyToBeStarted);
                 Assert.IsFalse(stdTagActiveDto.ReadyToUndoStarted);
 
                 var siteTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Completed.GetDisplayValue() && t.TagType == TagType.SiteArea);
                 Assert.IsFalse(siteTagActiveDto.ReadyToBeEdited);
                 Assert.IsFalse(siteTagActiveDto.ReadyToBeTransferred);
                 Assert.IsFalse(siteTagActiveDto.ReadyToBeRescheduled);
-                Assert.IsFalse(siteTagActiveDto.ReadyToBeStarted);
+                Assert.IsTrue(siteTagActiveDto.ReadyToBeStarted);
                 Assert.IsFalse(siteTagActiveDto.ReadyToUndoStarted);
             }
         }

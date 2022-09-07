@@ -40,6 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         private int _siteAreaTagStartedId;
         private int _poAreaTagStartedId;
         private int _poAreaTagWithTwoReqsId;
+        private int _poAreaTagCompletedId;
         private int _reqDefForAll2Id;
         private int _tagReqForAll1Id;
         private int _tagReqForSupplierId;
@@ -68,10 +69,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var otherMode = AddMode(context, "FAB", false);
                 var resp2 = AddResponsible(context, "R2");
                 
-                var journeyWithSupplierStepFirsts = AddJourneyWithStep(context, "J1", "Sup1", supMode1, resp1);
-                var supplierStep1 = journeyWithSupplierStepFirsts.Steps.Single();
+                var journeyWithSupplierStepFirst = AddJourneyWithStep(context, "J1", "Sup1", supMode1, resp1);
+                var supplierStep1 = journeyWithSupplierStepFirst.Steps.Single();
                 var otherStep1 = new Step(TestPlant, "Fab", otherMode, resp2);
-                journeyWithSupplierStepFirsts.AddStep(otherStep1);
+                journeyWithSupplierStepFirst.AddStep(otherStep1);
 
                 var journeyWithSupplierStepLast = AddJourneyWithStep(context, "J2", "Fab", otherMode, resp2);
                 var otherStep2 = journeyWithSupplierStepLast.Steps.Single();
@@ -102,7 +103,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var standardTagCompleted = AddTag(context, project, TagType.Standard, Guid.NewGuid().ToString("N"), "",
                     otherStep1, new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 standardTagCompleted.StartPreservation();
-                standardTagCompleted.CompletePreservation(journeyWithSupplierStepFirsts);
+                standardTagCompleted.CompletePreservation(journeyWithSupplierStepFirst);
                 var standardTagStartedInLastStep = AddTag(context, project, TagType.Standard, Guid.NewGuid().ToString("N"), "",
                     otherStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 standardTagStartedInLastStep.StartPreservation();
@@ -143,6 +144,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var poAreaTagStarted = AddTag(context, project, TagType.PoArea, Guid.NewGuid().ToString("N"), _tagDescription,
                     supplierStep1, new List<TagRequirement> {_tagRequirementForPoAreaTag});
                 poAreaTagStarted.StartPreservation();
+                var poAreaTagCompleted = AddTag(context, project, TagType.PoArea, Guid.NewGuid().ToString("N"), _tagDescription,
+                    supplierStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                poAreaTagCompleted.StartPreservation();
+                poAreaTagCompleted.CompletePreservation(journeyWithSupplierStepFirst);
                 var poAreaTagWithTwoReqs = AddTag(context, project, TagType.PoArea, Guid.NewGuid().ToString("N"), _tagDescription,
                     supplierStep1, new List<TagRequirement>
                     {
@@ -175,6 +180,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 _preAreaTagStartedInFirstSupplierStepId = preAreaTagStartedInFirstSupplierStep.Id;
                 _siteAreaTagNotStartedId = siteAreaTagNotStarted.Id;
                 _poAreaTagNotStartedId = poAreaTagNotStarted.Id;
+                _poAreaTagCompletedId = poAreaTagCompleted.Id;
                 _poAreaTagWithTwoReqsId = poAreaTagWithTwoReqs.Id;
                 _siteAreaTagStartedId = siteAreaTagStarted.Id;
                 _poAreaTagStartedId = poAreaTagStarted.Id;
@@ -951,6 +957,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
+        public async Task IsReadyToBeStartedAsync_StandardTagCompleted_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeStartedAsync(_standardTagCompletedId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
         public async Task IsReadyToBeStartedAsync_StandardTagAlreadyStarted_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -1012,6 +1029,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 var result = await dut.IsReadyToBeStartedAsync(_poAreaTagNotStartedId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeStartedAsync_PoAreaTagCompleted_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeStartedAsync(_poAreaTagCompletedId, default);
                 Assert.IsTrue(result);
             }
         }
