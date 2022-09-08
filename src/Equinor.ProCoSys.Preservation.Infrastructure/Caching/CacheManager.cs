@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.Time;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Internal;
@@ -23,7 +24,11 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Caching
             var instance = Get<T>(key);
             if (instance != null)
             {
-                return instance;
+                var t = instance as Task;
+                if (t == null || t.IsCompletedSuccessfully)
+                {
+                    return instance;
+                }
             }
 
             instance = fetch.Invoke();
