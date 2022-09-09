@@ -240,6 +240,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 // get tags again, including Requirements, Actions and Attachments. See comment in CreateQueryableWithFilter regarding Include and EF
                 tagsWithIncludes = await (from tag in _context.QuerySet<Tag>()
                             .Include(t => t.Requirements)
+                            .ThenInclude(r => r.PreservationPeriods)
                             .Include(t => t.Attachments)
                             .Include(t => t.Actions)
                         where tagsIds.Contains(tag.Id)
@@ -344,19 +345,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             {
                 var tagWithIncludes = tagsWithIncludes.Single(t => t.Id == dto.TagId);
                 var orderedRequirements = tagWithIncludes.OrderedRequirements().ToList();
-                var requirementTitles = orderedRequirements
-                    .Select(r => reqDefs.Single(rd => rd.Id == r.RequirementDefinitionId).Title)
-                    .ToList();
-
-                int? nextDueWeeks = null;
-                var nextDueAsYearAndWeek = string.Empty;
-
-                var firstUpcomingRequirement = orderedRequirements.FirstOrDefault();
-                if (firstUpcomingRequirement != null)
-                {
-                    nextDueWeeks = firstUpcomingRequirement.GetNextDueInWeeks();
-                    nextDueAsYearAndWeek = firstUpcomingRequirement.NextDueTimeUtc?.FormatAsYearAndWeekString();
-                }
 
                 var journeyWithSteps = journeysWithSteps.Single(j => j.Id == dto.JourneyId);
                 var step = journeyWithSteps.Steps.Single(s => s.Id == dto.StepId);
@@ -381,6 +369,13 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                             action.IsOverDue(),
                             action.DueTimeUtc,
                             action.ClosedAtUtc)).ToList(),
+                    orderedRequirements.Select(
+                        req => new ExportRequirementDto(
+                            req.Id,
+                            reqDefs.Single(rd => rd.Id == req.RequirementDefinitionId).Title,
+                            req.NextDueTimeUtc,
+                            req.GetNextDueInWeeks(),
+                            req.HasActivePeriod ? req.ActivePeriod.Comment : null)).ToList(),
                     dto.GetActionStatus().GetDisplayValue(),
                     tagWithIncludes.Actions.Count,
                     dto.AreaCode,
@@ -391,13 +386,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     journeyWithSteps.Title,
                     dto.McPkgNo,
                     dto.ModeTitle,
-                    nextDueAsYearAndWeek,
-                    nextDueWeeks,
                     openActionsCount,
                     overdueActionsCount,
                     PurchaseOrderHelper.CreateTitle(dto.PurchaseOrderNo, dto.CalloffNo),
                     dto.Remark,
-                    string.Join(",", requirementTitles),
                     dto.ResponsibleCode,
                     dto.Status.GetDisplayValue(),
                     step.Title,

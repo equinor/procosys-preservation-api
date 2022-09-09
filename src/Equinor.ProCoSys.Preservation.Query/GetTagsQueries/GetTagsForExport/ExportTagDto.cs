@@ -6,6 +6,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
     {
         public ExportTagDto(
             List<ExportActionDto> actions,
+            List<ExportRequirementDto> requirements,
             string actionStatus,
             int actionsCount,
             string areaCode,
@@ -16,13 +17,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             string journey,
             string mcPkgNo,
             string mode,
-            string nextDueAsYearAndWeek,
-            int? nextDueWeeks,
             int openActionsCount,
             int overdueActionsCount,
             string purchaseOrderTitle,
             string remark,
-            string requirementTitles,
             string responsibleCode,
             string status,
             string step,
@@ -31,6 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             string tagNo)
         {
             Actions = actions;
+            Requirements = requirements;
             ActionStatus = actionStatus;
             ActionsCount = actionsCount;
             AreaCode = areaCode;
@@ -42,14 +41,11 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             Journey = journey;
             McPkgNo = mcPkgNo;
             Mode = mode;
-            NextDueWeeks = nextDueWeeks;
             OpenActionsCount = openActionsCount;
             OverdueActionsCount = overdueActionsCount;
             PurchaseOrderTitle = purchaseOrderTitle;
             TagNo = tagNo;
-            NextDueAsYearAndWeek = nextDueAsYearAndWeek;
             Remark = remark;
-            RequirementTitles = requirementTitles;
             ResponsibleCode = responsibleCode;
             Status = status;
             Step = step;
@@ -59,6 +55,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         }
 
         public List<ExportActionDto> Actions { get; }
+        public List<ExportRequirementDto> Requirements { get; }
         public string ActionStatus { get; }
         public int ActionsCount { get; }
         public string AreaCode { get; }
@@ -71,15 +68,9 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         public string Journey { get; }
         public string McPkgNo { get; }
         public string Mode { get; }
-        public string NextDueAsYearAndWeek { get; }
-        /// <summary>
-        /// NextDueWeeks shifts at Monday night regardless of where in week the NextDueTimeUtc / current time is
-        /// </summary>
-        public int? NextDueWeeks { get; }
         public int OpenActionsCount { get; }
         public int OverdueActionsCount { get; }
         public string PurchaseOrderTitle { get; }
-        public string RequirementTitles { get; }
         public string Remark { get; }
         public string ResponsibleCode { get; }
         public string Step { get; }
