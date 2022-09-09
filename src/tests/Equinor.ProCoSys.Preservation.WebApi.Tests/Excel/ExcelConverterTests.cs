@@ -368,8 +368,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 var row = worksheet.Row(i + 2); // + 2 because Row(1) is the header
                 Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.TagSheetColumns.TagNo).Value);
                 Assert.AreEqual(tag.Description, row.Cell(ExcelConverter.TagSheetColumns.Description).Value);
-                Assert.AreEqual(tag.NextDueAsYearAndWeek, row.Cell(ExcelConverter.TagSheetColumns.NextInYearAndWeek).Value);
-                AssertInt(tag.NextDueWeeks, row.Cell(ExcelConverter.TagSheetColumns.NextDueWeeks).Value);
+                Assert.AreEqual(tag.NextDueAsYearAndWeek, row.Cell(ExcelConverter.TagSheetColumns.RequirementNextInYearAndWeek).Value);
+                AssertInt(tag.NextDueWeeks, row.Cell(ExcelConverter.TagSheetColumns.RequirementNextDueWeeks).Value);
                 Assert.AreEqual(tag.Journey, row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
                 Assert.AreEqual(tag.Step, row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
                 Assert.AreEqual(tag.Mode, row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
@@ -378,7 +378,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 Assert.AreEqual(tag.ResponsibleCode, row.Cell(ExcelConverter.TagSheetColumns.Resp).Value);
                 Assert.AreEqual(tag.DisciplineCode, row.Cell(ExcelConverter.TagSheetColumns.Disc).Value);
                 Assert.AreEqual(tag.Status, row.Cell(ExcelConverter.TagSheetColumns.PresStatus).Value);
-                Assert.AreEqual(tag.RequirementTitles, row.Cell(ExcelConverter.TagSheetColumns.Req).Value);
+                Assert.AreEqual(tag.RequirementTitles, row.Cell(ExcelConverter.TagSheetColumns.RequirementTitle).Value);
                 Assert.AreEqual(tag.Remark, row.Cell(ExcelConverter.TagSheetColumns.Remark).Value);
                 Assert.AreEqual(tag.StorageArea, row.Cell(ExcelConverter.TagSheetColumns.StorageArea).Value);
                 Assert.AreEqual(tag.ActionStatus, row.Cell(ExcelConverter.TagSheetColumns.ActionStatus).Value);
@@ -487,8 +487,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             Assert.AreEqual(ExcelConverter.TagSheetColumns.Last, row.CellsUsed().Count());
             Assert.AreEqual("Tag nr", row.Cell(ExcelConverter.TagSheetColumns.TagNo).Value);
             Assert.AreEqual("Tag description", row.Cell(ExcelConverter.TagSheetColumns.Description).Value);
-            Assert.AreEqual("Next preservation", row.Cell(ExcelConverter.TagSheetColumns.NextInYearAndWeek).Value);
-            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.TagSheetColumns.NextDueWeeks).Value);
+            Assert.AreEqual("Next preservation", row.Cell(ExcelConverter.TagSheetColumns.RequirementNextInYearAndWeek).Value);
+            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.TagSheetColumns.RequirementNextDueWeeks).Value);
             Assert.AreEqual("Journey", row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
             Assert.AreEqual("Step", row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
             Assert.AreEqual("Mode", row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
@@ -497,7 +497,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             Assert.AreEqual("Responsible", row.Cell(ExcelConverter.TagSheetColumns.Resp).Value);
             Assert.AreEqual("Discipline", row.Cell(ExcelConverter.TagSheetColumns.Disc).Value);
             Assert.AreEqual("Status", row.Cell(ExcelConverter.TagSheetColumns.PresStatus).Value);
-            Assert.AreEqual("Requirements", row.Cell(ExcelConverter.TagSheetColumns.Req).Value);
+            Assert.AreEqual("Requirements", row.Cell(ExcelConverter.TagSheetColumns.RequirementTitle).Value);
             Assert.AreEqual("Remark", row.Cell(ExcelConverter.TagSheetColumns.Remark).Value);
             Assert.AreEqual("Storage area", row.Cell(ExcelConverter.TagSheetColumns.StorageArea).Value);
             Assert.AreEqual("Comm pkg", row.Cell(ExcelConverter.TagSheetColumns.CommPkg).Value);
