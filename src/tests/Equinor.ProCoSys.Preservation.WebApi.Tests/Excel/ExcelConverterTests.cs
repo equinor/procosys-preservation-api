@@ -54,6 +54,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             
             _exportTagDtoWithoutActionsAndHistory = new ExportTagDto(
                 new List<ExportActionDto>(), 
+                new List<ExportRequirementDto>(),
                 "actionStatus1",
                 1,
                 "areaCode1",
@@ -64,13 +65,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 "journey1",
                 "mcPkgNo1",
                 "mode1",
-                "nextDueAsYearAndWeek1",
-                4,
                 5,
                 6,
                 "purchaseOrderTitle1",
                 "remark1",
-                "requirementTitles1",
                 "responsibleCode1",
                 "status1",
                 "step1",
@@ -97,8 +95,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                     new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc))
             };
 
+            var reqDtos1 = new List<ExportRequirementDto>
+            {
+                new ExportRequirementDto(1,"R1", new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc), 4, "Comm1")
+            };
             _exportTagDtoWithTwoActionsAndTwoHistoryItems = new ExportTagDto(
                 actionDtos1,
+                reqDtos1,
                 "actionStatus2",
                 11,
                 "areaCode2",
@@ -109,13 +112,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 "journey2",
                 "mcPkgNo2",
                 "mode2",
-                "nextDueAsYearAndWeek2",
-                14,
                 15,
                 16,
                 "purchaseOrderTitle2",
                 "remark2",
-                "requirementTitles2",
                 "responsibleCode2",
                 "status2",
                 "step2",
@@ -139,8 +139,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                     null)
             };
 
+            var reqDtos2 = new List<ExportRequirementDto>
+            {
+                new ExportRequirementDto(2,"R2", new DateTime(2019, 1, 2, 3, 4, 5, DateTimeKind.Utc), 1, "Comm2"),
+                new ExportRequirementDto(3,"R3", new DateTime(2020, 2, 3, 4, 5, 6, DateTimeKind.Utc), 4, "Comm3")
+            };
+
             _exportTagDtoWithOneActionAndOneHistoryItems = new ExportTagDto(
                 actionDtos2,
+                reqDtos2,
                 "actionStatus3",
                 110,
                 "areaCode3",
@@ -151,13 +158,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 "journey3",
                 "mcPkgNo3",
                 "mode3",
-                "nextDueAsYearAndWeek3",
-                140,
                 150,
                 160,
                 "purchaseOrderTitle3",
                 "remark3",
-                "requirementTitles3",
                 "responsibleCode3",
                 "status3",
                 "step3",
@@ -359,36 +363,43 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
         {
             Assert.IsNotNull(worksheet);
             AssertHeadingsInTagSheet(worksheet);
-            
-            Assert.AreEqual(expectedTagData.Count + 1, worksheet.RowsUsed().Count());
 
-            for (var i = 0; i < expectedTagData.Count; i++)
+            var rowCount = expectedTagData.SelectMany(t => t.Requirements).Count();            
+            Assert.AreEqual(rowCount + 1, worksheet.RowsUsed().Count());
+
+            var rowIndex = 1; // start at 1 because Row(1) is the header
+            foreach (var tag in expectedTagData)
             {
-                var tag = expectedTagData.ElementAt(i);
-                var row = worksheet.Row(i + 2); // + 2 because Row(1) is the header
-                Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.TagSheetColumns.TagNo).Value);
-                Assert.AreEqual(tag.Description, row.Cell(ExcelConverter.TagSheetColumns.Description).Value);
-                Assert.AreEqual(tag.NextDueAsYearAndWeek, row.Cell(ExcelConverter.TagSheetColumns.NextInYearAndWeek).Value);
-                AssertInt(tag.NextDueWeeks, row.Cell(ExcelConverter.TagSheetColumns.NextDueWeeks).Value);
-                Assert.AreEqual(tag.Journey, row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
-                Assert.AreEqual(tag.Step, row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
-                Assert.AreEqual(tag.Mode, row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
-                Assert.AreEqual(tag.PurchaseOrderTitle, row.Cell(ExcelConverter.TagSheetColumns.Po).Value);
-                Assert.AreEqual(tag.AreaCode, row.Cell(ExcelConverter.TagSheetColumns.Area).Value);
-                Assert.AreEqual(tag.ResponsibleCode, row.Cell(ExcelConverter.TagSheetColumns.Resp).Value);
-                Assert.AreEqual(tag.DisciplineCode, row.Cell(ExcelConverter.TagSheetColumns.Disc).Value);
-                Assert.AreEqual(tag.Status, row.Cell(ExcelConverter.TagSheetColumns.PresStatus).Value);
-                Assert.AreEqual(tag.RequirementTitles, row.Cell(ExcelConverter.TagSheetColumns.Req).Value);
-                Assert.AreEqual(tag.Remark, row.Cell(ExcelConverter.TagSheetColumns.Remark).Value);
-                Assert.AreEqual(tag.StorageArea, row.Cell(ExcelConverter.TagSheetColumns.StorageArea).Value);
-                Assert.AreEqual(tag.ActionStatus, row.Cell(ExcelConverter.TagSheetColumns.ActionStatus).Value);
-                Assert.AreEqual(tag.CommPkgNo, row.Cell(ExcelConverter.TagSheetColumns.CommPkg).Value);
-                Assert.AreEqual(tag.McPkgNo, row.Cell(ExcelConverter.TagSheetColumns.McPkg).Value);
-                AssertInt(tag.ActionsCount, row.Cell(ExcelConverter.TagSheetColumns.Actions).Value);
-                AssertInt(tag.OpenActionsCount, row.Cell(ExcelConverter.TagSheetColumns.OpenActions).Value);
-                AssertInt(tag.OverdueActionsCount, row.Cell(ExcelConverter.TagSheetColumns.OverdueActions).Value);
-                AssertInt(tag.AttachmentsCount, row.Cell(ExcelConverter.TagSheetColumns.Attachments).Value);
-                AssertBool(tag.IsVoided, row.Cell(ExcelConverter.TagSheetColumns.Voided).Value);
+                foreach (var req in tag.Requirements)
+                {
+                    rowIndex++;
+
+                    var row = worksheet.Row(rowIndex); // + 2 because Row(1) is the header
+                    Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.TagSheetColumns.TagNo).Value);
+                    Assert.AreEqual(tag.Description, row.Cell(ExcelConverter.TagSheetColumns.Description).Value);
+                    Assert.AreEqual(req.RequirementTitle, row.Cell(ExcelConverter.TagSheetColumns.RequirementTitle).Value);
+                    Assert.AreEqual(req.ActiveComment, row.Cell(ExcelConverter.TagSheetColumns.RequirementComment).Value);
+                    Assert.AreEqual(req.NextDueAsYearAndWeek, row.Cell(ExcelConverter.TagSheetColumns.RequirementNextInYearAndWeek).Value);
+                    AssertInt(req.NextDueWeeks, row.Cell(ExcelConverter.TagSheetColumns.RequirementNextDueWeeks).Value);
+                    Assert.AreEqual(tag.Journey, row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
+                    Assert.AreEqual(tag.Step, row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
+                    Assert.AreEqual(tag.Mode, row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
+                    Assert.AreEqual(tag.PurchaseOrderTitle, row.Cell(ExcelConverter.TagSheetColumns.Po).Value);
+                    Assert.AreEqual(tag.AreaCode, row.Cell(ExcelConverter.TagSheetColumns.Area).Value);
+                    Assert.AreEqual(tag.ResponsibleCode, row.Cell(ExcelConverter.TagSheetColumns.Resp).Value);
+                    Assert.AreEqual(tag.DisciplineCode, row.Cell(ExcelConverter.TagSheetColumns.Disc).Value);
+                    Assert.AreEqual(tag.Status, row.Cell(ExcelConverter.TagSheetColumns.PresStatus).Value);
+                    Assert.AreEqual(tag.Remark, row.Cell(ExcelConverter.TagSheetColumns.Remark).Value);
+                    Assert.AreEqual(tag.StorageArea, row.Cell(ExcelConverter.TagSheetColumns.StorageArea).Value);
+                    Assert.AreEqual(tag.ActionStatus, row.Cell(ExcelConverter.TagSheetColumns.ActionStatus).Value);
+                    Assert.AreEqual(tag.CommPkgNo, row.Cell(ExcelConverter.TagSheetColumns.CommPkg).Value);
+                    Assert.AreEqual(tag.McPkgNo, row.Cell(ExcelConverter.TagSheetColumns.McPkg).Value);
+                    AssertInt(tag.ActionsCount, row.Cell(ExcelConverter.TagSheetColumns.Actions).Value);
+                    AssertInt(tag.OpenActionsCount, row.Cell(ExcelConverter.TagSheetColumns.OpenActions).Value);
+                    AssertInt(tag.OverdueActionsCount, row.Cell(ExcelConverter.TagSheetColumns.OverdueActions).Value);
+                    AssertInt(tag.AttachmentsCount, row.Cell(ExcelConverter.TagSheetColumns.Attachments).Value);
+                    AssertBool(tag.IsVoided, row.Cell(ExcelConverter.TagSheetColumns.Voided).Value);
+                }
             }
         }
 
@@ -487,8 +498,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             Assert.AreEqual(ExcelConverter.TagSheetColumns.Last, row.CellsUsed().Count());
             Assert.AreEqual("Tag nr", row.Cell(ExcelConverter.TagSheetColumns.TagNo).Value);
             Assert.AreEqual("Tag description", row.Cell(ExcelConverter.TagSheetColumns.Description).Value);
-            Assert.AreEqual("Next preservation", row.Cell(ExcelConverter.TagSheetColumns.NextInYearAndWeek).Value);
-            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.TagSheetColumns.NextDueWeeks).Value);
+            Assert.AreEqual("Requirement", row.Cell(ExcelConverter.TagSheetColumns.RequirementTitle).Value);
+            Assert.AreEqual("Active requirement comment", row.Cell(ExcelConverter.TagSheetColumns.RequirementComment).Value);
+            Assert.AreEqual("Next preservation", row.Cell(ExcelConverter.TagSheetColumns.RequirementNextInYearAndWeek).Value);
+            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.TagSheetColumns.RequirementNextDueWeeks).Value);
             Assert.AreEqual("Journey", row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
             Assert.AreEqual("Step", row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
             Assert.AreEqual("Mode", row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
@@ -497,7 +510,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             Assert.AreEqual("Responsible", row.Cell(ExcelConverter.TagSheetColumns.Resp).Value);
             Assert.AreEqual("Discipline", row.Cell(ExcelConverter.TagSheetColumns.Disc).Value);
             Assert.AreEqual("Status", row.Cell(ExcelConverter.TagSheetColumns.PresStatus).Value);
-            Assert.AreEqual("Requirements", row.Cell(ExcelConverter.TagSheetColumns.Req).Value);
             Assert.AreEqual("Remark", row.Cell(ExcelConverter.TagSheetColumns.Remark).Value);
             Assert.AreEqual("Storage area", row.Cell(ExcelConverter.TagSheetColumns.StorageArea).Value);
             Assert.AreEqual("Comm pkg", row.Cell(ExcelConverter.TagSheetColumns.CommPkg).Value);

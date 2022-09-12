@@ -96,9 +96,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
 
                 var tagDto = result.Data.Tags.First(t => t.Status == PreservationStatus.NotStarted.GetDisplayValue());
 
-                Assert.IsFalse(tagDto.NextDueWeeks.HasValue);
-                Assert.IsNull(tagDto.NextDueAsYearAndWeek);
-                Assert.AreEqual(PreservationStatus.NotStarted.GetDisplayValue(), tagDto.Status);
+                foreach (var req in tagDto.Requirements)
+                {
+                    Assert.IsFalse(req.NextDueWeeks.HasValue);
+                    Assert.IsNull(req.NextDueAsYearAndWeek);
+                }
             }
         }
 
@@ -114,9 +116,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
 
                 var tagDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active.GetDisplayValue());
 
-                Assert.AreEqual(_testDataSet.IntervalWeeks, tagDto.NextDueWeeks);
-                Assert.IsNotNull(tagDto.NextDueAsYearAndWeek);
-                Assert.AreEqual(PreservationStatus.Active.GetDisplayValue(), tagDto.Status);
+                foreach (var req in tagDto.Requirements)
+                {
+                    Assert.AreEqual(_testDataSet.IntervalWeeks, req.NextDueWeeks);
+                    Assert.IsNotNull(req.NextDueAsYearAndWeek);
+                }
             }
         }
 
@@ -634,7 +638,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var expectedRequirementTitle = _testDataSet.ReqType1.RequirementDefinitions.Single().Title;
                 foreach (var tag in tags)
                 {
-                    Assert.AreEqual(expectedRequirementTitle, tag.RequirementTitles);
+                    Assert.AreEqual(expectedRequirementTitle, tag.Requirements.Single().RequirementTitle);
                 }
                 Assert.AreEqual(_testDataSet.ReqType1.Title, result.Data.UsedFilter.RequirementTypeTitles.ElementAt(0));
             }
@@ -900,7 +904,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             Assert.AreEqual(tag.TagNo, tagDto.TagNo);
             Assert.AreEqual(tag.Remark, tagDto.Remark);
             Assert.AreEqual(tag.StorageArea, tagDto.StorageArea);
-            Assert.AreEqual(_testDataSet.ReqType1.RequirementDefinitions.First().Title, tagDto.RequirementTitles);
+            Assert.AreEqual(_testDataSet.ReqType1.RequirementDefinitions.First().Title, tagDto.Requirements.Single().RequirementTitle);
             Assert.AreEqual(2, tagDto.ActionsCount);
             Assert.AreEqual(2, tagDto.OpenActionsCount);
             Assert.AreEqual(1, tagDto.OverdueActionsCount);

@@ -41,27 +41,28 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
         {
             public static int TagNo = 1;
             public static int Description = 2;
-            public static int NextInYearAndWeek = 3;
-            public static int NextDueWeeks = 4;
-            public static int Journey = 5;
-            public static int Step = 6;
-            public static int Mode = 7;
-            public static int Po = 8;
-            public static int Area = 9;
-            public static int Resp = 10;
-            public static int Disc = 11;
-            public static int PresStatus = 12;
-            public static int Req = 13;
-            public static int Remark = 14;
-            public static int StorageArea = 15;
-            public static int CommPkg = 16;
-            public static int McPkg = 17;
-            public static int ActionStatus = 18;
-            public static int Actions = 19;
-            public static int OpenActions = 20;
-            public static int OverdueActions = 21;
-            public static int Attachments = 22;
-            public static int Voided = 23;
+            public static int RequirementTitle = 3;
+            public static int RequirementComment = 4;
+            public static int RequirementNextInYearAndWeek = 5;
+            public static int RequirementNextDueWeeks = 6;
+            public static int Journey = 7;
+            public static int Step = 8;
+            public static int Mode = 9;
+            public static int Po = 10;
+            public static int Area = 11;
+            public static int Resp = 12;
+            public static int Disc = 13;
+            public static int PresStatus = 14;
+            public static int Remark = 15;
+            public static int StorageArea = 16;
+            public static int CommPkg = 17;
+            public static int McPkg = 18;
+            public static int ActionStatus = 19;
+            public static int Actions = 20;
+            public static int OpenActions = 21;
+            public static int OverdueActions = 22;
+            public static int Attachments = 23;
+            public static int Voided = 24;
             public static int Last = Voided;
         }
 
@@ -205,8 +206,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
             row.Style.Font.SetFontSize(12);
             row.Cell(TagSheetColumns.TagNo).Value = "Tag nr";
             row.Cell(TagSheetColumns.Description).Value = "Tag description";
-            row.Cell(TagSheetColumns.NextInYearAndWeek).Value = "Next preservation";
-            row.Cell(TagSheetColumns.NextDueWeeks).Value = "Due (weeks)";
+            row.Cell(TagSheetColumns.RequirementTitle).Value = "Requirement";
+            row.Cell(TagSheetColumns.RequirementComment).Value = "Active requirement comment";
+            row.Cell(TagSheetColumns.RequirementNextInYearAndWeek).Value = "Next preservation";
+            row.Cell(TagSheetColumns.RequirementNextDueWeeks).Value = "Due (weeks)";
             row.Cell(TagSheetColumns.Journey).Value = "Journey";
             row.Cell(TagSheetColumns.Step).Value = "Step";
             row.Cell(TagSheetColumns.Mode).Value = "Mode";
@@ -215,7 +218,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
             row.Cell(TagSheetColumns.Resp).Value = "Responsible";
             row.Cell(TagSheetColumns.Disc).Value = "Discipline";
             row.Cell(TagSheetColumns.PresStatus).Value = "Status";
-            row.Cell(TagSheetColumns.Req).Value = "Requirements";
             row.Cell(TagSheetColumns.Remark).Value = "Remark";
             row.Cell(TagSheetColumns.StorageArea).Value = "Storage area";
             row.Cell(TagSheetColumns.CommPkg).Value = "Comm pkg";
@@ -229,35 +231,39 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
 
             foreach (var tag in tags)
             {
-                row = sheet.Row(++rowIdx);
-
-                row.Cell(TagSheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Description).SetValue(tag.Description).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.NextInYearAndWeek).SetValue(tag.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
-                if (tag.NextDueWeeks.HasValue)
+                foreach (var req in tag.Requirements)
                 {
-                    // The only number cell: NextDueWeeks
-                    row.Cell(TagSheetColumns.NextDueWeeks).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
+                    row = sheet.Row(++rowIdx);
+
+                    row.Cell(TagSheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.Description).SetValue(tag.Description).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.RequirementTitle).SetValue(req.RequirementTitle).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.RequirementComment).SetValue(req.ActiveComment).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.RequirementNextInYearAndWeek).SetValue(req.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
+                    if (req.NextDueWeeks.HasValue)
+                    {
+                        // The only number cell: NextDueWeeks
+                        row.Cell(TagSheetColumns.RequirementNextDueWeeks).SetValue(req.NextDueWeeks.Value).SetDataType(XLDataType.Number);
+                    }
+                    row.Cell(TagSheetColumns.Journey).SetValue(tag.Journey).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.Step).SetValue(tag.Step).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.Mode).SetValue(tag.Mode).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.Po).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.Area).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.Resp).SetValue(tag.ResponsibleCode).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.Disc).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.PresStatus).SetValue(tag.Status).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.Remark).SetValue(tag.Remark).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.StorageArea).SetValue(tag.StorageArea).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.CommPkg).SetValue(tag.CommPkgNo).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.McPkg).SetValue(tag.McPkgNo).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.ActionStatus).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.Actions).SetValue(tag.ActionsCount).SetDataType(XLDataType.Number);
+                    row.Cell(TagSheetColumns.OpenActions).SetValue(tag.OpenActionsCount).SetDataType(XLDataType.Number);
+                    row.Cell(TagSheetColumns.OverdueActions).SetValue(tag.OverdueActionsCount).SetDataType(XLDataType.Number);
+                    row.Cell(TagSheetColumns.Attachments).SetValue(tag.AttachmentsCount).SetDataType(XLDataType.Number);
+                    row.Cell(TagSheetColumns.Voided).SetValue(tag.IsVoided).SetDataType(XLDataType.Boolean);
                 }
-                row.Cell(TagSheetColumns.Journey).SetValue(tag.Journey).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Step).SetValue(tag.Step).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Mode).SetValue(tag.Mode).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Po).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Area).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Resp).SetValue(tag.ResponsibleCode).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Disc).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.PresStatus).SetValue(tag.Status).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Req).SetValue(tag.RequirementTitles).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Remark).SetValue(tag.Remark).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.StorageArea).SetValue(tag.StorageArea).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.CommPkg).SetValue(tag.CommPkgNo).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.McPkg).SetValue(tag.McPkgNo).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.ActionStatus).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Actions).SetValue(tag.ActionsCount).SetDataType(XLDataType.Number);
-                row.Cell(TagSheetColumns.OpenActions).SetValue(tag.OpenActionsCount).SetDataType(XLDataType.Number);
-                row.Cell(TagSheetColumns.OverdueActions).SetValue(tag.OverdueActionsCount).SetDataType(XLDataType.Number);
-                row.Cell(TagSheetColumns.Attachments).SetValue(tag.AttachmentsCount).SetDataType(XLDataType.Number);
-                row.Cell(TagSheetColumns.Voided).SetValue(tag.IsVoided).SetDataType(XLDataType.Boolean);
             }
 
             const int minWidth = 10;
