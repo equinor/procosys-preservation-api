@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.PcsServiceBus.Topics;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
@@ -77,7 +78,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             if (certificateEvent.CertificateType == "RFOC" || certificateEvent.CertificateType == "RFCC")
             {
                 await SetUserContextAsync(certificateEvent.Plant);
-                var result = await _mediator.Send(new AutoTransferCommand(certificateEvent.ProjectName, certificateEvent.CertificateNo, certificateEvent.CertificateType.ToString()));
+                var result = await _mediator.Send(new AutoTransferCommand(
+                    certificateEvent.ProjectName,
+                    certificateEvent.CertificateNo,
+                    certificateEvent.CertificateType.ToString(),
+                    certificateEvent.ProCoSysGuid));
 
                 LogAutoTransferResult(certificateEvent, result);
             }
