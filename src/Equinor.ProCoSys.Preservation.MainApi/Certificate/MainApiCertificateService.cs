@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
@@ -31,16 +30,6 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
                       $"&api-version={_apiVersion}";
 
             return await _mainApiClient.TryQueryAndDeserializeAsync<PCSCertificateTagsModel>(url);
-        }
-
-        public async Task<IEnumerable<PCSCertificateModel>> GetAcceptedCertificatesAsync(string plant, DateTime cutoffAcceptedTime)
-        {
-            var url = $"{_baseAddress}Certificate/Accepted" +
-                      $"?plantId={plant}" +
-                      $"&cutoffAcceptedTime={cutoffAcceptedTime:O}" +
-                      $"&api-version={_apiVersion}";
-
-            return await _mainApiClient.QueryAndDeserializeAsync<List<PCSCertificateModel>>(url);
         }
     }
 }
