@@ -20,8 +20,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
         private readonly string _testProjectName = "ProjectA";
         private readonly string _testTagNo = "TagA";
         private readonly string _certificateNo = "CertificateA";
+        private readonly Guid _rfccGuid = new Guid("{4270C978-D0A7-4485-82E0-146B6084FB20}");
+        private readonly Guid _rfocGuid = new Guid("{4270C978-D0A7-4485-82E0-146B6084FB21}");
+        private readonly Guid _tacGuid = new Guid("{4270C978-D0A7-4485-82E0-146B6084FB22}");
         private readonly int _step1OnJourneyId = 1;
         private readonly int _step2OnJourneyId = 2;
+        private readonly string _rfcc = "RFCC";
+        private readonly string _rfoc = "RFOC";
+        private readonly string _tac = "TAC";
 
         private AutoTransferCommand _commandForRfcc;
         private AutoTransferCommand _commandForRfoc;
@@ -35,7 +41,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
         private Mock<IProjectRepository> _projectRepoMock;
         private PCSCertificateTagsModel _procosysCertificateTagsModel;
         private Journey _journey;
-        private string _rfcc;
 
         [TestInitialize]
         public void Setup()
@@ -73,13 +78,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
 
             _tag.StartPreservation();
 
-            _rfcc = "RFCC";
-            var rfoc = "RFOC";
-            var tac = "TAC";
-
-            _commandForRfcc = new AutoTransferCommand(_testProjectName, _certificateNo, _rfcc);
-            _commandForRfoc = new AutoTransferCommand(_testProjectName, _certificateNo, rfoc);
-            _commandForOther = new AutoTransferCommand(_testProjectName, _certificateNo, tac);
+            _commandForRfcc = new AutoTransferCommand(_testProjectName, _certificateNo, _rfcc, _rfccGuid);
+            _commandForRfoc = new AutoTransferCommand(_testProjectName, _certificateNo, _rfoc, _rfocGuid);
+            _commandForOther = new AutoTransferCommand(_testProjectName, _certificateNo, _tac, _tacGuid);
 
             _procosysCertificateTagsModel = new PCSCertificateTagsModel()
             {
@@ -93,14 +94,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
                 }
             };
             _certificateApiServiceMock = new Mock<ICertificateApiService>();
-            _certificateApiServiceMock.Setup(c =>
-                    c.TryGetCertificateTagsAsync(TestPlant, _testProjectName, _certificateNo, _rfcc))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfccGuid))
                 .Returns(Task.FromResult(_procosysCertificateTagsModel));
-            _certificateApiServiceMock.Setup(c =>
-                    c.TryGetCertificateTagsAsync(TestPlant, _testProjectName, _certificateNo, rfoc))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfocGuid))
                 .Returns(Task.FromResult(_procosysCertificateTagsModel));
-            _certificateApiServiceMock.Setup(c =>
-                    c.TryGetCertificateTagsAsync(TestPlant, _testProjectName, _certificateNo, tac))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _tacGuid))
                 .Returns(Task.FromResult(_procosysCertificateTagsModel));
 
             _projectRepoMock = new Mock<IProjectRepository>();
@@ -191,8 +189,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
         public async Task HandlingAutoTransferCommand_ForUnknownCertificate_ShouldDoNothing_AndReturnNotFound()
         {
             // Arrange
-            _certificateApiServiceMock.Setup(c =>
-                    c.TryGetCertificateTagsAsync(TestPlant, _testProjectName, _certificateNo, _rfcc))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _commandForRfcc.ProCoSysGuid))
                 .Returns(Task.FromResult<PCSCertificateTagsModel>(null));
 
             // Act
@@ -201,7 +198,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             // Assert
             Assert.AreEqual(_step1OnJourneyId, _tag.StepId);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.AreEqual($"Certificate {_certificateNo} of type {_rfcc} not found in project {_testProjectName}", result.Errors[0]);
+            Assert.AreEqual($"Certificate {_commandForRfcc.ProCoSysGuid} not found", result.Errors[0]);
         }
 
         [TestMethod]
