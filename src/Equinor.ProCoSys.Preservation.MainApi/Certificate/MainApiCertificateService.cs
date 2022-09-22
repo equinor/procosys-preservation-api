@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Microsoft.Extensions.Options;
@@ -21,26 +19,14 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
             _baseAddress = new Uri(options.Value.BaseAddress);
         }
 
-        public async Task<PCSCertificateTagsModel> TryGetCertificateTagsAsync(string plant, string projectName, string certificateNo, string certificateType)
+        public async Task<PCSCertificateTagsModel> TryGetCertificateTagsAsync(string plant, Guid proCoSysGuid)
         {
-            var url = $"{_baseAddress}Certificate/Tags" +
+            var url = $"{_baseAddress}Certificate/TagsByCertificateGuid" +
                       $"?plantId={plant}" +
-                      $"&projectName={WebUtility.UrlEncode(projectName)}" +
-                      $"&certificateNo={WebUtility.UrlEncode(certificateNo)}" +
-                      $"&certificateType={WebUtility.UrlEncode(certificateType)}" +
+                      $"&proCoSysGuid={proCoSysGuid.ToString("N")}" +
                       $"&api-version={_apiVersion}";
 
             return await _mainApiClient.TryQueryAndDeserializeAsync<PCSCertificateTagsModel>(url);
-        }
-
-        public async Task<IEnumerable<PCSCertificateModel>> GetAcceptedCertificatesAsync(string plant, DateTime cutoffAcceptedTime)
-        {
-            var url = $"{_baseAddress}Certificate/Accepted" +
-                      $"?plantId={plant}" +
-                      $"&cutoffAcceptedTime={cutoffAcceptedTime:O}" +
-                      $"&api-version={_apiVersion}";
-
-            return await _mainApiClient.QueryAndDeserializeAsync<List<PCSCertificateModel>>(url);
         }
     }
 }

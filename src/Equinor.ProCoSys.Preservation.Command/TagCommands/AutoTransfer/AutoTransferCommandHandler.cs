@@ -67,15 +67,11 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer
                 return new SuccessResult<Unit>(Unit.Value);
             }
 
-            var certificateTagModel = await _certificateApiService.TryGetCertificateTagsAsync(
-                _plantProvider.Plant,
-                request.ProjectName,
-                request.CertificateNo,
-                request.CertificateType);
+            var certificateTagModel = await _certificateApiService.TryGetCertificateTagsAsync(_plantProvider.Plant, request.ProCoSysGuid);
 
             if (certificateTagModel == null)
             {
-                var error = $"Certificate {request.CertificateNo} of type {request.CertificateType} not found in project {request.ProjectName}";
+                var error = $"Certificate {request.ProCoSysGuid} not found";
                 _logger.LogError(error);
                 return new NotFoundResult<Unit>(error);
             }

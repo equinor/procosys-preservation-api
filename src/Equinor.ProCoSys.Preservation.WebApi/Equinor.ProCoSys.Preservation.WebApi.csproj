@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.96.0" />
-    <PackageReference Include="Equinor.ProCoSys.PcsServiceBus" Version="2.1.5" />
+    <PackageReference Include="Equinor.ProCoSys.PcsServiceBus" Version="2.1.12" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.1" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />

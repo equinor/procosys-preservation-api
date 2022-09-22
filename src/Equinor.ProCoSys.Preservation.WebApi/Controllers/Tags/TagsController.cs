@@ -634,7 +634,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromBody] AutoTransferDto dto)
         {
-            var result = await _mediator.Send(new AutoTransferCommand(dto.ProjectName, dto.CertificateNo, dto.CertificateType));
+            var result = await _mediator.Send(new AutoTransferCommand(
+                dto.ProjectName,
+                dto.CertificateNo,
+                dto.CertificateType,
+                dto.ProCoSysGuid));
             return this.FromResult(result);
         }
 
