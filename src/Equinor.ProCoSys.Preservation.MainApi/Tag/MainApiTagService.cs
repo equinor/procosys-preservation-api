@@ -104,6 +104,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
                     $"&projectName={WebUtility.UrlEncode(projectName)}" +
                     $"&currentPage={currentPage++}" +
                     $"&itemsPerPage={_tagSearchPageSize}" +
+                    $"&calculateMccrResponsibleCodes=true" +
                     $"&api-version={_apiVersion}";
                 tagSearchResult = await _mainApiClient.QueryAndDeserializeAsync<PCSTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
