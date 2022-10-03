@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Client
             var response = await httpClient.GetAsync(url);
             stopWatch.Stop();
 
-            var msg = $"{stopWatch.Elapsed.TotalSeconds}s elapsed when requesting '{url}'. Status: {response.StatusCode}";
+            var msg = $"{stopWatch.Elapsed.TotalMilliseconds}ms elapsed when requesting '{url}'. Status: {response.StatusCode}";
             if (!response.IsSuccessStatusCode)
             {
                 if (tryGet && response.StatusCode == HttpStatusCode.NotFound)
@@ -77,7 +77,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Client
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogError($"Request was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
+                _logger.LogError($"Request was unsuccessful and took {stopWatch.Elapsed.TotalMilliseconds}ms.");
                 throw new Exception();
             }
         }
