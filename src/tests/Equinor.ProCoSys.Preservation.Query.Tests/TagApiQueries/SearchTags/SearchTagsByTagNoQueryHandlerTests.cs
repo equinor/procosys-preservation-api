@@ -6,6 +6,7 @@ using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
@@ -19,9 +20,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
         private IList<PCSTagOverview> _apiTags;
         private SearchTagsByTagNoQuery _query;
         private TestDataSet _testDataSet;
+        private Mock<ILogger<SearchTagsByTagNoQueryHandler>> _loggerMock;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
+            _loggerMock = new Mock<ILogger<SearchTagsByTagNoQueryHandler>>();
+
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _testDataSet = AddTestDataSet(context);
@@ -78,7 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
+                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider, _loggerMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
@@ -90,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
+                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider, _loggerMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 Assert.AreEqual(3, result.Data.Count);
@@ -108,7 +112,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
+                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider, _loggerMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 Assert.IsTrue(result.Data[0].IsPreserved);
@@ -122,7 +126,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
+                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider, _loggerMock.Object);
                 _tagApiServiceMock
                     .Setup(x => x.SearchTagsByTagNoAsync(TestPlant, _testDataSet.Project1.Name, _testDataSet.SiteTagPrefix))
                     .Returns(Task.FromResult<IList<PCSTagOverview>>(null));
@@ -143,7 +147,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     .Setup(x => x.SearchTagsByTagNoAsync(TestPlant, "Project XYZ", "TagNo"))
                     .Returns(Task.FromResult(_apiTags));
 
-                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
+                var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider, _loggerMock.Object);
 
                 var query = new SearchTagsByTagNoQuery("Project XYZ", "TagNo");
                 var result = await dut.Handle(query, default);
