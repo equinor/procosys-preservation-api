@@ -10,6 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'equinor'
+    ref: 96092_remove_obsolete_env_vars_for_pres_api
 
 # Global variables for the pipeline
 variables:
@@ -38,26 +39,26 @@ name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
 
 stages:
 # Run tests Stage
-- stage: runtests
-  displayName: 'Run tests'
-  variables:
-    envName: 'runtests'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'
+#- stage: runtests
+#  displayName: 'Run tests'
+#  variables:
+#    envName: 'runtests'
+#    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+#    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'
 
-  jobs:
-  # Run Test
-  - template: /templates/pipelines/runtest.yml@templates
-    parameters:
-      deploymentName: 'runtests'
-      dependsOn: ''
-      envGroup: '${{ variables.envGroupName }}'
-      testPath: '${{ variables.testPath }}'
+#  jobs:
+#   Run Test
+#  - template: /templates/pipelines/runtest.yml@templates
+#    parameters:
+#      deploymentName: 'runtests'
+#      dependsOn: ''
+#      envGroup: '${{ variables.envGroupName }}'
+#      testPath: '${{ variables.testPath }}'
 
 # Build stage. Docker build, tag and push
 - stage: build
   displayName: 'Build'
-  dependsOn: 'runtests'
+#  dependsOn: 'runtests'
   variables:
     envName: 'build'
     envRg: '${{ variables.envRgName }}'
@@ -68,27 +69,28 @@ stages:
 
   jobs:
   # Docker Build
-  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
-    parameters:
-      deploymentName: 'docker_build'
-      dependsOn: ''
-      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
-      env: 'pcs-${{ variables.envName }}'
-      envGroup: '${{ variables.envGroupName }}'
-      buildCommand: build
-      versionNumber: ${{ variables.versionNumber }}
-      arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
-      dockerfilePath: '${{ variables.dockerfilePath }}'
-      buildContext: '$(Build.SourcesDirectory)/src'
-      repository: '${{ variables.repositoryName }}'
-      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+  #- template: /templates/pipelines/dockerbuild-preservation.yml@templates
+  #  parameters:
+  #    deploymentName: 'docker_build'
+  #    dependsOn: ''
+  #    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  #    env: 'pcs-${{ variables.envName }}'
+  #    envGroup: '${{ variables.envGroupName }}'
+  #    buildCommand: build
+  #    versionNumber: ${{ variables.versionNumber }}
+  #    arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
+  #    dockerfilePath: '${{ variables.dockerfilePath }}'
+  #    buildContext: '$(Build.SourcesDirectory)/src'
+  #    repository: '${{ variables.repositoryName }}'
+  #    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
   # Docker Build and Push (Master Only)
   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
     parameters:
       deploymentName: 'docker_build_and_push_master_only'
       dependsOn: ''
-      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       buildCommand: buildAndPush
@@ -147,7 +149,6 @@ stages:
       dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
       clusterName: 'pcs-aks-test'
       kvClientIdName: '${{ variables.kvClientIdName }}'
-      kvUriName: '${{ variables.kvUriName }}'
       kvClientSecretName: '${{ variables.kvClientSecretName }}'
       kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
       kvTenantIdSecret: '${{ variables.kvTenantIdSecret }}'
@@ -199,7 +200,6 @@ stages:
       dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
       clusterName: 'pcs-aks-test'
       kvClientIdName: '${{ variables.kvClientIdName }}'
-      kvUriName: '${{ variables.kvUriName }}'
       kvClientSecretName: '${{ variables.kvClientSecretName }}'
       kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
       kvTenantIdSecret: '${{ variables.kvTenantIdSecret }}'
@@ -249,7 +249,6 @@ stages:
       dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
       clusterName: 'pcs-aks-prod'
       kvClientIdName: '${{ variables.kvClientIdName }}'
-      kvUriName: '${{ variables.kvUriName }}'
       kvClientSecretName: '${{ variables.kvClientSecretName }}'
       kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
       kvTenantIdSecret: '${{ variables.kvTenantIdSecret }}'
