@@ -150,7 +150,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 options.EnableForHttps = true;
             });
 
-            services.AddApplicationInsightsTelemetry();
+            services.AddApplicationInsightsTelemetry(options =>
+            {
+                options.ConnectionString = Configuration["ApplicationInsights:ConnectionString"];
+            });
             services.AddMediatrModules();
             services.AddApplicationModules(Configuration);
 
