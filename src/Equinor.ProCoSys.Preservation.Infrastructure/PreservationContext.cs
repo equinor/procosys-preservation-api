@@ -37,6 +37,12 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             _currentUserProvider = currentUserProvider;
         }
 
+        // Use this code to log sql to console for debugging locally
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.LogTo(System.Console.WriteLine);
+        //}
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
