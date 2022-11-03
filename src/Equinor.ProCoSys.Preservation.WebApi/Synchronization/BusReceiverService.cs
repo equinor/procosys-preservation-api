@@ -87,9 +87,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _preservationApiOid.ToString()));
             currentUser.AddIdentity(claimsIdentity);
 
-        
 
-                switch (pcsTopic)
+
+            switch (pcsTopic)
             {
                 case PcsTopic.Project:
                     await ProcessProjectEvent(messageJson);
@@ -117,8 +117,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        private static bool IsDeleteEvent(Dictionary<string, object> deserialize) 
-            => deserialize.Contains(new KeyValuePair<string, object>("Behaviour", "delete"));
+        private static bool IsDeleteEvent(Dictionary<string, object> deserialize)
+            => deserialize.Contains(new KeyValuePair<string, object>("Behavior", "delete"));
 
 
         private async Task ProcessTagEvent(string messageJson)
