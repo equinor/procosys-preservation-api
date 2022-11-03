@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IAuthenticator _authenticator;
         private readonly IProjectApiService _projectApiService;
         private readonly ICertificateEventProcessorService _certificateEventProcessorService;
-        private Guid _preservationApiOid;
+        private readonly Guid _preservationApiOid;
         private const string PreservationBusReceiverTelemetryEvent = "Preservation Bus Receiver";
 
         public BusReceiverService(IPlantSetter plantSetter,
@@ -68,6 +68,19 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         public async Task ProcessMessageAsync(PcsTopic pcsTopic, string messageJson, CancellationToken cancellationToken)
         {
+            var deserializedMessage = JsonSerializer.Deserialize<Dictionary<string, object>>(messageJson);
+
+            /***
+             * Filter out deleted events for now, but should be handled properly #96688
+             */
+            if (deserializedMessage != null && IsDeleteEvent(deserializedMessage))
+            {
+                deserializedMessage.TryGetValue("ProCoSysGuid", out var guid);
+                TrackDeleteEvent(pcsTopic, guid);
+                return;
+            }
+
+
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
             var currentUser = _claimsProvider.GetCurrentUser();
@@ -75,7 +88,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _preservationApiOid.ToString()));
             currentUser.AddIdentity(claimsIdentity);
 
-            switch (pcsTopic)
+        
+
+                switch (pcsTopic)
             {
                 case PcsTopic.Project:
                     await ProcessProjectEvent(messageJson);
@@ -102,6 +117,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
+
+        private static bool IsDeleteEvent(Dictionary<string, object> deserialize) => deserialize.Contains(new KeyValuePair<string, object>("Behaviour", "delete"));
 
 
         private async Task ProcessTagEvent(string messageJson)
@@ -405,6 +422,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     {nameof(tagEvent.TagNo), tagEvent.TagNo},
                     {nameof(tagEvent.Plant), tagEvent.Plant[4..]},  //TODO: DRY, replace with NormalizePlant
                     {nameof(tagEvent.ProjectName), tagEvent.ProjectName.Replace('$', '_')} //TODO: DRY, replace with NormalizeProjectName
+                });
+
+        private void TrackDeleteEvent(PcsTopic topic, object guid) =>
+            _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
+                new Dictionary<string, string>
+                {
+                    {"Event Delete", topic.ToString()},
+                    {"ProCoSysGuid", guid.ToString()}
                 });
     }
 }
