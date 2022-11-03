@@ -69,7 +69,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         public async Task ProcessMessageAsync(PcsTopic pcsTopic, string messageJson, CancellationToken cancellationToken)
         {
             var deserializedMessage = JsonSerializer.Deserialize<Dictionary<string, object>>(messageJson);
-
             /***
              * Filter out deleted events for now, but should be handled properly #96688
              */
@@ -118,7 +117,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        private static bool IsDeleteEvent(Dictionary<string, object> deserialize) => deserialize.Contains(new KeyValuePair<string, object>("Behaviour", "delete"));
+        private static bool IsDeleteEvent(Dictionary<string, object> deserialize) 
+            => deserialize.Contains(new KeyValuePair<string, object>("Behaviour", "delete"));
 
 
         private async Task ProcessTagEvent(string messageJson)
