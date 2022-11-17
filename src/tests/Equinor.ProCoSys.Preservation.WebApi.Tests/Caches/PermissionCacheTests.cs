@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.Time;
 using Equinor.ProCoSys.Preservation.Infrastructure.Caching;
+using Equinor.ProCoSys.Preservation.MainApi.Me;
 using Equinor.ProCoSys.Preservation.MainApi.Permission;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Equinor.ProCoSys.Preservation.WebApi.Caches;
@@ -18,6 +19,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
     {
         private PermissionCache _dut;
         private readonly Guid Oid = new Guid("{3BFB54C7-91E2-422E-833F-951AD07FE37F}");
+        private Mock<IMeApiService> _meApiServiceMock;
         private Mock<IPermissionApiService> _permissionApiServiceMock;
         private readonly string TestPlant = "TestPlant";
         private readonly string Permission1 = "A";
@@ -33,6 +35,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         {
             TimeService.SetProvider(new ManualTimeProvider(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
 
+            _meApiServiceMock = new Mock<IMeApiService>();
             _permissionApiServiceMock = new Mock<IPermissionApiService>();
             _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(TestPlant))
                 .Returns(Task.FromResult<IList<PCSProject>>(new List<PCSProject>
@@ -51,7 +54,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
                 .Setup(x => x.Value)
                 .Returns(new CacheOptions());
 
-            _dut = new PermissionCache(new CacheManager(), _permissionApiServiceMock.Object, optionsMock.Object);
+            _dut = new PermissionCache(
+                new CacheManager(),
+                _permissionApiServiceMock.Object,
+                _meApiServiceMock.Object,
+                optionsMock.Object);
         }
 
         [TestMethod]
@@ -87,6 +94,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             // Assert
             AssertProjects(result);
             _permissionApiServiceMock.Verify(p => p.GetAllOpenProjectsAsync(TestPlant), Times.Once);
+            _meApiServiceMock.Verify(p => p.TracePlantAsync(TestPlant), Times.Once);
         }
 
         [TestMethod]
@@ -100,6 +108,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             AssertProjects(result);
             // since GetProjectsForUserAsyncAsync has been called twice, but GetAllProjectsAsync has been called once, the second Get uses cache
             _permissionApiServiceMock.Verify(p => p.GetAllOpenProjectsAsync(TestPlant), Times.Once);
+            _meApiServiceMock.Verify(p => p.TracePlantAsync(TestPlant), Times.Once);
         }
 
         [TestMethod]
@@ -146,6 +155,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             var dut = new PermissionCache(
                 cacheManagerMock.Object,
                 _permissionApiServiceMock.Object,
+                _meApiServiceMock.Object,
                 new Mock<IOptionsSnapshot<CacheOptions>>().Object);
             // Act
             dut.ClearAll(TestPlant, Oid);

@@ -8,5 +8,6 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Client
         Task<T> TryQueryAndDeserializeAsync<T>(string url);
         Task<T> QueryAndDeserializeAsync<T>(string url);
         Task PutAsync(string url, HttpContent content);
+        Task PostAsync(string url, HttpContent content);
     }
 }
