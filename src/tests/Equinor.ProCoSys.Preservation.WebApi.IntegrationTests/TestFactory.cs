@@ -8,6 +8,7 @@ using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
+using Equinor.ProCoSys.Preservation.MainApi.Me;
 using Equinor.ProCoSys.Preservation.MainApi.Permission;
 using Equinor.ProCoSys.Preservation.MainApi.Person;
 using Equinor.ProCoSys.Preservation.MainApi.Plant;
@@ -42,6 +43,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         private readonly List<Action> _teardownList = new List<Action>();
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
 
+        private readonly Mock<IMeApiService> _meApiServiceMock = new Mock<IMeApiService>();
         private readonly Mock<IPersonApiService> _personApiServiceMock = new Mock<IPersonApiService>();
         private readonly Mock<IPlantApiService> _plantApiServiceMock = new Mock<IPlantApiService>();
         private readonly Mock<IProjectApiService> _projectApiServiceMock = new Mock<IProjectApiService>();
@@ -152,6 +154,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 services.PostConfigureAll<JwtBearerOptions>(jwtBearerOptions =>
                     jwtBearerOptions.ForwardAuthenticate = IntegrationTestAuthHandler.TestAuthenticationScheme);
 
+                services.AddScoped(_ => _meApiServiceMock.Object);
                 services.AddScoped(_ => _personApiServiceMock.Object);
                 services.AddScoped(_ => _plantApiServiceMock.Object);
                 services.AddScoped(_ => _projectApiServiceMock.Object);

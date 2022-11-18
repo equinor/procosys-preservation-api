@@ -35,6 +35,7 @@ using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Certificate;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
+using Equinor.ProCoSys.Preservation.MainApi.Me;
 using Equinor.ProCoSys.Preservation.MainApi.Permission;
 using Equinor.ProCoSys.Preservation.MainApi.Person;
 using Equinor.ProCoSys.Preservation.MainApi.Plant;
@@ -119,6 +120,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IAuthenticator>(x => x.GetRequiredService<Authenticator>());
             services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
             services.AddScoped<ITagApiService, MainApiTagService>();
+            services.AddScoped<IMeApiService, MainApiMeService>();
             services.AddScoped<IPlantApiService, MainApiPlantService>();
             services.AddScoped<IPersonApiService, MainApiPersonService>();
             services.AddScoped<IProjectApiService, MainApiProjectService>();
