@@ -38,6 +38,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private Mock<ITagFunctionRepository> _tagFunctionRepository;
         private TagFunction _tagFunction;
         private Mock<ICertificateEventProcessorService> _certificationEventProcessorService;
+        private Mock<ICurrentUserSetter> _currentUserSetter;
 
         private const string Plant = "PCS$HEIMDAL";
         private const string Code = "Resp_Code";
@@ -55,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private Tag _tag2;
         private Project _newProjectCreated;
         private string _projectNotInPreservation ="ProjectNotInPres";
-
+        
         private const string TagNo1 = "TagNo1";
         private const string TagNo2 = "TagNo2";
         private const string OldTagDescription1 = "OldTagDescription1";
@@ -127,7 +128,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 .Returns(Task.FromResult(_tagFunction));
             var options = new Mock<IOptionsSnapshot<AuthenticatorOptions>>();
             options.Setup(s => s.Value).Returns(new AuthenticatorOptions{PreservationApiObjectId = Guid.NewGuid()});
-            var currentUserSetter = new Mock<ICurrentUserSetter>();
+            _currentUserSetter = new Mock<ICurrentUserSetter>();
             var claimsProvider = new Mock<IClaimsProvider>();
             claimsProvider.Setup(c => c.GetCurrentUser()).Returns(new ClaimsPrincipal());
             var projectApiService = new Mock<IProjectApiService>();
@@ -139,7 +140,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           _responsibleRepository.Object,
                                           _projectRepository.Object,
                                           _tagFunctionRepository.Object,
-                                          currentUserSetter.Object,
+                                          _currentUserSetter.Object,
                                           claimsProvider.Object,
                                           new Mock<IAuthenticator>().Object,
                                           options.Object,
@@ -740,6 +741,32 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
         #region Certificate
         //TODO: ADD TESTS
+        #endregion
+
+        #region Delete
+        [TestMethod]
+        public async Task HandleDeleteTopic_ShouldIgnoreMessage()
+        {
+            // Arrange
+            const string Delete = "delete";
+            var guid = new Guid();
+            var message =
+                $"{{\"Plant\" : \"{Plant}\",\"ProCoSysGuid\" : \"{guid}\",\"TagNo\" : \"{TagNo1}\",\"Behavior\" : \"{Delete}\",\"RegisterCode\" : \"SomeRegister\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+
+            // Assert
+            _telemetryClient.Verify(tc => tc.TrackEvent("Preservation Bus Receiver",
+                new Dictionary<string, string>
+                {
+                    {"Event Delete", PcsTopic.Tag.ToString()},
+                    {"ProCoSysGuid", guid.ToString()}
+                }),Times.Once());
+
+            //ProcessMessageAsync should return before setting user
+            _currentUserSetter.VerifyNoOtherCalls();
+        }
         #endregion
     }
 }
