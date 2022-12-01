@@ -116,6 +116,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             var tag = new Tag(
                 plantId, 
                 TagType.Standard, 
+                Guid.NewGuid(),
                 $"Tag in {projectName}", 
                 "Tag desc", 
                 step,

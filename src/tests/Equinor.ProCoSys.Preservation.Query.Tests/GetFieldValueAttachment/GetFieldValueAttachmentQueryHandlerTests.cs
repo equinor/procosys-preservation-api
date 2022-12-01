@@ -55,6 +55,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
 
             var tag = new Tag(TestPlant,
                 TagType.Standard,
+                Guid.NewGuid(),
                 "TagNo",
                 "Description",
                 journey.Steps.ElementAt(0),

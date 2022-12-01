@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.DeleteTag;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -33,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
             _rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
             var requirement = new TagRequirement(TestPlant, 2, _rdMock.Object);
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", _stepMock.Object, new List<TagRequirement> { requirement });
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", _stepMock.Object, new List<TagRequirement> { requirement });
             _tag.SetProtectedIdForTesting(2);
             _tag.IsVoided = true;
 

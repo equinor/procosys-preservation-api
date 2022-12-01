@@ -29,10 +29,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             _reqMock = new Mock<TagRequirement>();
             _reqMock.SetupGet(r => r.Plant).Returns(TestPlant);
-            _tag1 = new Tag(TestPlant, TagType.Standard, "Tag1", "", _stepMock.Object,
+            _tag1 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "Tag1", "", _stepMock.Object,
                 new List<TagRequirement> { _reqMock.Object })
             { McPkgNo = McPkgNo, CommPkgNo = CommPkgNo };
-            _tag2 = new Tag(TestPlant, TagType.Standard, "Tag2", "", _stepMock.Object,
+            _tag2 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "Tag2", "", _stepMock.Object,
                     new List<TagRequirement> { _reqMock.Object })
             { McPkgNo = McPkgNo2, CommPkgNo = CommPkgNo2 };
             _dut = new Project(TestPlant, "ProjectNameA", "DescA");
@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddTag_ShouldAddTagToTagsList()
         {
-            var newTag = new Tag(TestPlant, TagType.Standard, "", "", _stepMock.Object, new List<TagRequirement> { _reqMock.Object });
+            var newTag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", _stepMock.Object, new List<TagRequirement> { _reqMock.Object });
 
             _dut.AddTag(newTag);
 
@@ -159,13 +159,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void AddTag_ShouldFailIfAlreadyExists()
         {
             // Arrange
-            var aNewTag = new Tag(TestPlant, TagType.Standard, "Tag1", "", _stepMock.Object,
+            var aNewTag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "Tag1", "", _stepMock.Object,
                 new List<TagRequirement> {_reqMock.Object});
 
             // Act
             _dut.AddTag(aNewTag);
-
-
         }
     }
 }

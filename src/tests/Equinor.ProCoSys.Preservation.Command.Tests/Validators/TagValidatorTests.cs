@@ -92,7 +92,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
                 _firstSupplierStepId = supplierStep1.Id;
 
-                var standardTagNotStartedInFirstStep = AddTag(context, project, TagType.Standard, TagNo,
+                var standardTagNotStartedInFirstStep = AddTag(context, project, TagType.Standard, Guid.NewGuid(), TagNo,
                     _tagDescription, supplierStep1, new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1),
@@ -100,56 +100,155 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1)
                     });
                 _tagWithAllReqUsagesId = standardTagNotStartedInFirstStep.Id;
-                var standardTagCompleted = AddTag(context, project, TagType.Standard, Guid.NewGuid().ToString("N"), "",
-                    otherStep1, new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
+                var standardTagCompleted = AddTag(
+                    context,
+                    project,
+                    TagType.Standard,
+                    Guid.NewGuid(),
+                    Guid.NewGuid().ToString("N"),
+                    "",
+                    otherStep1,
+                    new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 standardTagCompleted.StartPreservation();
                 standardTagCompleted.CompletePreservation(journeyWithSupplierStepFirst);
-                var standardTagStartedInLastStep = AddTag(context, project, TagType.Standard, Guid.NewGuid().ToString("N"), "",
-                    otherStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                var standardTagStartedInLastStep = AddTag(
+                    context,
+                    project,
+                    TagType.Standard,
+                    Guid.NewGuid(),
+                    Guid.NewGuid().ToString("N"),
+                    "",
+                    otherStep1,
+                    new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 standardTagStartedInLastStep.StartPreservation();
-                var standardTagWithTwoReqsInLastStep = AddTag(context, project, TagType.Standard, Guid.NewGuid().ToString("N"), "",
-                    otherStep1, new List<TagRequirement>
+                var standardTagWithTwoReqsInLastStep = AddTag(
+                    context, 
+                    project, 
+                    TagType.Standard, 
+                    Guid.NewGuid(), 
+                    Guid.NewGuid().ToString("N"), 
+                    "",
+                    otherStep1, 
+                    new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1),
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)
                     });
 
-                var preAreaTagNotStartedInFirstSupplierStep = AddTag(context, project, TagType.PreArea, Guid.NewGuid().ToString("N"), _tagDescription,
-                    supplierStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                var preAreaTagNotStartedInFirstSupplierStep = AddTag(
+                    context,
+                    project,
+                    TagType.PreArea,
+                    null,
+                    Guid.NewGuid().ToString("N"),
+                    _tagDescription,
+                    supplierStep1,
+                    new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 _tagWithSingleReqForAllUsageId = preAreaTagNotStartedInFirstSupplierStep.Id;
-                var preAreaTagSupplierOnlyRequirementInFirstSupplierStep = AddTag(context, project, TagType.PreArea, Guid.NewGuid().ToString("N"), _tagDescription,
-                    supplierStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier)});
+                var preAreaTagSupplierOnlyRequirementInFirstSupplierStep = AddTag(context,
+                    project,
+                    TagType.PreArea,
+                    null,
+                    Guid.NewGuid().ToString("N"),
+                    _tagDescription,
+                    supplierStep1,
+                    new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier) });
                 _tagWithSingleReqForSupplierUsageId = preAreaTagSupplierOnlyRequirementInFirstSupplierStep.Id;
-                var preAreaTagOtherRequirementOnlyInFirstOtherStep = AddTag(context, project, TagType.PreArea, Guid.NewGuid().ToString("N"), _tagDescription,
-                    otherStep2, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1)});
+                var preAreaTagOtherRequirementOnlyInFirstOtherStep = AddTag(
+                    context,
+                    project,
+                    TagType.PreArea,
+                    null,
+                    Guid.NewGuid().ToString("N"),
+                    _tagDescription,
+                    otherStep2,
+                    new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1) });
                 _tagWithSingleReqForOtherUsageId = preAreaTagOtherRequirementOnlyInFirstOtherStep.Id;
-                var preAreaTagAllRequirementsInFirstOtherStep = AddTag(context, project, TagType.PreArea, Guid.NewGuid().ToString("N"), _tagDescription,
-                    otherStep2, new List<TagRequirement>
+                var preAreaTagAllRequirementsInFirstOtherStep = AddTag(
+                    context, 
+                    project, 
+                    TagType.PreArea, 
+                    null,
+                    Guid.NewGuid().ToString("N"), 
+                    _tagDescription,
+                    otherStep2, 
+                    new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1),
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier),
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1)
                     });
-                var preAreaTagStartedInFirstSupplierStep = AddTag(context, project, TagType.PreArea, Guid.NewGuid().ToString("N"), _tagDescription,
-                    supplierStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                var preAreaTagStartedInFirstSupplierStep = AddTag(
+                    context, 
+                    project, 
+                    TagType.PreArea, 
+                    null,
+                    Guid.NewGuid().ToString("N"), 
+                    _tagDescription,
+                    supplierStep1, 
+                    new List<TagRequirement> {
+                        new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)
+                    });
                 preAreaTagStartedInFirstSupplierStep.StartPreservation();
-                var siteAreaTagNotStarted = AddTag(context, project, TagType.SiteArea, Guid.NewGuid().ToString("N"), _tagDescription, 
-                    supplierStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
-                var siteAreaTagStarted = AddTag(context, project, TagType.SiteArea, Guid.NewGuid().ToString("N"), _tagDescription, 
-                    supplierStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                var siteAreaTagNotStarted = AddTag(
+                    context,
+                    project,
+                    TagType.SiteArea,
+                    null,
+                    Guid.NewGuid().ToString("N"),
+                    _tagDescription,
+                    supplierStep1,
+                    new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
+                var siteAreaTagStarted = AddTag(
+                    context,
+                    project,
+                    TagType.SiteArea,
+                    null,
+                    Guid.NewGuid().ToString("N"),
+                    _tagDescription,
+                    supplierStep1,
+                    new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 siteAreaTagStarted.StartPreservation();
-                var poAreaTagNotStarted = AddTag(context, project, TagType.PoArea, Guid.NewGuid().ToString("N"), _tagDescription,
-                    supplierStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                var poAreaTagNotStarted = AddTag(
+                    context,
+                    project,
+                    TagType.PoArea,
+                    null,
+                    Guid.NewGuid().ToString("N"),
+                    _tagDescription,
+                    supplierStep1,
+                    new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 _tagRequirementForPoAreaTag = new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1);
-                var poAreaTagStarted = AddTag(context, project, TagType.PoArea, Guid.NewGuid().ToString("N"), _tagDescription,
-                    supplierStep1, new List<TagRequirement> {_tagRequirementForPoAreaTag});
+                var poAreaTagStarted = AddTag(
+                    context,
+                    project,
+                    TagType.PoArea,
+                    null,
+                    Guid.NewGuid().ToString("N"),
+                    _tagDescription,
+                    supplierStep1,
+                    new List<TagRequirement> { _tagRequirementForPoAreaTag });
                 poAreaTagStarted.StartPreservation();
-                var poAreaTagCompleted = AddTag(context, project, TagType.PoArea, Guid.NewGuid().ToString("N"), _tagDescription,
-                    supplierStep1, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                var poAreaTagCompleted = AddTag(
+                    context,
+                    project,
+                    TagType.PoArea,
+                    null,
+                    Guid.NewGuid().ToString("N"),
+                    _tagDescription,
+                    supplierStep1,
+                    new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 poAreaTagCompleted.StartPreservation();
                 poAreaTagCompleted.CompletePreservation(journeyWithSupplierStepFirst);
-                var poAreaTagWithTwoReqs = AddTag(context, project, TagType.PoArea, Guid.NewGuid().ToString("N"), _tagDescription,
-                    supplierStep1, new List<TagRequirement>
+                var poAreaTagWithTwoReqs = AddTag(
+                    context, 
+                    project, 
+                    TagType.PoArea, 
+                    null,
+                    Guid.NewGuid().ToString("N"), 
+                    _tagDescription,
+                    supplierStep1, 
+                    new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier),
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)

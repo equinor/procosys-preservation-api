@@ -66,7 +66,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
             _req2ForAllWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdForAllTwoWeekInterval);
             _req3ForAllWithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rdForAllTwoWeekInterval);
             
-            _tagWithForAllRequirements = new Tag(TestPlant, TagType.Standard, "", "", supplierStep, new List<TagRequirement>
+            _tagWithForAllRequirements = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", supplierStep, new List<TagRequirement>
             {
                 _req1ForAllWithTwoWeekInterval, 
                 _req2ForAllWithTwoWeekInterval,
@@ -75,7 +75,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
 
             _reqForSupplierInSupplierStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForSupplierTwoWeekInterval);
             _reqForOtherInSupplierStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForOtherTwoWeekInterval);
-            _tagWithSupplierAndOtherRequirementsInSupplierStep = new Tag(TestPlant, TagType.Standard, "", "", supplierStep, new List<TagRequirement>
+            _tagWithSupplierAndOtherRequirementsInSupplierStep = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", supplierStep, new List<TagRequirement>
             {
                 _reqForSupplierInSupplierStep, 
                 _reqForOtherInSupplierStep
@@ -83,7 +83,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
 
             _reqForSupplierInOtherStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForSupplierTwoWeekInterval);
             _reqForOtherInOtherStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForOtherTwoWeekInterval);
-            _tagWithSupplierAndOtherRequirementsInOtherStep = new Tag(TestPlant, TagType.Standard, "", "", otherStep, new List<TagRequirement>
+            _tagWithSupplierAndOtherRequirementsInOtherStep = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", otherStep, new List<TagRequirement>
             {
                 _reqForSupplierInOtherStep, 
                 _reqForOtherInOtherStep

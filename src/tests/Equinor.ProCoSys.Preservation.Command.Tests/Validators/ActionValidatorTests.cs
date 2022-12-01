@@ -28,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var journey = AddJourneyWithStep(context, "J", "S1", AddMode(context, "M1", false), AddResponsible(context, "R1"));
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", _reqIconOther).RequirementDefinitions.First();
 
-                var tag = AddTag(context, project, TagType.Standard, "TagNo", "Tag description", journey.Steps.First(),
+                var tag = AddTag(context, project, TagType.Standard, Guid.NewGuid(), "TagNo", "Tag description", journey.Steps.First(),
                     new List<TagRequirement> {new TagRequirement(TestPlant, 2, rd)});
 
                 var action = new Action(TestPlant, "A", "D", null);

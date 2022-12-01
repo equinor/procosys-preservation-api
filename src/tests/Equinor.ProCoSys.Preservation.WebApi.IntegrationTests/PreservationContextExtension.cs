@@ -211,6 +211,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             var tag = new Tag(
                 project.Plant,
                 TagType.Standard,
+                Guid.NewGuid(),
                 tagNo,
                 $"{tagNo} - Description",
                 step,
@@ -232,6 +233,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             var tag = new Tag(
                 project.Plant,
                 TagType.SiteArea,
+                null,
                 tagNo,
                 $"{tagNo} - Description",
                 step,

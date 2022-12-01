@@ -50,7 +50,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             var reqMock = new Mock<TagRequirement>();
             reqMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement> { reqMock.Object });
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement> { reqMock.Object });
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock

@@ -50,7 +50,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
             var reqMock = new Mock<TagRequirement>();
             reqMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement> { reqMock.Object });
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement> { reqMock.Object });
 
             var attachment = new TagAttachment(TestPlant, Guid.Empty, "Fil.txt");
             attachment.SetProtectedIdForTesting(_command.AttachmentId);

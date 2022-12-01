@@ -126,7 +126,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
                 requirementThatIsVoided.IsVoided = true;
 
                 var tag = new Tag(TestPlant,
-                    TagType.Standard, 
+                    TagType.Standard,
+                    Guid.NewGuid(),
                     "TagNo",
                     "Description",
                     journey.Steps.ElementAt(0),

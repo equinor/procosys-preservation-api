@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags;
@@ -122,14 +123,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 AreaDescription = "AreaDescription1",
                 CallOffNo = "CalloffNo1",
                 CommPkgNo = "CommPkgNo1",
+                CommPkgProCoSysGuid = Guid.NewGuid(),
                 Description = "Description1",
                 DisciplineCode = "DisciplineCode1",
                 DisciplineDescription = "DisciplineDescription1",
                 McPkgNo = "McPkgNo1",
+                McPkgProCoSysGuid = Guid.NewGuid(),
                 PurchaseOrderNo = "PurchaseOrderNo1",
                 TagFunctionCode = tagFunctionCode1,
                 RegisterCode = registerCode1,
                 TagNo = TestTagNo1,
+                ProCoSysGuid = Guid.NewGuid(),
                 ProjectDescription = TestProjectDescription
             };
             _mainTagDetails2 = new PCSTagDetails
@@ -138,14 +142,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 AreaDescription = "AreaDescription2",
                 CallOffNo = "CalloffNo2",
                 CommPkgNo = "CommPkgNo2",
+                CommPkgProCoSysGuid = Guid.NewGuid(),
                 Description = "Description2",
                 DisciplineCode = "DisciplineCode2",
                 DisciplineDescription = "DisciplineDescription1",
                 McPkgNo = "McPkgNo2",
+                McPkgProCoSysGuid = Guid.NewGuid(),
                 PurchaseOrderNo = "PurchaseOrderNo2",
                 TagFunctionCode = tagFunctionCode2,
                 RegisterCode = registerCode2,
                 TagNo = TestTagNo2,
+                ProCoSysGuid = Guid.NewGuid(),
                 ProjectDescription = TestProjectDescription
             };
 
@@ -284,10 +291,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             Assert.AreEqual(mainTagDetails.AreaDescription, tagAddedToProject.AreaDescription);
             Assert.AreEqual(mainTagDetails.CallOffNo, tagAddedToProject.Calloff);
             Assert.AreEqual(mainTagDetails.CommPkgNo, tagAddedToProject.CommPkgNo);
+            Assert.IsNotNull(tagAddedToProject.CommPkgProCoSysGuid);
+            Assert.AreEqual(mainTagDetails.CommPkgProCoSysGuid, tagAddedToProject.CommPkgProCoSysGuid);
             Assert.AreEqual(mainTagDetails.DisciplineCode, tagAddedToProject.DisciplineCode);
             Assert.AreEqual(mainTagDetails.DisciplineDescription, tagAddedToProject.DisciplineDescription);
             Assert.AreEqual(TagType.Standard, tagAddedToProject.TagType);
             Assert.AreEqual(mainTagDetails.McPkgNo, tagAddedToProject.McPkgNo);
+            Assert.IsNotNull(tagAddedToProject.McPkgProCoSysGuid);
+            Assert.AreEqual(mainTagDetails.McPkgProCoSysGuid, tagAddedToProject.McPkgProCoSysGuid);
             Assert.AreEqual(mainTagDetails.Description, tagAddedToProject.Description);
             Assert.AreEqual(command.Remark, tagAddedToProject.Remark);
             Assert.AreEqual(command.StorageArea, tagAddedToProject.StorageArea);
@@ -296,6 +307,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
             Assert.AreEqual(mainTagDetails.TagFunctionCode, tagAddedToProject.TagFunctionCode);
             Assert.AreEqual(mainTagDetails.TagNo, tagAddedToProject.TagNo);
+            Assert.IsNotNull(tagAddedToProject.ProCoSysGuid);
+            Assert.AreEqual(mainTagDetails.ProCoSysGuid, tagAddedToProject.ProCoSysGuid);
             Assert.AreEqual(1, tagAddedToProject.Requirements.Count);
             var requirement = tagAddedToProject.Requirements.Single();
             Assert.AreEqual(regDefId, requirement.RequirementDefinitionId);

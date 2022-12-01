@@ -1334,12 +1334,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 AreaDescription = "ADesc",
                 CallOffNo = "CalloffNo",
                 CommPkgNo = "CommPkgNo",
+                CommPkgProCoSysGuid = Guid.NewGuid(),
                 Description = $"{tagNo}Description",
                 DisciplineCode = "DCode",
                 DisciplineDescription = "DDesc",
                 McPkgNo = "McPkgNo",
+                McPkgProCoSysGuid = Guid.NewGuid(),
                 PurchaseOrderNo = "PurchaseOrderNo",
                 TagFunctionCode = "TFCode",
+                ProCoSysGuid = Guid.NewGuid(),
                 TagNo = tagNo
             };
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.ProCoSys.Preservation.Domain;
@@ -48,11 +49,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
             _req2OnTag1 = new TagRequirement(TestPlant, _intervalWeeks, _rd2Mock.Object);
             _req1OnTag2 = new TagRequirement(TestPlant, _intervalWeeks, _rd1Mock.Object);
             _req2OnTag2 = new TagRequirement(TestPlant, _intervalWeeks, _rd2Mock.Object);
-            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
+            _tag1 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement>
             {
                 _req1OnTag1, _req2OnTag1
             });
-            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
+            _tag2 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement>
             {
                 _req1OnTag2, _req2OnTag2
             });

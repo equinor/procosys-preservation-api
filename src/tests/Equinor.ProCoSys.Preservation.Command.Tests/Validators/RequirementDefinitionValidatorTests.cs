@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
@@ -550,7 +551,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var stepMock = new Mock<Step>();
                 stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
                 var project = AddProject(context, "P", "D");
-                var tag = new Tag(TestPlant, TagType.Standard, "TagNo", "Desc", stepMock.Object, new List<TagRequirement>
+                var tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "TagNo", "Desc", stepMock.Object, new List<TagRequirement>
                 {
                     new TagRequirement(TestPlant, 4, _reqDefWithoutField)
                 });
@@ -685,7 +686,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
                 var project = AddProject(context, "P", "D");
                 var tagRequirement = new TagRequirement(TestPlant, 4, _reqDefWithTwoFields);
-                var tag = new Tag(TestPlant, TagType.Standard, "TagNo", "Desc", stepMock.Object, new List<TagRequirement>
+                var tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "TagNo", "Desc", stepMock.Object, new List<TagRequirement>
                 {
                     tagRequirement
                 });

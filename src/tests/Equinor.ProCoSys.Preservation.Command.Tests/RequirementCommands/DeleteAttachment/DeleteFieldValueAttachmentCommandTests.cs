@@ -51,7 +51,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
 
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
-            var tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
+            var tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement>
             {
                 _requirement
             });
