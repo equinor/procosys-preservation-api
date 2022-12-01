@@ -42,7 +42,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             string tagNo,
             string description,
             Step step, 
-            IEnumerable<TagRequirement> requirements)
+            IEnumerable<TagRequirement> requirements,
+            Guid? proCoSysGuid = null)
             : base(plant)
         {
             if (step == null)
@@ -70,9 +71,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"Can't relate item in {requirement.Plant} to item in {plant}");
             }
 
+            if (tagType == TagType.Standard && (!proCoSysGuid.HasValue || proCoSysGuid.Value == Guid.Empty))
+            {
+                throw new ArgumentNullException($"ProCoSysGuid for {tagType} can't be null or Guid.Empty");
+            }
+
             TagType = tagType;
             Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
+            ProCoSysGuid = proCoSysGuid;
             Description = description;
             StepId = step.Id;
             IsInSupplierStep = step.IsSupplierStep;
@@ -82,15 +89,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public Guid ObjectGuid { get; private set; }
+        public Guid? ProCoSysGuid { get; private set; }
         public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string AreaDescription { get; private set; }
         public string Calloff { get; set; }
         public string CommPkgNo { get; set; }
+        public Guid? CommPkgProCoSysGuid { get; set; }
         public string DisciplineCode { get; private set; }
         public string DisciplineDescription { get; private set; }
         public TagType TagType { get; private set; }
         public string McPkgNo { get; set; }
+        public Guid? McPkgProCoSysGuid { get; set; }
         public string Description { get; set; }
         public string PurchaseOrderNo { get; set; }
         public string Remark { get; set; }
