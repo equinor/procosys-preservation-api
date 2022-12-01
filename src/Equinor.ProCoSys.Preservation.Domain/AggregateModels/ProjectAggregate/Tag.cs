@@ -39,11 +39,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public Tag(
             string plant,
             TagType tagType,
+            Guid? proCoSysGuid,
             string tagNo,
             string description,
             Step step, 
-            IEnumerable<TagRequirement> requirements,
-            Guid? proCoSysGuid = null)
+            IEnumerable<TagRequirement> requirements)
             : base(plant)
         {
             if (step == null)
@@ -73,7 +73,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             if (tagType == TagType.Standard && (!proCoSysGuid.HasValue || proCoSysGuid.Value == Guid.Empty))
             {
-                throw new ArgumentNullException($"ProCoSysGuid for {tagType} can't be null or Guid.Empty");
+                throw new ArgumentException($"ProCoSysGuid for {tagType} can't be null or Guid.Empty");
+            }
+
+            if (tagType != TagType.Standard && proCoSysGuid.HasValue)
+            {
+                throw new ArgumentException($"ProCoSysGuid for {tagType} mus't be null");
             }
 
             TagType = tagType;
