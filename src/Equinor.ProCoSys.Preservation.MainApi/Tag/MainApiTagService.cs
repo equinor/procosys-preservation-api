@@ -47,12 +47,12 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             if (allTagNos == null)
             {
                 throw new ArgumentNullException(nameof(allTagNos));
-
             }
 
             var baseUrl = $"{_baseAddress}Tag/ByTagNos" +
                 $"?plantId={plant}" +
                 $"&projectName={WebUtility.UrlEncode(projectName)}" +
+                "&includeVoidedTags=false" + 
                 $"&api-version={_apiVersion}";
 
             var tagDetails = new List<PCSTagDetails>();
