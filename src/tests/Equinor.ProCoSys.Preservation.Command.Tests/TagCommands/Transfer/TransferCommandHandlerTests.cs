@@ -64,13 +64,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Transfer
             
             var tagId1 = 7;
             var tagId2 = 8;
-            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", step1OnJourney1Mock.Object,
+            _tag1 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", step1OnJourney1Mock.Object,
                 new List<TagRequirement> {reqMock1.Object});
             _tag1.SetProtectedIdForTesting(tagId1);
 
             var reqMock2 = new Mock<TagRequirement>();
             reqMock2.SetupGet(r => r.Plant).Returns(TestPlant);
-            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", step1OnJourney2Mock.Object,
+            _tag2 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", step1OnJourney2Mock.Object,
                 new List<TagRequirement> {reqMock2.Object});
             _tag2.SetProtectedIdForTesting(tagId2);
 

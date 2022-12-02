@@ -44,7 +44,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetPreservationRecord
                 var requirementWithoutField = new TagRequirement(TestPlant, _interval, _requirementDefinitionWithoutOneField);
 
                 var tag = new Tag(TestPlant,
-                    TagType.Standard, 
+                    TagType.Standard,
+                    Guid.NewGuid(),
                     "TagNo",
                     "Description",
                     journey.Steps.ElementAt(0),

@@ -85,14 +85,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(Plant);
-            _tag1 = new Tag(Plant, TagType.Standard, TagNo1, OldTagDescription1, stepMock.Object, new List<TagRequirement>
+            _tag1 = new Tag(Plant, TagType.Standard, Guid.NewGuid(), TagNo1, OldTagDescription1, stepMock.Object, new List<TagRequirement>
             {
                 new TagRequirement(Plant, 4, rdMock.Object)
             });
             _tag1.McPkgNo = McPkg1;
             _tag1.CommPkgNo = CommPkg1;
 
-            _tag2 = new Tag(Plant, TagType.Standard, TagNo2, OldTagDescription2, stepMock.Object, new List<TagRequirement>
+            _tag2 = new Tag(Plant, TagType.Standard, Guid.NewGuid(), TagNo2, OldTagDescription2, stepMock.Object, new List<TagRequirement>
             {
                 new TagRequirement(Plant, 4, rdMock.Object)
             });

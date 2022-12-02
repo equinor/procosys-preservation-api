@@ -52,13 +52,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
 
             var tagId1 = 7;
             var tagId2 = 8;
-            _stdTag = new Tag(TestPlant, TagType.Standard, "", "", fromStepMock.Object,
+            _stdTag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", fromStepMock.Object,
                 new List<TagRequirement> { reqMock1.Object });
             _stdTag.SetProtectedIdForTesting(tagId1);
 
             var reqMock2 = new Mock<TagRequirement>();
             reqMock2.SetupGet(r => r.Plant).Returns(TestPlant);
-            _poAreaTag = new Tag(TestPlant, TagType.PoArea, "", "", fromStepMock.Object,
+            _poAreaTag = new Tag(TestPlant, TagType.PoArea, null, "", "", fromStepMock.Object,
                 new List<TagRequirement> { reqMock2.Object });
             _poAreaTag.SetProtectedIdForTesting(tagId2);
 

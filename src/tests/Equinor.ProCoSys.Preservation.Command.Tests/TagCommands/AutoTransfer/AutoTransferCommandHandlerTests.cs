@@ -74,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             var reqMock = new Mock<TagRequirement>();
             reqMock.SetupGet(r => r.Plant).Returns(TestPlant);
             
-            _tag = new Tag(TestPlant, TagType.Standard, _testTagNo, "", step1OnJourney, new List<TagRequirement> {reqMock.Object});
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), _testTagNo, "", step1OnJourney, new List<TagRequirement> {reqMock.Object});
 
             _tag.StartPreservation();
 

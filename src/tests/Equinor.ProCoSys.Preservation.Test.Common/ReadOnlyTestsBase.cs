@@ -131,9 +131,17 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             return project;
         }
 
-        protected Tag AddTag(PreservationContext context, Project parentProject, TagType tagType, string tagNo, string description, Step step, IEnumerable<TagRequirement> requirements)
+        protected Tag AddTag(
+            PreservationContext context, 
+            Project parentProject, 
+            TagType tagType,
+            Guid? proCoSysGuid,
+            string tagNo, 
+            string description, 
+            Step step, 
+            IEnumerable<TagRequirement> requirements)
         {
-            var tag = new Tag(TestPlant, tagType, tagNo, description, step, requirements);
+            var tag = new Tag(TestPlant, tagType, proCoSysGuid, tagNo, description, step, requirements);
             parentProject.AddTag(tag);
             context.SaveChangesAsync().Wait();
             return tag;
@@ -224,6 +232,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             {
                 var tag = new Tag(TestPlant,
                     TagType.Standard,
+                    Guid.NewGuid(),
                     $"{testDataSet.StdTagPrefix}-{i}",
                     "Description",
                     testDataSet.Journey1With2Steps.Steps.ElementAt(0),
@@ -253,6 +262,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             {
                 var tag = new Tag(TestPlant,
                     TagType.SiteArea,
+                    null,
                     $"{testDataSet.SiteTagPrefix}-{i}",
                     "Description",
                     testDataSet.Journey2With1Step.Steps.ElementAt(0),
@@ -282,6 +292,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             {
                 var tag = new Tag(TestPlant,
                     TagType.Standard,
+                    Guid.NewGuid(),
                     $"Another-{i}",
                     "Description",
                     testDataSet.Journey1With2Steps.Steps.ElementAt(0),

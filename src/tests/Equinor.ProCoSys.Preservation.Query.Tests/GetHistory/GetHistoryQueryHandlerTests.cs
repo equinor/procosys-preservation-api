@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
@@ -30,11 +31,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistory
                 var journey = AddJourneyWithStep(context, "J", "S1", AddMode(context, "M1", false), AddResponsible(context, "R1"));
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", RequirementTypeIcon.Other).RequirementDefinitions.First();
 
-                _tagWithNoHistory = new Tag(TestPlant, TagType.Standard, "TagNo", "Tag description", journey.Steps.First(),
+                _tagWithNoHistory = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "TagNo", "Tag description", journey.Steps.First(),
                     new List<TagRequirement> { new TagRequirement(TestPlant, 2, rd) });
                 project.AddTag(_tagWithNoHistory);
 
-                _tagWithHistory = new Tag(TestPlant, TagType.Standard, "TagNo1", "Tag description1", journey.Steps.First(),
+                _tagWithHistory = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "TagNo1", "Tag description1", journey.Steps.First(),
                     new List<TagRequirement> { new TagRequirement(TestPlant, 2, rd) });
                 project.AddTag(_tagWithHistory);
 

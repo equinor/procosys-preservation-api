@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CreateActio
             _rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
             var requirement = new TagRequirement(TestPlant, _intervalWeeks, _rdMock.Object);
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement> { requirement });
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement> { requirement });
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock

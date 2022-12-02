@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.ProCoSys.Preservation.Domain;
@@ -37,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTag
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
             _requirement = new TagRequirement(TestPlant, _intervalWeeks, rdMock.Object);
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement> {_requirement})
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement> {_requirement})
             {
                 StorageArea = _oldStorageArea,
                 Remark = _oldRemark

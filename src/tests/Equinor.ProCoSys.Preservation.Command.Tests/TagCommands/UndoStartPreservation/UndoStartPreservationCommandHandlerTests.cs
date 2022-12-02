@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation;
@@ -53,12 +54,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
 
             var tagId1 = 7;
             var tagId2 = 8;
-            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
+            _tag1 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement>
             {
                 _req1OnTag1, _req2OnTag1
             });
             _tag1.SetProtectedIdForTesting(tagId1);
-            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
+            _tag2 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement>
             {
                 _req1OnTag2, _req2OnTag2
             });

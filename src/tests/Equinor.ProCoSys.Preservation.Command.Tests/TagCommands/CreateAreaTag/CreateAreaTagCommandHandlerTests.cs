@@ -306,10 +306,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(AreaDescription, tagAddedToProject.AreaDescription);
             Assert.AreEqual(expectedCalloff, tagAddedToProject.Calloff);
             Assert.IsNull(tagAddedToProject.CommPkgNo);
+            Assert.IsNull(tagAddedToProject.CommPkgProCoSysGuid);
             Assert.AreEqual(command.DisciplineCode, tagAddedToProject.DisciplineCode);
             Assert.AreEqual(DisciplineDescription, tagAddedToProject.DisciplineDescription);
             Assert.AreEqual(command.TagType, tagAddedToProject.TagType);
             Assert.IsNull(tagAddedToProject.McPkgNo);
+            Assert.IsNull(tagAddedToProject.McPkgProCoSysGuid);
             Assert.AreEqual(command.Description, tagAddedToProject.Description);
             Assert.AreEqual(command.Remark, tagAddedToProject.Remark);
             Assert.AreEqual(command.StorageArea, tagAddedToProject.StorageArea);
@@ -318,6 +320,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
             Assert.IsNull(tagAddedToProject.TagFunctionCode);
             Assert.AreEqual(command.GetTagNo(), tagAddedToProject.TagNo);
+            Assert.IsNull(tagAddedToProject.ProCoSysGuid);
             Assert.AreEqual(2, tagAddedToProject.Requirements.Count);
             AssertReqProperties(tagAddedToProject.Requirements.First(), ReqDefId1, Interval1);
             AssertReqProperties(tagAddedToProject.Requirements.Last(), ReqDefId2, Interval2);

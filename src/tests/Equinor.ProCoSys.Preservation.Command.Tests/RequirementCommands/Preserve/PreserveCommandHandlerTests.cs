@@ -66,12 +66,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
             _requirementForOther = new TagRequirement(TestPlant, Interval, rdForOther);
             _requirementForOther.SetProtectedIdForTesting(RequirementForOtherId);
 
-            _tagInSupplierStep = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, new List<TagRequirement>
+            _tagInSupplierStep = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", _supplierStep, new List<TagRequirement>
             {
                 _requirementForSupplier
             });
             _tagInSupplierStep.SetProtectedIdForTesting(TagInSupplierStepId);
-            _tagInOtherStep = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, new List<TagRequirement>
+            _tagInOtherStep = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", _otherStep, new List<TagRequirement>
             {
                 _requirementForOther
             });

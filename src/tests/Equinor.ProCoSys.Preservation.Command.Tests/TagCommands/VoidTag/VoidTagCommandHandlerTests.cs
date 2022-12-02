@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.ProCoSys.Preservation.Domain;
@@ -30,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.VoidTag
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
             var requirement = new TagRequirement(TestPlant, 2, rdMock.Object);
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object,
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object,
                 new List<TagRequirement> {requirement});
 
             var projectRepositoryMock = new Mock<IProjectRepository>();

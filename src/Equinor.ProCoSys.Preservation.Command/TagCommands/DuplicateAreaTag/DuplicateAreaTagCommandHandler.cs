@@ -87,6 +87,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
             var duplicatedTag = new Tag(
                             _plantProvider.Plant,
                             request.TagType,
+                            null,
                             request.GetTagNo(),
                             request.Description,
                             step,

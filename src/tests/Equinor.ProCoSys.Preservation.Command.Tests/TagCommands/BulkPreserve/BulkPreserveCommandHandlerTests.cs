@@ -49,11 +49,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _req2OnTag1WithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rdMock.Object);
             _req1OnTag2WithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdMock.Object);
             _req2OnTag2WithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rdMock.Object);
-            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", step, new List<TagRequirement>
+            _tag1 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", step, new List<TagRequirement>
             {
                 _req1OnTag1WithTwoWeekInterval, _req2OnTag1WithFourWeekInterval
             });
-            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", step, new List<TagRequirement>
+            _tag2 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", step, new List<TagRequirement>
             {
                 _req1OnTag2WithTwoWeekInterval, _req2OnTag2WithFourWeekInterval
             });

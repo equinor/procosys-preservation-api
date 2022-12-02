@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -58,21 +59,47 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var req1 = new TagRequirement(TestPlant, 1, rdMock.Object);
             var req2 = new TagRequirement(TestPlant, 2, rdMock.Object);
             var req3 = new TagRequirement(TestPlant, 4, rdMock.Object);
-            _standardTag1With3Reqs = new Tag(TestPlant, TagType.Standard, StandardTagNo1, "Desc", step,
-                new List<TagRequirement> {req1, req2, req3}) {CommPkgNo = CommPkg1, McPkgNo = McPkg1};
+            _standardTag1With3Reqs = new Tag(
+                TestPlant, 
+                TagType.Standard, 
+                Guid.NewGuid(),
+                StandardTagNo1, 
+                "Desc", 
+                step,
+                new List<TagRequirement> {req1, req2, req3}) 
+            {
+                CommPkgNo = CommPkg1,
+                McPkgNo = McPkg1
+            };
             _standardTag1With3Reqs.SetProtectedIdForTesting(StandardTagId1);
             project1.AddTag(_standardTag1With3Reqs);
 
             var reqTag2 = new TagRequirement(TestPlant, 1, rdMock.Object);
-            _standardTag2 = new Tag(TestPlant, TagType.Standard, StandardTagNo2, "Desc2", step,
-                new List<TagRequirement> {reqTag2}) {CommPkgNo = CommPkg2, McPkgNo = McPkg2};
+            _standardTag2 = new Tag(
+                TestPlant,
+                TagType.Standard,
+                Guid.NewGuid(),
+                StandardTagNo2,
+                "Desc2",
+                step,
+                new List<TagRequirement> { reqTag2 }) 
+            {
+                CommPkgNo = CommPkg2, 
+                McPkgNo = McPkg2
+            };
             _standardTag2.SetProtectedIdForTesting(StandardTagId2);
             project1.AddTag(_standardTag2);
 
             var req4 = new TagRequirement(TestPlant, 1, rdMock.Object);
             var req5 = new TagRequirement(TestPlant, 2, rdMock.Object);
             var req6 = new TagRequirement(TestPlant, 4, rdMock.Object);
-            var poTag = new Tag(TestPlant, TagType.PoArea, PoTagNo, "Desc", step,
+            var poTag = new Tag(
+                TestPlant, 
+                TagType.PoArea, 
+                null,
+                PoTagNo, 
+                "Desc", 
+                step,
                 new List<TagRequirement> {req4, req5, req6});
             poTag.SetProtectedIdForTesting(PoTagId);
             project1.AddTag(poTag);

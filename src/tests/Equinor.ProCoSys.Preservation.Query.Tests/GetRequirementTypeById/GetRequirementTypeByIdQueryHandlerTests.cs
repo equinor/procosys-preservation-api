@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -119,7 +120,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetRequirementTypeById
 
                 var project = AddProject(context, "P", "Project description");
                 var journey = AddJourneyWithStep(context, "J", "S1", AddMode(context, "M1", false), AddResponsible(context, "R1"));
-                AddTag(context, project, TagType.Standard, "TagNo", "Tag description", journey.Steps.First(),
+                AddTag(context, project, TagType.Standard, Guid.NewGuid(), "TagNo", "Tag description", journey.Steps.First(),
                     new List<TagRequirement> {new TagRequirement(TestPlant, 2, _requirementDefWithoutField)});
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -172,7 +173,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetRequirementTypeById
                 var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
                 var tagRequirement = new TagRequirement(TestPlant, 2, _requirementDefWithCheckbox);
                 var tag = new Tag(TestPlant,
-                    TagType.Standard, 
+                    TagType.Standard,
+                    Guid.NewGuid(),
                     "TagNo",
                     "Description",
                     journey.Steps.ElementAt(0),

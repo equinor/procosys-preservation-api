@@ -136,6 +136,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             return new Tag(
                 _plantProvider.Plant,
                 request.TagType,
+                null,
                 request.GetTagNo(),
                 request.Description,
                 step,

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule;
@@ -53,12 +54,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
             _req1OnTag2 = new TagRequirement(TestPlant, 3, _rd1Mock.Object);
             _req2OnTag2 = new TagRequirement(TestPlant, 4, _rd2Mock.Object);
             
-            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object,
+            _tag1 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object,
                 new List<TagRequirement> {_req1OnTag1, _req2OnTag1});
             _tag1.StartPreservation();
             _tag1.SetProtectedIdForTesting(_tagId1);
 
-            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object,
+            _tag2 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object,
                 new List<TagRequirement> {_req1OnTag2, _req2OnTag2});
             _tag2.StartPreservation();
             _tag2.SetProtectedIdForTesting(_tagId2);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators;
@@ -295,7 +296,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             {
                 var project = AddProject(context, "P", "Project description");
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", RequirementTypeIcon.Other).RequirementDefinitions.First();
-                AddTag(context, project, TagType.Standard, "TagNo", "Tag description", _step1InJourney1,
+                AddTag(context, project, TagType.Standard, Guid.NewGuid(), "TagNo", "Tag description", _step1InJourney1,
                     new List<TagRequirement> {new TagRequirement(TestPlant, 2, rd)});
             }
 

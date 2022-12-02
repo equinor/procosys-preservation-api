@@ -93,6 +93,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
                     var tag = new Tag(
                         plant, 
                         TagType.Standard,
+                        Guid.NewGuid(),
                         $"TagNo-{i}",
                         "Description",
                         steps[rand.Next(steps.Count)],
@@ -100,7 +101,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
                     {
                         Calloff = "CallOffNo",
                         CommPkgNo = "CommPkgNo",
+                        CommPkgProCoSysGuid = Guid.NewGuid(),
                         McPkgNo = "McPkgNo",
+                        McPkgProCoSysGuid = Guid.NewGuid(),
                         PurchaseOrderNo = "PoNo",
                         Remark = "Remark",
                         StorageArea = "SA",

@@ -262,6 +262,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             var tag = new Tag(
                 plantId,
                 tagType,
+                tagType == TagType.Standard ? Guid.NewGuid() : null,
                 "Tag A",
                 "Tag desc",
                 step,

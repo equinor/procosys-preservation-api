@@ -139,6 +139,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
             var tag = new Tag(
                 _plantProvider.Plant,
                 TagType.Standard,
+                tagDetails.ProCoSysGuid,
                 tagDetails.TagNo,
                 tagDetails.Description,
                 step,
@@ -146,7 +147,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
             {
                 Calloff = tagDetails.CallOffNo,
                 CommPkgNo = tagDetails.CommPkgNo,
+                CommPkgProCoSysGuid = tagDetails.CommPkgProCoSysGuid,
                 McPkgNo = tagDetails.McPkgNo,
+                McPkgProCoSysGuid = tagDetails.McPkgProCoSysGuid,
                 PurchaseOrderNo = tagDetails.PurchaseOrderNo,
                 Remark = request.Remark,
                 StorageArea = request.StorageArea,

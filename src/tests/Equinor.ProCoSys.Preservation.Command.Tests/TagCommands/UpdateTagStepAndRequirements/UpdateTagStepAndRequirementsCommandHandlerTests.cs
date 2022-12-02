@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
@@ -63,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             var reqId = 111;
             _tagRequirement1OnStandardTag1 = new TagRequirement(TestPlant, ThreeWeekInterval, rdMock1.Object);
             _tagRequirement1OnStandardTag1.SetProtectedIdForTesting(++reqId);
-            _standardTagWithOneRequirement = new Tag(TestPlant, TagType.Standard, "T1", Description, _stepMock1.Object, new List<TagRequirement>
+            _standardTagWithOneRequirement = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "T1", Description, _stepMock1.Object, new List<TagRequirement>
             {
                 _tagRequirement1OnStandardTag1
             });
@@ -71,14 +72,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             _tagRequirement1OnStandardTag2.SetProtectedIdForTesting(++reqId);
             _tagRequirement2OnStandardTag2 = new TagRequirement(TestPlant, ThreeWeekInterval, rdMock2.Object);
             _tagRequirement2OnStandardTag2.SetProtectedIdForTesting(++reqId);
-            _standardTagWithTwoRequirements = new Tag(TestPlant, TagType.Standard, "T2", "D", _stepMock1.Object, new List<TagRequirement>
+            _standardTagWithTwoRequirements = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "T2", "D", _stepMock1.Object, new List<TagRequirement>
             {
                 _tagRequirement1OnStandardTag2,
                 _tagRequirement2OnStandardTag2
             });
             _tagRequirement1OnAreaTag = new TagRequirement(TestPlant, ThreeWeekInterval, rdMock1.Object);
             _tagRequirement1OnAreaTag.SetProtectedIdForTesting(++reqId);
-            _areaTagWithOneRequirement = new Tag(TestPlant, TagType.PoArea, "T3", Description, _stepMock1.Object, new List<TagRequirement>
+            _areaTagWithOneRequirement = new Tag(TestPlant, TagType.PoArea, null, "T3", Description, _stepMock1.Object, new List<TagRequirement>
             {
                 _tagRequirement1OnAreaTag
             });

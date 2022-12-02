@@ -67,6 +67,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             _sourceTag = new Tag(
                 TestPlant,
                 TagType.SiteArea,
+                null,
                 "TagNo",
                 "Desc",
                 stepMock.Object,
