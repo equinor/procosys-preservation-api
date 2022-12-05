@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
@@ -11,7 +10,7 @@ using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
 {
-    public class FillPCSGuidsCommandHandler : IRequestHandler<FillPCSGuidsCommand, Result<IEnumerable<string>>>
+    public class FillPCSGuidsCommandHandler : IRequestHandler<FillPCSGuidsCommand, Result<Unit>>
     {
         private readonly ILogger<FillPCSGuidsCommand> _logger;
         private readonly IProjectRepository _projectRepository;
@@ -33,14 +32,14 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<IEnumerable<string>>> Handle(FillPCSGuidsCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(FillPCSGuidsCommand request, CancellationToken cancellationToken)
         {
             var allProjects = await _projectRepository.GetProjectsWithTagsAsync();
-            var updates = new List<string>();
+            var count = 0;
             foreach (var project in allProjects)
             {
                 var tagsToFill = project.Tags.Where(t => t.TagType == TagType.Standard && !t.ProCoSysGuid.HasValue).ToList();
-                _logger.LogInformation($"Found {tagsToFill.Count} in {project.Name} in {_plantProvider.Plant}");
+                _logger.LogInformation($"Found {tagsToFill.Count} in project {project.Name}, plant {_plantProvider.Plant}");
                 if (tagsToFill.Count == 0)
                 {
                     continue;
@@ -63,22 +62,21 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
                         tag.McPkgProCoSysGuid = pcsTagDetail.McPkgProCoSysGuid;
                         tag.CommPkgProCoSysGuid = pcsTagDetail.CommPkgProCoSysGuid;
                         tagNos += pcsTagDetail.TagNo + ", ";
+                        count++;
                     }
                     else
                     {
-                        var message = $"Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}";
-                        _logger.LogWarning(message);
-                        updates.Add(message);
+                        _logger.LogWarning($"Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}");
                     }
                 }
-                updates.Add($"{project.Name}: {tagNos.Trim(new char[] {' ',','})}");
+                _logger.LogInformation($"Tags updated in {project.Name}: {tagNos.Trim(new char[] {' ',','})}");
             }
 
-            if (!request.DryRun && updates.Count > 0)
+            if (!request.DryRun && count > 0)
             {
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
-            return new SuccessResult<IEnumerable<string>>(updates);
+            return new SuccessResult<Unit>(Unit.Value);
         }
     }
 }

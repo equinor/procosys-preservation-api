@@ -961,11 +961,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Obsolete]
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPut("FillPCSGuids")]
-        public async Task<ActionResult<IEnumerable<string>>> FillPCSGuids(
+        public async Task<ActionResult> FillPCSGuids(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
-        bool dryRun = true)
+            bool dryRun = true)
         {
             var result = await _mediator.Send(new FillPCSGuidsCommand(dryRun));
             return this.FromResult(result);
