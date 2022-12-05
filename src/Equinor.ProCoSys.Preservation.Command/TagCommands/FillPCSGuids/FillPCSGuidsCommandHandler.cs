@@ -39,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
             foreach (var project in allProjects)
             {
                 var tagsToFill = project.Tags.Where(t => t.TagType == TagType.Standard && !t.ProCoSysGuid.HasValue).ToList();
-                _logger.LogInformation($"Found {tagsToFill.Count} in project {project.Name}, plant {_plantProvider.Plant}");
+                _logger.LogInformation($"FillPCSGuids: Found {tagsToFill.Count} in project {project.Name}, plant {_plantProvider.Plant}");
                 if (tagsToFill.Count == 0)
                 {
                     continue;
@@ -66,10 +66,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
                     }
                     else
                     {
-                        _logger.LogWarning($"Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}");
+                        _logger.LogWarning($"FillPCSGuids: Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}");
                     }
                 }
-                _logger.LogInformation($"Tags updated in {project.Name}: {tagNos.Trim(new char[] {' ',','})}");
+                _logger.LogInformation($"FillPCSGuids: Tags updated in {project.Name}: {tagNos.Trim(new char[] {' ',','})}");
             }
 
             if (!request.DryRun && count > 0)

@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             foreach (var plant in await _plantCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
             {
-                _logger.LogInformation($"Synchronizing plant {plant}...");
+                _logger.LogInformation($"FillPCSGuids: Synchronizing plant {plant}...");
 
                 try
                 {
@@ -80,11 +80,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
                     var endTime = TimeService.UtcNow;
 
-                    _logger.LogInformation($"Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
+                    _logger.LogInformation($"FillPCSGuids: Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"Error synchronizing plant {plant}...");
+                    _logger.LogError(ex, $"FillPCSGuids: Error synchronizing plant {plant}...");
                 }
             }
         }
