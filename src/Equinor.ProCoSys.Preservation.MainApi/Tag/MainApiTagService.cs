@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             }
         }
 
-        public async Task<IList<PCSTagDetails>> GetTagDetailsAsync(string plant, string projectName, IList<string> allTagNos)
+        public async Task<IList<PCSTagDetails>> GetTagDetailsAsync(string plant, string projectName, IList<string> allTagNos, bool includeVoidedTags = false)
         {
             if (allTagNos == null)
             {
@@ -52,7 +52,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             var baseUrl = $"{_baseAddress}Tag/ByTagNos" +
                 $"?plantId={plant}" +
                 $"&projectName={WebUtility.UrlEncode(projectName)}" +
-                "&includeVoidedTags=false" + 
+                $"&includeVoidedTags={includeVoidedTags.ToString().ToLower()}" + 
                 $"&api-version={_apiVersion}";
 
             var tagDetails = new List<PCSTagDetails>();
