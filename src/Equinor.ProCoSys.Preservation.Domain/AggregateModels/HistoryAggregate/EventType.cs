@@ -41,6 +41,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
         [Description("Rescheduled")]
         Rescheduled,
         [Description("Undo \"Preservation started\"")]
-        UndoPreservationStarted
+        UndoPreservationStarted,
+        [Description("Tag voided in source")]
+        TagVoidedInSource,
+        [Description("Tag unvoided in source")]
+        TagUnvoidedInSource
     }
 }

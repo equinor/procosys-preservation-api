@@ -16,6 +16,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         private readonly List<Action> _actions = new List<Action>();
         private readonly List<TagAttachment> _attachments = new List<TagAttachment>();
         private bool _isVoided;
+        private bool _isVoidedInSource;
+        private bool _isDeletedInSource;
 
         public const int TagNoLengthMax = 255;
         public const int TagFunctionCodeLengthMax = 255;
@@ -132,11 +134,35 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 if (_isVoided)
                 {
                     AddDomainEvent(new TagVoidedEvent(Plant, ObjectGuid));
-
                 }
                 else
                 {
                     AddDomainEvent(new TagUnvoidedEvent(Plant, ObjectGuid));
+                }
+            }
+        }
+
+        public bool IsVoidedInSource
+        {
+            get => _isVoidedInSource;
+            set
+            {
+                // if tag is (un)voided in source (Main), the preservation tag should be (un)voided too
+                IsVoided = value;
+
+                if (_isVoidedInSource == value)
+                {
+                    return;
+                }
+
+                _isVoidedInSource = value;
+                if (_isVoidedInSource)
+                {
+                    AddDomainEvent(new TagVoidedInSourceEvent(Plant, ObjectGuid));
+                }
+                else
+                {
+                    AddDomainEvent(new TagUnvoidedInSourceEvent(Plant, ObjectGuid));
                 }
             }
         }
