@@ -1352,7 +1352,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 .Setup(service => service.GetTagDetailsAsync(
                     TestFactory.PlantWithAccess,
                     TestFactory.ProjectWithAccess,
-                    new List<string> {tagNo}))
+                    new List<string> {tagNo},
+                    false))
                 .Returns(Task.FromResult(mainTagDetailList));
         }
     }
