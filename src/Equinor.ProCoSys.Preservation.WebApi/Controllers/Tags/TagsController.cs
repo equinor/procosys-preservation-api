@@ -57,7 +57,6 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceResult;
 using ServiceResult.ApiExtensions;
 using RequirementPreserveCommand = Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
@@ -955,19 +954,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         {
             var tags = dto.Tags.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
             var result = await _mediator.Send(new RescheduleCommand(tags, dto.Weeks, dto.Direction, dto.Comment));
-            return this.FromResult(result);
-        }
-
-        [Obsolete]
-        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
-        [HttpPut("FillPCSGuids")]
-        public async Task<ActionResult> FillPCSGuids(
-            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
-            [Required]
-            string plant,
-            bool dryRun = true)
-        {
-            var result = await _mediator.Send(new FillPCSGuidsCommand(dryRun));
             return this.FromResult(result);
         }
 
