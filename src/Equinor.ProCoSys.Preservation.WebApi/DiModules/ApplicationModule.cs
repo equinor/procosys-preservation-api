@@ -68,12 +68,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
             services.Configure<AuthenticatorOptions>(configuration.GetSection("Authenticator"));
+            services.Configure<SynchronizationOptions>(configuration.GetSection("Synchronization"));
 
             services.AddDbContext<PreservationContext>(options =>
             {
                 var connectionString = configuration.GetConnectionString("PreservationContext");
                 options.UseSqlServer(connectionString);
             });
+
+            // Hosted services
+            services.AddHostedService<TimedSynchronization>();
 
             services.AddHttpContextAccessor();
             services.AddHttpClient();
@@ -103,6 +107,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
             services.AddScoped<IReadOnlyContext, PreservationContext>();
+            services.AddScoped<ISynchronizationService, SynchronizationService>();
 
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();

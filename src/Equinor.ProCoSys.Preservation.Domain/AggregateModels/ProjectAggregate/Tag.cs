@@ -94,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public Guid ObjectGuid { get; private set; }
-        public Guid? ProCoSysGuid { get; private set; }
+        public Guid? ProCoSysGuid { get; set; }
         public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string AreaDescription { get; private set; }
