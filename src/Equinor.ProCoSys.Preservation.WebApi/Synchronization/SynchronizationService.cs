@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids;
 using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Time;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Plant;
@@ -28,7 +29,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IClaimsTransformation _claimsTransformation;
         private readonly IAuthenticator _authenticator;
         private readonly IPlantCache _plantCache;
-        private readonly IOptionsSnapshot<SynchronizationOptions> _options;
+        private ISettingRepository _settingRepository;
+        private string _machine;
 
         public SynchronizationService(
             ILogger<SynchronizationService> logger,
@@ -39,8 +41,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IClaimsTransformation claimsTransformation,
             IAuthenticator authenticator,
             IPlantCache plantCache,
-            IOptionsSnapshot<SynchronizationOptions> options,
-            IOptionsSnapshot<AuthenticatorOptions> authenticatorOptions)
+            IOptionsSnapshot<AuthenticatorOptions> authenticatorOptions,
+            ISettingRepository settingRepository)
         {
             _logger = logger;
             _mediator = mediator;
@@ -50,12 +52,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _plantSetter = plantSetter;
             _authenticator = authenticator;
             _plantCache = plantCache;
-            _options = options;
             _preservationApiOid = authenticatorOptions.Value.PreservationApiObjectId;
+            _settingRepository = settingRepository;
+            _machine = Environment.MachineName;
         }
 
         public async Task Synchronize(CancellationToken cancellationToken)
         {
+            var runOnMachine = _settingRepository.GetByCodeAsync("OnMachine").Result;
+            if (runOnMachine == null || runOnMachine.Value != _machine)
+            {
+                _logger.LogInformation($"Timed work not enabled on {_machine}. Exiting ...");
+                return;
+            }
+
             _authenticator.AuthenticationType = AuthenticationType.AsApplication;
 
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);

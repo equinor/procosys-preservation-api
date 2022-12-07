@@ -17,19 +17,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IServiceProvider _services;
         private System.Timers.Timer _timer;
         private string _machine;
-        private ISettingRepository _settingRepository;
 
         public TimedSynchronization(
             ILogger<TimedSynchronization> logger,
             IOptionsMonitor<SynchronizationOptions> options,
-            IServiceProvider services,
-            ISettingRepository settingRepository)
+            IServiceProvider services)
         {
             _logger = logger;
             _options = options;
             _services = services;
             _machine = Environment.MachineName;
-            _settingRepository = settingRepository;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -50,13 +47,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         {
             try
             {
-                var runOnMachine = _settingRepository.GetByCodeAsync("OnMachine").Result;
-                if (runOnMachine == null || runOnMachine.Value != _machine)
-                {
-                    _logger.LogInformation($"Timed work not enabled on {_machine}. Exiting ...");
-                    return;
-                }
-
                 _logger.LogInformation($"Timed work starting on {_machine}");
                 using var scope = _services.CreateScope();
                 var syncService =
