@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,14 +13,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
     public class TimedSynchronization : IHostedService, IDisposable
     {
         private readonly ILogger<TimedSynchronization> _logger;
-        private readonly IOptionsSnapshot<SynchronizationOptions> _options;
+        private readonly IOptionsMonitor<SynchronizationOptions> _options;
         private readonly IServiceProvider _services;
         private System.Timers.Timer _timer;
         private string _machine;
 
         public TimedSynchronization(
             ILogger<TimedSynchronization> logger,
-            IOptionsSnapshot<SynchronizationOptions> options,
+            IOptionsMonitor<SynchronizationOptions> options,
             IServiceProvider services)
         {
             _logger = logger;
@@ -32,12 +33,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         {
             _timer = new System.Timers.Timer
             {
-                Interval = _options.Value.Interval.TotalMilliseconds,
+                Interval = _options.CurrentValue.Interval.TotalMilliseconds,
                 AutoReset = false
             };
             _timer.Elapsed += Timer_Elapsed;
             _timer.Start();
-            _logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.Value.Interval}");
+            _logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.CurrentValue.Interval}");
 
             return Task.CompletedTask;
         }
@@ -46,12 +47,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         {
             try
             {
-                if (_machine != _options.Value.OnMachine)
-                {
-                    _logger.LogInformation($"Timed work not enabled on {_machine}. Exiting ...");
-                    return;
-                }
-
                 _logger.LogInformation($"Timed work starting on {_machine}");
                 using var scope = _services.CreateScope();
                 var syncService =

@@ -9,11 +9,14 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Setting> builder)
         {
-            builder.ConfigurePlant();
             builder.ConfigureConcurrencyToken();
 
             builder.Property(x => x.Code)
                 .HasMaxLength(Setting.CodeLengthMax)
+                .IsRequired();
+
+            builder.Property(x => x.Value)
+                .HasMaxLength(Setting.ValueLengthMax)
                 .IsRequired();
         }
     }
