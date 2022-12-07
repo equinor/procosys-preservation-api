@@ -72,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
                 _logger.LogInformation($"FillPCSGuids: Tags updated in {project.Name}: {tagNos.Trim(new char[] {' ',','})}");
             }
 
-            if (!request.DryRun && count > 0)
+            if (request.SaveChanges && count > 0)
             {
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
             }

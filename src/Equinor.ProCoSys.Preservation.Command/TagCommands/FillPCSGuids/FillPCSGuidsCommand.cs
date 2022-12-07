@@ -5,8 +5,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
 {
     public class FillPCSGuidsCommand : IRequest<Result<Unit>>
     {
-        public FillPCSGuidsCommand(bool dryRun) => DryRun = dryRun;
+        public FillPCSGuidsCommand(bool saveChanges) => SaveChanges = saveChanges;
 
-        public bool DryRun { get; }
+        public bool SaveChanges { get; }
     }
 }

@@ -62,7 +62,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var runOnMachine = _settingRepository.GetByCodeAsync("OnMachine").Result;
             if (runOnMachine == null || runOnMachine.Value != _machine)
             {
-                _logger.LogInformation($"Timed work not enabled on {_machine}. Exiting ...");
+                _logger.LogInformation($"FillPCSGuids: Not enabled on {_machine}. Exiting ...");
                 return;
             }
 
@@ -75,6 +75,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _preservationApiOid.ToString()));
             currentUser.AddIdentity(claimsIdentity);
 
+            var saveChanges = _settingRepository.GetByCodeAsync("SaveChanges").Result;
             foreach (var plant in await _plantCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
             {
                 _logger.LogInformation($"FillPCSGuids: Synchronizing plant {plant}...");
@@ -86,7 +87,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
                     var startTime = TimeService.UtcNow;
 
-                    var result = await _mediator.Send(new FillPCSGuidsCommand(false));
+                    var result = await _mediator.Send(new FillPCSGuidsCommand(saveChanges?.Value == "true"));
 
                     var endTime = TimeService.UtcNow;
 
