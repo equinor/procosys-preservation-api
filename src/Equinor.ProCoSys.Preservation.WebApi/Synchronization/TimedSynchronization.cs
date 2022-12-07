@@ -12,14 +12,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
     public class TimedSynchronization : IHostedService, IDisposable
     {
         private readonly ILogger<TimedSynchronization> _logger;
-        private readonly IOptionsMonitor<SynchronizationOptions> _options;
+        private readonly IOptionsSnapshot<SynchronizationOptions> _options;
         private readonly IServiceProvider _services;
         private System.Timers.Timer _timer;
         private string _machine;
 
         public TimedSynchronization(
             ILogger<TimedSynchronization> logger,
-            IOptionsMonitor<SynchronizationOptions> options,
+            IOptionsSnapshot<SynchronizationOptions> options,
             IServiceProvider services)
         {
             _logger = logger;
@@ -32,19 +32,19 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         {
             _timer = new System.Timers.Timer
             {
-                Interval = _options.CurrentValue.Interval.TotalMilliseconds,
+                Interval = _options.Value.Interval.TotalMilliseconds,
                 AutoReset = false
             };
             _timer.Elapsed += Timer_Elapsed;
             _timer.Start();
-            _logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.CurrentValue.Interval}");
+            _logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.Value.Interval}");
 
             return Task.CompletedTask;
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (_machine != _options.CurrentValue.OnMachine)
+            if (_machine != _options.Value.OnMachine)
             {
                 _logger.LogInformation($"Timed work not enabled on {_machine}. Exiting ...");
                 return;
