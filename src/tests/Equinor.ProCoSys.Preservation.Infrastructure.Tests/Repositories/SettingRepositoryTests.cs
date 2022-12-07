@@ -11,13 +11,18 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
     [TestClass]
     public class SettingRepositoryTests : RepositoryTestBase
     {
-        private readonly string _settingCode = "A";
+        private readonly string _code = "A";
+        private readonly string _value = "B";
         private SettingRepository _dut;
 
         [TestInitialize]
         public void Setup()
         {
-            var setting = new Setting(TestPlant, _settingCode);
+            var setting = new Setting
+            {
+                Code = _code,
+                Value = _value
+            };
 
             var settings = new List<Setting> {setting};
 
@@ -34,10 +39,11 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetByCode_ShouldReturnSetting_WhenSettingExists()
         {
-            var result = await _dut.GetByCodeAsync(_settingCode);
+            var result = await _dut.GetByCodeAsync(_code);
 
             // Assert
-            Assert.AreEqual(_settingCode, result.Code);
+            Assert.AreEqual(_code, result.Code);
+            Assert.AreEqual(_value, result.Value);
         }
 
         [TestMethod]
