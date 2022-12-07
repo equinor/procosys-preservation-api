@@ -25,6 +25,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         Task<bool> IsVoidedAsync(int tagId, CancellationToken token);
         
+        Task<bool> IsVoidedInSourceAsync(int tagId, CancellationToken token);
+        
         Task<bool> VerifyPreservationStatusAsync(int tagId, PreservationStatus status, CancellationToken token);
         
         Task<bool> VerifyTagTypeAsync(int tagId, TagType tagType, CancellationToken token);

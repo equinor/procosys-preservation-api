@@ -23,6 +23,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag
                 .WithMessage(command => $"Tag doesn't exist! TagId={command.TagId}")
                 .MustAsync((command, token) => BeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is not voided! Tag='{GetTagDetails(command.TagId)}'")
+                .MustAsync((command, token) => NotBeAVoidedTagInSourceAsync(command.TagId, token))
+                .WithMessage(command => $"Tag is voided in source system! Tag='{GetTagDetails(command.TagId)}'")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
@@ -36,6 +38,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag
 
             async Task<bool> BeAVoidedTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsVoidedAsync(tagId, token);
+
+            async Task<bool> NotBeAVoidedTagInSourceAsync(int tagId, CancellationToken token)
+                => !await tagValidator.IsVoidedInSourceAsync(tagId, token);
 
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);

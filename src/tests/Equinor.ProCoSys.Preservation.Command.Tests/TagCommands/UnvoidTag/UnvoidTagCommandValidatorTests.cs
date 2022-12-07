@@ -81,6 +81,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UnvoidTag
         }
 
         [TestMethod]
+        public async Task Validate_ShouldFail_WhenTagIsVoidedInSource()
+        {
+            _tagValidatorMock.Setup(r => r.IsVoidedInSourceAsync(_tagId, default)).Returns(Task.FromResult(true));
+
+            var result = await _dut.ValidateAsync(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is voided in source system!"));
+        }
+
+        [TestMethod]
         public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
