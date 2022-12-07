@@ -76,7 +76,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
                     var startTime = TimeService.UtcNow;
 
-                    var result = await _mediator.Send(new FillPCSGuidsCommand(_options.Value.DryRun));
+                    var result = await _mediator.Send(new FillPCSGuidsCommand(false));
 
                     var endTime = TimeService.UtcNow;
 

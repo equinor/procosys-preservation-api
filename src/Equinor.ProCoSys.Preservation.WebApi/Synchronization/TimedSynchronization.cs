@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,32 +13,35 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
     public class TimedSynchronization : IHostedService, IDisposable
     {
         private readonly ILogger<TimedSynchronization> _logger;
-        private readonly IOptionsSnapshot<SynchronizationOptions> _options;
+        private readonly IOptionsMonitor<SynchronizationOptions> _options;
         private readonly IServiceProvider _services;
         private System.Timers.Timer _timer;
         private string _machine;
+        private ISettingRepository _settingRepository;
 
         public TimedSynchronization(
             ILogger<TimedSynchronization> logger,
-            IOptionsSnapshot<SynchronizationOptions> options,
-            IServiceProvider services)
+            IOptionsMonitor<SynchronizationOptions> options,
+            IServiceProvider services,
+            ISettingRepository settingRepository)
         {
             _logger = logger;
             _options = options;
             _services = services;
             _machine = Environment.MachineName;
+            _settingRepository = settingRepository;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _timer = new System.Timers.Timer
             {
-                Interval = _options.Value.Interval.TotalMilliseconds,
+                Interval = _options.CurrentValue.Interval.TotalMilliseconds,
                 AutoReset = false
             };
             _timer.Elapsed += Timer_Elapsed;
             _timer.Start();
-            _logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.Value.Interval}");
+            _logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.CurrentValue.Interval}");
 
             return Task.CompletedTask;
         }
@@ -46,7 +50,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         {
             try
             {
-                if (_machine != _options.Value.OnMachine)
+                var runOnMachine = _settingRepository.GetByCodeAsync("OnMachine").Result;
+                if (runOnMachine == null || runOnMachine.Value != _machine)
                 {
                     _logger.LogInformation($"Timed work not enabled on {_machine}. Exiting ...");
                     return;
