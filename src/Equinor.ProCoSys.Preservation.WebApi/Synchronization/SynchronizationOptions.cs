@@ -6,6 +6,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
     {
         public TimeSpan Interval { get; set; }
         public bool DryRun { get; set; }
-        public bool Enabled { get; set; }
+        public string OnMachine { get; set; }
     }
 }

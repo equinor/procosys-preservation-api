@@ -15,6 +15,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IOptionsMonitor<SynchronizationOptions> _options;
         private readonly IServiceProvider _services;
         private System.Timers.Timer _timer;
+        private string _machine;
 
         public TimedSynchronization(
             ILogger<TimedSynchronization> logger,
@@ -24,12 +25,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _logger = logger;
             _options = options;
             _services = services;
+            _machine = Environment.MachineName;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Timed synchronization is running");
-
             _timer = new System.Timers.Timer
             {
                 Interval = _options.CurrentValue.Interval.TotalMilliseconds,
@@ -37,19 +37,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             };
             _timer.Elapsed += Timer_Elapsed;
             _timer.Start();
+            _logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.CurrentValue.Interval}");
 
             return Task.CompletedTask;
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (!_options.CurrentValue.Enabled)
+            if (_machine != _options.CurrentValue.OnMachine)
             {
-                _logger.LogInformation("Timed work disabled");
+                _logger.LogInformation($"Timed work not enabled on {_machine}. Exiting ...");
                 return;
             }
 
-            _logger.LogInformation("Doing timed work");
+            _logger.LogInformation($"Timed work starting on {_machine}");
             try
             {
                 using var scope = _services.CreateScope();
@@ -58,10 +59,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                         .GetRequiredService<ISynchronizationService>();
 
                 syncService.Synchronize(default).GetAwaiter().GetResult();
+                _logger.LogInformation($"Timed work finished on {_machine}");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error doing timed work");
+                _logger.LogError(ex, $"Timed work error on {_machine}");
             }
             finally
             {
