@@ -44,15 +44,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (_machine != _options.CurrentValue.OnMachine)
-            {
-                _logger.LogInformation($"Timed work not enabled on {_machine}. Exiting ...");
-                return;
-            }
-
-            _logger.LogInformation($"Timed work starting on {_machine}");
             try
             {
+                if (_machine != _options.CurrentValue.OnMachine)
+                {
+                    _logger.LogInformation($"Timed work not enabled on {_machine}. Exiting ...");
+                    return;
+                }
+
+                _logger.LogInformation($"Timed work starting on {_machine}");
                 using var scope = _services.CreateScope();
                 var syncService =
                     scope.ServiceProvider
