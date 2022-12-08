@@ -125,6 +125,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             get => _isVoided;
             set
             {
+                // do nothing if already set
                 if (_isVoided == value)
                 {
                     return;
@@ -147,9 +148,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             get => _isVoidedInSource;
             set
             {
-                // if tag is (un)voided in source (Main), the preservation tag should be (un)voided too
-                IsVoided = value;
-
+                // do nothing if already set
                 if (_isVoidedInSource == value)
                 {
                     return;
@@ -164,6 +163,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 {
                     AddDomainEvent(new TagUnvoidedInSourceEvent(Plant, ObjectGuid));
                 }
+
+                // if tag is (un)voided in source (Main), the preservation tag should be (un)voided too
+                IsVoided = value;
             }
         }
 
@@ -172,20 +174,23 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             get => _isDeletedInSource;
             set
             {
+                if (_isDeletedInSource && !value)
+                {
+                    // this is an Undelete, which don't make sence
+                    throw new Exception("Changing IsDeletedInSource from true to false is not supported!");
+                }
+
+                // do nothing if already set
                 if (_isDeletedInSource == value)
                 {
                     return;
                 }
 
                 _isDeletedInSource = value;
-                if (_isDeletedInSource)
-                {
-                    AddDomainEvent(new TagDeletedInSourceEvent(Plant, ObjectGuid));
-                }
-                else
-                {
-                    throw new Exception("Setting IsDeletedInSource from true to false is not supported!");
-                }
+                AddDomainEvent(new TagDeletedInSourceEvent(Plant, ObjectGuid));
+
+                // Make sure to also set IsVoidedInSource when setting _isDeletedInSource
+                IsVoidedInSource = value;
             }
         }
 

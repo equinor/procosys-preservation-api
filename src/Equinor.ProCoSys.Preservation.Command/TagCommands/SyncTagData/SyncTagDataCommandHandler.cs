@@ -68,9 +68,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData
                     }
                     else if (!tag.IsDeletedInSource)
                     { 
-                        _logger.LogWarning($"SyncTagData: Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting both IsVoidedInSource and IsDeletedInSource = true");
+                        _logger.LogWarning($"SyncTagData: Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting IsDeletedInSource");
                         tagNos += tag.TagNo + ", ";
-                        tag.IsVoidedInSource = true;
                         tag.IsDeletedInSource = true;
                         count++;
                     }
