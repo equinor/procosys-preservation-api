@@ -76,6 +76,9 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(mode.Title, dto.Mode.Title);
                 Assert.IsNotNull(dto.Responsible);
                 Assert.AreEqual(resp.Code, dto.Responsible.Code);
+                Assert.IsFalse(dto.IsVoided);
+                Assert.IsFalse(dto.IsVoidedInSource);
+                Assert.IsFalse(dto.IsDeletedInSource);
             }
         }
 
@@ -158,6 +161,32 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.NotFound, result.ResultType);
                 Assert.IsNull(result.Data);
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnIsVoided_WhenDeletedInSource()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _testTagId);
+                tag.IsDeletedInSource = true;
+                context.SaveChangesAsync().Wait();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetTagDetailsQuery(_testTagId);
+                var dut = new GetTagDetailsQueryHandler(context);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                var dto = result.Data;
+                Assert.IsTrue(dto.IsVoided);
+                Assert.IsTrue(dto.IsVoidedInSource);
+                Assert.IsTrue(dto.IsDeletedInSource);
             }
         }
     }
