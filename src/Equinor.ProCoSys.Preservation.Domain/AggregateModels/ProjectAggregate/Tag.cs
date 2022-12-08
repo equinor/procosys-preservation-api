@@ -131,6 +131,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                     return;
                 }
 
+                if (_isVoidedInSource && !value)
+                {
+                    throw new Exception("Can't unvoid when voided in source system!");
+                }
+
                 _isVoided = value;
                 if (_isVoided)
                 {
@@ -153,8 +158,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 {
                     return;
                 }
-
                 _isVoidedInSource = value;
+
+                // if tag is (un)voided in source (Main), the preservation tag should be (un)voided too
+                IsVoided = value;
+
                 if (_isVoidedInSource)
                 {
                     AddDomainEvent(new TagVoidedInSourceEvent(Plant, ObjectGuid));
@@ -163,9 +171,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 {
                     AddDomainEvent(new TagUnvoidedInSourceEvent(Plant, ObjectGuid));
                 }
-
-                // if tag is (un)voided in source (Main), the preservation tag should be (un)voided too
-                IsVoided = value;
             }
         }
 
@@ -187,10 +192,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 }
 
                 _isDeletedInSource = value;
-                AddDomainEvent(new TagDeletedInSourceEvent(Plant, ObjectGuid));
 
                 // Make sure to also set IsVoidedInSource when setting _isDeletedInSource
                 IsVoidedInSource = value;
+
+                AddDomainEvent(new TagDeletedInSourceEvent(Plant, ObjectGuid));
             }
         }
 
