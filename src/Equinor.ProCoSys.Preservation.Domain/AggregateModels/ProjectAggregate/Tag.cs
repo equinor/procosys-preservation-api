@@ -167,6 +167,28 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
         }
 
+        public bool IsDeletedInSource
+        {
+            get => _isDeletedInSource;
+            set
+            {
+                if (_isDeletedInSource == value)
+                {
+                    return;
+                }
+
+                _isDeletedInSource = value;
+                if (_isDeletedInSource)
+                {
+                    AddDomainEvent(new TagDeletedInSourceEvent(Plant, ObjectGuid));
+                }
+                else
+                {
+                    throw new Exception("Setting IsDeletedInSource from true to false is not supported!");
+                }
+            }
+        }
+
         public DateTime? NextDueTimeUtc { get; private set;  }
 
         public DateTime CreatedAtUtc { get; private set; }

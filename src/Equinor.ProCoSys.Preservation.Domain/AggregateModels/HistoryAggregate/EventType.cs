@@ -45,6 +45,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
         [Description("Tag voided in source system")]
         TagVoidedInSource,
         [Description("Tag unvoided in source system")]
-        TagUnvoidedInSource
+        TagUnvoidedInSource,
+        [Description("Tag deleted in source system")]
+        TagDeletedInSource
     }
 }
