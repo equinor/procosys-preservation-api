@@ -8,18 +8,18 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using ServiceResult;
 
-namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData
 {
-    public class FillPCSGuidsCommandHandler : IRequestHandler<FillPCSGuidsCommand, Result<Unit>>
+    public class SyncTagDataCommandHandler : IRequestHandler<SyncTagDataCommand, Result<Unit>>
     {
-        private readonly ILogger<FillPCSGuidsCommand> _logger;
+        private readonly ILogger<SyncTagDataCommand> _logger;
         private readonly IProjectRepository _projectRepository;
         private readonly ITagApiService _tagApiService;
         private readonly IPlantProvider _plantProvider;
         private readonly IUnitOfWork _unitOfWork;
 
-        public FillPCSGuidsCommandHandler(
-            ILogger<FillPCSGuidsCommand> logger,
+        public SyncTagDataCommandHandler(
+            ILogger<SyncTagDataCommand> logger,
             IPlantProvider plantProvider,
             IProjectRepository projectRepository,
             ITagApiService tagApiService,
@@ -32,14 +32,14 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Unit>> Handle(FillPCSGuidsCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(SyncTagDataCommand request, CancellationToken cancellationToken)
         {
             var allProjects = await _projectRepository.GetProjectsWithTagsAsync();
             var count = 0;
             foreach (var project in allProjects)
             {
-                var tagsToFill = project.Tags.Where(t => t.TagType == TagType.Standard && !t.ProCoSysGuid.HasValue).ToList();
-                _logger.LogInformation($"FillPCSGuids: Found {tagsToFill.Count} in project {project.Name}, plant {_plantProvider.Plant}");
+                var tagsToFill = project.Tags.Where(t => t.TagType == TagType.Standard).ToList();
+                _logger.LogInformation($"SyncTagData: Found {tagsToFill.Count} in project {project.Name}, plant {_plantProvider.Plant}");
                 if (tagsToFill.Count == 0)
                 {
                     continue;
@@ -58,18 +58,23 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids
                     var pcsTagDetail = pcsTagDetails.SingleOrDefault(t => t.TagNo == tag.TagNo);
                     if (pcsTagDetail != null)
                     {
-                        tag.ProCoSysGuid = pcsTagDetail.ProCoSysGuid;
-                        tag.McPkgProCoSysGuid = pcsTagDetail.McPkgProCoSysGuid;
-                        tag.CommPkgProCoSysGuid = pcsTagDetail.CommPkgProCoSysGuid;
-                        tagNos += pcsTagDetail.TagNo + ", ";
+                        if (pcsTagDetail.IsVoided != tag.IsVoidedInSource)
+                        {
+                            _logger.LogWarning($"SyncTagData: {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting IsVoidedInSource = {pcsTagDetail.IsVoided}");
+                            tagNos += tag.TagNo + ", ";
+                            tag.IsVoidedInSource = pcsTagDetail.IsVoided;
+                            count++;
+                        }
+                    }
+                    else if (!tag.IsDeletedInSource)
+                    { 
+                        _logger.LogWarning($"SyncTagData: Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting IsDeletedInSource");
+                        tagNos += tag.TagNo + ", ";
+                        tag.IsDeletedInSource = true;
                         count++;
                     }
-                    else
-                    {
-                        _logger.LogWarning($"FillPCSGuids: Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}");
-                    }
                 }
-                _logger.LogInformation($"FillPCSGuids: Tags updated in {project.Name}: {tagNos.Trim(new char[] {' ',','})}");
+                _logger.LogInformation($"SyncTagData: Tags updated in {project.Name}: {tagNos.Trim(new char[] {' ',','})}");
             }
 
             if (request.SaveChanges && count > 0)

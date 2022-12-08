@@ -33,7 +33,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         private const string CommPkg2 = "CommPkg2";
         private const string McPkg2 = "McPkg2";
 
-
         private ProjectRepository _dut;
         private Tag _standardTag1With3Reqs;
         private Tag _standardTag2;
@@ -182,6 +181,22 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var result = await _dut.GetTagOnlyByTagIdAsync(StandardTagId1);
 
             Assert.AreEqual(StandardTagId1, result.Id);
+        }
+
+        [TestMethod]
+        public async Task GetTagOnlyByProCoSysGuid_ShouldReturnTag()
+        {
+            var result = await _dut.GetTagOnlyByProCoSysGuidAsync(_standardTag1With3Reqs.ProCoSysGuid.Value);
+
+            Assert.AreEqual(_standardTag1With3Reqs.Id, result.Id);
+        }
+
+        [TestMethod]
+        public async Task GetTagOnlyByProCoSysGuid_UnknownGuid_ShouldReturnNull()
+        {
+            var result = await _dut.GetTagOnlyByProCoSysGuidAsync(Guid.NewGuid());
+
+            Assert.IsNull(result);
         }
 
         [TestMethod]

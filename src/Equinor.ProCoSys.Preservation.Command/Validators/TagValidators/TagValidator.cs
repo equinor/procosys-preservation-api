@@ -91,6 +91,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return tag != null && tag.IsVoided;
         }
 
+        public async Task<bool> IsVoidedInSourceAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
+            return tag != null && tag.IsVoidedInSource;
+        }
+
         public async Task<bool> VerifyPreservationStatusAsync(int tagId, PreservationStatus status, CancellationToken token)
         {
             var tag = await GetTagWithoutIncludesAsync(tagId, token);

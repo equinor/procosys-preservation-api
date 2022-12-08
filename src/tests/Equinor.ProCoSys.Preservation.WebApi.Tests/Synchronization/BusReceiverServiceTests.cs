@@ -157,7 +157,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project1Name}\", \"IsClosed\" : true, \"Description\" : \"{NewDescription}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Project, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Project, message, default);
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -176,7 +176,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{unknownProjectName}\", \"IsClosed\" : true, \"Description\" : \"{unknownProjectDescription}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Project, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Project, message, default);
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -195,7 +195,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var messageWithoutPlant = $"{{\"ProjectName\" : \"{Project1Name}\", \"IsClosed\" : true, \"Description\" : \"{NewDescription}\"}}";
             
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutPlant, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutPlant, default);
         }
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -205,7 +205,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var messageWithoutProjectName = $"{{\"Plant\" : \"{Plant}\", \"IsClosed\" : true, \"Description\" : \"{NewDescription}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutProjectName, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutProjectName, default);
         }
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -215,7 +215,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = "{}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Project, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Project, message, default);
         }
         #endregion
 
@@ -229,7 +229,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreNotEqual(true, _tagFunction.IsVoided);
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, default);
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -249,7 +249,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(false, _tagFunction.IsVoided);
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, default);
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -269,7 +269,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{ \"Plant\" : \"{Plant}\", \"RegisterCode\" : \"{RegisterCode}\", \"Code\" : \"{unknownCode}\", \"Description\" : \"{NewDescription}\", \"IsVoided\" : false}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, default);
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -287,7 +287,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var messageWithoutPlant = $"{{ \"RegisterCode\" : \"{RegisterCode}\", \"Code\" : \"{TagFunctionCode}\", \"Description\" : \"{NewDescription}\", \"IsVoided\" : false}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutPlant, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutPlant, default);
         }
 
         [TestMethod]
@@ -298,7 +298,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var messageWithoutTagFunctionCode = $"{{ \"Plant\" : \"{Plant}\", \"RegisterCode\" : \"{RegisterCode}\", \"Description\" : \"{NewDescription}\", \"IsVoided\" : false}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutTagFunctionCode, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutTagFunctionCode, default);
         }
 
         [TestMethod]
@@ -309,7 +309,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var messageWithoutRegisterCode = $"{{ \"Plant\" : \"{Plant}\", \"Code\" : \"{TagFunctionCode}\", \"Description\" : \"{NewDescription}\", \"IsVoided\" : false}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutRegisterCode, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutRegisterCode, default);
         }
 
         [TestMethod]
@@ -320,7 +320,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = "{}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, default);
         }
         #endregion
 
@@ -332,7 +332,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{ \"Plant\" : \"{Plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{Code}\", \"Description\" : \"{NewDescription}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, default);
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -349,7 +349,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             var message = $"{{ \"Plant\" : \"{Plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{codeNew}\", \"CodeOld\" : \"{Code}\", \"IsVoided\" : false, \"Description\" : \"{NewDescription}\"}}";
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, default);
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -367,7 +367,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{ \"Plant\" : \"{Plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{unknownCode}\", \"Description\" : \"{NewDescription}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, default);
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
@@ -385,7 +385,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var messageWithoutPlant = $"{{ \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{Code}\", \"Description\" : \"{NewDescription}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Responsible, messageWithoutPlant, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Responsible, messageWithoutPlant, default);
         }
 
         [TestMethod]
@@ -396,7 +396,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var messageWithoutResponsibleCode = $"{{ \"Plant\" : \"{Plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Description\" : \"{NewDescription}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Responsible, messageWithoutResponsibleCode, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Responsible, messageWithoutResponsibleCode, default);
         }
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
@@ -406,7 +406,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = "{}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, default);
         }
         #endregion
 
@@ -419,7 +419,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project2Name}\", \"ProjectNameOld\" : \"{Project1Name}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{Description}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, default);
 
             // Assert
             _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
@@ -434,7 +434,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{_projectNotInPreservation}\", \"ProjectNameOld\" : \"{Project1Name}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{Description}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, default);
 
             // Assert
             _projectRepository.Verify(p => p.Add(It.IsAny<Project>()));
@@ -452,7 +452,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{unknownProject}\", \"ProjectNameOld\" : \"{Project1Name}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{Description}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, default);
         }
 
         [TestMethod]
@@ -464,7 +464,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project1Name}\", \"ProjectNameOld\" : \"{unknownProject}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{Description}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, default);
 
             // Assert
             _projectRepository.Verify(p => p.GetProjectWithTagsByNameAsync(unknownProject), Times.Once);
@@ -479,7 +479,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = "{}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, default);
         }
         #endregion
 
@@ -490,7 +490,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         {
             var message = "{\"Plant\" : \"OnePlant\", \"ProjectName\" : \"P1\", \"CommPkgNo\" :\"C1\", \"McPkgNo\" : \"M2\", \"McPkgNoOld\" : \"M2\", \"Description\" : \"Desc\"}";
 
-            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, default);
         }
 
         [TestMethod]
@@ -502,7 +502,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project1Name}\", \"CommPkgNo\" :\"{toCommPkg}\", \"CommPkgNoOld\" :\"{_tag1.CommPkgNo}\", \"McPkgNo\" : \"{toMcPkg}\", \"McPkgNoOld\" : \"{_tag1.McPkgNo}\", \"Description\" : \"Desc\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, default);
 
             // Assert
             _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
@@ -520,7 +520,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{unknowProject}\", \"CommPkgNo\" :\"{toCommPkg}\", \"CommPkgNoOld\" :\"{_tag1.CommPkgNo}\", \"McPkgNo\" : \"{toMcPkg}\", \"McPkgNoOld\" : \"{_tag1.McPkgNo}\", \"Description\" : \"Desc\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, default);
 
             // Assert
             _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
@@ -536,7 +536,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = "{}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, default);
         }
         #endregion
 
@@ -549,7 +549,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message = "{}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
         }
 
         [TestMethod]
@@ -561,7 +561,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 $"{{\"ProjectName\" : \"{Project1Name}\",\"Plant\" : \"{Plant}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
         }
 
         [TestMethod]
@@ -573,7 +573,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 $"{{\"TagNo\" : \"{TagNo1}\",\"Plant\" : \"{Plant}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
         }
 
         [TestMethod]
@@ -585,7 +585,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 $"{{\"TagNo\" : \"{TagNo1}\",\"ProjectName\" : \"{Project1Name}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
         }
 
         [TestMethod]
@@ -603,7 +603,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 $"{{\"TagNo\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
 
             // Assert
             Assert.AreEqual(area, _tag1.AreaCode);
@@ -631,7 +631,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
 
             // Assert
             Assert.AreEqual(tagNew, _tag1.TagNo);
@@ -645,7 +645,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        public async Task HandleTagTopic_ShouldNotUpdateIsVoidedProperty()
+        public async Task HandleTagTopic_ShouldUpdateBothIsVoidedAndIsVoidedInSourceProperty()
         {
             // Arrange
             var area = "Area69";
@@ -659,12 +659,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 $"{{\"TagNo\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             Assert.IsFalse(_tag1.IsVoided);
+            Assert.IsFalse(_tag1.IsVoidedInSource);
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
 
             // Assert
-            Assert.IsFalse(_tag1.IsVoided);
+            Assert.IsTrue(_tag1.IsVoided);
+            Assert.IsTrue(_tag1.IsVoidedInSource);
         }
 
         [TestMethod]
@@ -687,7 +689,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.IsFalse(_project2.Tags.Contains(_tag1));
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
 
             // Assert
             Assert.AreEqual(tagNew, _tag1.TagNo);
@@ -722,7 +724,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.IsNull(_newProjectCreated);
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
 
             // Assert
             Assert.AreEqual(tagNew, _tag1.TagNo);
@@ -740,32 +742,95 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         #endregion
 
         #region Certificate
-        //TODO: ADD TESTS
+
+        [TestMethod]
+        public async Task HandleCertificateTopic_ShouldCall_CertificateEventProcessorService_WithoutBehavior()
+        {
+            // Arrange
+            var message = 
+                $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project1Name}\", \"CertificateNo\" :\"XX\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Certificate, message, default);
+
+            // Assert
+            _certificationEventProcessorService.Verify(u => u.ProcessCertificateEventAsync(message), Times.Once);
+
+        }
+
+        [TestMethod]
+        public async Task HandleCertificateTopic_ShouldCall_CertificateEventProcessorService_WithBehavior()
+        {
+            // Arrange
+            var message =
+                $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project1Name}\", \"CertificateNo\" :\"XX\", \"Behavior\" :\"delete\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Certificate, message, default);
+
+            // Assert
+            _certificationEventProcessorService.Verify(u => u.ProcessCertificateEventAsync(message), Times.Once);
+
+        }
         #endregion
 
         #region Delete
+
         [TestMethod]
-        public async Task HandleDeleteTopic_ShouldIgnoreMessage()
+        public async Task HandleDeleteTopic_ForTag_ShouldDeleteTag()
         {
             // Arrange
-            const string Delete = "delete";
-            var guid = new Guid();
-            var message =
-                $"{{\"Plant\" : \"{Plant}\",\"ProCoSysGuid\" : \"{guid}\",\"TagNo\" : \"{TagNo1}\",\"Behavior\" : \"{Delete}\",\"RegisterCode\" : \"SomeRegister\"}}";
+            var guid = _tag1.ProCoSysGuid;
+            var message = $"{{\"Plant\" : \"{Plant}\", \"ProCoSysGuid\" : \"{guid}\",\"Behavior\" : \"delete\"}}";
+            _projectRepository.Setup(p => p.GetTagOnlyByProCoSysGuidAsync(guid.Value))
+                .Returns(Task.FromResult(_tag1));
+            Assert.IsFalse(_tag1.IsDeletedInSource);
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, default);
+
+            // Assert
+            Assert.IsTrue(_tag1.IsDeletedInSource);
+        }
+
+        [TestMethod]
+        public async Task HandleDeleteTopic_ForProject_ShouldIgnoreMessage()
+            => await HandleDeleteTopic_ShouldIgnoreMessage(Guid.NewGuid(), PcsTopic.Project);
+
+        [TestMethod]
+        public async Task HandleDeleteTopic_ForResponsible_ShouldIgnoreMessage()
+            => await HandleDeleteTopic_ShouldIgnoreMessage(Guid.NewGuid(), PcsTopic.Responsible);
+
+        [TestMethod]
+        public async Task HandleDeleteTopic_ForTagFunction_ShouldIgnoreMessage()
+            => await HandleDeleteTopic_ShouldIgnoreMessage(Guid.NewGuid(), PcsTopic.TagFunction);
+
+        [TestMethod]
+        public async Task HandleDeleteTopic_ForCommPkg_ShouldIgnoreMessage()
+            => await HandleDeleteTopic_ShouldIgnoreMessage(Guid.NewGuid(), PcsTopic.CommPkg);
+
+        [TestMethod]
+        public async Task HandleDeleteTopic_ForMcPkg_ShouldIgnoreMessage()
+            => await HandleDeleteTopic_ShouldIgnoreMessage(Guid.NewGuid(), PcsTopic.McPkg);
+
+        private async Task HandleDeleteTopic_ShouldIgnoreMessage(Guid guid, PcsTopic topic)
+        {
+            // Arrange
+            var message = $"{{\"ProCoSysGuid\" : \"{guid}\",\"Behavior\" : \"delete\"}}";
 
             // Act
-            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+            await _dut.ProcessMessageAsync(topic, message, default);
 
             // Assert
             _telemetryClient.Verify(tc => tc.TrackEvent("Preservation Bus Receiver",
                 new Dictionary<string, string>
                 {
-                    {"Event Delete", PcsTopic.Tag.ToString()},
-                    {"ProCoSysGuid", guid.ToString()}
+                    {"Event Delete", topic.ToString()},
+                    {"ProCoSysGuid", guid.ToString()},
+                    {"Supported", "False"}
                 }),Times.Once());
 
-            //ProcessMessageAsync should return before setting user
-            _currentUserSetter.VerifyNoOtherCalls();
+            // processing message should return before setting plant
+            _plantSetter.VerifyNoOtherCalls();
         }
         #endregion
     }

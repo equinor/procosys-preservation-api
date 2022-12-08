@@ -76,7 +76,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.ToTable("History");
 
-                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed','Rescheduled','UndoPreservationStarted')");
+                    b.HasCheckConstraint("CK_History_constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed','Rescheduled','UndoPreservationStarted','TagVoidedInSource','TagUnvoidedInSource','TagDeletedInSource')");
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
@@ -701,10 +701,16 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<bool>("IsDeletedInSource")
+                        .HasColumnType("bit");
+
                     b.Property<bool>("IsInSupplierStep")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsVoided")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVoidedInSource")
                         .HasColumnType("bit");
 
                     b.Property<string>("McPkgNo")

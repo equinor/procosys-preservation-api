@@ -1856,7 +1856,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region Void
 
         [TestMethod]
-        public void Void_ShouldAddTagVoidedEvent_WhenUnvoided()
+        public void Void_ShouldAddTagVoidedEvent_WhenNotAlreadyVoided()
         {
             // Arrange
             Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
@@ -2252,6 +2252,184 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(UndoPreservationStartedEvent));
+        }
+
+        #endregion
+
+        #region VoidInSource
+
+        [TestMethod]
+        public void VoidInSource_ShouldAddEvents_WhenNotAlreadyVoidedInSource()
+        {
+            // Arrange
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = true;
+
+            // Assert
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(1), typeof(TagVoidedInSourceEvent));
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(2), typeof(TagVoidedEvent));
+        }
+
+        [TestMethod]
+        public void VoidInSource_ShouldNotAddAnotherTagVoidedInSourceEvent_WhenAlreadyVoidedInSource()
+        {
+            // Arrange
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = true;
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = true;
+
+            // Assert
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+        }
+
+        [TestMethod]
+        public void VoidInSource_ShouldVoidInPreservation()
+        {
+            // Arrange
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = true;
+
+            // Assert
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+        }
+
+        #endregion
+
+        #region UnvoidInSource
+
+        [TestMethod]
+        public void UnvoidInSource_ShouldAddEvents_WhenVoidedInSource()
+        {
+            // Arrange
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = true;
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = false;
+
+            // Assert
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+            Assert.AreEqual(5, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(3), typeof(TagUnvoidedInSourceEvent));
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(4), typeof(TagUnvoidedEvent));
+        }
+
+        [TestMethod]
+        public void UnvoidInSource_ShouldNotAddAnotherTagUnvoidedInSourceEvent_WhenAlreadyUnvoidedInSource()
+        {
+            // Arrange
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = true;
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = false;
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+            Assert.AreEqual(5, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = false;
+
+            // Assert
+            Assert.AreEqual(5, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+        }
+
+        [TestMethod]
+        public void UnvoidInSource_ShouldUnvoidInPreservation()
+        {
+            // Arrange
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = true;
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource = false;
+
+            // Assert
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+        }
+
+        #endregion
+
+        #region DeleteInSource
+
+        [TestMethod]
+        public void DeleteInSource_ShouldAddEvents_WhenNotDeletedInSource()
+        {
+            // Arrange
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = true;
+
+            // Assert
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource);
+            Assert.AreEqual(4, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(1), typeof(TagDeletedInSourceEvent));
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(2), typeof(TagVoidedInSourceEvent));
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(3), typeof(TagVoidedEvent));
+        }
+
+        [TestMethod]
+        public void DeleteInSource_ShouldVoidInPreservation()
+        {
+            // Arrange
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource);
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = true;
+
+            // Assert
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+        }
+
+        [TestMethod]
+        public void DeleteInSource_ShouldSetIsVoidedInSourceInPreservation()
+        {
+            // Arrange
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource);
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = true;
+
+            // Assert
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoidedInSource);
+        }
+
+        [TestMethod]
+        public void DeleteInSource_ShouldNotAddAnotherTagDeletedInSourceEvent_WhenAlreadyDeletedInSource()
+        {
+            // Arrange
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = true;
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource);
+            Assert.AreEqual(4, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = true;
+
+            // Assert
+            Assert.AreEqual(4, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+        }
+
+        [TestMethod]
+        public void UnDeleteInSource_ShouldThrowException()
+        {
+            // Arrange
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = true;
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource);
+
+            // Act and Assert
+            Assert.ThrowsException<Exception>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = false);
         }
 
         #endregion

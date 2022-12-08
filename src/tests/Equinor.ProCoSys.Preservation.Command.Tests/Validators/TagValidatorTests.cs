@@ -2169,5 +2169,44 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.AreEqual(string.Empty, result);
             }
         }
+
+        [TestMethod]
+        public async Task IsVoidedInSourceAsync_NotVoidedInSource_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsVoidedInSourceAsync(_standardTagNotStartedInFirstStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsVoidedInSourceAsync_VoidedInSource_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
+                tag.IsVoidedInSource = true;
+                context.SaveChangesAsync().Wait();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsVoidedInSourceAsync(_standardTagNotStartedInFirstStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsVoidedInSourceAsync_UnknownTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsVoidedInSourceAsync(0, default);
+                Assert.IsFalse(result);
+            }
+        }
     }
 }

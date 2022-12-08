@@ -37,6 +37,12 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .SelectMany(project => project.Tags)
                 .SingleOrDefaultAsync(tag => tag.Id == tagId);
 
+        public Task<Tag> GetTagOnlyByProCoSysGuidAsync(Guid proCoSysGuid)
+            => Set
+                .Include(p => p.Tags)
+                .SelectMany(project => project.Tags)
+                .SingleOrDefaultAsync(tag => tag.ProCoSysGuid.HasValue && tag.ProCoSysGuid.Value == proCoSysGuid);
+
         public Task<Tag> GetTagWithPreservationHistoryByTagIdAsync(int tagId)
             => DefaultQuery
                 .SelectMany(project => project.Tags)

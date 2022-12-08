@@ -16,6 +16,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         private readonly List<Action> _actions = new List<Action>();
         private readonly List<TagAttachment> _attachments = new List<TagAttachment>();
         private bool _isVoided;
+        private bool _isVoidedInSource;
+        private bool _isDeletedInSource;
 
         public const int TagNoLengthMax = 255;
         public const int TagFunctionCodeLengthMax = 255;
@@ -94,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public Guid ObjectGuid { get; private set; }
-        public Guid? ProCoSysGuid { get; set; }
+        public Guid? ProCoSysGuid { get; private set; }
         public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string AreaDescription { get; private set; }
@@ -123,6 +125,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             get => _isVoided;
             set
             {
+                // do nothing if already set
                 if (_isVoided == value)
                 {
                     return;
@@ -132,12 +135,62 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 if (_isVoided)
                 {
                     AddDomainEvent(new TagVoidedEvent(Plant, ObjectGuid));
-
                 }
                 else
                 {
                     AddDomainEvent(new TagUnvoidedEvent(Plant, ObjectGuid));
                 }
+            }
+        }
+
+        public bool IsVoidedInSource
+        {
+            get => _isVoidedInSource;
+            set
+            {
+                // do nothing if already set
+                if (_isVoidedInSource == value)
+                {
+                    return;
+                }
+
+                _isVoidedInSource = value;
+                if (_isVoidedInSource)
+                {
+                    AddDomainEvent(new TagVoidedInSourceEvent(Plant, ObjectGuid));
+                }
+                else
+                {
+                    AddDomainEvent(new TagUnvoidedInSourceEvent(Plant, ObjectGuid));
+                }
+
+                // if tag is (un)voided in source (Main), the preservation tag should be (un)voided too
+                IsVoided = value;
+            }
+        }
+
+        public bool IsDeletedInSource
+        {
+            get => _isDeletedInSource;
+            set
+            {
+                if (_isDeletedInSource && !value)
+                {
+                    // this is an Undelete, which don't make sence
+                    throw new Exception("Changing IsDeletedInSource from true to false is not supported!");
+                }
+
+                // do nothing if already set
+                if (_isDeletedInSource == value)
+                {
+                    return;
+                }
+
+                _isDeletedInSource = value;
+                AddDomainEvent(new TagDeletedInSourceEvent(Plant, ObjectGuid));
+
+                // Make sure to also set IsVoidedInSource when setting _isDeletedInSource
+                IsVoidedInSource = value;
             }
         }
 
