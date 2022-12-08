@@ -60,7 +60,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData
                     {
                         if (pcsTagDetail.IsVoided != tag.IsVoidedInSource)
                         {
-                            _logger.LogWarning($"SyncTagData: {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting IsVoidedInSource={pcsTagDetail.IsVoided}");
+                            _logger.LogWarning($"SyncTagData: {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting IsVoidedInSource = {pcsTagDetail.IsVoided}");
                             tagNos += tag.TagNo + ", ";
                             tag.IsVoidedInSource = pcsTagDetail.IsVoided;
                             count++;
@@ -68,8 +68,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData
                     }
                     else if (!tag.IsDeletedInSource)
                     { 
-                        _logger.LogWarning($"SyncTagData: Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting IsDeletedInSource");
+                        _logger.LogWarning($"SyncTagData: Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting both IsVoidedInSource and IsDeletedInSource = true");
                         tagNos += tag.TagNo + ", ";
+                        tag.IsVoidedInSource = true;
                         tag.IsDeletedInSource = true;
                         count++;
                     }
