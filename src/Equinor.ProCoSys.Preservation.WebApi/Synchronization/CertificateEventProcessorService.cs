@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.PcsServiceBus.Topics;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.ProCoSys.Preservation.Domain;
@@ -60,6 +61,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         public async Task ProcessCertificateEventAsync(string messageJson)
         {
             var certificateEvent = JsonSerializer.Deserialize<CertificateTopic>(messageJson);
+            if (certificateEvent != null && certificateEvent.Behavior == "delete")
+            {
+                TrackUnsupportedDeleteEvent(PcsTopic.Certificate, certificateEvent.ProCoSysGuid);
+                return;
+            }
 
             if (certificateEvent != null && (
                 certificateEvent.Plant.IsEmpty() ||
@@ -127,6 +133,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     {nameof(certificateTopic.CertificateStatus), certificateTopic.CertificateStatus.ToString()},
                     {nameof(certificateTopic.Plant), NormalizePlant(certificateTopic.Plant)},
                     {nameof(certificateTopic.ProjectName), NormalizeProjectName(certificateTopic.ProjectName)}
+                });
+
+        private void TrackUnsupportedDeleteEvent(PcsTopic topic, Guid guid) =>
+            _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
+                new Dictionary<string, string>
+                {
+                    {"Event Delete", topic.ToString()},
+                    {"ProCoSysGuid", guid.ToString()},
+                    {"Supported", "false"}
                 });
 
         private string NormalizePlant(string plant) => plant[4..];

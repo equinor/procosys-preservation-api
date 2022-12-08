@@ -68,17 +68,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         public async Task ProcessMessageAsync(PcsTopic pcsTopic, string messageJson, CancellationToken cancellationToken)
         {
-            var deserializedMessage = JsonSerializer.Deserialize<Dictionary<string, object>>(messageJson);
-            /***
-             * Filter out deleted events for now, but should be handled properly #96688
-             */
-            if (deserializedMessage != null && IsDeleteEvent(deserializedMessage))
-            {
-                deserializedMessage.TryGetValue("ProCoSysGuid", out var guid);
-                TrackDeleteEvent(pcsTopic, guid);
-                return;
-            }
-
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
             var currentUser = _claimsProvider.GetCurrentUser();
@@ -114,13 +103,21 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        private static bool IsDeleteEvent(Dictionary<string, object> deserialize) =>
-            deserialize.Any(kv=> kv.Key == "Behavior" 
-                                 && kv.Value.ToString() == "delete");
-
         private async Task ProcessTagEvent(string messageJson)
         {
             var tagEvent = JsonSerializer.Deserialize<TagTopic>(messageJson);
+            if (tagEvent != null && tagEvent.Behavior == "delete")
+            {
+                await ProcessTagDeleteEventAsync(tagEvent, messageJson);
+            }
+            else
+            {
+                await ProcessTagEventAsync(tagEvent, messageJson);
+            }
+        }
+
+        private async Task ProcessTagEventAsync(TagTopic tagEvent, string messageJson)
+        {
             if (tagEvent == null ||
                 tagEvent.Plant.IsEmpty() ||
                 tagEvent.TagNo.IsEmpty() ||
@@ -171,6 +168,29 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 tagToUpdate.Description = tagEvent.Description;
                 tagToUpdate.McPkgNo = tagEvent.McPkgNo;
                 tagToUpdate.TagFunctionCode = tagEvent.TagFunctionCode;
+                // when voiding in Main, we IsVoidedInSource in preservation, which also set IsVoided
+                tagToUpdate.IsVoidedInSource = tagEvent.IsVoided;
+            }
+        }
+
+        private async Task ProcessTagDeleteEventAsync(TagTopic tagEvent, string messageJson)
+        {
+            if (tagEvent == null ||
+                tagEvent.Plant.IsEmpty() ||
+                tagEvent.ProCoSysGuid.IsEmpty())
+            {
+                throw new ArgumentNullException($"Deserialized JSON is not a valid TagEvent for delete {messageJson}");
+            }
+
+            var guid = new Guid(tagEvent.ProCoSysGuid);
+            TrackDeleteEvent(PcsTopic.Tag, guid, true);
+
+            _plantSetter.SetPlant(tagEvent.Plant);
+
+            var tagToDelete = await _projectRepository.GetTagOnlyByProCoSysGuidAsync(guid);
+            if (tagToDelete != null)
+            {
+                tagToDelete.IsDeletedInSource = true;
             }
         }
 
@@ -196,6 +216,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private async Task ProcessMcPkgEvent(string messageJson)
         {
             var mcPkgEvent = JsonSerializer.Deserialize<McPkgTopic>(messageJson);
+            if (mcPkgEvent != null && mcPkgEvent.Behavior == "delete")
+            {
+                TrackDeleteEvent(PcsTopic.McPkg, mcPkgEvent.ProCoSysGuid, false);
+                return;
+            }
 
             if (mcPkgEvent == null ||
                 mcPkgEvent.Plant.IsEmpty() ||
@@ -241,6 +266,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private async Task ProcessCommPkgEvent(string messageJson)
         {
             var commPkgEvent = JsonSerializer.Deserialize<CommPkgTopic>(messageJson);
+            if (commPkgEvent != null && commPkgEvent.Behavior == "delete")
+            {
+                TrackDeleteEvent(PcsTopic.CommPkg, commPkgEvent.ProCoSysGuid, false);
+                return;
+            }
 
             if (commPkgEvent.Plant.IsEmpty() ||
                 commPkgEvent.CommPkgNo.IsEmpty() ||
@@ -276,6 +306,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private async Task ProcessTagFunctionEvent(string messageJson)
         {
             var tagFunctionEvent = JsonSerializer.Deserialize<TagFunctionTopic>(messageJson);
+            if (tagFunctionEvent != null && tagFunctionEvent.Behavior == "delete")
+            {
+                TrackDeleteEvent(PcsTopic.TagFunction, tagFunctionEvent.ProCoSysGuid, false);
+                return;
+            }
+
             if (tagFunctionEvent == null ||
                 tagFunctionEvent.Plant.IsEmpty() ||
                 tagFunctionEvent.Code.IsEmpty() ||
@@ -315,6 +351,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private async Task ProcessProjectEvent(string messageJson)
         {
             var projectEvent = JsonSerializer.Deserialize<ProjectTopic>(messageJson);
+            if (projectEvent != null && projectEvent.Behavior == "delete")
+            {
+                TrackDeleteEvent(PcsTopic.Project, projectEvent.ProCoSysGuid, false);
+                return;
+            }
             if (projectEvent == null || projectEvent.Plant.IsEmpty() || projectEvent.ProjectName.IsEmpty())
             {
                 throw new ArgumentNullException($"Deserialized JSON is not a valid ProjectEvent {messageJson}");
@@ -335,6 +376,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private async Task ProcessResponsibleEvent(string messageJson)
         {
             var responsibleEvent = JsonSerializer.Deserialize<ResponsibleTopic>(messageJson);
+            if (responsibleEvent != null && responsibleEvent.Behavior == "delete")
+            {
+                TrackDeleteEvent(PcsTopic.Responsible, responsibleEvent.ProCoSysGuid, false);
+                return;
+            }
             if (responsibleEvent == null || responsibleEvent.Plant.IsEmpty() || responsibleEvent.Code.IsEmpty())
             {
                 throw new ArgumentNullException($"Deserialized JSON is not a valid ResponsibleEvent {messageJson}");
@@ -424,12 +470,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     {nameof(tagEvent.ProjectName), tagEvent.ProjectName.Replace('$', '_')} //TODO: DRY, replace with NormalizeProjectName
                 });
 
-        private void TrackDeleteEvent(PcsTopic topic, object guid) =>
+        private void TrackDeleteEvent(PcsTopic topic, Guid guid, bool supported) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
                     {"Event Delete", topic.ToString()},
-                    {"ProCoSysGuid", guid?.ToString()}
+                    {"ProCoSysGuid", guid.ToString()},
+                    {"Supported", supported.ToString()}
                 });
     }
 }
