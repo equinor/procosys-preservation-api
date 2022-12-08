@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.FillPCSGuids;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Time;
@@ -62,7 +62,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var runOnMachine = _settingRepository.GetByCodeAsync("OnMachine").Result;
             if (runOnMachine == null || runOnMachine.Value != _machine)
             {
-                _logger.LogInformation($"FillPCSGuids: Not enabled on {_machine}. Exiting ...");
+                _logger.LogInformation($"SyncTagData: Not enabled on {_machine}. Exiting ...");
                 return;
             }
 
@@ -78,7 +78,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var saveChanges = _settingRepository.GetByCodeAsync("SaveChanges").Result;
             foreach (var plant in await _plantCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
             {
-                _logger.LogInformation($"FillPCSGuids: Synchronizing plant {plant}...");
+                _logger.LogInformation($"SyncTagData: Synchronizing plant {plant}...");
 
                 try
                 {
@@ -87,15 +87,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
                     var startTime = TimeService.UtcNow;
 
-                    var result = await _mediator.Send(new FillPCSGuidsCommand(saveChanges?.Value == "true"));
+                    var result = await _mediator.Send(new SyncTagDataCommand(saveChanges?.Value == "true"));
 
                     var endTime = TimeService.UtcNow;
 
-                    _logger.LogInformation($"FillPCSGuids: Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
+                    _logger.LogInformation($"SyncTagData: Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"FillPCSGuids: Error synchronizing plant {plant}...");
+                    _logger.LogError(ex, $"SyncTagData: Error synchronizing plant {plant}...");
                 }
             }
         }
