@@ -6,8 +6,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
     {
         public TagDetailsDto(int id,
             string tagNo,
-            bool isInUse, 
-            bool isVoided, 
+            bool isInUse,
+            bool isVoided,
+            bool isVoidedInSource,
+            bool isDeletedInSource, 
             string description, 
             string status, 
             JourneyDetailsDto journey, 
@@ -30,6 +32,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
             TagNo = tagNo;
             IsInUse = isInUse;
             IsVoided = isVoided;
+            IsVoidedInSource = isVoidedInSource;
+            IsDeletedInSource = isDeletedInSource;
             Description = description;
             Status = status;
             Journey = journey;
@@ -53,6 +57,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
         public string TagNo { get; }
         public bool IsInUse { get; }
         public bool IsVoided { get; }
+        public bool IsVoidedInSource { get; }
+        public bool IsDeletedInSource { get; }
         public string Description { get; }
         public string Status { get; }
         public JourneyDetailsDto Journey { get; }
