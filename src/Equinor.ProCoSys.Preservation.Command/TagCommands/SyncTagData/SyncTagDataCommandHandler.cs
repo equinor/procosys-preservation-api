@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData
             var count = 0;
             foreach (var project in allProjects)
             {
-                var tagsToFill = project.Tags.Where(t => t.TagType == TagType.Standard).ToList();
+                var tagsToFill = project.Tags.Where(t => t.TagType == TagType.Standard && !t.ProCoSysGuid.HasValue).ToList();
                 _logger.LogInformation($"SyncTagData: Found {tagsToFill.Count} in project {project.Name}, plant {_plantProvider.Plant}");
                 if (tagsToFill.Count == 0)
                 {
@@ -58,12 +58,16 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData
                     var pcsTagDetail = pcsTagDetails.SingleOrDefault(t => t.TagNo == tag.TagNo);
                     if (pcsTagDetail != null)
                     {
+                        tag.ProCoSysGuid = pcsTagDetail.ProCoSysGuid;
+                        tag.McPkgProCoSysGuid = pcsTagDetail.McPkgProCoSysGuid;
+                        tag.CommPkgProCoSysGuid = pcsTagDetail.CommPkgProCoSysGuid;
+                        tagNos += pcsTagDetail.TagNo + ", ";
+                        count++;
+
                         if (pcsTagDetail.IsVoided != tag.IsVoidedInSource)
                         {
                             _logger.LogWarning($"SyncTagData: {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting IsVoidedInSource = {pcsTagDetail.IsVoided}");
-                            tagNos += tag.TagNo + ", ";
                             tag.IsVoidedInSource = pcsTagDetail.IsVoided;
-                            count++;
                         }
                     }
                     else if (!tag.IsDeletedInSource)
