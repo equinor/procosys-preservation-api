@@ -39,6 +39,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
                                         tag.TagNo,
                                         tag.Status != PreservationStatus.NotStarted || anyActions || anyAttachments,
                                         tag.IsVoided,
+                                        tag.IsVoidedInSource,
+                                        tag.IsDeletedInSource,
                                         tag.Description,
                                         tag.Status.GetDisplayValue(),
                                         new JourneyDetailsDto(journey.Id, journey.Title),
