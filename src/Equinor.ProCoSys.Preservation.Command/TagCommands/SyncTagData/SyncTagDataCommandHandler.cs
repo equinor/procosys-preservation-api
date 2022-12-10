@@ -70,6 +70,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData
                     { 
                         _logger.LogWarning($"SyncTagData: Did not find {tag.TagNo} in {project.Name} in {_plantProvider.Plant}. Setting IsDeletedInSource");
                         tagNos += tag.TagNo + ", ";
+                        tag.ProCoSysGuid = System.Guid.Empty;
                         tag.IsDeletedInSource = true;
                         count++;
                     }
