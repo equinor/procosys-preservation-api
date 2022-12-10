@@ -62,7 +62,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var runOnMachine = _settingRepository.GetByCodeAsync("OnMachine").Result;
             if (runOnMachine == null || runOnMachine.Value != _machine)
             {
-                _logger.LogInformation($"SyncTagData: Not enabled on {_machine}. Exiting ...");
+                _logger.LogInformation($"SynchronizationService: Not enabled on {_machine}. Exiting ...");
                 return;
             }
 
@@ -78,7 +78,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var saveChanges = _settingRepository.GetByCodeAsync("SaveChanges").Result;
             foreach (var plant in await _plantCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
             {
-                _logger.LogInformation($"SyncTagData: Synchronizing plant {plant}...");
+                _logger.LogInformation($"SynchronizationService: Synchronizing plant {plant}...");
 
                 try
                 {
@@ -91,11 +91,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
                     var endTime = TimeService.UtcNow;
 
-                    _logger.LogInformation($"SyncTagData: Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
+                    _logger.LogInformation($"SynchronizationService: Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, $"SyncTagData: Error synchronizing plant {plant}...");
+                    _logger.LogError(ex, $"SynchronizationService: Error synchronizing plant {plant}...");
                 }
             }
         }

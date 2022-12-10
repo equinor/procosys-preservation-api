@@ -47,10 +47,6 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData
 
                 var tagsToFillTagNo = tagsToFill.Select(t => t.TagNo).ToList();
                 var pcsTagDetails = await _tagApiService.GetTagDetailsAsync(_plantProvider.Plant, project.Name, tagsToFillTagNo, true);
-                if (pcsTagDetails.Count == 0)
-                {
-                    continue;
-                }
 
                 var tagNos = string.Empty;
                 foreach (var tag in tagsToFill)
@@ -78,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData
                         count++;
                     }
                 }
-                _logger.LogInformation($"SyncTagData: Tags updated in {project.Name}: {tagNos.Trim(new char[] {' ',','})}");
+                _logger.LogInformation($"SyncTagData: Tags updated in {project.Name} in {_plantProvider.Plant}: {tagNos.Trim(new char[] {' ',','})}");
             }
 
             if (request.SaveChanges && count > 0)
