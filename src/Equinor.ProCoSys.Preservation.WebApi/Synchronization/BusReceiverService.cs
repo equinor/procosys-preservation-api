@@ -183,7 +183,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             }
 
             var guid = new Guid(tagEvent.ProCoSysGuid);
-            TrackDeleteEvent(PcsTopic.Tag, guid, true);
+            TrackDeleteEvent(PcsTopic.Tag, tagEvent.ProCoSysGuid, true);
 
             _plantSetter.SetPlant(tagEvent.Plant);
 
@@ -215,7 +215,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private async Task ProcessMcPkgEvent(string messageJson)
         {
-            var mcPkgEvent = JsonSerializer.Deserialize<McPkgTopic>(messageJson);
+            var mcPkgEvent = JsonSerializer.Deserialize<McPkgTmpTopic>(messageJson);
             if (mcPkgEvent != null && mcPkgEvent.Behavior == "delete")
             {
                 TrackDeleteEvent(PcsTopic.McPkg, mcPkgEvent.ProCoSysGuid, false);
@@ -265,7 +265,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private async Task ProcessCommPkgEvent(string messageJson)
         {
-            var commPkgEvent = JsonSerializer.Deserialize<CommPkgTopic>(messageJson);
+            var commPkgEvent = JsonSerializer.Deserialize<CommPkgTmpTopic>(messageJson);
             if (commPkgEvent != null && commPkgEvent.Behavior == "delete")
             {
                 TrackDeleteEvent(PcsTopic.CommPkg, commPkgEvent.ProCoSysGuid, false);
@@ -305,7 +305,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private async Task ProcessTagFunctionEvent(string messageJson)
         {
-            var tagFunctionEvent = JsonSerializer.Deserialize<TagFunctionTopic>(messageJson);
+            var tagFunctionEvent = JsonSerializer.Deserialize<TagFunctionTmpTopic>(messageJson);
             if (tagFunctionEvent != null && tagFunctionEvent.Behavior == "delete")
             {
                 TrackDeleteEvent(PcsTopic.TagFunction, tagFunctionEvent.ProCoSysGuid, false);
@@ -350,7 +350,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private async Task ProcessProjectEvent(string messageJson)
         {
-            var projectEvent = JsonSerializer.Deserialize<ProjectTopic>(messageJson);
+            var projectEvent = JsonSerializer.Deserialize<ProjectTmpTopic>(messageJson);
             if (projectEvent != null && projectEvent.Behavior == "delete")
             {
                 TrackDeleteEvent(PcsTopic.Project, projectEvent.ProCoSysGuid, false);
@@ -375,7 +375,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private async Task ProcessResponsibleEvent(string messageJson)
         {
-            var responsibleEvent = JsonSerializer.Deserialize<ResponsibleTopic>(messageJson);
+            var responsibleEvent = JsonSerializer.Deserialize<ResponsibleTmpTopic>(messageJson);
             if (responsibleEvent != null && responsibleEvent.Behavior == "delete")
             {
                 TrackDeleteEvent(PcsTopic.Responsible, responsibleEvent.ProCoSysGuid, false);
@@ -409,52 +409,57 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             }
         }
 
-        private void TrackResponsibleEvent(ResponsibleTopic responsibleEvent) =>
+        private void TrackResponsibleEvent(ResponsibleTmpTopic responsibleEvent) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
                     {"Event", ResponsibleTopic.TopicName},
+                    {nameof(responsibleEvent.ProCoSysGuid), responsibleEvent.ProCoSysGuid},
                     {nameof(responsibleEvent.Code), responsibleEvent.Code},
                     {nameof(responsibleEvent.Plant), responsibleEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
                 });
 
-        private void TrackCommPkgEvent(CommPkgTopic commPkgEvent) =>
+        private void TrackCommPkgEvent(CommPkgTmpTopic commPkgEvent) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
                     {"Event", IpoTopic.TopicName},
+                    {nameof(commPkgEvent.ProCoSysGuid), commPkgEvent.ProCoSysGuid},
                     {nameof(commPkgEvent.CommPkgNo), commPkgEvent.CommPkgNo},
                     {nameof(commPkgEvent.Plant), commPkgEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
                     {nameof(commPkgEvent.ProjectName), commPkgEvent.ProjectName.Replace('$', '_')}, //TODO: DRY, replace with NormalizeProjectName
                     {nameof(commPkgEvent.ProjectNameOld), commPkgEvent.ProjectNameOld.Replace('$', '_')} //TODO: DRY, replace with NormalizeProjectName
                 });
 
-        private void TrackTagFunctionEvent(TagFunctionTopic tagFunctionEvent) =>
+        private void TrackTagFunctionEvent(TagFunctionTmpTopic tagFunctionEvent) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
                     {"Event", TagFunctionTopic.TopicName},
+                    {nameof(tagFunctionEvent.ProCoSysGuid), tagFunctionEvent.ProCoSysGuid},
                     {nameof(tagFunctionEvent.Code), tagFunctionEvent.Code},
                     {nameof(tagFunctionEvent.RegisterCode), tagFunctionEvent.RegisterCode},
                     {nameof(tagFunctionEvent.IsVoided), tagFunctionEvent.IsVoided.ToString()},
                     {nameof(tagFunctionEvent.Plant), tagFunctionEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
                 });
 
-        private void TrackProjectEvent(ProjectTopic projectEvent) =>
+        private void TrackProjectEvent(ProjectTmpTopic projectEvent) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
                     {"Event", ProjectTopic.TopicName},
+                    {nameof(projectEvent.ProCoSysGuid), projectEvent.ProCoSysGuid},
                     {nameof(projectEvent.ProjectName), projectEvent.ProjectName},
                     {nameof(projectEvent.IsClosed), projectEvent.IsClosed.ToString()},
                     {nameof(projectEvent.Plant), projectEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
                 });
 
-        private void TrackMcPkgEvent(McPkgTopic mcPkgEvent) =>
+        private void TrackMcPkgEvent(McPkgTmpTopic mcPkgEvent) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
                     {"Event", McPkgTopic.TopicName},
+                    {nameof(mcPkgEvent.ProCoSysGuid), mcPkgEvent.ProCoSysGuid},
                     {nameof(mcPkgEvent.McPkgNo), mcPkgEvent.McPkgNo},
                     {nameof(mcPkgEvent.Plant), mcPkgEvent.Plant[4..]}, //TODO: DRY, replace with NormalizePlant
                     {nameof(mcPkgEvent.ProjectName), mcPkgEvent.ProjectName.Replace('$', '_')} //TODO: DRY, replace with NormalizeProjectName
@@ -465,17 +470,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 new Dictionary<string, string>
                 {
                     {"Event", TagTopic.TopicName},
+                    {nameof(tagEvent.ProCoSysGuid), tagEvent.ProCoSysGuid},
                     {nameof(tagEvent.TagNo), tagEvent.TagNo},
                     {nameof(tagEvent.Plant), tagEvent.Plant[4..]},  //TODO: DRY, replace with NormalizePlant
                     {nameof(tagEvent.ProjectName), tagEvent.ProjectName.Replace('$', '_')} //TODO: DRY, replace with NormalizeProjectName
                 });
 
-        private void TrackDeleteEvent(PcsTopic topic, Guid guid, bool supported) =>
+        private void TrackDeleteEvent(PcsTopic topic, string guid, bool supported) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
                     {"Event Delete", topic.ToString()},
-                    {"ProCoSysGuid", guid.ToString()},
+                    {"ProCoSysGuid", guid},
                     {"Supported", supported.ToString()}
                 });
     }
