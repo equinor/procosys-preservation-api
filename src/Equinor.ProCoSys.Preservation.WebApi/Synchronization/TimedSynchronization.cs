@@ -31,14 +31,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new System.Timers.Timer
-            {
-                Interval = _options.CurrentValue.Interval.TotalMilliseconds,
-                AutoReset = false
-            };
-            _timer.Elapsed += Timer_Elapsed;
-            _timer.Start();
-            _logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.CurrentValue.Interval}");
+            //_timer = new System.Timers.Timer
+            //{
+            //    Interval = _options.CurrentValue.Interval.TotalMilliseconds,
+            //    AutoReset = false
+            //};
+            //_timer.Elapsed += Timer_Elapsed;
+            //_timer.Start();
+            //_logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.CurrentValue.Interval}");
 
             return Task.CompletedTask;
         }
