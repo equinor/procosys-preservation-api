@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
@@ -854,6 +855,34 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
+
+        [TestMethod]
+        public async Task DeleteJourney_AsAdmin_ShouldReturnBadRequest_WhenDeleteJourneyWithTagInStep()
+        {
+            // Arrange
+            var (journeyId, step) = await CreateStepAsync(Guid.NewGuid().ToString(), OtherModeIdUnderTest);
+
+            await CreateStandardTagAsync(step.Id, false);
+
+            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            var currentRowVersion = await JourneysControllerTestsHelper.VoidJourneyAsync(
+               UserType.LibraryAdmin,
+               TestFactory.PlantWithAccess,
+               journeyId,
+               journey.RowVersion);
+
+            // Act
+            await JourneysControllerTestsHelper.DeleteJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId,
+                currentRowVersion,
+                HttpStatusCode.BadRequest,
+                "Journey can not be deleted when preservation tags exists in journey!");
+        }
         [TestMethod]
         public async Task DeleteJourney_AsAdmin_ShouldReturnConflict_WhenWrongRowVersion()
         {
