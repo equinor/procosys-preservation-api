@@ -19,8 +19,8 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteJourney
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => BeAVoidedJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey is not voided! Journey={command.JourneyId}")
-                .MustAsync((command, token) => NotBeUsedAsync(command.JourneyId, token))
-                .WithMessage(command => $"Journey is used! Journey={command.JourneyId}")
+                .MustAsync((command, token) => NoStepHasTagAsync(command.JourneyId, token))
+                .WithMessage(command => $"Journey can not be deleted when preservation tags exists in journey! Journey={command.JourneyId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
@@ -30,8 +30,8 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteJourney
             async Task<bool> BeAVoidedJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.IsVoidedAsync(journeyId, token);
 
-            async Task<bool> NotBeUsedAsync(int journeyId, CancellationToken token)
-                => !await journeyValidator.IsInUseAsync(journeyId, token);
+            async Task<bool> NoStepHasTagAsync(int journeyId, CancellationToken token)
+                => !await journeyValidator.HasAnyStepInJourneyATagAsync(journeyId, token);
 
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);

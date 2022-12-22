@@ -57,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         public async Task Validate_ShouldFail_WhenJourneyNotVoided()
         {
             _journeyValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -66,15 +66,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         }
 
         [TestMethod]
-        public async Task Validate_ShouldFail_WhenJourneyIsInUse()
+        public async Task Validate_ShouldFail_WhenAStepInJourneyHasTag()
         {
-            _journeyValidatorMock.Setup(r => r.IsInUseAsync(_id, default)).Returns(Task.FromResult(true));
-            
+            _journeyValidatorMock.Setup(r => r.HasAnyStepInJourneyATagAsync(_id, default)).Returns(Task.FromResult(true));
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey is used!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey can not be deleted when preservation tags exists in journey!"));
         }
 
         [TestMethod]

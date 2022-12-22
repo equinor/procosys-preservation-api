@@ -18,12 +18,15 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
     public class JourneyRepositoryTests : RepositoryTestBase
     {
         private const int JourneyId = 5;
-        private const int StepId = 51;
+        private const int StepId1 = 51;
+        private const int StepId2 = 52;
         private List<Journey> _journeys;
-        private Mock<DbSet<Journey>> _dbSetMock;
+        private Mock<DbSet<Journey>> _journeySetMock;
+        private Mock<DbSet<Step>> _stepSetMock;
 
         private JourneyRepository _dut;
-        private Step _step;
+        private Step _step1;
+        private Step _step2;
         private Journey _journey;
 
         [TestInitialize]
@@ -35,25 +38,37 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var responsibleMock = new Mock<Responsible>();
             responsibleMock.SetupGet(x => x.Plant).Returns(TestPlant);
 
-            _step = new Step(TestPlant, "S", modeMock.Object, responsibleMock.Object);
-            _step.SetProtectedIdForTesting(StepId);
+            _step1 = new Step(TestPlant, "S1", modeMock.Object, responsibleMock.Object);
+            _step1.SetProtectedIdForTesting(StepId1);
+
+            _step2 = new Step(TestPlant, "S2", modeMock.Object, responsibleMock.Object);
+            _step2.SetProtectedIdForTesting(StepId2);
 
             _journey = new Journey(TestPlant, "J");
             _journey.SetProtectedIdForTesting(5);
 
-            _journey.AddStep(_step);
-            
+            _journey.AddStep(_step1);
+            _journey.AddStep(_step2);
+
             _journeys = new List<Journey>
             {
                 _journey
             };
-            
-            _dbSetMock = _journeys.AsQueryable().BuildMockDbSet();
+
+            _journeySetMock = _journeys.AsQueryable().BuildMockDbSet();
 
             ContextHelper
                 .ContextMock
                 .Setup(x => x.Journeys)
-                .Returns(_dbSetMock.Object);
+                .Returns(_journeySetMock.Object);
+
+            var steps = new List<Step> {_step1, _step2};
+            _stepSetMock = steps.AsQueryable().BuildMockDbSet();
+
+            ContextHelper
+                .ContextMock
+                .Setup(x => x.Steps)
+                .Returns(_stepSetMock.Object);
 
             _dut = new JourneyRepository(ContextHelper.ContextMock.Object);
         }
@@ -61,9 +76,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetStepByStepId_KnownId_ShouldReturnStep()
         {
-            var result = await _dut.GetStepByStepIdAsync(StepId);
+            var result = await _dut.GetStepByStepIdAsync(StepId1);
 
-            Assert.AreEqual(StepId, result.Id);
+            Assert.AreEqual(StepId1, result.Id);
         }
 
         [TestMethod]
@@ -77,7 +92,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetJourneysByStepIdsAsync_KnownId_ShouldReturnStep()
         {
-            var result = await _dut.GetJourneysByStepIdsAsync(new List<int>{StepId});
+            var result = await _dut.GetJourneysByStepIdsAsync(new List<int>{StepId1});
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(JourneyId, result.Single().Id);
@@ -95,7 +110,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         public async Task GetJourneysWithAutoTransferStepsAsync_MatchingAutoTransferMethod_ShouldReturnJourneys()
         {
             // Arrange
-            _step.AutoTransferMethod = AutoTransferMethod.OnRfccSign;
+            _step1.AutoTransferMethod = AutoTransferMethod.OnRfccSign;
 
             // Act
             var result = await _dut.GetJourneysWithAutoTransferStepsAsync(AutoTransferMethod.OnRfccSign);
@@ -106,7 +121,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public void Remove_WhenJourneyIsVoided_ShouldCallRemoveForJourney()
+        public void Remove_WhenJourneyIsVoided_ShouldRemoveJourneyAndStepsFromContext()
         {
             // Arrange
             _journey.IsVoided = true;
@@ -115,7 +130,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             _dut.Remove(_journey);
 
             // Arrange
-            _dbSetMock.Verify(s => s.Remove(_journey), Times.Once);
+            _journeySetMock.Verify(s => s.Remove(_journey), Times.Once);
+            _stepSetMock.Verify(s => s.Remove(_step1), Times.Once);
+            _stepSetMock.Verify(s => s.Remove(_step2), Times.Once);
         }
 
         [TestMethod]

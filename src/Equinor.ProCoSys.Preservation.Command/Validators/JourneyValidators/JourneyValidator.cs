@@ -73,18 +73,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators
             return journey != null && journey.Steps.Any();
         }
 
-        public async Task<bool> IsInUseAsync(int journeyId, CancellationToken token)
-        {
-            var journey = await GetJourneyWithStepsAsync(journeyId, token);
-            if (journey == null)
-            {
-                return false;
-            }
-
-            return journey.Steps.Any();
-        }
-
-        public async Task<bool> IsAnyStepInJourneyInUseAsync(int journeyId, CancellationToken token)
+        public async Task<bool> HasAnyStepInJourneyATagAsync(int journeyId, CancellationToken token)
         {
             var journey = await GetJourneyWithStepsAsync(journeyId, token);
             if (journey == null || !journey.Steps.Any())
