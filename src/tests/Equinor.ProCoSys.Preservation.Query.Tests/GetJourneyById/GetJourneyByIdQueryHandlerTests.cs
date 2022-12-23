@@ -95,6 +95,25 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetJourneyById
         }
 
         [TestMethod]
+        public async Task HandleGetJourneyByIdQueryHandler_BeforeTagsAddedToStep_ShouldReturnJourneyNotInUse()
+        {
+            int journeyId;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                journeyId = AddJourneyWithStep(context, "J3", "Step1", _testDataSet.Mode1, _testDataSet.Responsible1).Id;
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetJourneyByIdQueryHandler(context);
+                var result = await dut.Handle(new GetJourneyByIdQuery(journeyId, true), default);
+
+                var journey = result.Data;
+                Assert.IsFalse(journey.IsInUse);
+            }
+        }
+
+        [TestMethod]
         public async Task HandleGetJourneyByIdQueryHandler_AfterTagsAddedToAStep_ShouldReturnAllStepsInUse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

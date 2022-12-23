@@ -51,7 +51,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetJourneyById
             var journeyDto = new JourneyDetailsDto(
                 journey.Id,
                 journey.Title,
-                journey.Steps.Any(),
+                anyStepInUse,
                 journey.IsVoided,
                 journey.OrderedSteps()
                     .Where(s => !s.IsVoided || request.IncludeVoided)
