@@ -74,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteStep
         [TestMethod]
         public async Task Validate_ShouldFail_WhenAnyStepInJourneyIsInUse()
         {
-            _journeyValidatorMock.Setup(r => r.IsAnyStepInJourneyInUseAsync(_journeyId, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.HasAnyStepInJourneyATagAsync(_journeyId, default)).Returns(Task.FromResult(true));
             
             var result = await _dut.ValidateAsync(_command);
 

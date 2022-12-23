@@ -235,62 +235,29 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task IsInUseAsync_NoSteps_ShouldReturnFalse()
+        public async Task HassAnyStepInJourneyATagAsync_ShouldReturnFalse_WhenNoSteps()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.IsInUseAsync(_journeyWithoutStepId, default);
+                var result = await dut.HasAnyStepInJourneyATagAsync(_journeyWithoutStepId, default);
                 Assert.IsFalse(result);
             }
         }
         
         [TestMethod]
-        public async Task IsInUseAsync_HaveSteps_ShouldReturnTrue()
+        public async Task HassAnyStepInJourneyATagAsync_ShouldReturnFalse_BeforeTagAddedToAStep()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.IsInUseAsync(_journey1WithStepId, default);
-                Assert.IsTrue(result);
-            }
-        }
-        
-        [TestMethod]
-        public async Task IsInUseAsync_UnknownJourney_ShouldReturnFalse()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new JourneyValidator(context);
-                var result = await dut.IsInUseAsync(1267, default);
+                var result = await dut.HasAnyStepInJourneyATagAsync(_journey1WithStepId, default);
                 Assert.IsFalse(result);
             }
         }
         
         [TestMethod]
-        public async Task IsAnyStepInJourneyInUseAsync_ShouldReturnFalse_WhenNoSteps()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new JourneyValidator(context);
-                var result = await dut.IsAnyStepInJourneyInUseAsync(_journeyWithoutStepId, default);
-                Assert.IsFalse(result);
-            }
-        }
-        
-        [TestMethod]
-        public async Task IsAnyStepInJourneyInUseAsync_ShouldReturnFalse_BeforeTagAddedToAStep()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new JourneyValidator(context);
-                var result = await dut.IsAnyStepInJourneyInUseAsync(_journey1WithStepId, default);
-                Assert.IsFalse(result);
-            }
-        }
-        
-        [TestMethod]
-        public async Task IsAnyStepInJourneyInUseAsync_ShouldReturnTrue_AfterTagAddedToAStep()
+        public async Task HassAnyStepInJourneyATagAsync_ShouldReturnTrue_AfterTagAddedToAStep()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -303,7 +270,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.IsAnyStepInJourneyInUseAsync(_journey1WithStepId, default);
+                var result = await dut.HasAnyStepInJourneyATagAsync(_journey1WithStepId, default);
                 Assert.IsTrue(result);
             }
         }

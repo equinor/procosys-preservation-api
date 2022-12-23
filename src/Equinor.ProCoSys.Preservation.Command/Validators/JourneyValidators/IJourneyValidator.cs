@@ -15,8 +15,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators
         Task<bool> IsVoidedAsync(int journeyId, CancellationToken token);
         Task<bool> AreAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token);
         Task<bool> HasAnyStepsAsync(int journeyId, CancellationToken token);
-        Task<bool> IsInUseAsync(int journeyId, CancellationToken token);
-        Task<bool> IsAnyStepInJourneyInUseAsync(int journeyId, CancellationToken token);
+        Task<bool> HasAnyStepInJourneyATagAsync(int journeyId, CancellationToken token);
         Task<bool> ExistsWithDuplicateTitleAsync(int journeyId, CancellationToken token);
         Task<bool> HasAnyStepWithAutoTransferMethodAsync(int journeyId, AutoTransferMethod autoTransferMethod, CancellationToken token);
         Task<bool> HasOtherStepWithAutoTransferMethodAsync(int journeyId, int stepId, AutoTransferMethod autoTransferMethod, CancellationToken token);

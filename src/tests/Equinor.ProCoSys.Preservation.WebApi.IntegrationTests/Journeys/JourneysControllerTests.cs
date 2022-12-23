@@ -162,13 +162,40 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         }
 
         [TestMethod]
-        public async Task DeleteJourney_AsAdmin_ShouldDeleteJourney()
+        public async Task DeleteJourney_AsAdmin_ShouldDeleteJourneyWithoutStep()
         {
             // Arrange
             var journeyId = await JourneysControllerTestsHelper.CreateJourneyAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 Guid.NewGuid().ToString());
+            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId);
+            var currentRowVersion = await JourneysControllerTestsHelper.VoidJourneyAsync(
+               UserType.LibraryAdmin,
+               TestFactory.PlantWithAccess,
+               journeyId,
+               journey.RowVersion);
+
+            // Act
+            await JourneysControllerTestsHelper.DeleteJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyId,
+                currentRowVersion);
+
+            // Assert
+            var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            Assert.IsNull(journeys.SingleOrDefault(j => j.Id == journeyId));
+        }
+
+        [TestMethod]
+        public async Task DeleteJourney_AsAdmin_ShouldDeleteJourneyWithStep()
+        {
+            // Arrange
+            var (journeyId, step) = await CreateStepAsync(Guid.NewGuid().ToString(), OtherModeIdUnderTest);
             var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,

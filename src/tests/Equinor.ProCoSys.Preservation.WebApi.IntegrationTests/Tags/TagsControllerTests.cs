@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -1241,19 +1240,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             await AssertInHistoryAsLatestEventAsync(tagToTest.Id, UserType.Planner, EventType.PreservationStarted);
         }
 
-        private void AssertUser(TokenProfile profile, PersonDto personDto)
-        {
-            Assert.IsNotNull(personDto);
-            Assert.AreEqual(profile.FirstName, personDto.FirstName);
-            Assert.AreEqual(profile.LastName, personDto.LastName);
-        }
-
-        private void AssertCreatedBy(UserType userType, HistoryDto historyDto)
-        {
-            var profile = TestFactory.Instance.GetTestProfile(userType);
-            AssertUser(profile, historyDto.CreatedBy);
-        }
-
         private async Task AssertNewTagCreatedAsync(
             UserType userType, 
             string plant,
@@ -1267,94 +1253,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 TestFactory.ProjectWithAccess);
             Assert.AreEqual(initialTagsCount + 1, tagsResult.Tags.Count);
             Assert.IsNotNull(tagsResult.Tags.SingleOrDefault(t => t.Id == id));
-        }
-
-        private async Task AssertInHistoryAsExistingEventAsync(int tagIdUnderTest, UserType userType, EventType eventType)
-        {
-            var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
-                UserType.Preserver, TestFactory.PlantWithAccess,
-                tagIdUnderTest);
-            
-            // history records are sorted with newest first in list
-            var historyDto = historyDtos.First(h => h.Description.StartsWith(eventType.GetDescription()));
-            AssertCreatedBy(userType, historyDto);
-        }
-
-        private async Task AssertInHistoryAsLatestEventAsync(int tagId, UserType userType, EventType eventType)
-        {
-            var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
-                UserType.Preserver, TestFactory.PlantWithAccess,
-                tagId);
-            
-            // history records are sorted with newest first in list
-            var historyDto = historyDtos.First();
-            Assert.IsTrue(historyDto.Description.StartsWith(eventType.GetDescription()));
-            AssertCreatedBy(userType, historyDto);
-        }
-
-        private async Task<int> CreateStandardTagAsync(
-            int stepId,
-            bool startPreservation)
-        {
-            var newReqDefId = await CreateRequirementDefinitionAsync(TestFactory.PlantWithAccess);
-
-            var tagNo = Guid.NewGuid().ToString();
-            MockMainApiDataForTag(tagNo);
-
-            var newTagIds = await TagsControllerTestsHelper.CreateStandardTagAsync(
-                UserType.Planner,
-                TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
-                new []{ tagNo },
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                },
-                stepId,
-                null,
-                null);
-
-            if (startPreservation)
-            {
-                await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, newTagIds);
-                await AssertInHistoryAsLatestEventAsync(newTagIds.Single(), UserType.Planner, EventType.PreservationStarted);
-            }
-            return newTagIds.Single();
-        }
-
-        private void MockMainApiDataForTag(string tagNo)
-        {
-            var mainTagDetails = new PCSTagDetails
-            {
-                AreaCode = "ACode",
-                AreaDescription = "ADesc",
-                CallOffNo = "CalloffNo",
-                CommPkgNo = "CommPkgNo",
-                CommPkgProCoSysGuid = Guid.NewGuid(),
-                Description = $"{tagNo}Description",
-                DisciplineCode = "DCode",
-                DisciplineDescription = "DDesc",
-                McPkgNo = "McPkgNo",
-                McPkgProCoSysGuid = Guid.NewGuid(),
-                PurchaseOrderNo = "PurchaseOrderNo",
-                TagFunctionCode = "TFCode",
-                ProCoSysGuid = Guid.NewGuid(),
-                TagNo = tagNo
-            };
-
-            IList<PCSTagDetails> mainTagDetailList = new List<PCSTagDetails> {mainTagDetails};
-            TestFactory.Instance
-                .TagApiServiceMock
-                .Setup(service => service.GetTagDetailsAsync(
-                    TestFactory.PlantWithAccess,
-                    TestFactory.ProjectWithAccess,
-                    new List<string> {tagNo},
-                    false))
-                .Returns(Task.FromResult(mainTagDetailList));
         }
     }
 }
