@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,6 +16,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
@@ -25,23 +27,30 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         private readonly IReadOnlyContext _context;
         private readonly IPlantProvider _plantProvider;
         private readonly DateTime _utcNow;
+        private readonly ILogger<GetTagsForExportQueryHandler> _logger;
+        private Stopwatch _stopWatch;
 
-        public GetTagsForExportQueryHandler(IReadOnlyContext context, IPlantProvider plantProvider)
+        public GetTagsForExportQueryHandler(IReadOnlyContext context, IPlantProvider plantProvider, ILogger<GetTagsForExportQueryHandler> logger)
         {
             _context = context;
             _plantProvider = plantProvider;
+            _logger = logger;
             _utcNow = TimeService.UtcNow;
         }
 
         public async Task<Result<ExportDto>> Handle(GetTagsForExportQuery request, CancellationToken cancellationToken)
         {
+            _stopWatch = Stopwatch.StartNew();
+            _logger.LogInformation("GetTagsForExportQueryHandler start");
             var queryable = CreateQueryableWithFilter(_context, request.ProjectName, request.Filter, _utcNow);
 
             queryable = AddSorting(request.Sorting, queryable);
 
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying orderedDtos. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
             var orderedDtos = await queryable
                 .TagWith("GetTagsForExportQueryHandler: orderedDtos")
                 .ToListAsync(cancellationToken);
+            _logger.LogInformation($"GetTagsForExportQueryHandler got orderedDtos. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
 
             var usedFilterDto = await CreateUsedFilterDtoAsync(request.ProjectName, request.Filter);
             if (!orderedDtos.Any())
@@ -58,19 +67,26 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             var requirementDefinitionIds = tagsWithIncludes.SelectMany(t => t.Requirements)
                 .Select(r => r.RequirementDefinitionId).Distinct();
             
-            var reqDefWithFields = await (from rd in _context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying reqDefWithFields. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            var reqDefWithFields = await (from rd in _context.QuerySet<RequirementDefinition>()
+                        .Include(rd => rd.Fields)
                     where requirementDefinitionIds.Contains(rd.Id)
                     select rd)
+                //.AsSplitQuery()
                 .TagWith("GetTagsForExportQueryHandler: reqDefWithFields")
                 .ToListAsync(cancellationToken);
+            _logger.LogInformation($"GetTagsForExportQueryHandler got reqDefWithFields. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
 
             // get Journeys with Steps to be able to export journey and step titles
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying journeysWithSteps. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
             var journeysWithSteps = await (from j in _context.QuerySet<Journey>()
                         .Include(j => j.Steps)
                     where journeyIds.Contains(j.Id)
                     select j)
+                //.AsSplitQuery()
                 .TagWith("GetTagsForExportQueryHandler: journeysWithSteps")
                 .ToListAsync(cancellationToken);
+            _logger.LogInformation($"GetTagsForExportQueryHandler got journeysWithSteps. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
 
             var exportTagDtos = CreateExportTagDtos(
                 orderedDtos,
@@ -83,6 +99,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 await GetHistoryForSingleTagAsync(tagsIds.Single(), exportTagDtos, tagsWithIncludes, reqDefWithFields, cancellationToken);
             }
 
+            _logger.LogInformation("GetTagsForExportQueryHandler end");
             return new SuccessResult<ExportDto>(new ExportDto(exportTagDtos, usedFilterDto));
         }
 
@@ -93,6 +110,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             List<RequirementDefinition> reqDefWithFields,
             CancellationToken cancellationToken)
         {
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying history. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
             var history = await (from h in _context.QuerySet<History>()
                     join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
                     join createdBy in _context.QuerySet<Person>() on h.CreatedById equals createdBy.Id
@@ -104,6 +122,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     })
                 .TagWith("GetTagsForExportQueryHandler: history")
                 .ToListAsync(cancellationToken);
+            _logger.LogInformation($"GetTagsForExportQueryHandler got history. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
 
             var singleExportTagDto = exportTagDtos.Single();
             var singleTag = tagsWithIncludes.Single();
@@ -130,6 +149,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     preservationDetails.ToString(),
                     preservationComment));
             }
+            _logger.LogInformation($"GetTagsForExportQueryHandler history dto made. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
         }
 
         private (string, StringBuilder) GetPreservationDetailsFromPeriod(
@@ -197,7 +217,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             }
             var av = (AttachmentValue) fieldValue;
             return av.FieldValueAttachment.FileName;
-
         }
 
         private string GetCheckBoxValueAsString(FieldValue fieldValue)
@@ -227,6 +246,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             {
                 // get tags again, including Requirements, Actions, Attachments and preservation details. See comment in CreateQueryableWithFilter regarding Include and EF
                 // Preservation details found to enrich History info when one tag found
+                _logger.LogInformation($"GetTagsForExportQueryHandler querying tagsWithIncludes with details. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
                 tagsWithIncludes = await (from tag in _context.QuerySet<Tag>()
                             .Include(t => t.Requirements)
                             .ThenInclude(r => r.PreservationPeriods)
@@ -239,12 +259,15 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                             .Include(t => t.Actions)
                         where tag.Id == tagsIds.Single()
                         select tag)
+                    //.AsSplitQuery()
                     .TagWith("GetTagsForExportQueryHandler: tagsWithIncludes with details")
                     .ToListAsync(cancellationToken);
+                _logger.LogInformation($"GetTagsForExportQueryHandler got tagsWithIncludes with details. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
             }
             else
             {
                 // get tags again, including Requirements, Actions and Attachments. See comment in CreateQueryableWithFilter regarding Include and EF
+                _logger.LogInformation($"GetTagsForExportQueryHandler querying tagsWithIncludes without details. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
                 tagsWithIncludes = await (from tag in _context.QuerySet<Tag>()
                             .Include(t => t.Requirements)
                             .ThenInclude(r => r.PreservationPeriods)
@@ -252,8 +275,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                             .Include(t => t.Actions)
                         where tagsIds.Contains(tag.Id)
                         select tag)
+                    //.AsSplitQuery()
                     .TagWith("GetTagsForExportQueryHandler: tagsWithIncludes without details")
                     .ToListAsync(cancellationToken);
+                _logger.LogInformation($"GetTagsForExportQueryHandler got tagsWithIncludes without details. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
             }
 
             return tagsWithIncludes;
@@ -290,12 +315,17 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 filter.VoidedFilter.GetDisplayValue());
         }
 
-        private async Task<string> GetProjectDescriptionAsync(string projectName) 
-            => await (from p in _context.QuerySet<Project>()
-                where p.Name == projectName
-                select p.Description)
-            .TagWith("GetTagsForExportQueryHandler: projectDescription")
-            .SingleOrDefaultAsync();
+        private async Task<string> GetProjectDescriptionAsync(string projectName)
+        {
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying projectDescription. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            var projectDescription = await (from p in _context.QuerySet<Project>()
+                          where p.Name == projectName
+                          select p.Description)
+                       .TagWith("GetTagsForExportQueryHandler: projectDescription")
+                       .SingleOrDefaultAsync();
+            _logger.LogInformation($"GetTagsForExportQueryHandler got projectDescription. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            return projectDescription;
+        }
 
         private async Task<List<string>> GetJourneyTitlesAsync(IList<int> journeyIds)
         {
@@ -304,11 +334,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 return new List<string>();
             }
 
-            return await (from j in _context.QuerySet<Journey>()
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying journeyTitles. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            var journeyTitles = await (from j in _context.QuerySet<Journey>()
                 where journeyIds.Contains(j.Id)
                 select j.Title)
                 .TagWith("GetTagsForExportQueryHandler: journeyTitles")
                 .ToListAsync();
+            _logger.LogInformation($"GetTagsForExportQueryHandler got journeyTitles. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            return journeyTitles;
         }
 
         private async Task<List<string>> GetModeTitlesAsync(IList<int> modeIds)
@@ -318,11 +351,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 return new List<string>();
             }
 
-            return await (from m in _context.QuerySet<Mode>()
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying modeTitles. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            var modeTitles = await (from m in _context.QuerySet<Mode>()
                 where modeIds.Contains(m.Id)
                 select m.Title)
                 .TagWith("GetTagsForExportQueryHandler: modeTitles")
                 .ToListAsync();
+            _logger.LogInformation($"GetTagsForExportQueryHandler got modeTitles. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            return modeTitles;
         }
 
         private async Task<List<string>> GetResponsibleCodesAsync(IList<int> responsibleIds)
@@ -332,11 +368,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 return new List<string>();
             }
 
-            return await (from r in _context.QuerySet<Responsible>()
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying responsibleCodes. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            var responsibleCodes = await (from r in _context.QuerySet<Responsible>()
                 where responsibleIds.Contains(r.Id)
                 select r.Code)
                 .TagWith("GetTagsForExportQueryHandler: responsibleCodes")
                 .ToListAsync();
+            _logger.LogInformation($"GetTagsForExportQueryHandler got responsibleCodes. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            return responsibleCodes;
         }
 
         private async Task<List<string>> GetRequirementTypeTitlesAsync(IList<int> requirementTypeIds)
@@ -346,11 +385,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 return new List<string>();
             }
 
-            return await (from r in _context.QuerySet<RequirementType>()
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying requirementTypeTitles. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            var requirementTypeTitles = await (from r in _context.QuerySet<RequirementType>()
                 where requirementTypeIds.Contains(r.Id)
                 select r.Title)
                 .TagWith("GetTagsForExportQueryHandler: requirementTypeTitles")
                 .ToListAsync();
+            _logger.LogInformation($"GetTagsForExportQueryHandler querying requirementTypeTitles. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
+            return requirementTypeTitles;
         }
 
         private IList<ExportTagDto> CreateExportTagDtos(
@@ -359,6 +401,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             List<Journey> journeysWithSteps,
             List<RequirementDefinition> reqDefs)
         {
+            _logger.LogInformation($"GetTagsForExportQueryHandler create ExportTagDtos. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
             var tags = orderedDtos.Select(dto =>
             {
                 var tagWithIncludes = tagsWithIncludes.Single(t => t.Id == dto.TagId);
@@ -416,6 +459,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     dto.TagNo);
             });
 
+            _logger.LogInformation($"GetTagsForExportQueryHandler ExportTagDtos created. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
             return tags.ToList();
         }
     }

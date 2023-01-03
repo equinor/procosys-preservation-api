@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
 using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport;
+using Microsoft.Extensions.Logging;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Excel
 {
@@ -89,22 +91,38 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
             public static int Last = Comment;
         }
 
+        private readonly ILogger<ExcelConverter> _logger;
+        private Stopwatch _stopWatch;
+
+        public ExcelConverter(ILogger<ExcelConverter> logger) => _logger = logger;
+
         public MemoryStream Convert(ExportDto dto)
         {
+            _stopWatch = Stopwatch.StartNew();
+            _logger.LogInformation("ExcelConverter start");
             // see https://github.com/ClosedXML/ClosedXML for sample code
             var excelStream = new MemoryStream();
 
             using (var workbook = new XLWorkbook())
             {
+                _logger.LogInformation($"ExcelConverter CreateFrontSheet. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
                 CreateFrontSheet(workbook, dto.UsedFilter);
                 var exportTagDtos = dto.Tags.ToList();
+                
+                _logger.LogInformation($"ExcelConverter CreateTagSheet. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
                 CreateTagSheet(workbook, exportTagDtos);
+                
+                _logger.LogInformation($"ExcelConverter CreateActionSheet. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
                 CreateActionSheet(workbook, exportTagDtos);
+                
+                _logger.LogInformation($"ExcelConverter CreateHistorySheet. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
                 CreateHistorySheet(workbook, exportTagDtos);
 
+                _logger.LogInformation($"ExcelConverter save. {_stopWatch.Elapsed.TotalMilliseconds}ms from start");
                 workbook.SaveAs(excelStream);
             }
 
+            _logger.LogInformation("ExcelConverter end");
             return excelStream;
         }
 

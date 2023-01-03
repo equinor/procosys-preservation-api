@@ -5,7 +5,9 @@ using System.Linq;
 using ClosedXML.Excel;
 using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport;
 using Equinor.ProCoSys.Preservation.WebApi.Excel;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
 {
@@ -29,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
         [TestInitialize]
         public void Setup()
         {
-            _dut = new ExcelConverter();
+            _dut = new ExcelConverter(new Mock<ILogger<ExcelConverter>>().Object);
             _usedFilterDto = new UsedFilterDto(
                 "presActions",
                 new List<string>{"ac1", "ac2"}, 
