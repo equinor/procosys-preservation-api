@@ -187,7 +187,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 services.Remove(descriptor);
             }
 
-            services.AddDbContext<PreservationContext>(options => options.UseSqlServer(_connectionString));
+            services.AddDbContext<PreservationContext>(options 
+                => options.UseSqlServer(_connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
         }
 
         private void CreateSeededTestDatabase(IServiceCollection services)
@@ -234,7 +235,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         private PreservationContext DatabaseContext(IServiceCollection services)
         {
-            services.AddDbContext<PreservationContext>(options => options.UseSqlServer(_connectionString));
+            services.AddDbContext<PreservationContext>(options 
+                => options.UseSqlServer(_connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 
             var sp = services.BuildServiceProvider();
             _disposables.Add(sp);

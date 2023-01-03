@@ -73,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddDbContext<PreservationContext>(options =>
             {
                 var connectionString = configuration.GetConnectionString("PreservationContext");
-                options.UseSqlServer(connectionString);
+                options.UseSqlServer(connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
             });
 
             // Hosted services
