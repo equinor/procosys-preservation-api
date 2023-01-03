@@ -104,7 +104,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
                         RequirementTypeCode = rt.Code,
                         RequirementTypeIcon = rt.Icon
                     }
-                ).TagWith("GetTagsQueryHandler: reqTypes")
+                )
+                .TagWith("GetTagsQueryHandler: reqTypes")
                 .ToListAsync(cancellationToken);
 
             var result = CreateResult(
