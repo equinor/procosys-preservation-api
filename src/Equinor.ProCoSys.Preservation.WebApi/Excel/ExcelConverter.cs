@@ -118,11 +118,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
                 _logger.LogInformation($"ExcelConverter CreateHistorySheet. {_timer.Elapsed()}");
                 CreateHistorySheet(workbook, exportTagDtos);
 
-                _logger.LogInformation($"ExcelConverter save. {_timer.Elapsed()}");
+                _logger.LogInformation($"ExcelConverter saving. {_timer.Elapsed()}");
                 workbook.SaveAs(excelStream);
             }
 
-            _logger.LogInformation("ExcelConverter end");
+            _logger.LogInformation($"ExcelConverter saved and returning. {_timer.Elapsed()}");
             return excelStream;
         }
 

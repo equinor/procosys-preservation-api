@@ -72,7 +72,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                         .Include(rd => rd.Fields)
                     where requirementDefinitionIds.Contains(rd.Id)
                     select rd)
-                //.AsSplitQuery()
                 .TagWith("GetTagsForExportQueryHandler: reqDefWithFields")
                 .ToListAsync(cancellationToken);
             _logger.LogInformation($"GetTagsForExportQueryHandler got reqDefWithFields. {_timer.Elapsed()}");
@@ -83,7 +82,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                         .Include(j => j.Steps)
                     where journeyIds.Contains(j.Id)
                     select j)
-                //.AsSplitQuery()
                 .TagWith("GetTagsForExportQueryHandler: journeysWithSteps")
                 .ToListAsync(cancellationToken);
             _logger.LogInformation($"GetTagsForExportQueryHandler got journeysWithSteps. {_timer.Elapsed()}");
@@ -259,7 +257,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                             .Include(t => t.Actions)
                         where tag.Id == tagsIds.Single()
                         select tag)
-                    //.AsSplitQuery()
+                    .AsSplitQuery()
                     .TagWith("GetTagsForExportQueryHandler: tagsWithIncludes with details")
                     .ToListAsync(cancellationToken);
                 _logger.LogInformation($"GetTagsForExportQueryHandler got tagsWithIncludes with details. {_timer.Elapsed()}");
@@ -275,7 +273,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                             .Include(t => t.Actions)
                         where tagsIds.Contains(tag.Id)
                         select tag)
-                    //.AsSplitQuery()
+                    .AsSplitQuery()
                     .TagWith("GetTagsForExportQueryHandler: tagsWithIncludes without details")
                     .ToListAsync(cancellationToken);
                 _logger.LogInformation($"GetTagsForExportQueryHandler got tagsWithIncludes without details. {_timer.Elapsed()}");
