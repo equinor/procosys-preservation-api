@@ -34,15 +34,18 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
         public async Task<Result<TagsResult>> Handle(GetTagsQuery request, CancellationToken cancellationToken)
         {
             var queryable = CreateQueryableWithFilter(_context, request.ProjectName, request.Filter, _utcNow);
-            queryable = queryable.TagWith("First queryable");
 
             // count before adding sorting/paging
-            var maxAvailable = await queryable.CountAsync(cancellationToken);
+            var maxAvailable = await queryable
+                .TagWith("GetTagsQueryHandler: maxAvailable")
+                .CountAsync(cancellationToken);
             
             queryable = AddSorting(request.Sorting, queryable);
             queryable = AddPaging(request.Paging, queryable);
 
-            var orderedDtos = await queryable.ToListAsync(cancellationToken);
+            var orderedDtos = await queryable
+                .TagWith("GetTagsQueryHandler: orderedDtos")
+                .ToListAsync(cancellationToken);
 
             if (!orderedDtos.Any())
             {
@@ -54,19 +57,19 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
 
             // get tags again, including Requirements and PreservationPeriods. See comment in CreateQueryableWithFilter regarding Include and EF
             var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>()
-                        .TagWith("tagsWithRequirements")
                         .Include(t => t.Requirements)
                         .ThenInclude(r => r.PreservationPeriods)
                     where tagsIds.Contains(tag.Id)
                     select tag)
+                .TagWith("GetTagsQueryHandler: tagsWithRequirements")
                 .ToListAsync(cancellationToken);
 
             // get Journeys with Steps to be able to calculate ReadyToBeTransferred + NextMode + NextResponsible
             var journeysWithSteps = await (from j in _context.QuerySet<Journey>()
-                        .TagWith("journeysWithSteps")
                         .Include(j => j.Steps)
                     where journeyIds.Contains(j.Id)
                     select j)
+                .TagWith("GetTagsQueryHandler: journeysWithSteps")
                 .ToListAsync(cancellationToken);
 
             // enrich DTO to be able to get distinct NextSteps to query database for distinct NextMode + NextResponsible
@@ -81,14 +84,16 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             var requirementDefinitionIds = tagsWithRequirements.SelectMany(t => t.Requirements).Select(r => r.RequirementDefinitionId).Distinct();
 
             var nextModes = await (from m in _context.QuerySet<Mode>()
-                    .TagWith("nextModes")
                     where nextModeIds.Contains(m.Id)
-                select m).ToListAsync(cancellationToken);
+                select m)
+                .TagWith("GetTagsQueryHandler: nextModes")
+                .ToListAsync(cancellationToken);
 
             var nextResponsibles = await (from r in _context.QuerySet<Responsible>()
-                .TagWith("nextResponsibles")
                 where nextResponsibleIds.Contains(r.Id)
-                select r).ToListAsync(cancellationToken);
+                select r)
+                .TagWith("GetTagsQueryHandler: nextResponsibles")
+                .ToListAsync(cancellationToken);
             
             var reqTypes = await (from rd in _context.QuerySet<RequirementDefinition>()
                                   join rt in _context.QuerySet<RequirementType>() on EF.Property<int>(rd, "RequirementTypeId") equals rt.Id
@@ -99,7 +104,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
                         RequirementTypeCode = rt.Code,
                         RequirementTypeIcon = rt.Icon
                     }
-                ).TagWith("reqTypes")
+                ).TagWith("GetTagsQueryHandler: reqTypes")
                 .ToListAsync(cancellationToken);
 
             var result = CreateResult(
