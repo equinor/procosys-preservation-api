@@ -99,6 +99,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 await GetHistoryForSingleTagAsync(tagsIds.Single(), exportTagDtos, tagsWithIncludes, reqDefWithFields, cancellationToken);
             }
 
+            _logger.LogInformation("GetTagsForExportQueryHandler end");
             return new SuccessResult<ExportDto>(new ExportDto(exportTagDtos, usedFilterDto));
         }
 
