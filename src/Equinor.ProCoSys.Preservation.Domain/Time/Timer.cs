@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Time
         {
             long elapsedFromStart = _stopWatch.ElapsedMilliseconds;
 
-            var elapsed = $"{elapsedFromStart - _previousElapsedFromStart} / {elapsedFromStart}";
+            var elapsed = $"{elapsedFromStart - _previousElapsedFromStart}ms / {elapsedFromStart}ms";
             _previousElapsedFromStart = elapsedFromStart;
             return elapsed;
         }
