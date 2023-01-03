@@ -256,7 +256,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                         .Include(t => t.Actions)
                             where tag.Id == tagsIds.Single()
                             select tag)
-                    .AsSplitQuery()
                     .TagWith("GetTagsForExportQueryHandler: tagsWithIncludes with details")
                     .ToListAsync(cancellationToken);
                 _logger.LogInformation($"GetTagsForExportQueryHandler got tagsWithIncludes with details. {_timer.Elapsed()}");
@@ -272,7 +271,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                         .Include(t => t.Actions)
                             where tagsIds.Contains(tag.Id)
                             select tag)
-                    .AsSplitQuery()
                     .TagWith("GetTagsForExportQueryHandler: tagsWithIncludes without details")
                     .ToListAsync(cancellationToken);
                 _logger.LogInformation($"GetTagsForExportQueryHandler got tagsWithIncludes without details. {_timer.Elapsed()}");
