@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -246,18 +245,17 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 // Preservation details found to enrich History info when one tag found
                 _logger.LogInformation($"GetTagsForExportQueryHandler querying tagsWithIncludes with details. {_timer.Elapsed()}");
                 tagsWithIncludes = await (from tag in _context.QuerySet<Tag>()
-                            .Include(t => t.Requirements)
+                        .Include(t => t.Requirements)
                             .ThenInclude(r => r.PreservationPeriods)
                             .ThenInclude(p => p.PreservationRecord)
-                            .Include(t => t.Requirements)
+                        .Include(t => t.Requirements)
                             .ThenInclude(r => r.PreservationPeriods)
                             .ThenInclude(p => p.FieldValues)
                             .ThenInclude(fv => fv.FieldValueAttachment)
-                            .Include(t => t.Attachments)
-                            .Include(t => t.Actions)
-                        where tag.Id == tagsIds.Single()
-                        select tag)
-                    .AsSplitQuery()
+                        .Include(t => t.Attachments)
+                        .Include(t => t.Actions)
+                            where tag.Id == tagsIds.Single()
+                            select tag)
                     .TagWith("GetTagsForExportQueryHandler: tagsWithIncludes with details")
                     .ToListAsync(cancellationToken);
                 _logger.LogInformation($"GetTagsForExportQueryHandler got tagsWithIncludes with details. {_timer.Elapsed()}");
@@ -267,13 +265,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 // get tags again, including Requirements, Actions and Attachments. See comment in CreateQueryableWithFilter regarding Include and EF
                 _logger.LogInformation($"GetTagsForExportQueryHandler querying tagsWithIncludes without details. {_timer.Elapsed()}");
                 tagsWithIncludes = await (from tag in _context.QuerySet<Tag>()
-                            .Include(t => t.Requirements)
+                        .Include(t => t.Requirements)
                             .ThenInclude(r => r.PreservationPeriods)
-                            .Include(t => t.Attachments)
-                            .Include(t => t.Actions)
-                        where tagsIds.Contains(tag.Id)
-                        select tag)
-                    .AsSplitQuery()
+                        .Include(t => t.Attachments)
+                        .Include(t => t.Actions)
+                            where tagsIds.Contains(tag.Id)
+                            select tag)
                     .TagWith("GetTagsForExportQueryHandler: tagsWithIncludes without details")
                     .ToListAsync(cancellationToken);
                 _logger.LogInformation($"GetTagsForExportQueryHandler got tagsWithIncludes without details. {_timer.Elapsed()}");
