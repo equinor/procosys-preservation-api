@@ -2,9 +2,9 @@
 {
     public enum PreservationStatus
     {
+        InService = -1,
         NotStarted,
         Active,
-        Completed,
-        InService
+        Completed
     }
 }

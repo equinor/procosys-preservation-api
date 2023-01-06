@@ -833,7 +833,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.ToTable("Tags");
 
-                    b.HasCheckConstraint("constraint_tag_check_valid_statusenum", "Status in (0,1,2,3)");
+                    b.HasCheckConstraint("constraint_tag_check_valid_statusenum", "Status in (0,1,2,-1)");
 
                     b.HasCheckConstraint("constraint_tag_check_valid_tag_type", "TagType in ('Standard','PreArea','SiteArea','PoArea')");
                 });
