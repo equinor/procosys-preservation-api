@@ -446,6 +446,35 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
+        public async Task HandleGetTagsQuery_ShouldFilterOnPreservationStatusEqualInService()
+        {
+            var filter = new Filter { PreservationStatus = PreservationStatus.InService };
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
+
+                Assert.AreEqual(0, result.Data.Tags.Count());
+            }
+
+            SetInServiceOnAllTags();
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
+
+                AssertCount(result.Data, 20);
+                foreach (var tag in result.Data.Tags)
+                {
+                    Assert.AreEqual(PreservationStatus.InService.GetDisplayValue(), tag.Status);
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnOpenActions()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -1050,6 +1079,20 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var tags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ToList();
                 tags.ForEach(t => t.StartPreservation());
+                context.SaveChangesAsync().Wait();
+            }
+        }
+
+        private void SetInServiceOnAllTags()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ToList();
+                tags.ForEach(t =>
+                {
+                    t.StartPreservation();
+                    t.SetInService();
+                });
                 context.SaveChangesAsync().Wait();
             }
         }

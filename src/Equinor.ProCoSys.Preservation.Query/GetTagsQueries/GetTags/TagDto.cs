@@ -27,11 +27,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             bool readyToBeRescheduled,
             bool readyToBeDuplicated,
             bool readyToUndoStarted,
+            bool readyToBeSetInService,
             string purchaseOrderNo,
             IEnumerable<RequirementDto> requirements,
             string responsibleCode,
             string responsibleDescription,
-            string status,
+            PreservationStatus status,
             string storageArea,
             string tagFunctionCode,
             string tagDescription,
@@ -59,12 +60,13 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             ReadyToBeRescheduled = readyToBeRescheduled;
             ReadyToBeDuplicated = readyToBeDuplicated;
             ReadyToUndoStarted = readyToUndoStarted;
+            ReadyToBeSetInService = readyToBeSetInService;
             ReadyToBeEdited = readyToBeEdited;
             PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
             ResponsibleCode = responsibleCode;
             ResponsibleDescription = responsibleDescription;
-            Status = status;
+            Status = status.GetDisplayValue();
             StorageArea = storageArea;
             TagFunctionCode = tagFunctionCode;
             Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
@@ -94,6 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
         public bool ReadyToBeRescheduled { get; }
         public bool ReadyToBeDuplicated { get; }
         public bool ReadyToUndoStarted { get; }
+        public bool ReadyToBeSetInService { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public string ResponsibleCode { get; }
         public string ResponsibleDescription { get; }
