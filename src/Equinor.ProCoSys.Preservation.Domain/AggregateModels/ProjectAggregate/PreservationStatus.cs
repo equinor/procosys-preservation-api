@@ -4,6 +4,7 @@
     {
         NotStarted,
         Active,
-        Completed
+        Completed,
+        InService
     }
 }
