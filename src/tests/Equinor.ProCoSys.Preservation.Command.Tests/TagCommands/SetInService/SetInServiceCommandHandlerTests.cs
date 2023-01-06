@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.SetInService;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -11,15 +11,15 @@ using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPreservation
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.SetInService
 {
     [TestClass]
-    public class UndoStartPreservationCommandHandlerTests : CommandHandlerTestsBase
+    public class SetInServiceCommandHandlerTests : CommandHandlerTestsBase
     {
         private const string _rowVersion1 = "AAAAAAAAABA=";
         private const string _rowVersion2 = "AAAAAAAABBA=";
         
-        private UndoStartPreservationCommand _command;
+        private SetInServiceCommand _command;
         private Tag _tag1;
         private Tag _tag2;
         private TagRequirement _req1OnTag1;
@@ -29,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
         private Mock<RequirementDefinition> _rd1Mock;
         private Mock<RequirementDefinition> _rd2Mock;
 
-        private UndoStartPreservationCommandHandler _dut;
+        private SetInServiceCommandHandler _dut;
 
         [TestInitialize]
         public void Setup()
@@ -78,38 +78,38 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UndoStartPrese
             var projectRepoMock = new Mock<IProjectRepository>();
             projectRepoMock.Setup(r => r.GetTagsWithPreservationHistoryByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(tags));
-            _command = new UndoStartPreservationCommand(tagIdsWithRowVersion);
+            _command = new SetInServiceCommand(tagIdsWithRowVersion);
 
-            _dut = new UndoStartPreservationCommandHandler(projectRepoMock.Object, UnitOfWorkMock.Object);
+            _dut = new SetInServiceCommandHandler(projectRepoMock.Object, UnitOfWorkMock.Object);
         }
 
         [TestMethod]
-        public async Task HandlingUndoStartPreservationCommand_ShouldUndoStartPreservationOnAllTags()
+        public async Task HandlingSetInServiceCommand_ShouldSetInServiceOnAllTags()
         {
             var result = await _dut.Handle(_command, default);
 
             Assert.AreEqual(0, result.Errors.Count);
 
-            Assert.AreEqual(PreservationStatus.NotStarted, _tag1.Status);
-            Assert.AreEqual(PreservationStatus.NotStarted, _tag2.Status);
+            Assert.AreEqual(PreservationStatus.InService, _tag1.Status);
+            Assert.AreEqual(PreservationStatus.InService, _tag2.Status);
         }
 
         [TestMethod]
-        public async Task HandlingUndoStartPreservationCommand_ShouldClearNextDueTimeUtcOnAllTagsAndAllRequirement()
+        public async Task HandlingSetInServiceCommand_ShouldNotClearNextDueTimeUtcOnAnyTagsOrAnyRequirement()
         {
             await _dut.Handle(_command, default);
 
-            Assert.IsFalse(_req1OnTag1.NextDueTimeUtc.HasValue);
-            Assert.IsFalse(_req2OnTag1.NextDueTimeUtc.HasValue);
-            Assert.IsFalse(_req1OnTag2.NextDueTimeUtc.HasValue);
-            Assert.IsFalse(_req2OnTag2.NextDueTimeUtc.HasValue);
+            Assert.IsTrue(_req1OnTag1.NextDueTimeUtc.HasValue);
+            Assert.IsTrue(_req2OnTag1.NextDueTimeUtc.HasValue);
+            Assert.IsTrue(_req1OnTag2.NextDueTimeUtc.HasValue);
+            Assert.IsTrue(_req2OnTag2.NextDueTimeUtc.HasValue);
 
-            Assert.IsFalse(_tag1.NextDueTimeUtc.HasValue);
-            Assert.IsFalse(_tag2.NextDueTimeUtc.HasValue);
+            Assert.IsTrue(_tag1.NextDueTimeUtc.HasValue);
+            Assert.IsTrue(_tag2.NextDueTimeUtc.HasValue);
         }
 
         [TestMethod]
-        public async Task HandlingUndoStartPreservationCommand_ShouldSave()
+        public async Task HandlingSetInServiceCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
 

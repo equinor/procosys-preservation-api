@@ -1188,6 +1188,50 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
+        public async Task IsReadyToUndoStartedAsync_UnknownTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToUndoStartedAsync(0, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeSetInServiceAsync_TagNotStarted_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeSetInServiceAsync(_standardTagNotStartedInFirstStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeSetInServiceAsync_TagStarted_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeSetInServiceAsync(_standardTagStartedAndInLastStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeSetInServiceAsync_UnknownTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeSetInServiceAsync(0, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
         public async Task IsReadyToBeRescheduledAsync_TagNotStarted_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

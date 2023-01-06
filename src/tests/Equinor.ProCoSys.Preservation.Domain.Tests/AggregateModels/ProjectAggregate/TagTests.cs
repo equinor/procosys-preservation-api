@@ -569,7 +569,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void StartPreservation_FromInService_ShouldNotChangeNextDueDateOnTagOrAnyRequirement()
+        public void StartPreservation_FromInService_ShouldNotChangeNextDueTimeUtcOnTagOrAnyRequirement()
         {
             // Arrange
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _lastStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
