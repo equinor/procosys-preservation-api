@@ -24,13 +24,14 @@ using Equinor.ProCoSys.Preservation.Command.TagCommands.DeleteTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.SetInService;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirements;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Query.CheckAreaTagNo;
@@ -573,6 +574,19 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             [FromBody] List<int> tagIds)
         {
             var result = await _mediator.Send(new StartPreservationCommand(tagIds));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [HttpPut("SetInService")]
+        public async Task<IActionResult> SetInService(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromBody] List<TagIdWithRowVersionDto> tagDtos)
+        {
+            var tags = tagDtos?.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
+            var result = await _mediator.Send(new SetInServiceCommand(tags));
             return this.FromResult(result);
         }
 

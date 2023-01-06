@@ -4,28 +4,29 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload;
+using Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction;
 using Equinor.ProCoSys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.ProCoSys.Preservation.Command.ActionCommands.UpdateAction;
-using Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction;
 using Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttachment;
 using Equinor.ProCoSys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload;
 using Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Delete;
 using Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Upload;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.DeleteTag;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.SetInService;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UndoStartPreservation;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirements;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.ProCoSys.Preservation.Domain;
@@ -350,6 +351,120 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new StartPreservationCommand(new List<int>{TagIdWithAccessToProject});
             
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region SetInServiceCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnSetInServiceCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new SetInServiceCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnSetInServiceCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new SetInServiceCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithoutAccessToProject, null) });
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnSetInServiceCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new SetInServiceCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnSetInServiceCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new SetInServiceCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region UndoStartPreservationCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnUndoStartPreservationCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new UndoStartPreservationCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUndoStartPreservationCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new UndoStartPreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithoutAccessToProject, null) });
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUndoStartPreservationCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new UndoStartPreservationCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUndoStartPreservationCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new UndoStartPreservationCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
+
             // act
             var result = await _dut.ValidateAsync(command);
 
