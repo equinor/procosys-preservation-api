@@ -145,7 +145,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.SetInService
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Set in service on tag can not be done!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag can not be set in service!"));
         }
 
         [TestMethod]

@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SetInService
                     .MustAsync((_, tag, _, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, tag) => $"Tag is voided! Tag='{GetTagDetails(tag.Id)}'")
                     .MustAsync((_, tag, _, token) => IsReadyToBeSetInServiceAsync(tag.Id, token))
-                    .WithMessage((_, tag) => $"Set in service on tag can not be done! Tag='{GetTagDetails(tag.Id)}'")
+                    .WithMessage((_, tag) => $"Tag can not be set in service! Tag='{GetTagDetails(tag.Id)}'")
                     .Must(tag => HaveAValidRowVersion(tag.RowVersion))
                     .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });
