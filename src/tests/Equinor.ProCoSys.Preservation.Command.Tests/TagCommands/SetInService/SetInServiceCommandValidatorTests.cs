@@ -32,8 +32,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.SetInService
             _tagIds = new List<int> {TagId1, TagId2};
             _tagIdsWithRowVersion = new List<IdAndRowVersion>
             {
-                new IdAndRowVersion(TagId1, RowVersion1),
-                new IdAndRowVersion(TagId2, RowVersion2)
+                new (TagId1, RowVersion1),
+                new (TagId2, RowVersion2)
             };
             _projectValidatorMock = new Mock<IProjectValidator>();
             _projectValidatorMock.Setup(p => p.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(true));
@@ -77,9 +77,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.SetInService
         public async Task Validate_ShouldFail_WhenTagsNotUnique()
         {
             var command = new SetInServiceCommand(
-                new List<IdAndRowVersion> { 
-                    new IdAndRowVersion(1, null), 
-                    new IdAndRowVersion(1, null) });
+                new List<IdAndRowVersion> { new (1, null), new IdAndRowVersion(1, null) });
             
             var result = await _dut.ValidateAsync(command);
 
@@ -165,9 +163,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.SetInService
         public async Task Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
             var command = new SetInServiceCommand(
-                new List<IdAndRowVersion> {
-                    new IdAndRowVersion(1, null),
-                    new IdAndRowVersion(1, null) });
+                new List<IdAndRowVersion> { new (1, null), new (1, null) });
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
             
             var result = await _dut.ValidateAsync(command);
