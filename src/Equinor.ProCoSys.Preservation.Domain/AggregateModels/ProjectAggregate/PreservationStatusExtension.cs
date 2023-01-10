@@ -8,6 +8,7 @@
                 PreservationStatus.NotStarted => "Not started",
                 PreservationStatus.Active => "Active",
                 PreservationStatus.Completed => "Completed",
+                PreservationStatus.InService => "In service",
                 _ => string.Empty
             };
 

@@ -84,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         }
 
         [TestMethod]
-        public async Task HandlingStartPreservationCommand_ShouldStartPreservationOnAllRequirementsOnAllTags()
+        public async Task HandlingStartPreservationCommand_ShouldNextDueTimeUtcOnAllRequirementsOnAllTags()
         {
             await _dut.Handle(_command, default);
 
@@ -93,6 +93,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
             Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag1.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag2.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag2.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, _tag1.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, _tag2.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public async Task HandlingStartPreservationCommand_ShouldNextDueTimeUtcOnAllTags()
+        {
+            await _dut.Handle(_command, default);
+
+            var expectedNextDueTimeUtc = _utcNow.AddWeeks(_intervalWeeks);
 
             Assert.AreEqual(expectedNextDueTimeUtc, _tag1.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _tag2.NextDueTimeUtc);

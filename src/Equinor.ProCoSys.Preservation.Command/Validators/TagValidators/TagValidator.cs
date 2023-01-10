@@ -180,6 +180,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             return tag.IsReadyToUndoStarted();
         }
 
+        public async Task<bool> IsReadyToBeSetInServiceAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludesAsync(tagId, token);
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return tag.IsReadyToBeSetInService();
+        }
+
         public async Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken token)
         {
             var tag = await GetTagWithoutIncludesAsync(tagId, token);

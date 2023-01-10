@@ -76,7 +76,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.ToTable("History");
 
-                    b.HasCheckConstraint("CK_History_constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed','Rescheduled','UndoPreservationStarted','TagVoidedInSource','TagUnvoidedInSource','TagDeletedInSource')");
+                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed','Rescheduled','UndoPreservationStarted','TagVoidedInSource','TagUnvoidedInSource','TagDeletedInSource','PreservationSetInService')");
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
@@ -833,7 +833,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.ToTable("Tags");
 
-                    b.HasCheckConstraint("constraint_tag_check_valid_statusenum", "Status in (0,1,2)");
+                    b.HasCheckConstraint("constraint_tag_check_valid_statusenum", "Status in (0,1,2,-1)");
 
                     b.HasCheckConstraint("constraint_tag_check_valid_tag_type", "TagType in ('Standard','PreArea','SiteArea','PoArea')");
                 });

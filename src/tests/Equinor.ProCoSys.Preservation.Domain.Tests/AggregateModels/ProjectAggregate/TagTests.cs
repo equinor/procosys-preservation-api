@@ -311,6 +311,22 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void AddRequirement_ShouldStartPreservation_OnAddedRequirement_WhenInService()
+        {
+            // Arrange
+            Assert.IsFalse(_reqNeedInputThreeWeekInterval.HasActivePeriod);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+            _dutWithOneReqNotNeedInputTwoWeekInterval.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_reqNeedInputThreeWeekInterval);
+
+            // Assert
+            Assert.IsTrue(_reqNeedInputThreeWeekInterval.HasActivePeriod);
+        }
+
+        [TestMethod]
         public void AddRequirement_ShouldNotStartPreservation_OnAddedRequirement_WhenPreservationNotStarted()
         {
             // Arrange
@@ -537,6 +553,91 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void StartPreservation_FromInService_ShouldSetStatusActive()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _lastStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
+
+            // Act
+            dut.StartPreservation();
+
+            // Assert
+            Assert.AreEqual(PreservationStatus.Active, dut.Status);
+        }
+
+        [TestMethod]
+        public void StartPreservation_FromInService_ShouldNotChangeNextDueTimeUtcOnTagOrAnyRequirement()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _lastStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+
+            dut.StartPreservation();
+            var expectedNextDueTimeUtcOnFirstReq = dut.Requirements.ElementAt(0).NextDueTimeUtc.Value;
+            var expectedNextDueTimeUtcOnSecondReq = dut.Requirements.ElementAt(1).NextDueTimeUtc.Value;
+            var expectedNextDueTimeUtcOnTag = dut.NextDueTimeUtc.Value;
+
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+            dut.SetInService();
+            Assert.AreEqual(expectedNextDueTimeUtcOnFirstReq, dut.Requirements.ElementAt(0).NextDueTimeUtc.Value);
+            Assert.AreEqual(expectedNextDueTimeUtcOnSecondReq, dut.Requirements.ElementAt(1).NextDueTimeUtc.Value);
+            Assert.AreEqual(expectedNextDueTimeUtcOnTag, dut.NextDueTimeUtc.Value);
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+
+            // Act
+            dut.StartPreservation();
+
+            // Assert
+            Assert.AreEqual(expectedNextDueTimeUtcOnFirstReq, dut.Requirements.ElementAt(0).NextDueTimeUtc.Value);
+            Assert.AreEqual(expectedNextDueTimeUtcOnSecondReq, dut.Requirements.ElementAt(1).NextDueTimeUtc.Value);
+            Assert.AreEqual(expectedNextDueTimeUtcOnTag, dut.NextDueTimeUtc.Value);
+        }
+
+        [TestMethod]
+        public void StartPreservation_FromInService_ShouldStartOnEachNonVoidedRequirement()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _lastStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.Requirements.ElementAt(0).IsVoided = true;
+
+            dut.StartPreservation();
+            dut.SetInService();
+
+            // Act
+            dut.StartPreservation();
+
+            // Assert
+            var expectedNextDueTime1 = _utcNow.AddWeeks(dut.Requirements.ElementAt(1).IntervalWeeks);
+            var expectedNextDueTime2 = _utcNow.AddWeeks(dut.Requirements.ElementAt(2).IntervalWeeks);
+            var expectedNextDueTime3 = _utcNow.AddWeeks(dut.Requirements.ElementAt(3).IntervalWeeks);
+            Assert.AreEqual(expectedNextDueTime1, dut.Requirements.ElementAt(1).NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTime2, dut.Requirements.ElementAt(2).NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTime3, dut.Requirements.ElementAt(3).NextDueTimeUtc);
+            Assert.IsFalse(dut.Requirements.ElementAt(0).NextDueTimeUtc.HasValue);
+
+            var expectedNextDueTime = _utcNow.AddWeeks(dut.OrderedRequirements().ElementAt(0).IntervalWeeks);
+            Assert.AreEqual(expectedNextDueTime, dut.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public void StartPreservation_FromInService_ShouldAddPreservationStartedEvent()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _lastStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.StartPreservation();
+            dut.SetInService();
+
+            // Act
+            dut.StartPreservation();
+
+            // Assert
+            Assert.AreEqual(4, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(PreservationStartedEvent));
+        }
+
+        [TestMethod]
         public void StartPreservation_ShouldThrowException_IfAlreadyStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
@@ -634,10 +735,26 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsFalse(dut.IsReadyToBePreserved());
         }
 
+        [TestMethod]
+        public void IsReadyToBePreserved_ShouldBeFalse_WhenInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
+
+            dut.StartPreservation();
+
+            _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
+            Assert.IsTrue(dut.IsReadyToBePreserved());
+
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
+            Assert.IsFalse(dut.IsReadyToBePreserved());
+        }
+
         #endregion
 
         #region IsReadyToBeRescheduled
-        
+
         [TestMethod]
         public void IsReadyToBeRescheduled_ShouldBeFalse_WhenNotStarted()
         {
@@ -667,6 +784,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             
             // Act
             Assert.IsFalse(dut.IsReadyToBeRescheduled());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeRescheduled_ShouldBeTrue_WhenInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
+
+            // Act
+            Assert.IsTrue(dut.IsReadyToBeRescheduled());
         }
 
         #endregion
@@ -702,6 +831,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Act
             Assert.IsFalse(dut.IsReadyToBeEdited());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeEdited_ShouldBeTrue_WhenInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
+
+            // Act
+            Assert.IsTrue(dut.IsReadyToBeEdited());
         }
 
         #endregion
@@ -1032,7 +1173,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region GetUpComingRequirements
 
         [TestMethod]
-        public void GetUpComingRequirements_ShouldReturnNoneRequirements_BeforePreservationStarted()
+        public void GetUpComingRequirements_ShouldReturnNoneRequirements_WhenPreservationNotStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
 
@@ -1095,17 +1236,22 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region OrderedRequirements
 
         [TestMethod]
-        public void OrderedRequirements_ShouldReturnAllRequirements_BeforeAndAfterPreservationStarted()
+        public void OrderedRequirements_ShouldReturnAllRequirements_InAnyStatus()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
 
             Assert.AreEqual(2, dut.OrderedRequirements().Count());
-        
+
             dut.StartPreservation();
-            
+
+            Assert.AreEqual(2, dut.OrderedRequirements().Count());
+
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
+
             Assert.AreEqual(2, dut.OrderedRequirements().Count());
         }
-        
+
         [TestMethod]
         public void OrderedRequirements_ShouldNotReturnOrderedVoidedRequirements()
         {
@@ -1472,7 +1618,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region IsReadyToBeTransferred
 
         [TestMethod]
-        public void IsReadyToBeTransferred_ShouldBeTrue_BeforePreservationStarted()
+        public void IsReadyToBeTransferred_ShouldBeTrue_WhenPreservationNotStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
@@ -1522,7 +1668,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region IsReadyToBeCompleted
 
         [TestMethod]
-        public void IsReadyToBeCompleted_ShouldBeFalse_BeforePreservationStarted()
+        public void IsReadyToBeCompleted_ShouldBeFalse_WhenPreservationNotStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
 
@@ -1530,10 +1676,21 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToBeCompleted_ShouldBeTrue_AfterPreservationStarted()
+        public void IsReadyToBeCompleted_ShouldBeTrue_WhenPreservationIsActive()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
+
+            Assert.IsTrue(dut.IsReadyToBeCompleted(_journey));
+        }
+
+        [TestMethod]
+        public void IsReadyToBeCompleted_ShouldBeTrue_WhenInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
 
             Assert.IsTrue(dut.IsReadyToBeCompleted(_journey));
         }
@@ -1561,20 +1718,31 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region IsReadyToBeStarted
 
         [TestMethod]
-        public void IsReadyToBeStarted_ShouldBeTrue_BeforePreservationStarted()
+        public void IsReadyToBeStarted_ShouldBeTrue_WhenPreservationNotStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
             Assert.IsTrue(dut.IsReadyToBeStarted());
         }
-        
+
         [TestMethod]
-        public void IsReadyToBeStarted_ShouldBeFalse_AfterPreservationStarted()
+        public void IsReadyToBeStarted_ShouldBeFalse_WhenPreservationIsActive()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsFalse(dut.IsReadyToBeStarted());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeStarted_ShouldBeTrue_WhenInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
+
+            Assert.IsTrue(dut.IsReadyToBeStarted());
         }
 
         [TestMethod]
@@ -1585,6 +1753,90 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.CompletePreservation(_journey);
 
             Assert.IsTrue(dut.IsReadyToBeStarted());
+        }
+
+        #endregion
+
+        #region IsReadyToUndoStarted
+
+        [TestMethod]
+        public void IsReadyToUndoStarted_ShouldBeFalse_WhenPreservationNotStarted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+
+            Assert.IsFalse(dut.IsReadyToUndoStarted());
+        }
+
+        [TestMethod]
+        public void IsReadyToUndoStarted_ShouldBeTrue_WhenPreservationIsActive()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsTrue(dut.IsReadyToUndoStarted());
+        }
+
+        [TestMethod]
+        public void IsReadyToUndoStarted_ShouldBeTrue_WhenInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
+
+            Assert.IsTrue(dut.IsReadyToUndoStarted());
+        }
+
+        [TestMethod]
+        public void IsReadyToUndoStarted_ShouldBeFalse_AfterPreservationCompleted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.CompletePreservation(_journey);
+
+            Assert.IsFalse(dut.IsReadyToUndoStarted());
+        }
+
+        #endregion
+
+        #region IsReadyToBeSetInService
+
+        [TestMethod]
+        public void IsReadyToBeSetInService_ShouldBeFalse_WhenPreservationNotStarted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+
+            Assert.IsFalse(dut.IsReadyToBeSetInService());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeSetInService_ShouldBeTrue_WhenPreservationIsActive()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsTrue(dut.IsReadyToBeSetInService());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeSetInService_ShouldBeFalse_WhenInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
+            
+            Assert.IsFalse(dut.IsReadyToBeSetInService());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeSetInService_ShouldBeFalse_AfterPreservationCompleted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.CompletePreservation(_journey);
+
+            Assert.IsFalse(dut.IsReadyToBeSetInService());
         }
 
         #endregion
@@ -2079,7 +2331,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
                         
         [TestMethod]
-        public void UpdateRequirement_Void_ShouldKeepDueTimeNull_BeforePreservationStarted()
+        public void UpdateRequirement_Void_ShouldKeepDueTimeNull_WhenPreservationNotStarted()
         {
             // Arrange
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
@@ -2211,10 +2463,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void UndoStartPreservation_ShouldClearDueDateOnTagAndEachRequirement()
+        public void UndoStartPreservation_ShouldClearDueDateOnTagAndEachRequirement_WhenPreservationStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
             dut.StartPreservation();
+            Assert.AreEqual(PreservationStatus.Active, dut.Status);
 
             dut.UndoStartPreservation();
 
@@ -2224,7 +2477,22 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void UndoStartPreservation_ShouldSetStatusNotStartedOnVoidedRequirements()
+        public void UndoStartPreservation_ShouldClearDueDateOnTagAndEachRequirement_WhenInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
+
+            dut.UndoStartPreservation();
+
+            Assert.IsFalse(dut.Requirements.ElementAt(0).NextDueTimeUtc.HasValue);
+            Assert.IsFalse(dut.Requirements.ElementAt(1).NextDueTimeUtc.HasValue);
+            Assert.IsFalse(dut.NextDueTimeUtc.HasValue);
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldClearDueDateOnVoidedRequirements()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
             dut.StartPreservation();
@@ -2252,6 +2520,59 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(UndoPreservationStartedEvent));
+        }
+
+        #endregion
+
+        #region SetInService
+
+        [TestMethod]
+        public void SetInService_ShouldSetStatusInService()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+            Assert.AreEqual(PreservationStatus.Active, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.SetInService();
+
+            Assert.AreEqual(PreservationStatus.InService, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+        }
+
+        [TestMethod]
+        public void SetInService_ShouldNotChangeDueDateOnTagOrAnyRequirement()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.StartPreservation();
+            var expectedNextDueTimeUtcOnFirstReq = dut.Requirements.ElementAt(0).NextDueTimeUtc.Value;
+            var expectedNextDueTimeUtcOnSecondReq = dut.Requirements.ElementAt(1).NextDueTimeUtc.Value;
+            var expectedNextDueTimeUtcOnTag = dut.NextDueTimeUtc.Value;
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+
+            dut.SetInService();
+
+            Assert.AreEqual(expectedNextDueTimeUtcOnFirstReq, dut.Requirements.ElementAt(0).NextDueTimeUtc.Value);
+            Assert.AreEqual(expectedNextDueTimeUtcOnSecondReq, dut.Requirements.ElementAt(1).NextDueTimeUtc.Value);
+            Assert.AreEqual(expectedNextDueTimeUtcOnTag, dut.NextDueTimeUtc.Value);
+        }
+
+        [TestMethod]
+        public void SetInService_ShouldThrowException_IfInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.StartPreservation();
+            dut.SetInService();
+
+            Assert.ThrowsException<Exception>(() => dut.SetInService());
+        }
+
+        [TestMethod]
+        public void SetInService_ShouldAddPreservationSetInServiceEvent()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.SetInService();
+
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(PreservationSetInServiceEvent));
         }
 
         #endregion

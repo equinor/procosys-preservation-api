@@ -249,7 +249,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _requirements.Add(tagRequirement);
-            if (Status == PreservationStatus.Active)
+            if (Status == PreservationStatus.Active || Status == PreservationStatus.InService)
             {
                 tagRequirement.StartPreservation();
             }
@@ -347,13 +347,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new Exception($"Preservation on {nameof(Tag)} {Id} can not start. Status = {Status}");
             }
-            foreach (var requirement in Requirements.Where(r => !r.IsVoided))
-            {
-                requirement.StartPreservation();
-            }
 
+            if (Status != PreservationStatus.InService)
+            {
+                foreach (var requirement in Requirements.Where(r => !r.IsVoided))
+                {
+                    requirement.StartPreservation();
+                }
+
+                UpdateNextDueTimeUtc();
+            }
             Status = PreservationStatus.Active;
-            UpdateNextDueTimeUtc();
             AddDomainEvent(new PreservationStartedEvent(Plant, ObjectGuid));
         }
 
@@ -371,6 +375,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             Status = PreservationStatus.NotStarted;
             UpdateNextDueTimeUtc();
             AddDomainEvent(new UndoPreservationStartedEvent(Plant, ObjectGuid));
+        }
+
+        public void SetInService()
+        {
+            if (!IsReadyToBeSetInService())
+            {
+                throw new Exception($"Can not set in service on {nameof(Tag)} {Id}. Status = {Status}");
+            }
+
+            Status = PreservationStatus.InService;
+            AddDomainEvent(new PreservationSetInServiceEvent(Plant, ObjectGuid));
         }
 
         public void CompletePreservation(Journey journey)
@@ -394,7 +409,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                FirstUpcomingRequirement() != null;
 
         public bool IsReadyToBeRescheduled()
-            => Status == PreservationStatus.Active;
+            => Status == PreservationStatus.Active || Status == PreservationStatus.InService;
 
         public bool IsReadyToBeEdited()
             => Status != PreservationStatus.Completed;
@@ -451,7 +466,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(journey));
             }
 
-            return Status == PreservationStatus.Active && 
+            return (Status == PreservationStatus.Active || Status == PreservationStatus.InService) && 
                    (!FollowsAJourney || FollowsAJourney && journey.GetNextStep(StepId) == null);
         }
         
@@ -536,11 +551,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             ModifiedById = modifiedBy.Id;
         }
 
-        public bool IsReadyToBeStarted()
-            => (Status == PreservationStatus.NotStarted || Status == PreservationStatus.Completed)
-                && Requirements.Any(r => !r.IsVoided);
+        public bool IsReadyToBeStarted() => Status != PreservationStatus.Active && Requirements.Any(r => !r.IsVoided);
 
-        public bool IsReadyToUndoStarted() => Status == PreservationStatus.Active;
+        public bool IsReadyToUndoStarted() => Status == PreservationStatus.Active || Status == PreservationStatus.InService;
+
+        public bool IsReadyToBeSetInService() => Status == PreservationStatus.Active;
 
         public TagAttachment GetAttachmentByFileName(string fileName) => _attachments.SingleOrDefault(a => a.FileName.ToUpper() == fileName.ToUpper());
 

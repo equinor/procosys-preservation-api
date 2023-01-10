@@ -155,6 +155,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
                 var isReadyToBeRescheduled = tagWithRequirements.IsReadyToBeRescheduled();
                 var isReadyToBeDuplicated = tagWithRequirements.IsReadyToBeDuplicated();
                 var isReadyToUndoStarted = tagWithRequirements.IsReadyToUndoStarted();
+                var isReadyToBeSetInService = tagWithRequirements.IsReadyToBeSetInService();
 
                 var nextMode = tagWithRequirements.FollowsAJourney && dto.NextStep != null 
                     ? nextModes.Single(m => m.Id == dto.NextStep.ModeId)
@@ -184,11 +185,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
                     isReadyToBeRescheduled,
                     isReadyToBeDuplicated,
                     isReadyToUndoStarted,
+                    isReadyToBeSetInService,
                     dto.PurchaseOrderNo,
                     requirementDtos,
                     dto.ResponsibleCode,
                     dto.ResponsibleDescription,
-                    dto.Status.GetDisplayValue(),
+                    dto.Status,
                     dto.StorageArea,
                     dto.TagFunctionCode,
                     dto.Description,

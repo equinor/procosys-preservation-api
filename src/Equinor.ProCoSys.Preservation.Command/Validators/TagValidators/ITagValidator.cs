@@ -45,6 +45,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         Task<bool> IsReadyToBeStartedAsync(int tagId, CancellationToken token);
 
+        Task<bool> IsReadyToBeSetInServiceAsync(int tagId, CancellationToken token);
+
         Task<bool> IsReadyToUndoStartedAsync(int tagId, CancellationToken token);
 
         Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken token);
@@ -76,7 +78,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token);
-
+        
         Task<bool> RequirementUsageCoversBothForSupplierAndOtherAsync(int tagId, CancellationToken token);
 
         Task<bool> RequirementUsageWillCoverForOtherThanSuppliersAsync(

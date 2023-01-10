@@ -35,11 +35,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             true,
             true,
             true,
+            true,
             "PoNo",
             new List<RequirementDto> {new RequirementDto(0, null, RequirementTypeIcon.Other, default, default, false)},
             "Resp",
             "RespDescription",
-            PreservationStatus.Active.GetDisplayValue(),
+            PreservationStatus.Active,
             "SA",
             "TagFunctionCode",
             "TagDesc",
@@ -70,6 +71,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             Assert.IsTrue(_dut.ReadyToBeRescheduled);
             Assert.IsTrue(_dut.ReadyToBeDuplicated);
             Assert.IsTrue(_dut.ReadyToUndoStarted);
+            Assert.IsTrue(_dut.ReadyToBeSetInService);
             Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
             Assert.IsNotNull(_dut.Requirements);
