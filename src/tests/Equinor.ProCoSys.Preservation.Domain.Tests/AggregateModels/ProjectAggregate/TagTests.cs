@@ -2477,9 +2477,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void UndoStartPreservation_ShouldThrowException_IfNotStarted()
+        public void UndoStartPreservation_ShouldThrowException_IfInService()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
 
             Assert.ThrowsException<Exception>(() => dut.UndoStartPreservation());
         }
@@ -2497,12 +2500,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void UndoStartPreservation_ShouldThrowException_IfInService()
+        public void UndoStartPreservation_ShouldThrowException_IfNotStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
-            dut.StartPreservation();
-            dut.SetInService();
-            Assert.AreEqual(PreservationStatus.InService, dut.Status);
 
             Assert.ThrowsException<Exception>(() => dut.UndoStartPreservation());
         }
