@@ -2477,21 +2477,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void UndoStartPreservation_ShouldClearDueDateOnTagAndEachRequirement_WhenInService()
-        {
-            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
-            dut.StartPreservation();
-            dut.SetInService();
-            Assert.AreEqual(PreservationStatus.InService, dut.Status);
-
-            dut.UndoStartPreservation();
-
-            Assert.IsFalse(dut.Requirements.ElementAt(0).NextDueTimeUtc.HasValue);
-            Assert.IsFalse(dut.Requirements.ElementAt(1).NextDueTimeUtc.HasValue);
-            Assert.IsFalse(dut.NextDueTimeUtc.HasValue);
-        }
-
-        [TestMethod]
         public void UndoStartPreservation_ShouldClearDueDateOnVoidedRequirements()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
@@ -2507,6 +2492,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void UndoStartPreservation_ShouldThrowException_IfNotStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+
+            Assert.ThrowsException<Exception>(() => dut.UndoStartPreservation());
+        }
+
+        [TestMethod]
+        public void UndoStartPreservation_ShouldThrowException_IfInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+            dut.StartPreservation();
+            dut.SetInService();
+            Assert.AreEqual(PreservationStatus.InService, dut.Status);
 
             Assert.ThrowsException<Exception>(() => dut.UndoStartPreservation());
         }
