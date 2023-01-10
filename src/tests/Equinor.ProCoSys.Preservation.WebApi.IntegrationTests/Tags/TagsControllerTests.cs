@@ -1174,6 +1174,40 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
+        public async Task SetInService_AsPlanner_ShouldSetInServiceOnTags()
+        {
+            // Arrange 
+            var tagIdUnderTest = await CreateStandardTagAsync(TwoStepJourneyWithTags.Steps.First(s => !s.IsVoided).Id, true);
+
+            var tagsResult = await TagsControllerTestsHelper.GetPageOfTagsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToSetInService = tagsResult.Tags.Single(t => t.Id == tagIdUnderTest);
+            Assert.IsTrue(tagToSetInService.ReadyToUndoStarted, "Bad test setup: Didn't find tag ready to set in service");
+            var currentRowVersion = tagToSetInService.RowVersion;
+
+            // Act
+            var idAndRowVersions = await TagsControllerTestsHelper.SetInServiceAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagIdUnderTest,
+                        RowVersion = currentRowVersion
+                    }
+                });
+
+            // Assert
+            Assert.IsNotNull(idAndRowVersions);
+            Assert.AreEqual(1, idAndRowVersions.Count);
+
+            var idAndRowVersion = idAndRowVersions.Single();
+            AssertRowVersionChange(currentRowVersion, idAndRowVersion.RowVersion);
+            await AssertInHistoryAsLatestEventAsync(tagToSetInService.Id, UserType.Planner, EventType.PreservationSetInService);
+        }
+
+        [TestMethod]
         public async Task CompletePreservation_AsPlanner_ShouldCompletePreservationOnTags()
         {
             // Arrange 

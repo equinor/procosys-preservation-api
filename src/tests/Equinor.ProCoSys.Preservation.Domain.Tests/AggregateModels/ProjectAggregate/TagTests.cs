@@ -1777,14 +1777,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToUndoStarted_ShouldBeTrue_WhenInService()
+        public void IsReadyToUndoStarted_ShouldBeFalse_WhenInService()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
             dut.SetInService();
             Assert.AreEqual(PreservationStatus.InService, dut.Status);
 
-            Assert.IsTrue(dut.IsReadyToUndoStarted());
+            Assert.IsFalse(dut.IsReadyToUndoStarted());
         }
 
         [TestMethod]
@@ -2477,18 +2477,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void UndoStartPreservation_ShouldClearDueDateOnTagAndEachRequirement_WhenInService()
+        public void UndoStartPreservation_ShouldThrowException_IfInService()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
             dut.StartPreservation();
             dut.SetInService();
             Assert.AreEqual(PreservationStatus.InService, dut.Status);
 
-            dut.UndoStartPreservation();
-
-            Assert.IsFalse(dut.Requirements.ElementAt(0).NextDueTimeUtc.HasValue);
-            Assert.IsFalse(dut.Requirements.ElementAt(1).NextDueTimeUtc.HasValue);
-            Assert.IsFalse(dut.NextDueTimeUtc.HasValue);
+            Assert.ThrowsException<Exception>(() => dut.UndoStartPreservation());
         }
 
         [TestMethod]
