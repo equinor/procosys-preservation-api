@@ -641,6 +641,29 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             return JsonConvert.DeserializeObject<List<IdAndRowVersion>>(jsonString);
         }
 
+        public static async Task<IList<IdAndRowVersion>> SetInServiceAsync(
+            UserType userType, string plant,
+            IEnumerable<IdAndRowVersion> tagDtos,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = tagDtos;
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/SetInService", content);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<IdAndRowVersion>>(jsonString);
+        }
+
         public static async Task<int> CreateAreaTagAsync(
             UserType userType,
             string plant,

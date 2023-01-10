@@ -1954,6 +1954,102 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
         #endregion
 
+        #region SetInService
+        [TestMethod]
+        public async Task SetInService_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.SetInServiceAsync(
+                UserType.Anonymous, TestFactory.UnknownPlant,
+                null,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task SetInService_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.SetInServiceAsync(
+                UserType.Hacker, TestFactory.UnknownPlant,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task SetInService_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.SetInServiceAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task SetInService_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.SetInServiceAsync(
+                UserType.Hacker, TestFactory.PlantWithAccess,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task SetInService_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.SetInServiceAsync(
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task SetInService_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.SetInServiceAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task SetInService_AsPlanner_ShouldReturnBadRequest_WhenIllegalRowVersion()
+        {
+            // Arrange 
+            var tagResultDto = await TagsControllerTestsHelper.GetPageOfTagsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToSetInService = tagResultDto.Tags.FirstOrDefault(t => t.ReadyToBeSetInService);
+            Assert.IsNotNull(tagToSetInService, "Bad test setup: Didn't find tag to set in service");
+
+            // Act
+            await TagsControllerTestsHelper.SetInServiceAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagToSetInService.Id,
+                        RowVersion = "invalidrowversion"
+                    }
+                },
+                HttpStatusCode.BadRequest,
+                "Not a valid row version!");
+        }
+
+        [TestMethod]
+        public async Task SetInService_AsPlanner_ShouldReturnConflict_WhenWrongRowVersion()
+        {
+            // Arrange 
+            var tagResultDto = await TagsControllerTestsHelper.GetPageOfTagsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToSetInService = tagResultDto.Tags.FirstOrDefault(t => t.ReadyToBeSetInService);
+            Assert.IsNotNull(tagToSetInService, "Bad test setup: Didn't find tag to set in service");
+
+            // Act
+            await TagsControllerTestsHelper.SetInServiceAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagToSetInService.Id,
+                        RowVersion = TestFactory.WrongButValidRowVersion
+                    }
+                },
+                HttpStatusCode.Conflict);
+        }
+
+        #endregion
+
         #region CompletePreservation
         [TestMethod]
         public async Task CompletePreservation_AsAnonymous_ShouldReturnUnauthorized()
