@@ -1777,14 +1777,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToUndoStarted_ShouldBeTrue_WhenInService()
+        public void IsReadyToUndoStarted_ShouldBeFalse_WhenInService()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
             dut.SetInService();
             Assert.AreEqual(PreservationStatus.InService, dut.Status);
 
-            Assert.IsTrue(dut.IsReadyToUndoStarted());
+            Assert.IsFalse(dut.IsReadyToUndoStarted());
         }
 
         [TestMethod]
