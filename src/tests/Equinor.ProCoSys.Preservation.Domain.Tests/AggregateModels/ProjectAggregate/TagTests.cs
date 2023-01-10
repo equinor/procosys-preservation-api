@@ -2477,6 +2477,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void UndoStartPreservation_ShouldThrowException_IfNotStarted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+
+            Assert.ThrowsException<Exception>(() => dut.UndoStartPreservation());
+        }
+
+        [TestMethod]
         public void UndoStartPreservation_ShouldClearDueDateOnVoidedRequirements()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
@@ -2486,14 +2494,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.UndoStartPreservation();
 
             Assert.IsFalse(dut.Requirements.ElementAt(0).NextDueTimeUtc.HasValue);
-        }
-
-        [TestMethod]
-        public void UndoStartPreservation_ShouldThrowException_IfNotStarted()
-        {
-            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
-
-            Assert.ThrowsException<Exception>(() => dut.UndoStartPreservation());
         }
 
         [TestMethod]
