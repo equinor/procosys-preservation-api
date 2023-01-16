@@ -27,7 +27,6 @@ using Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirements;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -977,63 +976,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UpdateTagCommand(TagIdWithAccessToProject, null, null, null);
-
-            // act
-            var result = await _dut.ValidateAsync(command);
-
-            // Assert
-            Assert.IsTrue(result);
-        }
-        #endregion
-
-        #region UpdateTagStepAndRequirementsCommand
-        [TestMethod]
-        public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
-        {
-            // Arrange
-            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, null, 0, null, null, null, null);
-
-            // act
-            var result = await _dut.ValidateAsync(command);
-
-            // Assert
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnFalse_WhenNoAccessToProject()
-        {
-            // Arrange
-            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithoutAccessToProject, null, 0, null, null, null, null);
-
-            // act
-            var result = await _dut.ValidateAsync(command);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnFalse_WhenNoAccessToContent()
-        {
-            // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, null, 0, null, null, null, null);
-
-            // act
-            var result = await _dut.ValidateAsync(command);
-
-            // Assert
-            Assert.IsFalse(result);
-        }
-
-        [TestMethod]
-        public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
-        {
-            // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, null, 0, null, null, null, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
