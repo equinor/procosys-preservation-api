@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
         public string Label { get; set; }
         public string Unit { get; set; }
-        public bool IsVoided { get; set; }
+        public virtual bool IsVoided { get; set; }
         public bool? ShowPrevious { get; set; }
         public int SortKey { get; set; }
         public FieldType FieldType { get; private set; }
