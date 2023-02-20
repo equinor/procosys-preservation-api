@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public bool? ShowPrevious { get; set; }
         public int SortKey { get; set; }
         public FieldType FieldType { get; private set; }
-        public bool NeedsUserInput => FieldType.NeedsUserInput();
+        public bool NeedsUserInput => !IsVoided && FieldType.NeedsUserInput();
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
