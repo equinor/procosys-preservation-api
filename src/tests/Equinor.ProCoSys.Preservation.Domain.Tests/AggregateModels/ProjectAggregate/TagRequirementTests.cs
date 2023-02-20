@@ -871,6 +871,25 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void VoidNumberField_ShouldMakeRequirementReadyToBePreserved_WhenRecordCheckBoxValue()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            _numberField1Mock.SetupGet(f => f.IsVoided).Returns(true);
+
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
+                {
+                    {CheckBoxFieldId, true}
+                },
+                _reqDefWithNumberAndCheckBoxFieldMock.Object);
+
+            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
+            Assert.IsTrue(dut.ReadyToBePreserved);
+        }
+
+        [TestMethod]
         public void RecordNumberIsNaValues_ShouldNotMakeRequirementReadyToBePreserved_WithNaForAllNumbers()
         {
             var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithTwoNumberFieldsMock.Object);

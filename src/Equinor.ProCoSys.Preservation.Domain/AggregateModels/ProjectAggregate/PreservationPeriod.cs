@@ -70,24 +70,25 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when updating status");
             }
 
-            var fieldNeedUserInputIds = requirementDefinition.Fields.Where(f => f.NeedsUserInput).Select(f => f.Id);
+            var fieldNeedUserInput = requirementDefinition.Fields.Where(f => f.NeedsUserInput);
+            var fieldNeedUserInputIds = fieldNeedUserInput.Select(f => f.Id);
             var recordedIds = _fieldValues.Select(fv => fv.FieldId);
 
             if (fieldNeedUserInputIds.All(id => recordedIds.Contains(id)))
             {
-                var numberFieldIds = requirementDefinition
-                    .Fields
+                var numberFieldNeedUserInputIds = fieldNeedUserInput
                     .Where(f => f.FieldType == FieldType.Number)
                     .Select(f => f.Id)
                     .ToList();
-                if (!numberFieldIds.Any())
+
+                if (!numberFieldNeedUserInputIds.Any())
                 {
                     Status = PreservationPeriodStatus.ReadyToBePreserved;
                     return;
                 }
 
                 var numberValues = _fieldValues
-                    .Where(fv => numberFieldIds.Contains(fv.FieldId))
+                    .Where(fv => numberFieldNeedUserInputIds.Contains(fv.FieldId))
                     .Select(fv => (NumberValue)fv);
 
                 Status = numberValues.Any(nv => nv.Value.HasValue) ? PreservationPeriodStatus.ReadyToBePreserved : PreservationPeriodStatus.NeedsUserInput;
