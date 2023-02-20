@@ -76,19 +76,19 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             if (fieldNeedUserInputIds.All(id => recordedIds.Contains(id)))
             {
-                var numberFieldIds = fieldNeedUserInput
+                var numberFieldNeedUserInputIds = fieldNeedUserInput
                     .Where(f => f.FieldType == FieldType.Number)
                     .Select(f => f.Id)
                     .ToList();
 
-                if (!numberFieldIds.Any())
+                if (!numberFieldNeedUserInputIds.Any())
                 {
                     Status = PreservationPeriodStatus.ReadyToBePreserved;
                     return;
                 }
 
                 var numberValues = _fieldValues
-                    .Where(fv => numberFieldIds.Contains(fv.FieldId))
+                    .Where(fv => numberFieldNeedUserInputIds.Contains(fv.FieldId))
                     .Select(fv => (NumberValue)fv);
 
                 Status = numberValues.Any(nv => nv.Value.HasValue) ? PreservationPeriodStatus.ReadyToBePreserved : PreservationPeriodStatus.NeedsUserInput;
