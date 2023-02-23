@@ -132,7 +132,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var claimsProvider = new Mock<IClaimsProvider>();
             claimsProvider.Setup(c => c.GetCurrentUser()).Returns(new ClaimsPrincipal());
             var projectApiService = new Mock<IProjectApiService>();
-            projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation)).Returns(Task.FromResult(new PCSProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
+            projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation)).Returns(Task.FromResult(new ProCoSysProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
 
             _dut = new BusReceiverService(_plantSetter.Object,
                                           _unitOfWork.Object,

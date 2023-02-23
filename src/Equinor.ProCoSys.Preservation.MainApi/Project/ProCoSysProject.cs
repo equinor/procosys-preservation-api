@@ -1,6 +1,6 @@
 ﻿namespace Equinor.ProCoSys.Preservation.MainApi.Project
 {
-    public class PCSProject
+    public class ProCoSysProject
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -104,7 +104,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("AllPlantsFromMain")]
-        public async Task<IList<PCSPlant>> GetPlantsFromMain()
+        public async Task<IList<ProCoSysPlant>> GetPlantsFromMain()
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var plants = await _plantApiService.GetAllPlantsForUserAsync(currentUserOid);

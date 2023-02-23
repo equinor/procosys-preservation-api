@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Plant
             _baseAddress = new Uri(options.Value.BaseAddress);
         }
 
-        public async Task<List<PCSPlant>> GetAllPlantsForUserAsync(Guid azureOid)
+        public async Task<List<ProCoSysPlant>> GetAllPlantsForUserAsync(Guid azureOid)
         {
             var url = $"{_baseAddress}Plants/ForUser" +
                       $"?azureOid={azureOid:D}" +
@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Plant
             _authenticator.AuthenticationType = AuthenticationType.AsApplication;
             try
             {
-                return await _mainApiClient.QueryAndDeserializeAsync<List<PCSPlant>>(url);
+                return await _mainApiClient.QueryAndDeserializeAsync<List<ProCoSysPlant>>(url);
             }
             finally
             {

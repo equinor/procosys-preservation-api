@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
-        private PCSProject _result;
+        private ProCoSysProject _result;
         private string _name = "NameA";
         private string _description = "Description1";
         private MainApiProjectService _dut;
@@ -27,7 +27,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
 
-            _result = new PCSProject {Id = 1, Name = _name, Description = _description};
+            _result = new ProCoSysProject {Id = 1, Name = _name, Description = _description};
             _dut = new MainApiProjectService(_mainApiClient.Object, _mainApiOptions.Object);
         }
 
@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSProject>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProCoSysProject>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_result));
 
             // Act

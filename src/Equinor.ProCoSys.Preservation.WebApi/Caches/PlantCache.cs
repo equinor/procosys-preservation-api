@@ -63,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
 
         public void Clear(Guid userOid) => _cacheManager.Remove(PlantsCacheKey(userOid));
 
-        private async Task<IList<PCSPlant>> GetAllPlantsForUserAsync(Guid userOid)
+        private async Task<IList<ProCoSysPlant>> GetAllPlantsForUserAsync(Guid userOid)
             => await _cacheManager.GetOrCreate(
                 PlantsCacheKey(userOid),
                 async () =>

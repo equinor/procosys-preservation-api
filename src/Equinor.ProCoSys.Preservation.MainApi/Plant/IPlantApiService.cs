@@ -6,6 +6,6 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Plant
 {
     public interface IPlantApiService
     {
-        Task<List<PCSPlant>> GetAllPlantsForUserAsync(Guid azureOid);
+        Task<List<ProCoSysPlant>> GetAllPlantsForUserAsync(Guid azureOid);
     }
 }

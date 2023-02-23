@@ -275,10 +275,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         private void SetupTestUsers()
         {
-            var commonProCoSysPlants = new List<PCSPlant>
+            var commonProCoSysPlants = new List<ProCoSysPlant>
             {
-                new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle, HasAccess = true},
-                new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
+                new ProCoSysPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle, HasAccess = true},
+                new ProCoSysPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
             };
 
             var commonProCoSysProjects = new List<PCSProject>
@@ -364,10 +364,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             LastName = "Hacker", 
                             Oid = _hackerOid
                         },
-                    ProCoSysPlants = new List<PCSPlant>
+                    ProCoSysPlants = new List<ProCoSysPlant>
                     {
-                        new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
-                        new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
+                        new ProCoSysPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
+                        new ProCoSysPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
                     },
                     ProCoSysPermissions = new List<string>(),
                     ProCoSysProjects = new List<PCSProject>(),
@@ -376,7 +376,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         // Authenticated client with necessary roles to perform preservation work
         private void SetupPreserverUser(
-            List<PCSPlant> commonProCoSysPlants,
+            List<ProCoSysPlant> commonProCoSysPlants,
             List<PCSProject> commonProCoSysProjects,
             List<string> commonProCoSysRestrictions)
             => _testUsers.Add(UserType.Preserver,
@@ -410,7 +410,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         // Authenticated user with necessary roles to Create and Update in Scope
         private void SetupPlannerUser(
-            List<PCSPlant> commonProCoSysPlants,
+            List<ProCoSysPlant> commonProCoSysPlants,
             List<PCSProject> commonProCoSysProjects,
             List<string> commonProCoSysRestrictions)
             => _testUsers.Add(UserType.Planner,
@@ -445,7 +445,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         // Authenticated client with necessary roles to Create and Update in Library
         private void SetupLibraryAdminUser(
-            List<PCSPlant> commonProCoSysPlants,
+            List<ProCoSysPlant> commonProCoSysPlants,
             List<PCSProject> commonProCoSysProjects,
             List<string> commonProCoSysRestrictions)
             => _testUsers.Add(UserType.LibraryAdmin,
@@ -499,10 +499,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         FirstName = "XPlant",
                         LastName = "App",
                     },
-                    ProCoSysPlants = new List<PCSPlant>
+                    ProCoSysPlants = new List<ProCoSysPlant>
                     {
-                        new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
-                        new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
+                        new ProCoSysPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
+                        new ProCoSysPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
                     },
                     ProCoSysPermissions = new List<string>(),
                     ProCoSysProjects = new List<PCSProject>(),

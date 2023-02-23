@@ -30,13 +30,13 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Plant
             var mainApiClient = new Mock<IBearerTokenApiClient>();
             _authenticator = new Mock<IAuthenticator>();
             mainApiClient
-                .Setup(x => x.QueryAndDeserializeAsync<List<PCSPlant>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(new List<PCSPlant>
+                .Setup(x => x.QueryAndDeserializeAsync<List<ProCoSysPlant>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new List<ProCoSysPlant>
                 {
-                    new PCSPlant { Id = _plantId, Title = _plantTitle },
-                    new PCSPlant { Id = "PCS$ASGARD", Title = "Åsgard" },
-                    new PCSPlant { Id = "PCS$ASGARD_A", Title = "ÅsgardA" },
-                    new PCSPlant { Id = "PCS$ASGARD_B", Title = "ÅsgardB" },
+                    new ProCoSysPlant { Id = _plantId, Title = _plantTitle },
+                    new ProCoSysPlant { Id = "PCS$ASGARD", Title = "Åsgard" },
+                    new ProCoSysPlant { Id = "PCS$ASGARD_A", Title = "ÅsgardA" },
+                    new ProCoSysPlant { Id = "PCS$ASGARD_B", Title = "ÅsgardB" },
                 }));
 
             _dut = new MainApiPlantService(_authenticator.Object, mainApiClient.Object, mainApiOptions.Object);
