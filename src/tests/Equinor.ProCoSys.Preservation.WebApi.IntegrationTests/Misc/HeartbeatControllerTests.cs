@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         public async Task Get_IsAlive_AsAnonymous_ShouldReturnOk() => await AssertIsAlive(UserType.Anonymous);
 
         [TestMethod]
-        public async Task Get_IsAlive_AsHacker_ShouldReturnOk() => await AssertIsAlive(UserType.Hacker, HttpStatusCode.Forbidden);
+        public async Task Get_IsAlive_AsHacker_ShouldReturnOk() => await AssertIsAlive(UserType.Hacker);
 
         private static async Task AssertIsAlive(UserType userType, HttpStatusCode expectedHttpStatusCode = HttpStatusCode.OK)
         {

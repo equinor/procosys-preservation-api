@@ -98,7 +98,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             AssertUser(profile, historyDto.CreatedBy);
         }
 
-        protected void AssertUser(TokenProfile profile, PersonDto personDto)
+        protected void AssertUser(TestProfile profile, PersonDto personDto)
         {
             Assert.IsNotNull(personDto);
             Assert.AreEqual(profile.FirstName, personDto.FirstName);

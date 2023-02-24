@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Infrastructure.Caching;
 using Equinor.ProCoSys.Preservation.MainApi.Person;
 using Microsoft.Extensions.Options;
@@ -15,7 +14,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
 
         public PersonCache(
             ICacheManager cacheManager, 
-            ICurrentUserProvider currentUserProvider, 
             IPersonApiService personApiService,
             IOptionsSnapshot<CacheOptions> options)
         {

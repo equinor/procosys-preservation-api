@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Permission
             _baseAddress = new Uri(options.Value.BaseAddress);
         }
         
-        public async Task<IList<ProCoSysProject>> GetAllOpenProjectsAsync(string plantId)
+        public async Task<List<ProCoSysProject>> GetAllOpenProjectsAsync(string plantId)
         {
             var url = $"{_baseAddress}Projects" +
                       $"?plantId={plantId}" +
@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Permission
             return await _mainApiClient.QueryAndDeserializeAsync<List<ProCoSysProject>>(url) ?? new List<ProCoSysProject>();
         }
 
-        public async Task<IList<string>> GetPermissionsAsync(string plantId)
+        public async Task<List<string>> GetPermissionsAsync(string plantId)
         {
             var url = $"{_baseAddress}Permissions" +
                       $"?plantId={plantId}" +
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Permission
             return await _mainApiClient.QueryAndDeserializeAsync<List<string>>(url) ?? new List<string>();
         }
 
-        public async Task<IList<string>> GetContentRestrictionsAsync(string plantId)
+        public async Task<List<string>> GetContentRestrictionsAsync(string plantId)
         {
             var url = $"{_baseAddress}ContentRestrictions" +
                       $"?plantId={plantId}" +

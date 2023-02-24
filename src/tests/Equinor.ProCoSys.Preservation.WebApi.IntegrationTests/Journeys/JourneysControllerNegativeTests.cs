@@ -18,11 +18,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task CreateJourney_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task CreateJourney_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.CreateJourneyAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 Guid.NewGuid().ToString(),
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task CreateJourney_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -69,10 +70,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task GetJourneys_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task GetJourneys_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.GetJourneysAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task GetJourneys_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -115,11 +117,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task GetJourney_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task GetJourney_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.GetJourneyAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task GetJourney_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -170,14 +173,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UpdateJourney_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task UpdateJourney_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.UpdateJourneyAsync(
                 UserType.Hacker,
                 TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
                 Guid.NewGuid().ToString(),
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task UpdateJourney_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -259,12 +263,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task VoidJourney_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task VoidJourney_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.VoidJourneyAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task VoidJourney_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -337,12 +342,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UnvoidJourney_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task UnvoidJourney_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.UnvoidJourneyAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task UnvoidJourney_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -426,14 +432,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task CreateStep_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task CreateStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.CreateStepAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
                 Guid.NewGuid().ToString(),
                 OtherModeIdUnderTest,
                 KnownTestData.ResponsibleCode,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task CreateStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -501,7 +508,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UpdateStep_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task UpdateStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
@@ -510,7 +517,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 OtherModeIdUnderTest,
                 KnownTestData.ResponsibleCode,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task UpdateStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -617,13 +625,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task VoidStep_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task VoidStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.VoidStepAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
                 FirstStepIdInJourney1UnderTest,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task VoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -710,13 +719,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UnvoidStep_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task UnvoidStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
                 FirstStepIdInJourney1UnderTest,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task UnvoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -807,12 +817,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task DeleteJourney_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task DeleteJourney_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.DeleteJourneyAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task DeleteJourney_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -922,13 +933,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task DeleteStep_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task DeleteStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 JourneyId1UnderTest,
                 FirstStepIdInJourney1UnderTest,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task DeleteStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -1030,7 +1042,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task SwapSteps_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task SwapSteps_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.SwapStepsAsync(
                 UserType.Hacker,
                 TestFactory.UnknownPlant,
@@ -1045,7 +1057,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                     Id = 12, 
                     RowVersion = TestFactory.AValidRowVersion
                 },
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task SwapSteps_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
