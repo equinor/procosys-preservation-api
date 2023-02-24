@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IProjectRepository _projectRepository;
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly ICurrentUserSetter _currentUserSetter;
-        private readonly IClaimsProvider _claimsProvider;
+        private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
         private readonly IAuthenticator _authenticator;
         private readonly IProjectApiService _projectApiService;
         private readonly ICertificateEventProcessorService _certificateEventProcessorService;
@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IProjectRepository projectRepository,
             ITagFunctionRepository tagFunctionRepository,
             ICurrentUserSetter currentUserSetter,
-            IClaimsProvider claimsProvider,
+            IClaimsPrincipalProvider claimsPrincipalProvider,
             IAuthenticator authenticator,
             IOptionsSnapshot<AuthenticatorOptions> options,
             IProjectApiService projectApiService,
@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _projectRepository = projectRepository;
             _tagFunctionRepository = tagFunctionRepository;
             _currentUserSetter = currentUserSetter;
-            _claimsProvider = claimsProvider;
+            _claimsPrincipalProvider = claimsPrincipalProvider;
             _authenticator = authenticator;
             _projectApiService = projectApiService;
             _certificateEventProcessorService = certificateEventProcessorService;
@@ -70,7 +70,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         {
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
-            var currentUser = _claimsProvider.GetCurrentUser();
+            var currentUser = _claimsPrincipalProvider.GetCurrentClaimsPrincipal();
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _preservationApiOid.ToString()));
             currentUser.AddIdentity(claimsIdentity);

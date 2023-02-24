@@ -2,8 +2,8 @@
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Misc
 {
-    public interface IClaimsProvider
+    public interface IClaimsPrincipalProvider
     {
-        ClaimsPrincipal GetCurrentUser();
+        ClaimsPrincipal GetCurrentClaimsPrincipal();
     }
 }

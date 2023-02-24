@@ -6,9 +6,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
     public class ProjectAccessChecker : IProjectAccessChecker
     {
-        private readonly IClaimsProvider _claimsProvider;
+        private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
 
-        public ProjectAccessChecker(IClaimsProvider claimsProvider) => _claimsProvider = claimsProvider;
+        public ProjectAccessChecker(IClaimsPrincipalProvider claimsPrincipalProvider) => _claimsPrincipalProvider = claimsPrincipalProvider;
 
         public bool HasCurrentUserAccessToProject(string projectName)
         {
@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
             }
             
             var userDataClaimWithProject = ClaimsTransformation.GetProjectClaimValue(projectName);
-            return _claimsProvider.GetCurrentUser().Claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithProject);
+            return _claimsPrincipalProvider.GetCurrentClaimsPrincipal().Claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithProject);
         }
     }
 }

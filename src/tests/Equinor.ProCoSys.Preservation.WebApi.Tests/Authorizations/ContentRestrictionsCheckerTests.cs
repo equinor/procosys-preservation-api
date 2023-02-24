@@ -24,10 +24,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             var principal = new ClaimsPrincipal();
             _claimsIdentity = new ClaimsIdentity();
             principal.AddIdentity(_claimsIdentity);
-            var claimsProviderMock = new Mock<IClaimsProvider>();
-            claimsProviderMock.Setup(u => u.GetCurrentUser()).Returns(principal);
+            var claimsPrincipalProviderMock = new Mock<IClaimsPrincipalProvider>();
+            claimsPrincipalProviderMock.Setup(u => u.GetCurrentClaimsPrincipal()).Returns(principal);
             
-            _dut = new ContentRestrictionsChecker(claimsProviderMock.Object);
+            _dut = new ContentRestrictionsChecker(claimsPrincipalProviderMock.Object);
         }
 
         [TestMethod]

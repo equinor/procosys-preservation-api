@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public TokenProfile Profile { get; set; }
         public PCSPerson ProCoSysPerson { get; set; }
         public List<ProCoSysPlant> ProCoSysPlants { get; set; }
-        public List<PCSProject> ProCoSysProjects { get; set; }
+        public List<ProCoSysProject> ProCoSysProjects { get; set; }
         public List<string> ProCoSysPermissions { get; set; }
         public List<string> ProCoSysRestrictions { get; set; }
         public HttpClient HttpClient { get; set; }

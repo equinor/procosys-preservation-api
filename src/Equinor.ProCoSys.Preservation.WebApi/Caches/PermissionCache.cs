@@ -62,7 +62,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
             _cacheManager.Remove(ContentRestrictionsCacheKey(plantId, userOid));
         }
 
-        private async Task<IList<PCSProject>> GetAllProjectsForUserAsync(string plantId, Guid userOid)
+        private async Task<IList<ProCoSysProject>> GetAllProjectsForUserAsync(string plantId, Guid userOid)
             => await _cacheManager.GetOrCreate(
                 ProjectsCacheKey(plantId, userOid),
                 async () => await GetAllOpenProjectsAsync(plantId),
@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
             return $"CONTENTRESTRICTIONS_{userOid.ToString().ToUpper()}_{plantId}";
         }
 
-        private async Task<IList<PCSProject>> GetAllOpenProjectsAsync(string plantId)
+        private async Task<IList<ProCoSysProject>> GetAllOpenProjectsAsync(string plantId)
         {
             // trace users use of plant each time getting projects
             // this will serve the purpose since we want to log once a day pr user pr plant, and preservation client ALWAYS get projects at startup

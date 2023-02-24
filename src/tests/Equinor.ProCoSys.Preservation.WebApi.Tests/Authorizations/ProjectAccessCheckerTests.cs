@@ -19,10 +19,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, ClaimsTransformation.GetProjectClaimValue(ProjectName)));
             principal.AddIdentity(claimsIdentity);
-            var claimsProviderMock = new Mock<IClaimsProvider>();
-            claimsProviderMock.Setup(c => c.GetCurrentUser()).Returns(principal);
+            var claimsPrincipalProviderMock = new Mock<IClaimsPrincipalProvider>();
+            claimsPrincipalProviderMock.Setup(c => c.GetCurrentClaimsPrincipal()).Returns(principal);
             
-            _dut = new ProjectAccessChecker(claimsProviderMock.Object);
+            _dut = new ProjectAccessChecker(claimsPrincipalProviderMock.Object);
         }
 
         [TestMethod]

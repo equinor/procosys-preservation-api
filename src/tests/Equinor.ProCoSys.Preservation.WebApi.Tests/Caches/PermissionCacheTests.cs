@@ -38,11 +38,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             _meApiServiceMock = new Mock<IMeApiService>();
             _permissionApiServiceMock = new Mock<IPermissionApiService>();
             _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(TestPlant))
-                .Returns(Task.FromResult<IList<PCSProject>>(new List<PCSProject>
+                .Returns(Task.FromResult<IList<ProCoSysProject>>(new List<ProCoSysProject>
                 {
-                    new PCSProject {Name = Project1WithAccess, HasAccess = true},
-                    new PCSProject {Name = Project2WithAccess, HasAccess = true},
-                    new PCSProject {Name = ProjectWithoutAccess}
+                    new ProCoSysProject {Name = Project1WithAccess, HasAccess = true},
+                    new ProCoSysProject {Name = Project2WithAccess, HasAccess = true},
+                    new ProCoSysProject {Name = ProjectWithoutAccess}
                 }));
             _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(TestPlant))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Permission1, Permission2}));

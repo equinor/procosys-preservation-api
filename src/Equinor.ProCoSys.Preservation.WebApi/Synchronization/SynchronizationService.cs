@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly Guid _preservationApiOid;
         private readonly ILogger<SynchronizationService> _logger;
         private readonly IMediator _mediator;
-        private readonly IClaimsProvider _claimsProvider;
+        private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
         private readonly IPlantSetter _plantSetter;
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IClaimsTransformation _claimsTransformation;
@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         public SynchronizationService(
             ILogger<SynchronizationService> logger,
             IMediator mediator,
-            IClaimsProvider claimsProvider,
+            IClaimsPrincipalProvider claimsPrincipalProvider,
             IPlantSetter plantSetter,
             ICurrentUserSetter currentUserSetter,
             IClaimsTransformation claimsTransformation,
@@ -46,7 +46,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         {
             _logger = logger;
             _mediator = mediator;
-            _claimsProvider = claimsProvider;
+            _claimsPrincipalProvider = claimsPrincipalProvider;
             _currentUserSetter = currentUserSetter;
             _claimsTransformation = claimsTransformation;
             _plantSetter = plantSetter;
@@ -70,7 +70,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
-            var currentUser = _claimsProvider.GetCurrentUser();
+            var currentUser = _claimsPrincipalProvider.GetCurrentClaimsPrincipal();
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _preservationApiOid.ToString()));
             currentUser.AddIdentity(claimsIdentity);

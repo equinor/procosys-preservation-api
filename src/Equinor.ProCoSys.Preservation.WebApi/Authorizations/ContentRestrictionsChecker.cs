@@ -7,13 +7,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
     public class ContentRestrictionsChecker : IContentRestrictionsChecker
     {
-        private readonly IClaimsProvider _claimsProvider;
+        private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
 
-        public ContentRestrictionsChecker(IClaimsProvider claimsProvider) => _claimsProvider = claimsProvider;
+        public ContentRestrictionsChecker(IClaimsPrincipalProvider claimsPrincipalProvider) => _claimsPrincipalProvider = claimsPrincipalProvider;
 
         public bool HasCurrentUserExplicitNoRestrictions()
         {
-            var claimWithContentRestriction = GetContentRestrictionClaims(_claimsProvider.GetCurrentUser().Claims);
+            var claimWithContentRestriction = GetContentRestrictionClaims(_claimsPrincipalProvider.GetCurrentClaimsPrincipal().Claims);
 
             // the rule for saying that a user do not have any restriction, is that user has one and only one restriction with value %
             return claimWithContentRestriction.Count == 1 && HasContentRestrictionClaim(claimWithContentRestriction, ClaimsTransformation.NoRestrictions);
@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
                 return false;
             }
             
-            var claimWithContentRestriction = GetContentRestrictionClaims(_claimsProvider.GetCurrentUser().Claims);
+            var claimWithContentRestriction = GetContentRestrictionClaims(_claimsPrincipalProvider.GetCurrentClaimsPrincipal().Claims);
             return HasContentRestrictionClaim(claimWithContentRestriction, responsibleCode);
         }
 

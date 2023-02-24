@@ -129,8 +129,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var options = new Mock<IOptionsSnapshot<AuthenticatorOptions>>();
             options.Setup(s => s.Value).Returns(new AuthenticatorOptions{PreservationApiObjectId = Guid.NewGuid()});
             _currentUserSetter = new Mock<ICurrentUserSetter>();
-            var claimsProvider = new Mock<IClaimsProvider>();
-            claimsProvider.Setup(c => c.GetCurrentUser()).Returns(new ClaimsPrincipal());
+            var claimsPrincipalProvider = new Mock<IClaimsPrincipalProvider>();
+            claimsPrincipalProvider.Setup(c => c.GetCurrentClaimsPrincipal()).Returns(new ClaimsPrincipal());
             var projectApiService = new Mock<IProjectApiService>();
             projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation)).Returns(Task.FromResult(new ProCoSysProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
 
@@ -141,7 +141,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           _projectRepository.Object,
                                           _tagFunctionRepository.Object,
                                           _currentUserSetter.Object,
-                                          claimsProvider.Object,
+                                          claimsPrincipalProvider.Object,
                                           new Mock<IAuthenticator>().Object,
                                           options.Object,
                                           projectApiService.Object,

@@ -1,6 +1,6 @@
 ﻿namespace Equinor.ProCoSys.Preservation.MainApi.Permission
 {
-    public class PCSProject
+    public class ProCoSysProject
     {
         public int Id { get; set; }
         public string Name { get; set; }
