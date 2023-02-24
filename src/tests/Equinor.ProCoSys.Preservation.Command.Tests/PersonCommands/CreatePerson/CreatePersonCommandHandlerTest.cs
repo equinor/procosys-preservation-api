@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
                 });
             _personCacheMock = new Mock<IPersonCache>();
             _personCacheMock.Setup(p => p.GetAsync(_oid))
-                .Returns(Task.FromResult(new PCSPerson
+                .Returns(Task.FromResult(new ProCoSysPerson
                 {
                     AzureOid = _oid.ToString("D"),
                     FirstName = FirstName,
@@ -77,7 +77,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
         {
             // Arrange
             _personCacheMock.Setup(p => p.GetAsync(_oid))
-                .Returns(Task.FromResult<PCSPerson>(null));
+                .Returns(Task.FromResult<ProCoSysPerson>(null));
 
             // Act
             await Assert.ThrowsExceptionAsync<Exception>(() => _dut.Handle(_command, default));

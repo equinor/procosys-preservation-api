@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Person
             _apiVersion = options.Value.ApiVersion;
         }
 
-        public async Task<PCSPerson> TryGetPersonByOidAsync(Guid azureOid)
+        public async Task<ProCoSysPerson> TryGetPersonByOidAsync(Guid azureOid)
         {
             var url = $"{_baseAddress}Person" +
                       $"?azureOid={azureOid:D}" +
@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Person
             _authenticator.AuthenticationType = AuthenticationType.AsApplication;
             try
             {
-                return await _mainApiClient.TryQueryAndDeserializeAsync<PCSPerson>(url);
+                return await _mainApiClient.TryQueryAndDeserializeAsync<ProCoSysPerson>(url);
             }
             finally
             {

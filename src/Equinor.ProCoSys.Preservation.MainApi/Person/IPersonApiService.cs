@@ -5,6 +5,6 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Person
 {
     public interface IPersonApiService
     {
-        Task<PCSPerson> TryGetPersonByOidAsync(Guid azureOid);
+        Task<ProCoSysPerson> TryGetPersonByOidAsync(Guid azureOid);
     }
 }

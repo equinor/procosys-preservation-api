@@ -9,7 +9,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     public class TestUser : ITestUser
     {
         public TokenProfile Profile { get; set; }
-        public PCSPerson ProCoSysPerson { get; set; }
+        public ProCoSysPerson ProCoSysPerson { get; set; }
         public List<ProCoSysPlant> ProCoSysPlants { get; set; }
         public List<ProCoSysProject> ProCoSysProjects { get; set; }
         public List<string> ProCoSysPermissions { get; set; }

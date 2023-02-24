@@ -7,6 +7,6 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Person
     public interface IPersonCache
     {
         Task<bool> ExistsAsync(Guid userOid);
-        Task<PCSPerson> GetAsync(Guid userOid);
+        Task<ProCoSysPerson> GetAsync(Guid userOid);
     }
 }

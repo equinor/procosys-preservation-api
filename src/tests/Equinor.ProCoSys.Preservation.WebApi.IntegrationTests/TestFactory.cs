@@ -335,7 +335,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 if (testUser.ProCoSysPerson != null)
                 {
                     _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
-                    .Returns(Task.FromResult(new PCSPerson
+                    .Returns(Task.FromResult(new ProCoSysPerson
                     {
                         AzureOid = testUser.Profile.Oid,
                         FirstName = testUser.ProCoSysPerson.FirstName,
@@ -345,7 +345,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 else
                 {
                     _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
-                        .Returns(Task.FromResult((PCSPerson)null));
+                        .Returns(Task.FromResult((ProCoSysPerson)null));
                 }
                 _plantApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
                     .Returns(Task.FromResult(testUser.ProCoSysPlants));
@@ -389,7 +389,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             LastName = "Preserver",
                             Oid = _preserverOid
                         },
-                    ProCoSysPerson = new PCSPerson
+                    ProCoSysPerson = new ProCoSysPerson
                     {
                         FirstName = "Peder",
                         LastName = "Preserver"
@@ -423,7 +423,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             LastName = "Planner",
                             Oid = _plannerOid
                         },
-                    ProCoSysPerson = new PCSPerson
+                    ProCoSysPerson = new ProCoSysPerson
                     {
                         FirstName = "Pernilla",
                         LastName = "Planner",
@@ -458,7 +458,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             LastName = "Admin",
                             Oid = _libraryAdminOid
                         },
-                    ProCoSysPerson = new PCSPerson
+                    ProCoSysPerson = new ProCoSysPerson
                     {
                         FirstName = "Arne",
                         LastName = "Admin",
@@ -494,7 +494,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             IsAppToken = true,
                             AppRoles = new[] {AppRoles.CROSSPLANT}
                         },
-                    ProCoSysPerson = new PCSPerson
+                    ProCoSysPerson = new ProCoSysPerson
                     {
                         FirstName = "XPlant",
                         LastName = "App",

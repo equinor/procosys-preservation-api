@@ -28,8 +28,8 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Person
             var mainApiClient = new Mock<IBearerTokenApiClient>();
             _authenticator = new Mock<IAuthenticator>();
             mainApiClient
-                .Setup(x => x.TryQueryAndDeserializeAsync<PCSPerson>(It.IsAny<string>()))
-                .Returns(Task.FromResult(new PCSPerson
+                .Setup(x => x.TryQueryAndDeserializeAsync<ProCoSysPerson>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new ProCoSysPerson
                 {
                     AzureOid = _azureOid.ToString("D"),
                     FirstName = _firstname,

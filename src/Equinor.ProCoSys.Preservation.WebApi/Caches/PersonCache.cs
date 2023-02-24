@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
             _options = options;
         }
 
-        public async Task<PCSPerson> GetAsync(Guid userOid)
+        public async Task<ProCoSysPerson> GetAsync(Guid userOid)
             => await _cacheManager.GetOrCreate(
                 PersonsCacheKey(userOid),
                 async () =>
