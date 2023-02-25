@@ -9,29 +9,30 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Auth.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 using PreservationAction = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
 {
     public class GetTagsCrossPlantQueryHandler : IRequestHandler<GetTagsCrossPlantQuery, Result<List<TagDto>>>
     {
         private readonly IReadOnlyContext _context;
-        private readonly IPlantCache _plantCache;
+        private readonly IPermissionCache _permissionCache;
         private readonly IPlantSetter _plantSetter;
         private readonly DateTime _utcNow;
 
         public GetTagsCrossPlantQueryHandler(
             IReadOnlyContext context,
-            IPlantCache plantCache,
+            IPermissionCache permissionCache,
             IPlantSetter plantSetter)
         {
             _context = context;
-            _plantCache = plantCache;
+            _permissionCache = permissionCache;
             _plantSetter = plantSetter;
             _utcNow = TimeService.UtcNow;
         }
@@ -92,7 +93,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
             var tagDtos = new List<TagDto>();
             foreach (var project in projects)
             {
-                var plantTitle = await _plantCache.GetPlantTitleAsync(project.Plant);
+                var plantTitle = await _permissionCache.GetPlantTitleAsync(project.Plant);
                 foreach (var tag in project.Tags.Where(t => !t.IsVoided))
                 {
                     var requirementDtos = tag.OrderedRequirements().Select(

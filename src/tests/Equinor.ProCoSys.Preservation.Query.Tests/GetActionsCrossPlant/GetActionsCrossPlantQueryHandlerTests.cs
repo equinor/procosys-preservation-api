@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -10,9 +9,8 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Auth.Time;
 using Equinor.ProCoSys.Preservation.Infrastructure;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +18,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
+using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Permission;
 
 namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
 {
@@ -33,8 +34,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
         protected ManualTimeProvider _timeProvider;
         protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
 
-        private readonly PlantProvider _plantProvider = new PlantProvider(null);
-        private readonly Mock<IPlantCache> _plantCacheMock = new Mock<IPlantCache>();
+        private readonly PlantProviderForTest _plantProvider = new PlantProviderForTest(null);
+        private readonly Mock<IPermissionCache> _permissionCacheMock = new Mock<IPermissionCache>();
 
         private readonly ProCoSysPlant _plantA = new ProCoSysPlant {Id = "PCS$A", Title = "A"};
         private readonly ProCoSysPlant _plantB = new ProCoSysPlant {Id = "PCS$B", Title = "B"};
@@ -49,8 +50,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
         [TestInitialize]
         public void Setup()
         {
-            _plantCacheMock.Setup(p => p.GetPlantTitleAsync(_plantA.Id)).Returns(Task.FromResult(_plantA.Title));
-            _plantCacheMock.Setup(p => p.GetPlantTitleAsync(_plantB.Id)).Returns(Task.FromResult(_plantB.Title));
+            _permissionCacheMock.Setup(p => p.GetPlantTitleAsync(_plantA.Id)).Returns(Task.FromResult(_plantA.Title));
+            _permissionCacheMock.Setup(p => p.GetPlantTitleAsync(_plantB.Id)).Returns(Task.FromResult(_plantB.Title));
             
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
             currentUserProviderMock.Setup(x => x.GetCurrentUserOid()).Returns(_currentUserOid);
@@ -149,7 +150,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var query = new GetActionsCrossPlantQuery(1);
-                var dut = new GetActionsCrossPlantQueryHandler(context, _plantCacheMock.Object, _plantProvider);
+                var dut = new GetActionsCrossPlantQueryHandler(context, _permissionCacheMock.Object, _plantProvider);
 
                 var result = await dut.Handle(query, default);
 
@@ -166,7 +167,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var query = new GetActionsCrossPlantQuery();
-                var dut = new GetActionsCrossPlantQueryHandler(context, _plantCacheMock.Object, _plantProvider);
+                var dut = new GetActionsCrossPlantQueryHandler(context, _permissionCacheMock.Object, _plantProvider);
 
                 var result = await dut.Handle(query, default);
 
@@ -187,7 +188,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var query = new GetActionsCrossPlantQuery();
-                var dut = new GetActionsCrossPlantQueryHandler(context, _plantCacheMock.Object, _plantProvider);
+                var dut = new GetActionsCrossPlantQueryHandler(context, _permissionCacheMock.Object, _plantProvider);
 
                 var result = await dut.Handle(query, default);
 

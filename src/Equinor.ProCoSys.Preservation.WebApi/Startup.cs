@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Equinor.ProCoSys.Auth;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Query;
@@ -149,6 +150,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             {
                 options.EnableForHttps = true;
             });
+
+            services.AddPcsAuthIntegration();
 
             services.AddApplicationInsightsTelemetry(options =>
             {

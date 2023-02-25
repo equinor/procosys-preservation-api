@@ -1,15 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
+using Equinor.ProCoSys.Auth.Authentication;
+using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
 {
-    public class AuthenticatorOptions
+    public class AuthenticatorOptions : IAuthenticatorOptions
     {
-        public string Instance { get; set; }
+        protected readonly IOptionsMonitor<PreservationAuthenticatorOptions> _options;
 
-        public string PreservationApiClientId { get; set; }
-        public Guid PreservationApiObjectId { get; set; }
-        public string PreservationApiSecret { get; set; }
+        private readonly IDictionary<string, string> _scopes = new Dictionary<string, string>();
+        
+        public AuthenticatorOptions(IOptionsMonitor<PreservationAuthenticatorOptions> options)
+        {
+            _options = options;
+            _scopes.Add("MainApiScope", _options.CurrentValue.MainApiScope);
+        }
 
-        public string MainApiScope { get; set; }
+        public string Instance => _options.CurrentValue.Instance;
+
+        public string ClientId => _options.CurrentValue.PreservationApiClientId;
+
+        public string Secret => _options.CurrentValue.PreservationApiSecret;
+
+        public Guid ObjectId => _options.CurrentValue.PreservationApiObjectId;
+
+        public IDictionary<string, string> Scopes => _scopes;
     }
 }

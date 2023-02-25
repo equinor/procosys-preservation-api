@@ -2,9 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Misc;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
@@ -14,16 +15,16 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
     public class GetActionsCrossPlantQueryHandler : IRequestHandler<GetActionsCrossPlantQuery, Result<List<ActionDto>>>
     {
         private readonly IReadOnlyContext _context;
-        private readonly IPlantCache _plantCache;
+        private readonly IPermissionCache _permissionCache;
         private readonly IPlantSetter _plantSetter;
 
         public GetActionsCrossPlantQueryHandler(
             IReadOnlyContext context,
-            IPlantCache plantCache,
+            IPermissionCache permissionCache,
             IPlantSetter plantSetter)
         {
             _context = context;
-            _plantCache = plantCache;
+            _permissionCache = permissionCache;
             _plantSetter = plantSetter;
         }
 
@@ -41,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
             var actions = new List<ActionDto>();
             foreach (var project in projects)
             {
-                var plantTitle = await _plantCache.GetPlantTitleAsync(project.Plant);
+                var plantTitle = await _permissionCache.GetPlantTitleAsync(project.Plant);
                 foreach (var tag in project.Tags.Where(t => !t.IsVoided && t.Actions.Count > 0))
                 {
                     foreach (var action in tag.Actions)

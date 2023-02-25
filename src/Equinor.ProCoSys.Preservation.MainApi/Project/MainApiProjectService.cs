@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Auth.Client;
 using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.MainApi.Project
@@ -10,9 +10,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Project
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IBearerTokenApiClient _mainApiClient;
+        private readonly IMainApiClient _mainApiClient;
 
-        public MainApiProjectService(IBearerTokenApiClient mainApiClient,
+        public MainApiProjectService(IMainApiClient mainApiClient,
             IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;

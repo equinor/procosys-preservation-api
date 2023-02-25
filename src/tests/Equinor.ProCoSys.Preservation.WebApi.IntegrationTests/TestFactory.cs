@@ -4,19 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Auth.Permission;
+using Equinor.ProCoSys.Auth.Person;
 using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
 using Equinor.ProCoSys.Preservation.MainApi.Me;
-using Equinor.ProCoSys.Preservation.MainApi.Permission;
-using Equinor.ProCoSys.Preservation.MainApi.Person;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
-using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -26,7 +25,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using ProCoSysProject = Equinor.ProCoSys.Preservation.MainApi.Permission.ProCoSysProject;
+using ProCoSysProject = Equinor.ProCoSys.Auth.Permission.ProCoSysProject;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
@@ -45,7 +44,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         private readonly Mock<IMeApiService> _meApiServiceMock = new Mock<IMeApiService>();
         private readonly Mock<IPersonApiService> _personApiServiceMock = new Mock<IPersonApiService>();
-        private readonly Mock<IPlantApiService> _plantApiServiceMock = new Mock<IPlantApiService>();
         private readonly Mock<IProjectApiService> _projectApiServiceMock = new Mock<IProjectApiService>();
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock = new Mock<IPermissionApiService>();
         public readonly Mock<IResponsibleApiService> ResponsibleApiServiceMock = new Mock<IResponsibleApiService>();
@@ -153,7 +151,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
                 services.AddScoped(_ => _meApiServiceMock.Object);
                 services.AddScoped(_ => _personApiServiceMock.Object);
-                services.AddScoped(_ => _plantApiServiceMock.Object);
                 services.AddScoped(_ => _projectApiServiceMock.Object);
                 services.AddScoped(_ => TagApiServiceMock.Object);
                 services.AddScoped(_ => TagFunctionApiServiceMock.Object);
@@ -334,7 +331,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                     _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
                         .Returns(Task.FromResult((ProCoSysPerson)null));
                 }
-                _plantApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
+                _permissionApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
                     .Returns(Task.FromResult(testUser.ProCoSysPlants));
             }
         }

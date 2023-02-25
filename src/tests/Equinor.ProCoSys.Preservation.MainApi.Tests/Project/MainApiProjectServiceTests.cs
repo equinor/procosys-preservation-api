@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Auth.Client;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
     {
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
-        private Mock<IBearerTokenApiClient> _mainApiClient;
+        private Mock<IMainApiClient> _mainApiClient;
         private ProCoSysProject _result;
         private string _name = "NameA";
         private string _description = "Description1";
@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
             _mainApiOptions
                 .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
-            _mainApiClient = new Mock<IBearerTokenApiClient>();
+            _mainApiClient = new Mock<IMainApiClient>();
 
             _result = new ProCoSysProject {Id = 1, Name = _name, Description = _description};
             _dut = new MainApiProjectService(_mainApiClient.Object, _mainApiOptions.Object);
@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProCoSysProject>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProCoSysProject>(It.IsAny<string>(), null))
                 .Returns(Task.FromResult(_result));
 
             // Act

@@ -3,18 +3,17 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Auth.Time;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
-using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Auth.Authentication;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Authorization;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
@@ -27,8 +26,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IPlantSetter _plantSetter;
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IClaimsTransformation _claimsTransformation;
-        private readonly IAuthenticator _authenticator;
-        private readonly IPlantCache _plantCache;
+        private readonly IMainApiTokenProvider _mainApiTokenProvider;
+        private readonly IPermissionCache _permissionCache;
         private ISettingRepository _settingRepository;
         private string _machine;
 
@@ -39,9 +38,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IPlantSetter plantSetter,
             ICurrentUserSetter currentUserSetter,
             IClaimsTransformation claimsTransformation,
-            IAuthenticator authenticator,
-            IPlantCache plantCache,
-            IOptionsSnapshot<AuthenticatorOptions> authenticatorOptions,
+            IMainApiTokenProvider mainApiTokenProvider,
+            IPermissionCache permissionCache,
+            IOptionsSnapshot<PreservationAuthenticatorOptions> authenticatorOptions,
             ISettingRepository settingRepository)
         {
             _logger = logger;
@@ -50,8 +49,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _currentUserSetter = currentUserSetter;
             _claimsTransformation = claimsTransformation;
             _plantSetter = plantSetter;
-            _authenticator = authenticator;
-            _plantCache = plantCache;
+            _mainApiTokenProvider = mainApiTokenProvider;
+            _permissionCache = permissionCache;
             _preservationApiOid = authenticatorOptions.Value.PreservationApiObjectId;
             _settingRepository = settingRepository;
             _machine = Environment.MachineName;
@@ -66,7 +65,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 return;
             }
 
-            _authenticator.AuthenticationType = AuthenticationType.AsApplication;
+            _mainApiTokenProvider.AuthenticationType = AuthenticationType.AsApplication;
 
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
@@ -76,7 +75,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             currentUser.AddIdentity(claimsIdentity);
 
             var saveChanges = _settingRepository.GetByCodeAsync("SaveChanges").Result;
-            foreach (var plant in await _plantCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
+            foreach (var plant in await _permissionCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
             {
                 _logger.LogInformation($"SynchronizationService: Synchronizing plant {plant}...");
 

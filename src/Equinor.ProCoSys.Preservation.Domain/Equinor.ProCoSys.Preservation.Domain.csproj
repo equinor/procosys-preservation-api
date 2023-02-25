@@ -8,4 +8,12 @@
     <PackageReference Include="MediatR" Version="10.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\procosys-invitation-for-punch-out-api\src\Equinor.ProCoSys.Auth\Equinor.ProCoSys.Auth.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Time\" />
+  </ItemGroup>
+
 </Project>

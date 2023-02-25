@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Auth.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
         public async Task InvokeAsync(
             HttpContext context,
             IHttpContextAccessor httpContextAccessor,
-            IBearerTokenSetter bearerTokenSetter,
+            IBearerTokenSetterForAll bearerTokenSetterForAll,
             ILogger<CurrentBearerTokenMiddleware> logger)
         {
             logger.LogInformation($"----- {GetType().Name} start");
@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             if (tokens != null && tokens.Length > 1)
             {
                 var token = tokens[1];
-                bearerTokenSetter.SetBearerToken(token);
+                bearerTokenSetterForAll.SetBearerToken(token);
             }
 
             logger.LogInformation($"----- {GetType().Name} complete");

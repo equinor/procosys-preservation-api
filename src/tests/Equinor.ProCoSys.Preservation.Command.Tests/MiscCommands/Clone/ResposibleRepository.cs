@@ -9,7 +9,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
     internal class ResponsibleRepository : TestRepository<Responsible>, IResponsibleRepository
     {
 
-        public ResponsibleRepository(PlantProvider plantProvider, List<Responsible> sourceResponsibles)
+        public ResponsibleRepository(PlantProviderForTest plantProvider, List<Responsible> sourceResponsibles)
             :base(plantProvider, sourceResponsibles)
         {
         }

@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using Equinor.ProCoSys.Preservation.MainApi.Permission;
-using Equinor.ProCoSys.Preservation.MainApi.Person;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Auth.Permission;
+using Equinor.ProCoSys.Auth.Person;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {

@@ -11,15 +11,15 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Auth.Authentication;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 {
@@ -126,8 +126,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _tagFunction = new TagFunction(Plant, TagFunctionCode, TagFunctionDescription, RegisterCode);
             _tagFunctionRepository.Setup(t => t.GetByCodesAsync(TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(_tagFunction));
-            var options = new Mock<IOptionsSnapshot<AuthenticatorOptions>>();
-            options.Setup(s => s.Value).Returns(new AuthenticatorOptions{PreservationApiObjectId = Guid.NewGuid()});
+            var options = new Mock<IOptionsSnapshot<PreservationAuthenticatorOptions>>();
+            options.Setup(s => s.Value).Returns(new PreservationAuthenticatorOptions{PreservationApiObjectId = Guid.NewGuid()});
             _currentUserSetter = new Mock<ICurrentUserSetter>();
             var claimsPrincipalProvider = new Mock<IClaimsPrincipalProvider>();
             claimsPrincipalProvider.Setup(c => c.GetCurrentClaimsPrincipal()).Returns(new ClaimsPrincipal());
@@ -142,7 +142,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           _tagFunctionRepository.Object,
                                           _currentUserSetter.Object,
                                           claimsPrincipalProvider.Object,
-                                          new Mock<IAuthenticator>().Object,
+                                          new Mock<IMainApiTokenProvider>().Object,
                                           options.Object,
                                           projectApiService.Object,
                                           _certificationEventProcessorService.Object);

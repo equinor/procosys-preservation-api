@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain.Time;
-using Equinor.ProCoSys.Preservation.Infrastructure.Caching;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Time;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Auth.Time;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate
 {

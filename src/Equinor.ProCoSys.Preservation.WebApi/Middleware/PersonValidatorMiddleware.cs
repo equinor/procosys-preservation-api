@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
-using Equinor.ProCoSys.Preservation.MainApi.Person;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

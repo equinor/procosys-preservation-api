@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
+using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Auth.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

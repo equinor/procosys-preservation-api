@@ -12,13 +12,13 @@ using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
-using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using Microsoft.Extensions.Options;
+using Equinor.ProCoSys.Auth.Authentication;
+using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Auth.Authorization;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
-        private readonly IAuthenticator _authenticator;
+        private readonly IMainApiTokenProvider _mainApiTokenProvider;
         private readonly IProjectApiService _projectApiService;
         private readonly ICertificateEventProcessorService _certificateEventProcessorService;
         private readonly Guid _preservationApiOid;
@@ -46,8 +46,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ITagFunctionRepository tagFunctionRepository,
             ICurrentUserSetter currentUserSetter,
             IClaimsPrincipalProvider claimsPrincipalProvider,
-            IAuthenticator authenticator,
-            IOptionsSnapshot<AuthenticatorOptions> options,
+            IMainApiTokenProvider mainApiTokenProvider,
+            IOptionsSnapshot<PreservationAuthenticatorOptions> options,
             IProjectApiService projectApiService,
             ICertificateEventProcessorService certificateEventProcessorService)
         {
@@ -59,7 +59,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _tagFunctionRepository = tagFunctionRepository;
             _currentUserSetter = currentUserSetter;
             _claimsPrincipalProvider = claimsPrincipalProvider;
-            _authenticator = authenticator;
+            _mainApiTokenProvider = mainApiTokenProvider;
             _projectApiService = projectApiService;
             _certificateEventProcessorService = certificateEventProcessorService;
 
@@ -199,7 +199,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var projectToMoveTagInto = await _projectRepository.GetProjectWithTagsByNameAsync(projectName);
             if (projectToMoveTagInto == null)
             {
-                _authenticator.AuthenticationType = AuthenticationType.AsApplication;
+                _mainApiTokenProvider.AuthenticationType = AuthenticationType.AsApplication;
                 _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
                 var pcsProject = await _projectApiService.TryGetProjectAsync(plant, projectName);
                 if (pcsProject == null)

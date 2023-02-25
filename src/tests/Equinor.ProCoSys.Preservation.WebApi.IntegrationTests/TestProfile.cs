@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using Newtonsoft.Json;
-using AuthPerson = Equinor.ProCoSys.Preservation.MainApi.Person.ProCoSysPerson;
+using AuthPerson = Equinor.ProCoSys.Auth.Person.ProCoSysPerson;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {

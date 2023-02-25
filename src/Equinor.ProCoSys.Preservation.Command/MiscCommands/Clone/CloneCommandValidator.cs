@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Auth.Caches;
 using FluentValidation;
 
 namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
@@ -9,7 +9,7 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
     {
         private static string[] BasisPlants = {"PCS$STATOIL_BASIS", "PCS$SUN_BASIS", "PCS$WIND_BASIS"};
 
-        public CloneCommandValidator(IPlantCache plantCache)
+        public CloneCommandValidator(IPermissionCache permissionCache)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
             ClassLevelCascadeMode = CascadeMode.Stop;
@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
                 .WithMessage(command => $"Target plant can not be a basis plant! Plant={command.TargetPlant}");
 
             async Task<bool> UserHaveAccessToPlantAsync(string plantId)
-                => await plantCache.HasCurrentUserAccessToPlantAsync(plantId);
+                => await permissionCache.HasCurrentUserAccessToPlantAsync(plantId);
             
             bool NotBeABasisPlant(string plantId) => !BasisPlants.Contains(plantId);
         }

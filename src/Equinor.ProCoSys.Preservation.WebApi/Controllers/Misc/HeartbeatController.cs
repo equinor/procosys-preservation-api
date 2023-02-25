@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Auth.Time;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

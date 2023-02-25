@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using MediatR;

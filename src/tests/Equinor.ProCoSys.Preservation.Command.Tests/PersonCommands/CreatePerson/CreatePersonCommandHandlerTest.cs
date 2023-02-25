@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Person;
 using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.ProCoSys.Preservation.MainApi.Person;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

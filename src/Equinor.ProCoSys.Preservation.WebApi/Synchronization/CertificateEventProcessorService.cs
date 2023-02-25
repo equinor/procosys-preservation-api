@@ -5,16 +5,15 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.PcsServiceBus.Topics;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
-using Equinor.ProCoSys.Preservation.Domain;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ServiceResult;
+using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Auth.Authentication;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
@@ -29,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IPlantSetter _plantSetter;
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IClaimsTransformation _claimsTransformation;
-        private readonly IAuthenticator _authenticator;
+        private readonly IMainApiTokenProvider _mainApiTokenProvider;
 
         private const string PreservationBusReceiverTelemetryEvent = "Preservation Bus Receiver";
 
@@ -41,8 +40,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IPlantSetter plantSetter,
             ICurrentUserSetter currentUserSetter,
             IClaimsTransformation claimsTransformation,
-            IAuthenticator authenticator,
-            IOptionsSnapshot<AuthenticatorOptions> authenticatorOptions
+            IMainApiTokenProvider mainApiTokenProvider,
+            IOptionsSnapshot<PreservationAuthenticatorOptions> authenticatorOptions
         )
         {
             _logger = logger;
@@ -52,7 +51,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _currentUserSetter = currentUserSetter;
             _claimsTransformation = claimsTransformation;
             _plantSetter = plantSetter;
-            _authenticator = authenticator;
+            _mainApiTokenProvider = mainApiTokenProvider;
             _preservationApiOid = authenticatorOptions.Value.PreservationApiObjectId;
         }
 
@@ -96,7 +95,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private async Task SetUserContextAsync(string plant)
         {
-            _authenticator.AuthenticationType = AuthenticationType.AsApplication;
+            _mainApiTokenProvider.AuthenticationType = AuthenticationType.AsApplication;
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
             var currentUser = _claimsPrincipalProvider.GetCurrentClaimsPrincipal();
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Misc;
 using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,12 +15,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
     public class VerifyPreservationApiClientExists : IHostedService
     {
         private readonly IServiceScopeFactory _serviceProvider;
-        private readonly IOptionsMonitor<AuthenticatorOptions> _options;
+        private readonly IOptionsMonitor<PreservationAuthenticatorOptions> _options;
         private readonly ILogger<VerifyPreservationApiClientExists> _logger;
 
         public VerifyPreservationApiClientExists(
             IServiceScopeFactory serviceProvider,
-            IOptionsMonitor<AuthenticatorOptions> options, 
+            IOptionsMonitor<PreservationAuthenticatorOptions> options, 
             ILogger<VerifyPreservationApiClientExists> logger)
         {
             _serviceProvider = serviceProvider;

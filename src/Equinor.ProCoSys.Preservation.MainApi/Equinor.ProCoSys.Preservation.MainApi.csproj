@@ -10,4 +10,9 @@
     <PackageReference Include="System.Text.Json" Version="6.0.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\procosys-invitation-for-punch-out-api\src\Equinor.ProCoSys.Auth\Equinor.ProCoSys.Auth.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Domain\Equinor.ProCoSys.Preservation.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Auth.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
     {
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
-        private Mock<IBearerTokenApiClient> _mainApiClient;
+        private Mock<IMainApiClient> _mainApiClient;
         private PCSDiscipline _procosysDiscipline;
         private MainApiDisciplineService _dut;
 
@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
             _mainApiOptions
                 .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
-            _mainApiClient = new Mock<IBearerTokenApiClient>();
+            _mainApiClient = new Mock<IMainApiClient>();
 
             _procosysDiscipline = new PCSDiscipline
             {
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSDiscipline>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSDiscipline>(It.IsAny<string>(), null))
                 .Returns(Task.FromResult(_procosysDiscipline));
 
             // Act
