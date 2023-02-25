@@ -10,6 +10,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
         public Guid PreservationApiObjectId { get; set; }
         public string PreservationApiSecret { get; set; }
 
+        public bool DisableProjectUserDataClaims { get; set; }
+        public bool DisableRestrictionRoleUserDataClaims { get; set; }
+
         public string MainApiScope { get; set; }
     }
 }
