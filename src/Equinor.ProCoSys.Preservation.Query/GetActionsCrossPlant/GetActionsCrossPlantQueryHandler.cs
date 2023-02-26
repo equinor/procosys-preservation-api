@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
             var actions = new List<ActionDto>();
             foreach (var project in projects)
             {
-                var plantTitle = await _permissionCache.GetPlantTitleAsync(project.Plant);
+                var plantTitle = await _permissionCache.GetPlantTitleForCurrentUserAsync(project.Plant);
                 foreach (var tag in project.Tags.Where(t => !t.IsVoided && t.Actions.Count > 0))
                 {
                     foreach (var action in tag.Actions)

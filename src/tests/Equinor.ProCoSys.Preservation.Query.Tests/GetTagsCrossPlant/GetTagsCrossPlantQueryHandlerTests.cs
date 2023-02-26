@@ -54,8 +54,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         [TestInitialize]
         public void Setup()
         {
-            _permissionCacheMock.Setup(p => p.GetPlantTitleAsync(_plantA.Id)).Returns(Task.FromResult(_plantA.Title));
-            _permissionCacheMock.Setup(p => p.GetPlantTitleAsync(_plantB.Id)).Returns(Task.FromResult(_plantB.Title));
+            _permissionCacheMock.Setup(p => p.GetPlantTitleForCurrentUserAsync(_plantA.Id)).Returns(Task.FromResult(_plantA.Title));
+            _permissionCacheMock.Setup(p => p.GetPlantTitleForCurrentUserAsync(_plantB.Id)).Returns(Task.FromResult(_plantB.Title));
             
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
             currentUserProviderMock.Setup(x => x.GetCurrentUserOid()).Returns(_currentUserOid);

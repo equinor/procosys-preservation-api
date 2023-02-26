@@ -93,7 +93,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
             var tagDtos = new List<TagDto>();
             foreach (var project in projects)
             {
-                var plantTitle = await _permissionCache.GetPlantTitleAsync(project.Plant);
+                var plantTitle = await _permissionCache.GetPlantTitleForCurrentUserAsync(project.Plant);
                 foreach (var tag in project.Tags.Where(t => !t.IsVoided))
                 {
                     var requirementDtos = tag.OrderedRequirements().Select(

@@ -14,20 +14,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
     {
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProjectAccessChecker _projectAccessChecker;
-        private readonly IContentRestrictionsChecker _contentRestrictionsChecker;
+        private readonly IRestrictionRolesChecker _restrictionRolesChecker;
         private readonly ITagHelper _tagHelper;
         private readonly ILogger<AccessValidator> _logger;
 
         public AccessValidator(
             ICurrentUserProvider currentUserProvider, 
             IProjectAccessChecker projectAccessChecker,
-            IContentRestrictionsChecker contentRestrictionsChecker,
+            IRestrictionRolesChecker restrictionRolesChecker,
             ITagHelper tagHelper, 
             ILogger<AccessValidator> logger)
         {
             _currentUserProvider = currentUserProvider;
             _projectAccessChecker = projectAccessChecker;
-            _contentRestrictionsChecker = contentRestrictionsChecker;
+            _restrictionRolesChecker = restrictionRolesChecker;
             _tagHelper = tagHelper;
             _logger = logger;
         }
@@ -90,13 +90,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 
         private async Task<bool> HasCurrentUserAccessToContentAsync(ITagCommandRequest tagCommandRequest)
         {
-            if (_contentRestrictionsChecker.HasCurrentUserExplicitNoRestrictions())
+            if (_restrictionRolesChecker.HasCurrentUserExplicitNoRestrictions())
             {
                 return true;
             }
 
             var responsibleCode = await _tagHelper.GetResponsibleCodeAsync(tagCommandRequest.TagId);
-            return _contentRestrictionsChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
+            return _restrictionRolesChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
         }
     }
 }

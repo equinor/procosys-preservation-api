@@ -8,19 +8,19 @@ using Moq;
 namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
 {
     [TestClass]
-    public class ContentRestrictionsCheckerTests
+    public class RestrictionRolesCheckerTests
     {
-        public readonly string ContentRestriction = "R1";
-        private ContentRestrictionsChecker _dut;
+        public readonly string RestrictionRole = "R1";
+        private RestrictionRolesChecker _dut;
         private ClaimsIdentity _claimsIdentity;
-        private Claim _normalContentRestrictionClaim;
+        private Claim _normalRestrictionRoleClaim;
         private Claim _explicitNoRestrictionsClaim;
 
         [TestInitialize]
         public void Setup()
         {
-            _normalContentRestrictionClaim = new Claim(ClaimTypes.UserData, ClaimsTransformation.GetContentRestrictionClaimValue(ContentRestriction));
-            _explicitNoRestrictionsClaim = new Claim(ClaimTypes.UserData, ClaimsTransformation.GetContentRestrictionClaimValue(ClaimsTransformation.NoRestrictions));
+            _normalRestrictionRoleClaim = new Claim(ClaimTypes.UserData, ClaimsTransformation.GetRestrictionRoleClaimValue(RestrictionRole));
+            _explicitNoRestrictionsClaim = new Claim(ClaimTypes.UserData, ClaimsTransformation.GetRestrictionRoleClaimValue(ClaimsTransformation.NoRestrictions));
 
             var principal = new ClaimsPrincipal();
             _claimsIdentity = new ClaimsIdentity();
@@ -28,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             var claimsPrincipalProviderMock = new Mock<IClaimsPrincipalProvider>();
             claimsPrincipalProviderMock.Setup(u => u.GetCurrentClaimsPrincipal()).Returns(principal);
             
-            _dut = new ContentRestrictionsChecker(claimsPrincipalProviderMock.Object);
+            _dut = new RestrictionRolesChecker(claimsPrincipalProviderMock.Object);
         }
 
         [TestMethod]
@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public void HasCurrentUserExplicitNoRestrictions_ShouldReturnFalse_WhenNormalRestrictionClaimOnlyExist()
         {
             // Arrange
-            _claimsIdentity.AddClaim(_normalContentRestrictionClaim);
+            _claimsIdentity.AddClaim(_normalRestrictionRoleClaim);
 
             // Act
             var result = _dut.HasCurrentUserExplicitNoRestrictions();
@@ -72,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange (invalid state)
             _claimsIdentity.AddClaim(_explicitNoRestrictionsClaim);
-            _claimsIdentity.AddClaim(_normalContentRestrictionClaim);
+            _claimsIdentity.AddClaim(_normalRestrictionRoleClaim);
 
             // Act
             var result = _dut.HasCurrentUserExplicitNoRestrictions();
@@ -84,10 +84,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public void HasCurrentUserExplicitAccessToContent_ShouldReturnTrue_WhenNormalRestrictionClaimExists()
         {
-            _claimsIdentity.AddClaim(_normalContentRestrictionClaim);
+            _claimsIdentity.AddClaim(_normalRestrictionRoleClaim);
 
             // Act
-            var result = _dut.HasCurrentUserExplicitAccessToContent(ContentRestriction);
+            var result = _dut.HasCurrentUserExplicitAccessToContent(RestrictionRole);
 
             // Assert
             Assert.IsTrue(result);
@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public void HasCurrentUserExplicitAccessToContent_ShouldReturnFalse_WhenNormalRestrictionClaimNotExists()
         {
-            _claimsIdentity.AddClaim(_normalContentRestrictionClaim);
+            _claimsIdentity.AddClaim(_normalRestrictionRoleClaim);
 
             // Act
             var result = _dut.HasCurrentUserExplicitAccessToContent("XYZ");
@@ -108,7 +108,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public void HasCurrentUserExplicitAccessToContent_ShouldReturnFalse_WhenRestrictionToCheckNotGiven()
         {
-            _claimsIdentity.AddClaim(_normalContentRestrictionClaim);
+            _claimsIdentity.AddClaim(_normalRestrictionRoleClaim);
 
             // Act
             var result1 = _dut.HasCurrentUserExplicitAccessToContent(null);

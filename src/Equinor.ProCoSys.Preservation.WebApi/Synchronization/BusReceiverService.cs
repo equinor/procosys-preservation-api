@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
-        private readonly IMainApiTokenProvider _mainApiTokenProvider;
+        private readonly IMainApiAuthenticator _mainApiAuthenticator;
         private readonly IProjectApiService _projectApiService;
         private readonly ICertificateEventProcessorService _certificateEventProcessorService;
         private readonly Guid _preservationApiOid;
@@ -46,7 +46,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ITagFunctionRepository tagFunctionRepository,
             ICurrentUserSetter currentUserSetter,
             IClaimsPrincipalProvider claimsPrincipalProvider,
-            IMainApiTokenProvider mainApiTokenProvider,
+            IMainApiAuthenticator mainApiAuthenticator,
             IOptionsSnapshot<PreservationAuthenticatorOptions> options,
             IProjectApiService projectApiService,
             ICertificateEventProcessorService certificateEventProcessorService)
@@ -59,7 +59,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _tagFunctionRepository = tagFunctionRepository;
             _currentUserSetter = currentUserSetter;
             _claimsPrincipalProvider = claimsPrincipalProvider;
-            _mainApiTokenProvider = mainApiTokenProvider;
+            _mainApiAuthenticator = mainApiAuthenticator;
             _projectApiService = projectApiService;
             _certificateEventProcessorService = certificateEventProcessorService;
 
@@ -199,7 +199,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var projectToMoveTagInto = await _projectRepository.GetProjectWithTagsByNameAsync(projectName);
             if (projectToMoveTagInto == null)
             {
-                _mainApiTokenProvider.AuthenticationType = AuthenticationType.AsApplication;
+                _mainApiAuthenticator.AuthenticationType = AuthenticationType.AsApplication;
                 _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
                 var pcsProject = await _projectApiService.TryGetProjectAsync(plant, projectName);
                 if (pcsProject == null)

@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             var plantId = plantProvider.Plant;
             if (context.User.Identity.IsAuthenticated && plantId != null)
             {
-                if (!await permissionCache.IsAValidPlantAsync(plantId))
+                if (!await permissionCache.IsAValidPlantForCurrentUserAsync(plantId))
                 {
                     var errors = new Dictionary<string, string[]>
                     {

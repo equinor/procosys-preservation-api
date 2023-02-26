@@ -257,7 +257,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsForCurrentUserAsync(plant))
                 .Returns(Task.FromResult(testUser.AccessableProjects));
 
-            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsForCurrentUserAsync(plant))
+            _permissionApiServiceMock.Setup(p => p.GetRestrictionRolesForCurrentUserAsync(plant))
                 .Returns(Task.FromResult(testUser.Restrictions));
         }
 

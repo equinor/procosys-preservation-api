@@ -142,7 +142,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           _tagFunctionRepository.Object,
                                           _currentUserSetter.Object,
                                           claimsPrincipalProvider.Object,
-                                          new Mock<IMainApiTokenProvider>().Object,
+                                          new Mock<IMainApiAuthenticator>().Object,
                                           options.Object,
                                           projectApiService.Object,
                                           _certificationEventProcessorService.Object);
