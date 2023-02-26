@@ -25,7 +25,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using ProCoSysProject = Equinor.ProCoSys.Auth.Permission.ProCoSysProject;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
@@ -252,42 +251,42 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         
         private void SetupPermissionMock(string plant, ITestUser testUser)
         {
-            _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(plant))
-                .Returns(Task.FromResult(testUser.ProCoSysPermissions));
+            _permissionApiServiceMock.Setup(p => p.GetPermissionsForCurrentUserAsync(plant))
+                .Returns(Task.FromResult(testUser.Permissions));
                         
-            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(plant))
-                .Returns(Task.FromResult(testUser.ProCoSysProjects));
+            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsForCurrentUserAsync(plant))
+                .Returns(Task.FromResult(testUser.AccessableProjects));
 
-            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(plant))
-                .Returns(Task.FromResult(testUser.ProCoSysRestrictions));
+            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsForCurrentUserAsync(plant))
+                .Returns(Task.FromResult(testUser.Restrictions));
         }
 
         private void SetupTestUsers()
         {
-            var commonProCoSysPlants = new List<ProCoSysPlant>
+            var accessablePlants = new List<AccessablePlant>
             {
-                new ProCoSysPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle, HasAccess = true},
-                new ProCoSysPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
+                new AccessablePlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle, HasAccess = true},
+                new AccessablePlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
             };
 
-            var commonProCoSysProjects = new List<ProCoSysProject>
+            var accessableProjects = new List<AccessableProject>
             {
-                new ProCoSysProject {Name = ProjectWithAccess, HasAccess = true},
-                new ProCoSysProject {Name = ProjectWithoutAccess}
+                new AccessableProject {Name = ProjectWithAccess, HasAccess = true},
+                new AccessableProject {Name = ProjectWithoutAccess}
             };
 
-            var commonProCoSysRestrictions = new List<string>
+            var restrictions = new List<string>
             {
                 ClaimsTransformation.NoRestrictions
             };
 
             SetupAnonymousUser();
 
-            SetupLibraryAdminUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
+            SetupLibraryAdminUser(accessablePlants, accessableProjects, restrictions);
 
-            SetupPlannerUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
+            SetupPlannerUser(accessablePlants, accessableProjects, restrictions);
 
-            SetupPreserverUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
+            SetupPreserverUser(accessablePlants, accessableProjects, restrictions);
     
             SetupHackerUser();
             
@@ -332,7 +331,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         .Returns(Task.FromResult((ProCoSysPerson)null));
                 }
                 _permissionApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
-                    .Returns(Task.FromResult(testUser.ProCoSysPlants));
+                    .Returns(Task.FromResult(testUser.AccessablePlants));
             }
         }
 
@@ -348,20 +347,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             LastName = "Hacker", 
                             Oid = _hackerOid
                         },
-                    ProCoSysPlants = new List<ProCoSysPlant>
+                    AccessablePlants = new List<AccessablePlant>
                     {
-                        new ProCoSysPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
-                        new ProCoSysPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
+                        new AccessablePlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
+                        new AccessablePlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
                     },
-                    ProCoSysPermissions = new List<string>(),
-                    ProCoSysProjects = new List<ProCoSysProject>(),
-                    ProCoSysRestrictions = new List<string>()
+                    Permissions = new List<string>(),
+                    AccessableProjects = new List<AccessableProject>(),
+                    Restrictions = new List<string>()
                 });
 
         // Authenticated client with necessary roles to perform preservation work
         private void SetupPreserverUser(
-            List<ProCoSysPlant> commonProCoSysPlants,
-            List<ProCoSysProject> commonProCoSysProjects,
+            List<AccessablePlant> commonAccessablePlants,
+            List<AccessableProject> accessableProjects,
             List<string> commonProCoSysRestrictions)
             => _testUsers.Add(UserType.Preserver,
                 new TestUser
@@ -373,8 +372,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             LastName = "Preserver",
                             Oid = _preserverOid
                         },
-                    ProCoSysPlants = commonProCoSysPlants,
-                    ProCoSysPermissions = new List<string>
+                    AccessablePlants = commonAccessablePlants,
+                    Permissions = new List<string>
                     {
                         Permissions.PRESERVATION_CREATE,
                         Permissions.PRESERVATION_DELETE,
@@ -383,14 +382,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         Permissions.PRESERVATION_ATTACHFILE,
                         Permissions.PRESERVATION_DETACHFILE
                     },
-                    ProCoSysProjects = commonProCoSysProjects,
-                    ProCoSysRestrictions = commonProCoSysRestrictions
+                    AccessableProjects = accessableProjects,
+                    Restrictions = commonProCoSysRestrictions
                 });
 
         // Authenticated user with necessary roles to Create and Update in Scope
         private void SetupPlannerUser(
-            List<ProCoSysPlant> commonProCoSysPlants,
-            List<ProCoSysProject> commonProCoSysProjects,
+            List<AccessablePlant> commonAccessablePlants,
+            List<AccessableProject> accessableProjects,
             List<string> commonProCoSysRestrictions)
             => _testUsers.Add(UserType.Planner,
                 new TestUser
@@ -402,8 +401,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             LastName = "Planner",
                             Oid = _plannerOid
                         },
-                    ProCoSysPlants = commonProCoSysPlants,
-                    ProCoSysPermissions = new List<string>
+                    AccessablePlants = commonAccessablePlants,
+                    Permissions = new List<string>
                     {
                         Permissions.PRESERVATION_PLAN_READ,
                         Permissions.PRESERVATION_PLAN_CREATE,
@@ -413,14 +412,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         Permissions.PRESERVATION_PLAN_ATTACHFILE,
                         Permissions.PRESERVATION_PLAN_DETACHFILE
                     },
-                    ProCoSysProjects = commonProCoSysProjects,
-                    ProCoSysRestrictions = commonProCoSysRestrictions
+                    AccessableProjects = accessableProjects,
+                    Restrictions = commonProCoSysRestrictions
                 });
 
         // Authenticated client with necessary roles to Create and Update in Library
         private void SetupLibraryAdminUser(
-            List<ProCoSysPlant> commonProCoSysPlants,
-            List<ProCoSysProject> commonProCoSysProjects,
+            List<AccessablePlant> accessablePlants,
+            List<AccessableProject> accessableProjects,
             List<string> commonProCoSysRestrictions)
             => _testUsers.Add(UserType.LibraryAdmin,
                 new TestUser
@@ -432,8 +431,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             LastName = "Admin",
                             Oid = _libraryAdminOid
                         },
-                    ProCoSysPlants = commonProCoSysPlants,
-                    ProCoSysPermissions = new List<string>
+                    AccessablePlants = accessablePlants,
+                    Permissions = new List<string>
                     {
                         Permissions.LIBRARY_PRESERVATION_CREATE,
                         Permissions.LIBRARY_PRESERVATION_DELETE,
@@ -441,8 +440,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         Permissions.LIBRARY_PRESERVATION_VOIDUNVOID,
                         Permissions.LIBRARY_PRESERVATION_WRITE
                     },
-                    ProCoSysProjects = commonProCoSysProjects,
-                    ProCoSysRestrictions = commonProCoSysRestrictions
+                    AccessableProjects = accessableProjects,
+                    Restrictions = commonProCoSysRestrictions
                 });
         
         // Authenticated Application client without any ProCoSys roles. Configured with app role to allow using cross plant endpoints
@@ -464,14 +463,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             IsAppToken = true,
                             AppRoles = new[] {AppRoles.CROSSPLANT}
                         },
-                    ProCoSysPlants = new List<ProCoSysPlant>
+                    AccessablePlants = new List<AccessablePlant>
                     {
-                        new ProCoSysPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
-                        new ProCoSysPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
+                        new AccessablePlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
+                        new AccessablePlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
                     },
-                    ProCoSysPermissions = new List<string>(),
-                    ProCoSysProjects = new List<ProCoSysProject>(),
-                    ProCoSysRestrictions = new List<string>()
+                    Permissions = new List<string>(),
+                    AccessableProjects = new List<AccessableProject>(),
+                    Restrictions = new List<string>()
                 });
         }
 

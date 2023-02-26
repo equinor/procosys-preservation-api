@@ -37,8 +37,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
         private readonly PlantProviderForTest _plantProvider = new PlantProviderForTest(null);
         private readonly Mock<IPermissionCache> _permissionCacheMock = new Mock<IPermissionCache>();
 
-        private readonly ProCoSysPlant _plantA = new ProCoSysPlant {Id = "PCS$A", Title = "A"};
-        private readonly ProCoSysPlant _plantB = new ProCoSysPlant {Id = "PCS$B", Title = "B"};
+        private readonly AccessablePlant _plantA = new AccessablePlant {Id = "PCS$A", Title = "A"};
+        private readonly AccessablePlant _plantB = new AccessablePlant {Id = "PCS$B", Title = "B"};
         private Project _projectA;
         private Project _projectB;
         private Action _openAction;
@@ -196,7 +196,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             }
         }
 
-        private void AssertAction(ActionDto actionDto, Action action, ProCoSysPlant plant, Project project, bool expectToBeClosed)
+        private void AssertAction(ActionDto actionDto, Action action, AccessablePlant plant, Project project, bool expectToBeClosed)
         {
             AssertEqualAndNotNull(plant.Id, actionDto.PlantId);
             AssertEqualAndNotNull(plant.Title, actionDto.PlantTitle);

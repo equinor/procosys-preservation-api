@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
             [Required]
             string plant)
         {
-            var permissions = await _permissionApiService.GetPermissionsAsync(plant);
+            var permissions = await _permissionApiService.GetPermissionsForCurrentUserAsync(plant);
             return permissions;
         }
 
@@ -79,12 +79,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("AllProjectsFromMain")]
-        public async Task<IList<ProCoSysProject>> GetProjectsFromMain(
+        public async Task<IList<AccessableProject>> GetProjectsFromMain(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant)
         {
-            var projects = await _permissionApiService.GetAllOpenProjectsAsync(plant);
+            var projects = await _permissionApiService.GetAllOpenProjectsForCurrentUserAsync(plant);
             return projects;
         }
 
@@ -99,7 +99,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("AllPlantsFromMain")]
-        public async Task<IList<ProCoSysPlant>> GetPlantsFromMain()
+        public async Task<IList<AccessablePlant>> GetPlantsFromMain()
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var plants = await _permissionApiService.GetAllPlantsForUserAsync(currentUserOid);

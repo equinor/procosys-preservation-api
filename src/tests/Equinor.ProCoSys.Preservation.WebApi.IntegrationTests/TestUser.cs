@@ -9,10 +9,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     {
         public TestProfile Profile { get; set; }
         public ProCoSysPerson AuthProCoSysPerson => Profile?.AsAuthProCoSysPerson();
-        public List<ProCoSysPlant> ProCoSysPlants { get; set; }
-        public List<ProCoSysProject> ProCoSysProjects { get; set; }
-        public List<string> ProCoSysPermissions { get; set; }
-        public List<string> ProCoSysRestrictions { get; set; }
+        public List<AccessablePlant> AccessablePlants { get; set; }
+        public List<AccessableProject> AccessableProjects { get; set; }
+        public List<string> Permissions { get; set; }
+        public List<string> Restrictions { get; set; }
         public HttpClient HttpClient { get; set; }
 
         public override string ToString() => Profile?.ToString();

@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             ILogger<PersonValidatorMiddleware> logger)
         {
             logger.LogInformation($"----- {GetType().Name} start");
-            if (currentUserProvider.HasCurrentUser())
+            if (currentUserProvider.HasCurrentUser)
             {
                 var oid = currentUserProvider.GetCurrentUserOid();
                 if (!await personCache.ExistsAsync(oid))

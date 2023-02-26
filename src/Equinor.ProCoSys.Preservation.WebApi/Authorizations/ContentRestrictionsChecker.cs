@@ -16,7 +16,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
         {
             var claimWithContentRestriction = GetContentRestrictionClaims(_claimsPrincipalProvider.GetCurrentClaimsPrincipal().Claims);
 
-            // the rule for saying that a user do not have any restriction, is that user has one and only one restriction with value %
+            // the rule for saying that a user do not have any restriction, is that user has one and only one restriction role with value %
             return claimWithContentRestriction.Count == 1 && HasContentRestrictionClaim(claimWithContentRestriction, ClaimsTransformation.NoRestrictions);
         }
 

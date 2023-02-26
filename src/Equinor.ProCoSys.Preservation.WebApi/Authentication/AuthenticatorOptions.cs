@@ -5,6 +5,10 @@ using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
 {
+    /// <summary>
+    /// "Mapping" between application options read by IOptionsMonitor to generic IAuthenticatorOptions
+    /// Needed because keys for configuration differ from application to application
+    /// </summary>
     public class AuthenticatorOptions : IAuthenticatorOptions
     {
         protected readonly IOptionsMonitor<PreservationAuthenticatorOptions> _options;
@@ -14,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
         public AuthenticatorOptions(IOptionsMonitor<PreservationAuthenticatorOptions> options)
         {
             _options = options;
-            _scopes.Add("MainApiScope", _options.CurrentValue.MainApiScope);
+            _scopes.Add(MainApiAuthenticator.MainApiScopeKey, _options.CurrentValue.MainApiScope);
         }
 
         public string Instance => _options.CurrentValue.Instance;

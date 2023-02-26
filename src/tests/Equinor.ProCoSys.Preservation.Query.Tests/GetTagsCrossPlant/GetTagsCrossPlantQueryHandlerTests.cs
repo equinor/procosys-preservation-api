@@ -38,8 +38,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
 
         private readonly int _intervalWeeks1 = 1;
         private readonly int _intervalWeeks2 = 2;
-        private ProCoSysPlant _plantA = new ProCoSysPlant {Id = "PCS$A", Title = "A"};
-        private ProCoSysPlant _plantB = new ProCoSysPlant {Id = "PCS$B", Title = "B"};
+        private AccessablePlant _plantA = new AccessablePlant {Id = "PCS$A", Title = "A"};
+        private AccessablePlant _plantB = new AccessablePlant {Id = "PCS$B", Title = "B"};
         private int _projectAId;
         private int _projectBId;
         private int _standardTagId;
@@ -181,7 +181,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         private void AssertTag(
             TagDto tagDto,
             Tag tag,
-            ProCoSysPlant plant,
+            AccessablePlant plant,
             Project project)
         {
             AssertEqualAndNotNull(plant.Id, tagDto.PlantId);
