@@ -5,30 +5,20 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.PcsServiceBus.Topics;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ServiceResult;
 using Equinor.ProCoSys.Auth.Misc;
-using Equinor.ProCoSys.Auth.Authentication;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
     public class CertificateEventProcessorService : ICertificateEventProcessorService
     {
-        private readonly Guid _preservationApiOid;
-
         private readonly ILogger _logger;
         private readonly ITelemetryClient _telemetryClient;
         private readonly IMediator _mediator;
-        private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
         private readonly IPlantSetter _plantSetter;
-        private readonly ICurrentUserSetter _currentUserSetter;
-        private readonly IClaimsTransformation _claimsTransformation;
-        private readonly IMainApiAuthenticator _mainApiAuthenticator;
 
         private const string PreservationBusReceiverTelemetryEvent = "Preservation Bus Receiver";
 
@@ -36,23 +26,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ILogger<CertificateEventProcessorService> logger,
             ITelemetryClient telemetryClient,
             IMediator mediator,
-            IClaimsPrincipalProvider claimsPrincipalProvider,
-            IPlantSetter plantSetter,
-            ICurrentUserSetter currentUserSetter,
-            IClaimsTransformation claimsTransformation,
-            IMainApiAuthenticator mainApiAuthenticator,
-            IOptionsSnapshot<PreservationAuthenticatorOptions> authenticatorOptions
-        )
+            IPlantSetter plantSetter)
         {
             _logger = logger;
             _telemetryClient = telemetryClient;
             _mediator = mediator;
-            _claimsPrincipalProvider = claimsPrincipalProvider;
-            _currentUserSetter = currentUserSetter;
-            _claimsTransformation = claimsTransformation;
             _plantSetter = plantSetter;
-            _mainApiAuthenticator = mainApiAuthenticator;
-            _preservationApiOid = authenticatorOptions.Value.PreservationApiObjectId;
         }
 
         //TODO: ADD TESTS FOR THIS CLASS
@@ -73,6 +52,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 throw new ArgumentNullException($"Deserialized JSON is not a valid CertificateEvent {messageJson}");
             }
 
+            _plantSetter.SetPlant(certificateEvent.Plant);
+
             TrackCertificateEvent(certificateEvent);
 
             await HandleAutoTransferIfRelevantAsync(certificateEvent);
@@ -82,7 +63,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         {
             if (certificateEvent.CertificateType == "RFOC" || certificateEvent.CertificateType == "RFCC")
             {
-                await SetUserContextAsync(certificateEvent.Plant);
                 var result = await _mediator.Send(new AutoTransferCommand(
                     certificateEvent.ProjectName,
                     certificateEvent.CertificateNo,
@@ -91,16 +71,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
                 LogAutoTransferResult(certificateEvent, result);
             }
-        }
-
-        private async Task SetUserContextAsync(string plant)
-        {
-            _mainApiAuthenticator.AuthenticationType = AuthenticationType.AsApplication;
-            _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
-            var currentUser = _claimsPrincipalProvider.GetCurrentClaimsPrincipal();
-
-            _plantSetter.SetPlant(plant);
-            await _claimsTransformation.TransformAsync(currentUser);
         }
 
         private void LogAutoTransferResult(CertificateTopic certificateEvent, Result<Unit> result)
@@ -114,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {"Status", resultOk ? "Succeeded" : "Failed"},
                 {"Plant", certificateEvent.Plant},
                 {"Type", "Autotransfer tags"},
-                {"ProjectName", String.IsNullOrWhiteSpace(certificateEvent.ProjectName) ? "null or empty" : certificateEvent.ProjectName},
+                {"ProjectName", string.IsNullOrWhiteSpace(certificateEvent.ProjectName) ? "null or empty" : certificateEvent.ProjectName},
                 {"CertificateNo", certificateEvent.CertificateNo},
                 {"CertificateType", certificateEvent.CertificateType}
             };
