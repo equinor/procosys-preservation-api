@@ -34,8 +34,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _plantSetter = plantSetter;
         }
 
-        //TODO: ADD TESTS FOR THIS CLASS
-
         public async Task ProcessCertificateEventAsync(string messageJson)
         {
             var certificateEvent = JsonSerializer.Deserialize<CertificateTopic>(messageJson);
@@ -66,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 var result = await _mediator.Send(new AutoTransferCommand(
                     certificateEvent.ProjectName,
                     certificateEvent.CertificateNo,
-                    certificateEvent.CertificateType.ToString(),
+                    certificateEvent.CertificateType,
                     certificateEvent.ProCoSysGuid));
 
                 LogAutoTransferResult(certificateEvent, result);
@@ -96,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {"Event", PcsServiceBus.Topics.CertificateTopic.TopicName},
+                    {"Event", CertificateTopic.TopicName},
                     {nameof(certificateTopic.CertificateNo), certificateTopic.CertificateNo},
                     {nameof(certificateTopic.CertificateType), certificateTopic.CertificateType},
                     {nameof(certificateTopic.CertificateStatus), certificateTopic.CertificateStatus.ToString()},
@@ -115,6 +113,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private string NormalizePlant(string plant) => plant[4..];
 
-        private string NormalizeProjectName(string projectName) => String.IsNullOrWhiteSpace(projectName) ? null : projectName.Replace('$', '_');
+        private string NormalizeProjectName(string projectName) => string.IsNullOrWhiteSpace(projectName) ? null : projectName.Replace('$', '_');
     }
 }

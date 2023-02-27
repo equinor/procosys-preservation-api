@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.PcsServiceBus;
@@ -129,8 +128,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var options = new Mock<IOptionsSnapshot<PreservationAuthenticatorOptions>>();
             options.Setup(s => s.Value).Returns(new PreservationAuthenticatorOptions{PreservationApiObjectId = Guid.NewGuid()});
             _currentUserSetter = new Mock<ICurrentUserSetter>();
-            var claimsPrincipalProvider = new Mock<IClaimsPrincipalProvider>();
-            claimsPrincipalProvider.Setup(c => c.GetCurrentClaimsPrincipal()).Returns(new ClaimsPrincipal());
             var projectApiService = new Mock<IProjectApiService>();
             projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation)).Returns(Task.FromResult(new ProCoSysProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
 
@@ -141,7 +138,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           _projectRepository.Object,
                                           _tagFunctionRepository.Object,
                                           _currentUserSetter.Object,
-                                          claimsPrincipalProvider.Object,
                                           new Mock<IMainApiAuthenticator>().Object,
                                           options.Object,
                                           projectApiService.Object,
