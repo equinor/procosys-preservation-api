@@ -2,6 +2,10 @@
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
 {
+    /// <summary>
+    /// Options for Authentication. Read from application configuration via IOptionsMonitor.
+    /// "Mapped" to the generic IAuthenticatorOptions
+    /// </summary>
     public class PreservationAuthenticatorOptions
     {
         public string Instance { get; set; }

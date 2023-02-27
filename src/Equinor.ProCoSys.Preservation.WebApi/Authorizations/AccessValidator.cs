@@ -10,6 +10,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
+    /// <summary>
+    /// Validates if current user has access to perform a request of type IProjectRequest, 
+    /// ITagCommandRequest or ITagQueryRequest.
+    /// It validates if user has access to the project of the request 
+    /// For ITagCommandRequest, it also validates if user has access to the content of the request 
+    ///     (i.e check if user has any restriction role saying that user is restricted to acccess 
+    ///     content for particular responsible code)
+    /// </summary>
     public class AccessValidator : IAccessValidator
     {
         private readonly ICurrentUserProvider _currentUserProvider;
