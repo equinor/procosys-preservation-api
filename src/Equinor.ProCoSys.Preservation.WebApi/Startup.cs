@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Equinor.ProCoSys.Auth;
+using Equinor.ProCoSys.Auth.Misc;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Query;
@@ -45,6 +46,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi
         {
             if (_environment.IsDevelopment())
             {
+                DebugOptions.DebugInDevelopment = Configuration.GetValue<bool>("DebugInDevelopment");
+
                 if (Configuration.GetValue<bool>("MigrateDatabase"))
                 {
                     services.AddHostedService<DatabaseMigrator>();
