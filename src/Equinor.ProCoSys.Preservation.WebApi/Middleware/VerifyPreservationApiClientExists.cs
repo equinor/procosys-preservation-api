@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception handling {nameof(CreatePersonCommand)}", e);
+                _logger.LogError(e, $"Exception handling {nameof(CreatePersonCommand)}");
                 throw;
             }
         }

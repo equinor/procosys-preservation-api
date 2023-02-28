@@ -34,6 +34,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         private readonly string _plannerOid = "00000000-0000-0000-0000-000000000002";
         private readonly string _preserverOid = "00000000-0000-0000-0000-000000000003";
         private readonly string _hackerOid = "00000000-0000-0000-0000-000000000666";
+        private readonly string _crossPlantAppOid = "00000000-0000-0000-0000-000000000888";
         private readonly string _integrationTestEnvironment = "IntegrationTests";
         private readonly string _connectionString;
         private readonly string _configPath;
@@ -333,6 +334,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 _permissionApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
                     .Returns(Task.FromResult(testUser.AccessablePlants));
             }
+
+            // Need to mock getting info for current application from Main. This to satisfy VerifyIpoApiClientExists middelware
+            var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
+            var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
+            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(preservationApiObjectId)))
+                .Returns(Task.FromResult(new ProCoSysPerson
+                {
+                    AzureOid = preservationApiObjectId,
+                    FirstName = "Pres",
+                    LastName = "API"
+                }));
         }
 
         // Authenticated client without any roles
@@ -446,12 +458,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         
         // Authenticated Application client without any ProCoSys roles. Configured with app role to allow using cross plant endpoints
         private void SetupCrossPlantApp()
-        {
-            var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
-
-            var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
-
-            _testUsers.Add(UserType.CrossPlantApp,
+            => _testUsers.Add(UserType.CrossPlantApp,
                 new TestUser
                 {
                     Profile =
@@ -459,7 +466,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         {
                             FirstName = "XPlant",
                             LastName = "App",
-                            Oid = preservationApiObjectId,
+                            Oid = _crossPlantAppOid,
                             IsAppToken = true,
                             AppRoles = new[] {AppRoles.CROSSPLANT}
                         },
@@ -472,7 +479,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                     AccessableProjects = new List<AccessableProject>(),
                     Restrictions = new List<string>()
                 });
-        }
 
         private void SetupAnonymousUser() => _testUsers.Add(UserType.Anonymous, new TestUser());
 
