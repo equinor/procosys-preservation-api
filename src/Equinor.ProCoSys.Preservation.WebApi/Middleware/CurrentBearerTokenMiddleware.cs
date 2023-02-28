@@ -18,13 +18,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             ILogger<CurrentBearerTokenMiddleware> logger)
         {
             logger.LogInformation($"----- {GetType().Name} start");
-            var authorizationHeader = httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            var tokens = authorizationHeader.ToString()?.Split(' ');
-
-            if (tokens != null && tokens.Length > 1)
+            if (httpContextAccessor.HttpContext != null)
             {
-                var token = tokens[1];
-                bearerTokenSetterForAll.SetBearerToken(token);
+                var authorizationHeader = httpContextAccessor.HttpContext.Request.Headers["Authorization"];
+                var tokens = authorizationHeader.ToString()?.Split(' ');
+
+                if (tokens != null && tokens.Length > 1)
+                {
+                    var token = tokens[1];
+                    bearerTokenSetterForAll.SetBearerToken(token);
+                }
             }
 
             logger.LogInformation($"----- {GetType().Name} complete");

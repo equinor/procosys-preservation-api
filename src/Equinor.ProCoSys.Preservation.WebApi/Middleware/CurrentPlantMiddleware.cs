@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             ILogger<CurrentPlantMiddleware> logger)
         {
             logger.LogInformation($"----- {GetType().Name} start");
-            var headers = httpContextAccessor?.HttpContext?.Request?.Headers;
+            var headers = httpContextAccessor?.HttpContext?.Request.Headers;
             if (headers == null)
             {
                 throw new Exception("Could not determine request headers");

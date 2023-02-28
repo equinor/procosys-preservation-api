@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
         {
             logger.LogInformation($"----- {GetType().Name} start");
             var plantId = plantProvider.Plant;
-            if (context.User.Identity.IsAuthenticated && plantId != null)
+            if (context.User.Identity != null && context.User.Identity.IsAuthenticated && plantId != null)
             {
                 if (!await permissionCache.IsAValidPlantForCurrentUserAsync(plantId))
                 {

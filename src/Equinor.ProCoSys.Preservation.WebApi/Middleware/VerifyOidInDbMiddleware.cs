@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson;
-using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -36,8 +35,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
                     // We have to do this silently as concurrency is a very likely problem.
                     // For a user accessing preservation for the first time, there will probably be multiple
                     // requests in parallel.
-                    logger.LogError($"Exception handling {nameof(CreatePersonCommand)}", e);
-                    throw;
+                    logger.LogError(e, $"Exception handling {nameof(CreatePersonCommand)}");
                 }
             }
             

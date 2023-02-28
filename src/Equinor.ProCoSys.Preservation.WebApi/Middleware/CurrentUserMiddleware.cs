@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             ILogger<CurrentUserMiddleware> logger)
         {
             logger.LogInformation($"----- {GetType().Name} start");
-            var oid = httpContextAccessor.HttpContext.User.Claims.TryGetOid();
+            var oid = httpContextAccessor.HttpContext?.User.Claims.TryGetOid();
             if (oid.HasValue)
             {
                 currentUserSetter.SetCurrentUserOid(oid.Value);
