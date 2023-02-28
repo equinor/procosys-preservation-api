@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (DebugOptions.DebugInDevelopment)
+            if (DebugOptions.DebugEntityFrameworkInDevelopment)
             {
                 optionsBuilder.LogTo(System.Console.WriteLine);
             }

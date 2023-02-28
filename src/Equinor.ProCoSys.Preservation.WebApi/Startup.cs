@@ -46,7 +46,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
         {
             if (_environment.IsDevelopment())
             {
-                DebugOptions.DebugInDevelopment = Configuration.GetValue<bool>("DebugInDevelopment");
+                DebugOptions.DebugEntityFrameworkInDevelopment = Configuration.GetValue<bool>("DebugEntityFrameworkInDevelopment");
 
                 if (Configuration.GetValue<bool>("MigrateDatabase"))
                 {
@@ -168,7 +168,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             if (serviceBusEnabled)
             {
                 // Env variable used in kubernetes. Configuration is added for easier use locally
-                // Url will be validated during startup of service bus intergration and give a
+                // Url will be validated during startup of service bus integration and give a
                 // Uri exception if invalid.
                 var leaderElectorUrl = "http://" + (Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE") ?? Configuration["ServiceBus:LeaderElectorUrl"]) + ":3003";
                
