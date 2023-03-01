@@ -12,16 +12,20 @@ using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
 {
-    public class VerifyPreservationApiClientExists : IHostedService
+    /// <summary>
+    /// Ensure that PreservationApiObjectId (i.e the application) exists as Person.
+    /// Needed when application modifies data, setting ModifiedById for changed records
+    /// </summary>
+    public class VerifyApplicationExistsAsPerson : IHostedService
     {
         private readonly IServiceScopeFactory _serviceProvider;
         private readonly IOptionsMonitor<PreservationAuthenticatorOptions> _options;
-        private readonly ILogger<VerifyPreservationApiClientExists> _logger;
+        private readonly ILogger<VerifyApplicationExistsAsPerson> _logger;
 
-        public VerifyPreservationApiClientExists(
+        public VerifyApplicationExistsAsPerson(
             IServiceScopeFactory serviceProvider,
             IOptionsMonitor<PreservationAuthenticatorOptions> options, 
-            ILogger<VerifyPreservationApiClientExists> logger)
+            ILogger<VerifyApplicationExistsAsPerson> logger)
         {
             _serviceProvider = serviceProvider;
             _options = options;

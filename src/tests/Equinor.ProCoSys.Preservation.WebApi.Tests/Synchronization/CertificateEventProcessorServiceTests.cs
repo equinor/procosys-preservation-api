@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
     [TestClass]
     public class CertificateEventProcessorServiceTests
     {
-        private CertificateTopic _certificateTopic = new CertificateTopic
+        private readonly CertificateTopic _certificateTopic = new CertificateTopic
         {
             Plant = "PCS$HEIMDAL",
             CertificateNo = "CO-OP-0065",
