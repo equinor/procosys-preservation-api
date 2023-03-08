@@ -554,12 +554,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
         {
             if (expectedValue.HasValue)
             {
-                Assert.AreEqual((double)expectedValue.Value, value);
+                Assert.AreEqual((double)expectedValue.Value, (double)(XLCellValue)value);
 
             }
             else
             {
-                Assert.AreEqual(string.Empty, value);
+                Assert.IsTrue(((XLCellValue)value).IsBlank);
             }
         }
 
@@ -570,13 +570,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
         {
             if (expectedUtcValue.HasValue)
             {
-                Assert.IsInstanceOfType(cell.Value, typeof(DateTime));
+                Assert.IsTrue(cell.Value.IsDateTime);
                 Assert.AreEqual("yyyy-mm-dd", cell.Style.DateFormat.Format);
                 Assert.AreEqual(expectedUtcValue.Value.Date, ((DateTime)cell.Value).Date);
             }
             else
             {
-                Assert.AreEqual(string.Empty, cell.Value);
+                Assert.IsTrue(cell.Value.IsBlank);
             }
         }
     }

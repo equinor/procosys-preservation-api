@@ -152,13 +152,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
             {
                 row = sheet.Row(++rowIdx);
             
-                row.Cell(HistorySheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
-                row.Cell(HistorySheetColumns.Description).SetValue(history.Description).SetDataType(XLDataType.Text);
-                row.Cell(HistorySheetColumns.DueInWeeks).SetValue(history.DueInWeeks).SetDataType(XLDataType.Number);
+                row.Cell(HistorySheetColumns.TagNo).SetValue(tag.TagNo);
+                row.Cell(HistorySheetColumns.Description).SetValue(history.Description);
+                row.Cell(HistorySheetColumns.DueInWeeks).SetValue(history.DueInWeeks);
                 AddDateCell(row, HistorySheetColumns.Date, history.CreatedAtUtc);
-                row.Cell(HistorySheetColumns.User).SetValue(history.CreatedBy).SetDataType(XLDataType.Text);
-                row.Cell(HistorySheetColumns.Details).SetValue(history.PreservationDetails).SetDataType(XLDataType.Text);
-                row.Cell(HistorySheetColumns.Comment).SetValue(history.PreservationComment).SetDataType(XLDataType.Text);
+                row.Cell(HistorySheetColumns.User).SetValue(history.CreatedBy);
+                row.Cell(HistorySheetColumns.Details).SetValue(history.PreservationDetails);
+                row.Cell(HistorySheetColumns.Comment).SetValue(history.PreservationComment);
             }
        
             const int minWidth = 10;
@@ -187,14 +187,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
                 {
                     row = sheet.Row(++rowIdx);
 
-                    row.Cell(ActionSheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
-                    row.Cell(ActionSheetColumns.Title).SetValue(action.Title).SetDataType(XLDataType.Text);
-                    row.Cell(ActionSheetColumns.Description).SetValue(action.Description).SetDataType(XLDataType.Text);
+                    row.Cell(ActionSheetColumns.TagNo).SetValue(tag.TagNo);
+                    row.Cell(ActionSheetColumns.Title).SetValue(action.Title);
+                    row.Cell(ActionSheetColumns.Description).SetValue(action.Description);
                     if (action.DueTimeUtc.HasValue)
                     {
                         AddDateCell(row, ActionSheetColumns.DueDate, action.DueTimeUtc.Value.Date);
                     }
-                    row.Cell(ActionSheetColumns.OverDue).SetValue(action.IsOverDue).SetDataType(XLDataType.Boolean);
+                    row.Cell(ActionSheetColumns.OverDue).SetValue(action.IsOverDue);
                     if (action.ClosedAtUtc.HasValue)
                     {
                         AddDateCell(row, ActionSheetColumns.Closed, action.ClosedAtUtc.Value.Date);
@@ -210,7 +210,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
         private void AddDateCell(IXLRow row, int cellIdx, DateTime date)
         {
             var cell = row.Cell(cellIdx);
-            cell.SetValue(date).SetDataType(XLDataType.DateTime);
+            cell.SetValue(date);
             cell.Style.DateFormat.Format = "yyyy-mm-dd";
         }
 
@@ -253,34 +253,34 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
                 {
                     row = sheet.Row(++rowIdx);
 
-                    row.Cell(TagSheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.Description).SetValue(tag.Description).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.RequirementTitle).SetValue(req.RequirementTitle).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.RequirementComment).SetValue(req.ActiveComment).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.RequirementNextInYearAndWeek).SetValue(req.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
+                    row.Cell(TagSheetColumns.TagNo).SetValue(tag.TagNo);
+                    row.Cell(TagSheetColumns.Description).SetValue(tag.Description);
+                    row.Cell(TagSheetColumns.RequirementTitle).SetValue(req.RequirementTitle);
+                    row.Cell(TagSheetColumns.RequirementComment).SetValue(req.ActiveComment);
+                    row.Cell(TagSheetColumns.RequirementNextInYearAndWeek).SetValue(req.NextDueAsYearAndWeek);
                     if (req.NextDueWeeks.HasValue)
                     {
                         // The only number cell: NextDueWeeks
-                        row.Cell(TagSheetColumns.RequirementNextDueWeeks).SetValue(req.NextDueWeeks.Value).SetDataType(XLDataType.Number);
+                        row.Cell(TagSheetColumns.RequirementNextDueWeeks).SetValue(req.NextDueWeeks.Value);
                     }
-                    row.Cell(TagSheetColumns.Journey).SetValue(tag.Journey).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.Step).SetValue(tag.Step).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.Mode).SetValue(tag.Mode).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.Po).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.Area).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.Resp).SetValue(tag.ResponsibleCode).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.Disc).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.PresStatus).SetValue(tag.Status).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.Remark).SetValue(tag.Remark).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.StorageArea).SetValue(tag.StorageArea).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.CommPkg).SetValue(tag.CommPkgNo).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.McPkg).SetValue(tag.McPkgNo).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.ActionStatus).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
-                    row.Cell(TagSheetColumns.Actions).SetValue(tag.ActionsCount).SetDataType(XLDataType.Number);
-                    row.Cell(TagSheetColumns.OpenActions).SetValue(tag.OpenActionsCount).SetDataType(XLDataType.Number);
-                    row.Cell(TagSheetColumns.OverdueActions).SetValue(tag.OverdueActionsCount).SetDataType(XLDataType.Number);
-                    row.Cell(TagSheetColumns.Attachments).SetValue(tag.AttachmentsCount).SetDataType(XLDataType.Number);
-                    row.Cell(TagSheetColumns.Voided).SetValue(tag.IsVoided).SetDataType(XLDataType.Boolean);
+                    row.Cell(TagSheetColumns.Journey).SetValue(tag.Journey);
+                    row.Cell(TagSheetColumns.Step).SetValue(tag.Step);
+                    row.Cell(TagSheetColumns.Mode).SetValue(tag.Mode);
+                    row.Cell(TagSheetColumns.Po).SetValue(tag.PurchaseOrderTitle);
+                    row.Cell(TagSheetColumns.Area).SetValue(tag.AreaCode);
+                    row.Cell(TagSheetColumns.Resp).SetValue(tag.ResponsibleCode);
+                    row.Cell(TagSheetColumns.Disc).SetValue(tag.DisciplineCode);
+                    row.Cell(TagSheetColumns.PresStatus).SetValue(tag.Status);
+                    row.Cell(TagSheetColumns.Remark).SetValue(tag.Remark);
+                    row.Cell(TagSheetColumns.StorageArea).SetValue(tag.StorageArea);
+                    row.Cell(TagSheetColumns.CommPkg).SetValue(tag.CommPkgNo);
+                    row.Cell(TagSheetColumns.McPkg).SetValue(tag.McPkgNo);
+                    row.Cell(TagSheetColumns.ActionStatus).SetValue(tag.ActionStatus);
+                    row.Cell(TagSheetColumns.Actions).SetValue(tag.ActionsCount);
+                    row.Cell(TagSheetColumns.OpenActions).SetValue(tag.OpenActionsCount);
+                    row.Cell(TagSheetColumns.OverdueActions).SetValue(tag.OverdueActionsCount);
+                    row.Cell(TagSheetColumns.Attachments).SetValue(tag.AttachmentsCount);
+                    row.Cell(TagSheetColumns.Voided).SetValue(tag.IsVoided);
                 }
             }
 
@@ -329,8 +329,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
 
         private void AddUsedFilter(IXLRow row, string label, string value, bool bold = false)
         {
-            row.Cell(1).SetValue(label).SetDataType(XLDataType.Text);
-            row.Cell(2).SetValue(value).SetDataType(XLDataType.Text);
+            row.Cell(1).SetValue(label);
+            row.Cell(2).SetValue(value);
             row.Style.Font.SetBold(bold);
         }
 

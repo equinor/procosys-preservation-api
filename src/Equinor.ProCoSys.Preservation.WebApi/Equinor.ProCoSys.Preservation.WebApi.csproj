@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.96.0" />
+    <PackageReference Include="ClosedXML" Version="0.100.3" />
     <PackageReference Include="Equinor.ProCoSys.PcsServiceBus" Version="3.8.5" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="MediatR" Version="12.0.1" />
