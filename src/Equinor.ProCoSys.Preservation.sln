@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29403.142
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.WebApi", "Equinor.ProCoSys.Preservation.WebApi\Equinor.ProCoSys.Preservation.WebApi.csproj", "{41238CAE-6367-4F5C-B20D-D99B12FEF49B}"
 EndProject
@@ -17,6 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		..\pipelines\api-build.yml = ..\pipelines\api-build.yml
+		Equinor.ProCoSys.Preservation.WebApi\Dockerfile = Equinor.ProCoSys.Preservation.WebApi\Dockerfile
 		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
@@ -37,8 +38,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.MainApi.Tests", "tests\Equinor.Procosys.Preservation.MainApi.Tests\Equinor.ProCoSys.Preservation.MainApi.Tests.csproj", "{3628443D-47B4-4D7A-AB08-3E0F613E5015}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.Test.Common", "tests\Equinor.Procosys.Preservation.Test.Common\Equinor.ProCoSys.Preservation.Test.Common.csproj", "{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.BlobStorage", "Equinor.ProCoSys.Preservation.BlobStorage\Equinor.ProCoSys.Preservation.BlobStorage.csproj", "{F2ECB765-2E38-43B3-BB94-050F9D1E2CB3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.WebApi.IntegrationTests", "tests\Equinor.Procosys.Preservation.WebApi.IntegrationTests\Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.csproj", "{62CE4391-513D-4A23-ACB2-9245A0D039AF}"
 EndProject
@@ -100,10 +99,6 @@ Global
 		{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F2ECB765-2E38-43B3-BB94-050F9D1E2CB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F2ECB765-2E38-43B3-BB94-050F9D1E2CB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F2ECB765-2E38-43B3-BB94-050F9D1E2CB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F2ECB765-2E38-43B3-BB94-050F9D1E2CB3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{62CE4391-513D-4A23-ACB2-9245A0D039AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{62CE4391-513D-4A23-ACB2-9245A0D039AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62CE4391-513D-4A23-ACB2-9245A0D039AF}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -6,7 +6,6 @@ COPY Equinor.ProCoSys.Preservation.Command/*.csproj ./Equinor.ProCoSys.Preservat
 COPY Equinor.ProCoSys.Preservation.Domain/*.csproj ./Equinor.ProCoSys.Preservation.Domain/
 COPY Equinor.ProCoSys.Preservation.Infrastructure/*.csproj ./Equinor.ProCoSys.Preservation.Infrastructure/
 COPY Equinor.ProCoSys.Preservation.MainApi/*.csproj ./Equinor.ProCoSys.Preservation.MainApi/
-COPY Equinor.ProCoSys.Preservation.BlobStorage/*.csproj ./Equinor.ProCoSys.Preservation.BlobStorage/
 COPY Equinor.ProCoSys.Preservation.Query/*.csproj ./Equinor.ProCoSys.Preservation.Query/
 COPY Equinor.ProCoSys.Preservation.WebApi/*.csproj ./Equinor.ProCoSys.Preservation.WebApi/
 

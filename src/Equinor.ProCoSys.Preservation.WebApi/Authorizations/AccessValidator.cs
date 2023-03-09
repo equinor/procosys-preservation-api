@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Query;
@@ -9,24 +10,32 @@ using Microsoft.Extensions.Logging;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
+    /// <summary>
+    /// Validates if current user has access to perform a request of type IProjectRequest, 
+    /// ITagCommandRequest or ITagQueryRequest.
+    /// It validates if user has access to the project of the request 
+    /// For ITagCommandRequest, it also validates if user has access to the content of the request 
+    ///     (i.e check if user has any restriction role saying that user is restricted to acccess 
+    ///     content for particular responsible code)
+    /// </summary>
     public class AccessValidator : IAccessValidator
     {
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProjectAccessChecker _projectAccessChecker;
-        private readonly IContentRestrictionsChecker _contentRestrictionsChecker;
+        private readonly IRestrictionRolesChecker _restrictionRolesChecker;
         private readonly ITagHelper _tagHelper;
         private readonly ILogger<AccessValidator> _logger;
 
         public AccessValidator(
             ICurrentUserProvider currentUserProvider, 
             IProjectAccessChecker projectAccessChecker,
-            IContentRestrictionsChecker contentRestrictionsChecker,
+            IRestrictionRolesChecker restrictionRolesChecker,
             ITagHelper tagHelper, 
             ILogger<AccessValidator> logger)
         {
             _currentUserProvider = currentUserProvider;
             _projectAccessChecker = projectAccessChecker;
-            _contentRestrictionsChecker = contentRestrictionsChecker;
+            _restrictionRolesChecker = restrictionRolesChecker;
             _tagHelper = tagHelper;
             _logger = logger;
         }
@@ -89,13 +98,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 
         private async Task<bool> HasCurrentUserAccessToContentAsync(ITagCommandRequest tagCommandRequest)
         {
-            if (_contentRestrictionsChecker.HasCurrentUserExplicitNoRestrictions())
+            if (_restrictionRolesChecker.HasCurrentUserExplicitNoRestrictions())
             {
                 return true;
             }
 
             var responsibleCode = await _tagHelper.GetResponsibleCodeAsync(tagCommandRequest.TagId);
-            return _contentRestrictionsChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
+            return _restrictionRolesChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
         }
     }
 }

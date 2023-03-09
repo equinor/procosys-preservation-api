@@ -3,18 +3,18 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
-using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Auth.Authentication;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Auth.Misc;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
@@ -23,35 +23,35 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly Guid _preservationApiOid;
         private readonly ILogger<SynchronizationService> _logger;
         private readonly IMediator _mediator;
-        private readonly IClaimsProvider _claimsProvider;
+        private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
         private readonly IPlantSetter _plantSetter;
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IClaimsTransformation _claimsTransformation;
-        private readonly IAuthenticator _authenticator;
-        private readonly IPlantCache _plantCache;
+        private readonly IMainApiAuthenticator _mainApiAuthenticator;
+        private readonly IPermissionCache _permissionCache;
         private ISettingRepository _settingRepository;
         private string _machine;
 
         public SynchronizationService(
             ILogger<SynchronizationService> logger,
             IMediator mediator,
-            IClaimsProvider claimsProvider,
+            IClaimsPrincipalProvider claimsPrincipalProvider,
             IPlantSetter plantSetter,
             ICurrentUserSetter currentUserSetter,
             IClaimsTransformation claimsTransformation,
-            IAuthenticator authenticator,
-            IPlantCache plantCache,
-            IOptionsSnapshot<AuthenticatorOptions> authenticatorOptions,
+            IMainApiAuthenticator mainApiAuthenticator,
+            IPermissionCache permissionCache,
+            IOptionsSnapshot<PreservationAuthenticatorOptions> authenticatorOptions,
             ISettingRepository settingRepository)
         {
             _logger = logger;
             _mediator = mediator;
-            _claimsProvider = claimsProvider;
+            _claimsPrincipalProvider = claimsPrincipalProvider;
             _currentUserSetter = currentUserSetter;
             _claimsTransformation = claimsTransformation;
             _plantSetter = plantSetter;
-            _authenticator = authenticator;
-            _plantCache = plantCache;
+            _mainApiAuthenticator = mainApiAuthenticator;
+            _permissionCache = permissionCache;
             _preservationApiOid = authenticatorOptions.Value.PreservationApiObjectId;
             _settingRepository = settingRepository;
             _machine = Environment.MachineName;
@@ -66,17 +66,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 return;
             }
 
-            _authenticator.AuthenticationType = AuthenticationType.AsApplication;
+            _mainApiAuthenticator.AuthenticationType = AuthenticationType.AsApplication;
 
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
-            var currentUser = _claimsProvider.GetCurrentUser();
+            var currentUser = _claimsPrincipalProvider.GetCurrentClaimsPrincipal();
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _preservationApiOid.ToString()));
             currentUser.AddIdentity(claimsIdentity);
 
             var saveChanges = _settingRepository.GetByCodeAsync("SaveChanges").Result;
-            foreach (var plant in await _plantCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
+            foreach (var plant in await _permissionCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
             {
                 _logger.LogInformation($"SynchronizationService: Synchronizing plant {plant}...");
 

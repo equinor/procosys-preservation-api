@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             ILogger<CurrentPlantMiddleware> logger)
         {
             logger.LogInformation($"----- {GetType().Name} start");
-            var headers = httpContextAccessor?.HttpContext?.Request?.Headers;
+            var headers = httpContextAccessor?.HttpContext?.Request.Headers;
             if (headers == null)
             {
                 throw new Exception("Could not determine request headers");

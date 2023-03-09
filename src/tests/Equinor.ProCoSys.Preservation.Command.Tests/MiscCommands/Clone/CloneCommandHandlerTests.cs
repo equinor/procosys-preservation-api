@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
         private readonly string _regCodeB = "RegisterCodeB";
         private CloneCommand _command;
         private CloneCommandHandler _dut;
-        private readonly PlantProvider _plantProvider = new PlantProvider(TestPlant);
+        private readonly PlantProviderForTest _plantProvider = new PlantProviderForTest(TestPlant);
         private ModeRepository _modeRepository;
         private readonly List<Mode> _sourceModes = new List<Mode>();
         private RequirementTypeRepository _requirementTypeRepository;

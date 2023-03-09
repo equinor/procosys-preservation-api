@@ -1,19 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using Equinor.ProCoSys.Preservation.MainApi.Permission;
-using Equinor.ProCoSys.Preservation.MainApi.Person;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Auth.Permission;
+using Equinor.ProCoSys.Auth.Person;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
     public interface ITestUser
     {
-        TokenProfile Profile { get; set; }
-        PCSPerson ProCoSysPerson { get; set; }
-        List<PCSPlant> ProCoSysPlants { get; set; }
-        List<PCSProject> ProCoSysProjects { get; set; }
-        List<string> ProCoSysPermissions { get; set; }
-        List<string> ProCoSysRestrictions { get; set; }
+        TestProfile Profile { get; set; }
+        ProCoSysPerson AuthProCoSysPerson { get; }
+        List<AccessablePlant> AccessablePlants { get; set; }
+        List<AccessableProject> AccessableProjects { get; set; }
+        List<string> Permissions { get; set; }
+        List<string> Restrictions { get; set; }
         HttpClient HttpClient { get; set; }
     }
 }

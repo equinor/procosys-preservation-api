@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,16 +12,20 @@ using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
 {
-    public class VerifyPreservationApiClientExists : IHostedService
+    /// <summary>
+    /// Ensure that PreservationApiObjectId (i.e the application) exists as Person.
+    /// Needed when application modifies data, setting ModifiedById for changed records
+    /// </summary>
+    public class VerifyApplicationExistsAsPerson : IHostedService
     {
         private readonly IServiceScopeFactory _serviceProvider;
-        private readonly IOptionsMonitor<AuthenticatorOptions> _options;
-        private readonly ILogger<VerifyPreservationApiClientExists> _logger;
+        private readonly IOptionsMonitor<PreservationAuthenticatorOptions> _options;
+        private readonly ILogger<VerifyApplicationExistsAsPerson> _logger;
 
-        public VerifyPreservationApiClientExists(
+        public VerifyApplicationExistsAsPerson(
             IServiceScopeFactory serviceProvider,
-            IOptionsMonitor<AuthenticatorOptions> options, 
-            ILogger<VerifyPreservationApiClientExists> logger)
+            IOptionsMonitor<PreservationAuthenticatorOptions> options, 
+            ILogger<VerifyApplicationExistsAsPerson> logger)
         {
             _serviceProvider = serviceProvider;
             _options = options;
@@ -49,7 +53,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             }
             catch (Exception e)
             {
-                _logger.LogError($"Exception handling {nameof(CreatePersonCommand)}", e);
+                _logger.LogError(e, $"Exception handling {nameof(CreatePersonCommand)}");
                 throw;
             }
         }

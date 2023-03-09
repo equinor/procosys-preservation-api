@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Equinor.ProCoSys.Auth;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Swagger;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Query;
@@ -44,6 +47,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi
         {
             if (_environment.IsDevelopment())
             {
+                DebugOptions.DebugEntityFrameworkInDevelopment = Configuration.GetValue<bool>("DebugEntityFrameworkInDevelopment");
+
                 if (Configuration.GetValue<bool>("MigrateDatabase"))
                 {
                     services.AddHostedService<DatabaseMigrator>();
@@ -150,6 +155,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 options.EnableForHttps = true;
             });
 
+            services.AddPcsAuthIntegration();
+
             services.AddApplicationInsightsTelemetry(options =>
             {
                 options.ConnectionString = Configuration["ApplicationInsights:ConnectionString"];
@@ -162,7 +169,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             if (serviceBusEnabled)
             {
                 // Env variable used in kubernetes. Configuration is added for easier use locally
-                // Url will be validated during startup of service bus intergration and give a
+                // Url will be validated during startup of service bus integration and give a
                 // Uri exception if invalid.
                 var leaderElectorUrl = "http://" + (Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE") ?? Configuration["ServiceBus:LeaderElectorUrl"]) + ":3003";
                
@@ -180,10 +187,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     //THIS METHOD SHOULD BE FALSE IN NORMAL OPERATION.
                     //ONLY SET TO TRUE WHEN A LARGE NUMBER OF MESSAGES HAVE FAILED AND ARE COPIED TO DEAD LETTER.
                     //WHEN SET TO TRUE, MESSAGES ARE READ FROM DEAD LETTER QUEUE INSTEAD OF NORMAL QUEUE
-                    .WithReadFromDeadLetterQueue(Configuration.GetValue<bool>("ServiceBus:ReadFromDeadLetterQueue", defaultValue: false))); 
+                    .WithReadFromDeadLetterQueue(Configuration.GetValue("ServiceBus:ReadFromDeadLetterQueue", defaultValue: false))); 
                 
             }
-            services.AddHostedService<VerifyPreservationApiClientExists>();
+            services.AddHostedService<VerifyApplicationExistsAsPerson>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -220,6 +227,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
 
             app.UseRouting();
 
+            // order of adding middelwares are crucial. Some depend that other has been run in advance
             app.UseCurrentPlant();
             app.UseCurrentBearerToken();
             app.UseAuthentication();

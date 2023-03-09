@@ -21,12 +21,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task CreateRequirementType_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task CreateRequirementType_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.CreateRequirementTypeAsync(
                 UserType.Hacker,
                 TestFactory.UnknownPlant,
                 Guid.NewGuid().ToString(),
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task CreateRequirementType_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -81,13 +82,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UpdateRequirementType_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task UpdateRequirementType_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementTypeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 Guid.NewGuid().ToString(),
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task UpdateRequirementType_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -165,10 +167,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task GetRequirementTypes_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task GetRequirementTypes_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task GetRequirementTypes_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -212,12 +215,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task GetRequirementType_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task GetRequirementType_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypeAsync(
                 UserType.Hacker, 
                 TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task GetRequirementType_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -271,12 +275,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task VoidRequirementType_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task VoidRequirementType_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.VoidRequirementTypeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task VoidRequirementType_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -346,12 +351,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UnvoidRequirementType_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task UnvoidRequirementType_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementTypeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task UnvoidRequirementType_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -428,12 +434,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task DeleteRequirementType_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task DeleteRequirementType_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementTypeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task DeleteRequirementType_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -511,12 +518,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 expectedStatusCode:HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task CreateRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task CreateRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 Guid.NewGuid().ToString(),
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest: "is not a valid plant");
 
         [TestMethod]
         public async Task CreateRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -573,7 +581,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 expectedStatusCode:HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UpdateRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task UpdateRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
@@ -581,7 +589,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 Guid.NewGuid().ToString(),
                 4,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest: "is not a valid plant");
 
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -773,13 +782,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task VoidRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task VoidRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task VoidRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -867,13 +877,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UnvoidRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task UnvoidRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task UnvoidRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -969,13 +980,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task DeleteRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
+        public async Task DeleteRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.Forbidden);
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
 
         [TestMethod]
         public async Task DeleteRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()

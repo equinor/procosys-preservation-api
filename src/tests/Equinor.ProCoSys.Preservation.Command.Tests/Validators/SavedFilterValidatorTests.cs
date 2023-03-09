@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Validators.SavedFilterValidators;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,6 +8,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Moq;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload;

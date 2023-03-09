@@ -6,7 +6,8 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Auth.Client;
+using Equinor.ProCoSys.Preservation.Domain;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -16,29 +17,26 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IBearerTokenApiClient _mainApiClient;
+        private readonly IMainApiClient _mainApiClient;
         private readonly int _tagSearchPageSize;
 
         public MainApiTagService(
-            IBearerTokenApiClient mainApiClient,
-            IOptionsSnapshot<MainApiOptions> options,
+            IMainApiClient mainApiClient,
+            IOptionsMonitor<MainApiOptions> mainApiOptions,
+            IOptionsMonitor<TagOptions> tagOptions,
             ILogger<MainApiTagService> logger)
         {
             _mainApiClient = mainApiClient;
-            _apiVersion = options.Value.ApiVersion;
-            _baseAddress = new Uri(options.Value.BaseAddress);
-            if (options.Value.TagSearchPageSize < 1)
+            _apiVersion = mainApiOptions.CurrentValue.ApiVersion;
+            _baseAddress = new Uri(mainApiOptions.CurrentValue.BaseAddress);
+            if (tagOptions.CurrentValue.TagSearchPageSize <= 0)
             {
-                throw new ArgumentOutOfRangeException(nameof(options.Value.TagSearchPageSize), "Must be a positive number.");
+                throw new ArgumentOutOfRangeException(nameof(tagOptions.CurrentValue.TagSearchPageSize), "Must be a positive number.");
             }
-            _tagSearchPageSize = options.Value.TagSearchPageSize;
+            _tagSearchPageSize = tagOptions.CurrentValue.TagSearchPageSize;
             if (_tagSearchPageSize < 100)
             {
                 logger.LogWarning("Tag search page size is set to a low value. This may impact the overall performance!");
-            }
-            if (_tagSearchPageSize <= 0)
-            {
-                throw new Exception($"{nameof(options.Value.TagSearchPageSize)} can't be zero or negative");
             }
         }
 

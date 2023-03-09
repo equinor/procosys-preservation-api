@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Auth.Client;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.TagFunction
     {
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
-        private Mock<IBearerTokenApiClient> _mainApiClient;
+        private Mock<IMainApiClient> _mainApiClient;
         private PCSTagFunction _result;
         private readonly string TagFunctionCode = "CodeTF";
         private readonly string RegisterCode = "CodeR";
@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.TagFunction
             _mainApiOptions
                 .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
-            _mainApiClient = new Mock<IBearerTokenApiClient>();
+            _mainApiClient = new Mock<IMainApiClient>();
 
             _result = new PCSTagFunction
             {
@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.TagFunction
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSTagFunction>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSTagFunction>(It.IsAny<string>(), null))
                 .Returns(Task.FromResult(_result));
 
             // Act

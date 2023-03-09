@@ -1,4 +1,4 @@
-﻿using Equinor.ProCoSys.Preservation.BlobStorage;
+﻿using Equinor.ProCoSys.BlobStorage;
 using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags

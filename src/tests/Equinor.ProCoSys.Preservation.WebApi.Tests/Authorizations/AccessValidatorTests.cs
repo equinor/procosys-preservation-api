@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload;
@@ -62,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
     public class AccessValidatorTests
     {
         private AccessValidator _dut;
-        private Mock<IContentRestrictionsChecker> _contentRestrictionsCheckerMock;
+        private Mock<IRestrictionRolesChecker> _restrictionRolesCheckerMock;
         private Mock<IProjectAccessChecker> _projectAccessCheckerMock;
         private Mock<ILogger<AccessValidator>> _loggerMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
@@ -78,13 +79,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
 
             _projectAccessCheckerMock = new Mock<IProjectAccessChecker>();
-            _contentRestrictionsCheckerMock = new Mock<IContentRestrictionsChecker>();
+            _restrictionRolesCheckerMock = new Mock<IRestrictionRolesChecker>();
             
             _projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithoutAccess)).Returns(false);
             _projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithAccess)).Returns(true);
             
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(true);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(false);
             
             var tagHelperMock = new Mock<ITagHelper>();
             tagHelperMock.Setup(p => p.GetProjectNameAsync(TagIdWithAccessToProject)).Returns(Task.FromResult(ProjectWithAccess));
@@ -96,7 +97,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             _dut = new AccessValidator(
                 _currentUserProviderMock.Object,
                 _projectAccessCheckerMock.Object,
-                _contentRestrictionsCheckerMock.Object,
+                _restrictionRolesCheckerMock.Object,
                 tagHelperMock.Object,
                 _loggerMock.Object);
         }
@@ -134,7 +135,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnPreserveCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new PreserveCommand(TagIdWithAccessToProject);
             
             // act
@@ -148,8 +149,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnPreserveCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new PreserveCommand(TagIdWithAccessToProject);
             
             // act
@@ -191,7 +192,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnBulkPreserveCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new BulkPreserveCommand(new List<int>{TagIdWithAccessToProject});
             
             // act
@@ -205,8 +206,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnBulkPreserveCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new BulkPreserveCommand(new List<int>{TagIdWithAccessToProject});
             
             // act
@@ -332,7 +333,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnStartPreservationCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new StartPreservationCommand(new List<int>{TagIdWithAccessToProject});
             
             // act
@@ -346,8 +347,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnStartPreservationCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new StartPreservationCommand(new List<int>{TagIdWithAccessToProject});
             
             // act
@@ -389,7 +390,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnSetInServiceCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new SetInServiceCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
 
             // act
@@ -403,8 +404,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnSetInServiceCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new SetInServiceCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
 
             // act
@@ -446,7 +447,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUndoStartPreservationCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new UndoStartPreservationCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
 
             // act
@@ -460,8 +461,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUndoStartPreservationCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UndoStartPreservationCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
 
             // act
@@ -503,7 +504,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateActionCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new CreateActionCommand(TagIdWithAccessToProject, null, null, null);
             
             // act
@@ -517,8 +518,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateActionCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new CreateActionCommand(TagIdWithAccessToProject, null, null, null);
             
             // act
@@ -560,7 +561,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateActionCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new UpdateActionCommand(TagIdWithAccessToProject, 0, null, null, null, null);
             
             // act
@@ -574,8 +575,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateActionCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UpdateActionCommand(TagIdWithAccessToProject, 0, null, null, null, null);
             
             // act
@@ -617,7 +618,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
 
             // act
@@ -631,8 +632,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
 
             // act
@@ -674,7 +675,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) });
 
             // act
@@ -688,8 +689,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) });
 
             // act
@@ -731,7 +732,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnTransferCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new TransferCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) });
 
             // act
@@ -745,8 +746,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnTransferCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new TransferCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) });
 
             // act
@@ -788,7 +789,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnVoidTagCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new VoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
@@ -802,8 +803,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnVoidTagCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new VoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
@@ -845,7 +846,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUnvoidTagCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
@@ -859,8 +860,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUnvoidTagCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
@@ -902,7 +903,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteTagCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new DeleteTagCommand(TagIdWithAccessToProject, null);
 
             // act
@@ -916,8 +917,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteTagCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new DeleteTagCommand(TagIdWithAccessToProject, null);
 
             // act
@@ -959,7 +960,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateTagCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new UpdateTagCommand(TagIdWithAccessToProject, null, null, null);
 
             // act
@@ -973,8 +974,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateTagCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UpdateTagCommand(TagIdWithAccessToProject, null, null, null);
 
             // act
@@ -1016,7 +1017,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateTagRequirementsCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new UpdateTagRequirementsCommand(TagIdWithAccessToProject, null, null, null, null, null);
 
             // act
@@ -1030,8 +1031,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateTagRequirementsCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UpdateTagRequirementsCommand(TagIdWithAccessToProject, null, null, null, null, null);
 
             // act
@@ -1073,7 +1074,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateTagStepCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new UpdateTagStepCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) }, 0);
 
             // act
@@ -1087,8 +1088,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateTagStepCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UpdateTagStepCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) }, 0);
 
             // act
@@ -1130,7 +1131,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null);
 
             // act
@@ -1144,8 +1145,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteTagAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null);
 
             // act
@@ -1187,7 +1188,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUploadTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream());
 
             // act
@@ -1201,8 +1202,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUploadTagAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream());
 
             // act
@@ -1244,7 +1245,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteFieldValueAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1);
 
             // act
@@ -1258,8 +1259,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteFieldValueAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1);
 
             // act
@@ -1301,7 +1302,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteActionAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null);
 
             // act
@@ -1315,8 +1316,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteActionAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null);
 
             // act
@@ -1358,7 +1359,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUploadActionAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream());
 
             // act
@@ -1372,8 +1373,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUploadActionAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream());
 
             // act
@@ -1415,7 +1416,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_RequirementPreserveCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1);
 
             // act
@@ -1429,8 +1430,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_RequirementPreserveCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1);
 
             // act
@@ -1472,7 +1473,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_RecordValuesCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null);
 
             // act
@@ -1486,8 +1487,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_RecordValuesCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null);
 
             // act
@@ -1529,7 +1530,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_UploadFieldValueAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream());
 
             // act
@@ -1543,8 +1544,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_UploadFieldValueAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _restrictionRolesCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream());
 
             // act

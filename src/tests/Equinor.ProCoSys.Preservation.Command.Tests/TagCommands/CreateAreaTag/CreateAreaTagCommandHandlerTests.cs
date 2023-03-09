@@ -76,7 +76,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             _projectApiServiceMock = new Mock<IProjectApiService>();
             _projectApiServiceMock.Setup(s => s.TryGetProjectAsync(TestPlant, TestProjectName))
-                .Returns(Task.FromResult(new PCSProject {Description = "ProjectDescription"}));
+                .Returns(Task.FromResult(new ProCoSysProject {Description = "ProjectDescription"}));
 
             var disciplineCode = "D";
             _disciplineApiServiceMock = new Mock<IDisciplineApiService>();

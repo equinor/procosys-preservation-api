@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 
@@ -30,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Misc
             var plant = _plantProvider.Plant;
             var userOid = _currentUserProvider.GetCurrentUserOid();
 
-            if (request is IProjectRequest projectRequest && !await _permissionCache.IsAValidProjectAsync(plant, userOid, projectRequest.ProjectName))
+            if (request is IProjectRequest projectRequest && !await _permissionCache.IsAValidProjectForUserAsync(plant, userOid, projectRequest.ProjectName))
             {
                 throw new InValidProjectException($"Project '{projectRequest.ProjectName}' is not a valid project in '{plant}'");
             }

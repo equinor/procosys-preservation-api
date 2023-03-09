@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -21,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
     [TestClass]
     public class GetHistoricalFieldValueAttachmentQueryHandlerTests : ReadOnlyTestsBase
     {
-        private Mock<IBlobStorage> _blobStorageMock;
+        private Mock<IAzureBlobService> _blobStorageMock;
         private Uri _uri;
         private string BlobContainer = "bc";
         private Mock<IOptionsSnapshot<BlobStorageOptions>> _blobStorageOptionsMock;
@@ -111,10 +110,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             _requirementIdWithAttachment = requirement.Id;
             _requirementIdWithCheckbox = requirement2.Id;
 
-            var fullBlobPath = fieldValueAttachment.GetFullBlobPath(BlobContainer);
-            _blobStorageMock = new Mock<IBlobStorage>();
+            var fullBlobPath = fieldValueAttachment.GetFullBlobPath();
+            _blobStorageMock = new Mock<IAzureBlobService>();
             _blobStorageMock
-                .Setup(b => b.GetDownloadSasUri(fullBlobPath, It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Setup(b => b.GetDownloadSasUri(
+                    BlobContainer,
+                    fullBlobPath, 
+                    It.IsAny<DateTimeOffset>(), 
+                    It.IsAny<DateTimeOffset>()))
                 .Returns(_uri);
 
             Assert.IsNotNull(activePeriodForRequirementWithAttachmentField.PreservationRecord);

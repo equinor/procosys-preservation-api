@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.Infrastructure;
@@ -87,7 +87,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
         private class SeederUserProvider : ICurrentUserProvider
         {
             public Guid GetCurrentUserOid() => _seederUser.Oid;
-            public bool HasCurrentUser() => true;
+            public bool HasCurrentUser => true;
         }
     }
 }

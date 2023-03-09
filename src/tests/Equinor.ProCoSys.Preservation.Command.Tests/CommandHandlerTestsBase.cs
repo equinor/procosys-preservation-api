@@ -1,9 +1,10 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Domain;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
         private TagRequirement _requirement;
         private UploadFieldValueAttachmentCommand _command;
         private UploadFieldValueAttachmentCommandHandler _dut;
-        private Mock<IBlobStorage> _blobStorageMock;
+        private Mock<IAzureBlobService> _blobStorageMock;
 
         [TestInitialize]
         public void Setup()
@@ -75,7 +75,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
                 .Returns(Task.FromResult(_requirementDefinition.Object));
             
-            _blobStorageMock = new Mock<IBlobStorage>();
+            _blobStorageMock = new Mock<IAzureBlobService>();
             
             var blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
@@ -132,8 +132,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
 
             // Assert
             var attachmentValue = (AttachmentValue)_requirement.ActivePeriod.FieldValues.Single();
-            var p = attachmentValue.FieldValueAttachment.GetFullBlobPath(_blobContainer);
-            _blobStorageMock.Verify(b => b.UploadAsync(p, It.IsAny<Stream>(), true, default), Times.Once);
+            var p = attachmentValue.FieldValueAttachment.GetFullBlobPath();
+            _blobStorageMock.Verify(b => b.UploadAsync(
+                _blobContainer,
+                p, 
+                It.IsAny<Stream>(), 
+                true, 
+                default), Times.Once);
         }
 
         [TestMethod]
@@ -142,14 +147,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
             // Arrange
             _requirement.RecordAttachment(new FieldValueAttachment(TestPlant, Guid.Empty, "F"), _command.FieldId, _requirementDefinition.Object);
             var attachmentValue = (AttachmentValue)_requirement.ActivePeriod.FieldValues.Single();
-            var p = attachmentValue.FieldValueAttachment.GetFullBlobPath(_blobContainer);
+            var p = attachmentValue.FieldValueAttachment.GetFullBlobPath();
 
             // Act
             await _dut.Handle(_command, default);
 
             // Assert
-            _blobStorageMock.Verify(b => b.DeleteAsync(p, default), Times.Once);
-            _blobStorageMock.Verify(b => b.UploadAsync(It.IsAny<string>(), It.IsAny<Stream>(), true, default), Times.Once);
+            _blobStorageMock.Verify(b => b.DeleteAsync(_blobContainer, p, default), Times.Once);
+            _blobStorageMock.Verify(b => b.UploadAsync(_blobContainer, It.IsAny<string>(), It.IsAny<Stream>(), true, default), Times.Once);
         }
 
         [TestMethod]
@@ -159,7 +164,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
             await _dut.Handle(_command, default);
 
             // Assert
-            _blobStorageMock.Verify(b => b.DeleteAsync(It.IsAny<string>(), default), Times.Never);
+            _blobStorageMock.Verify(b => b.DeleteAsync(It.IsAny<string>(), It.IsAny<string>(), default), Times.Never);
         }
 
         [TestMethod]

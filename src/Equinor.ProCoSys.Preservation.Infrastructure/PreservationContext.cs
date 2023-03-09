@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -37,11 +38,13 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             _currentUserProvider = currentUserProvider;
         }
 
-        // Use this code to log sql to console for debugging locally
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    optionsBuilder.LogTo(System.Console.WriteLine);
-        //}
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (DebugOptions.DebugEntityFrameworkInDevelopment)
+            {
+                optionsBuilder.LogTo(System.Console.WriteLine);
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

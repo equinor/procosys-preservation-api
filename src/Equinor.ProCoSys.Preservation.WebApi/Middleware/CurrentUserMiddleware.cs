@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Common.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             ILogger<CurrentUserMiddleware> logger)
         {
             logger.LogInformation($"----- {GetType().Name} start");
-            var oid = httpContextAccessor.HttpContext.User.Claims.TryGetOid();
+            var oid = httpContextAccessor.HttpContext?.User.Claims.TryGetOid();
             if (oid.HasValue)
             {
                 currentUserSetter.SetCurrentUserOid(oid.Value);

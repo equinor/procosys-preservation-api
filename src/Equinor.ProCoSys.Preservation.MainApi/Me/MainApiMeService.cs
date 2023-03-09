@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Auth.Client;
 using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.MainApi.Me
@@ -12,9 +12,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Me
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IBearerTokenApiClient _mainApiClient;
+        private readonly IMainApiClient _mainApiClient;
 
-        public MainApiMeService(IBearerTokenApiClient mainApiClient, IOptionsSnapshot<MainApiOptions> options)
+        public MainApiMeService(IMainApiClient mainApiClient, IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
             _apiVersion = options.Value.ApiVersion;

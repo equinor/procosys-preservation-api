@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetActionAttachment;
@@ -26,14 +25,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionAttachment
 
         private ActionAttachment _attachment;
         private TestDataSet _testDataSet;
-        private Mock<IBlobStorage> _blobStorageMock;
+        private Mock<IAzureBlobService> _blobStorageMock;
         private Uri _uri;
         private Mock<IOptionsSnapshot<BlobStorageOptions>> _blobStorageOptionsMock;
         private string BlobContainer = "bc";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            _blobStorageMock = new Mock<IBlobStorage>();
+            _blobStorageMock = new Mock<IAzureBlobService>();
             _uri = new Uri("http://whatever/file.txt");
             _blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
@@ -62,9 +61,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionAttachment
             _actionId = action.Id;
             _attachmentId = _attachment.Id;
 
-            var fullBlobPath = _attachment.GetFullBlobPath(BlobContainer);
+            var fullBlobPath = _attachment.GetFullBlobPath();
             _blobStorageMock
-                .Setup(b => b.GetDownloadSasUri(fullBlobPath, It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>()))
+                .Setup(b => b.GetDownloadSasUri(
+                    BlobContainer,
+                    fullBlobPath, 
+                    It.IsAny<DateTimeOffset>(), 
+                    It.IsAny<DateTimeOffset>()))
                 .Returns(_uri);
         }
 

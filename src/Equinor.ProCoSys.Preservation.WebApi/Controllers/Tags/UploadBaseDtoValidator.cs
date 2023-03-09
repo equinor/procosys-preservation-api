@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using FluentValidation;
 using Microsoft.Extensions.Options;

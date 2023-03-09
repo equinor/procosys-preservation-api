@@ -8,7 +8,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 {
     internal class TagFunctionRepository : TestRepository<TagFunction>, ITagFunctionRepository
     {
-        public TagFunctionRepository(PlantProvider plantProvider, List<TagFunction> sourceTagFunctions)
+        public TagFunctionRepository(PlantProviderForTest plantProvider, List<TagFunction> sourceTagFunctions)
             :base(plantProvider, sourceTagFunctions)
         {
         }

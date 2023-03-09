@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -57,12 +58,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 throw new Exception("[Authorization] header missing");
             }
 
-            TokenProfile profile;
+            TestProfile profile;
             var tokenPart = tokens[1];
             try
             {
                 var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(tokenPart));
-                profile = JsonConvert.DeserializeObject<TokenProfile>(decoded);
+                profile = JsonConvert.DeserializeObject<TestProfile>(decoded);
             }
             catch (Exception ex)
             {

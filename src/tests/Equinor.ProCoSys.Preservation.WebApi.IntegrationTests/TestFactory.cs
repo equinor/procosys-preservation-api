@@ -4,19 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Auth.Permission;
+using Equinor.ProCoSys.Auth.Person;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
 using Equinor.ProCoSys.Preservation.MainApi.Me;
-using Equinor.ProCoSys.Preservation.MainApi.Permission;
-using Equinor.ProCoSys.Preservation.MainApi.Person;
-using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
-using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -26,7 +25,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using PCSProject = Equinor.ProCoSys.Preservation.MainApi.Permission.PCSProject;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
@@ -36,6 +34,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         private readonly string _plannerOid = "00000000-0000-0000-0000-000000000002";
         private readonly string _preserverOid = "00000000-0000-0000-0000-000000000003";
         private readonly string _hackerOid = "00000000-0000-0000-0000-000000000666";
+        private readonly string _crossPlantAppOid = "00000000-0000-0000-0000-000000000888";
         private readonly string _integrationTestEnvironment = "IntegrationTests";
         private readonly string _connectionString;
         private readonly string _configPath;
@@ -45,13 +44,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         private readonly Mock<IMeApiService> _meApiServiceMock = new Mock<IMeApiService>();
         private readonly Mock<IPersonApiService> _personApiServiceMock = new Mock<IPersonApiService>();
-        private readonly Mock<IPlantApiService> _plantApiServiceMock = new Mock<IPlantApiService>();
         private readonly Mock<IProjectApiService> _projectApiServiceMock = new Mock<IProjectApiService>();
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock = new Mock<IPermissionApiService>();
         public readonly Mock<IResponsibleApiService> ResponsibleApiServiceMock = new Mock<IResponsibleApiService>();
         public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();
         public readonly Mock<IAreaApiService> AreaApiServiceMock = new Mock<IAreaApiService>();
-        public readonly Mock<IBlobStorage> BlobStorageMock = new Mock<IBlobStorage>();
+        public readonly Mock<IAzureBlobService> BlobStorageMock = new Mock<IAzureBlobService>();
         public readonly Mock<ITagApiService> TagApiServiceMock = new Mock<ITagApiService>();
         public readonly Mock<ITagFunctionApiService> TagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
 
@@ -131,17 +129,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         {
             var testUser = _testUsers[userType];
             
-            SetupPermissionMock(plant, 
-                testUser.ProCoSysPermissions,
-                testUser.ProCoSysProjects,
-                testUser.ProCoSysRestrictions);
+            SetupPermissionMock(plant, testUser);
             
             UpdatePlantInHeader(testUser.HttpClient, plant);
             
             return testUser.HttpClient;
         }
 
-        public TokenProfile GetTestProfile(UserType userType) => _testUsers[userType].Profile;
+        public TestProfile GetTestProfile(UserType userType) => _testUsers[userType].Profile;
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -156,7 +151,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
                 services.AddScoped(_ => _meApiServiceMock.Object);
                 services.AddScoped(_ => _personApiServiceMock.Object);
-                services.AddScoped(_ => _plantApiServiceMock.Object);
                 services.AddScoped(_ => _projectApiServiceMock.Object);
                 services.AddScoped(_ => TagApiServiceMock.Object);
                 services.AddScoped(_ => TagFunctionApiServiceMock.Object);
@@ -256,49 +250,44 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             return $"Server=(LocalDB)\\MSSQLLocalDB;Initial Catalog={dbName};Integrated Security=true;AttachDbFileName={dbPath}";
         }
         
-        private void SetupPermissionMock(
-            string plant,
-            IList<string> proCoSysPermissions,
-            IList<PCSProject> proCoSysProjects,
-            IList<string> proCoSysRestrictions
-            )
+        private void SetupPermissionMock(string plant, ITestUser testUser)
         {
-            _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(plant))
-                .Returns(Task.FromResult(proCoSysPermissions));
+            _permissionApiServiceMock.Setup(p => p.GetPermissionsForCurrentUserAsync(plant))
+                .Returns(Task.FromResult(testUser.Permissions));
                         
-            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(plant))
-                .Returns(Task.FromResult(proCoSysProjects));
+            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsForCurrentUserAsync(plant))
+                .Returns(Task.FromResult(testUser.AccessableProjects));
 
-            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(plant))
-                .Returns(Task.FromResult(proCoSysRestrictions));
+            _permissionApiServiceMock.Setup(p => p.GetRestrictionRolesForCurrentUserAsync(plant))
+                .Returns(Task.FromResult(testUser.Restrictions));
         }
 
         private void SetupTestUsers()
         {
-            var commonProCoSysPlants = new List<PCSPlant>
+            var accessablePlants = new List<AccessablePlant>
             {
-                new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle, HasAccess = true},
-                new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
+                new AccessablePlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle, HasAccess = true},
+                new AccessablePlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
             };
 
-            var commonProCoSysProjects = new List<PCSProject>
+            var accessableProjects = new List<AccessableProject>
             {
-                new PCSProject {Name = ProjectWithAccess, HasAccess = true},
-                new PCSProject {Name = ProjectWithoutAccess}
+                new AccessableProject {Name = ProjectWithAccess, HasAccess = true},
+                new AccessableProject {Name = ProjectWithoutAccess}
             };
 
-            var commonProCoSysRestrictions = new List<string>
+            var restrictions = new List<string>
             {
                 ClaimsTransformation.NoRestrictions
             };
 
             SetupAnonymousUser();
 
-            SetupLibraryAdminUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
+            SetupLibraryAdminUser(accessablePlants, accessableProjects, restrictions);
 
-            SetupPlannerUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
+            SetupPlannerUser(accessablePlants, accessableProjects, restrictions);
 
-            SetupPreserverUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
+            SetupPreserverUser(accessablePlants, accessableProjects, restrictions);
     
             SetupHackerUser();
             
@@ -332,24 +321,30 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         {
             foreach (var testUser in _testUsers.Values.Where(t => t.Profile != null))
             {
-                if (testUser.ProCoSysPerson != null)
+                if (testUser.AuthProCoSysPerson != null)
                 {
                     _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
-                    .Returns(Task.FromResult(new PCSPerson
-                    {
-                        AzureOid = testUser.Profile.Oid,
-                        FirstName = testUser.ProCoSysPerson.FirstName,
-                        LastName = testUser.ProCoSysPerson.LastName
-                    }));
+                    .Returns(Task.FromResult(testUser.AuthProCoSysPerson));
                 }
                 else
                 {
                     _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
-                        .Returns(Task.FromResult((PCSPerson)null));
+                        .Returns(Task.FromResult((ProCoSysPerson)null));
                 }
-                _plantApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
-                    .Returns(Task.FromResult(testUser.ProCoSysPlants));
+                _permissionApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
+                    .Returns(Task.FromResult(testUser.AccessablePlants));
             }
+
+            // Need to mock getting info for current application from Main. This to satisfy VerifyIpoApiClientExists middelware
+            var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
+            var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
+            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(preservationApiObjectId)))
+                .Returns(Task.FromResult(new ProCoSysPerson
+                {
+                    AzureOid = preservationApiObjectId,
+                    FirstName = "Pres",
+                    LastName = "API"
+                }));
         }
 
         // Authenticated client without any roles
@@ -358,44 +353,39 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 new TestUser
                 {
                     Profile =
-                        new TokenProfile
+                        new TestProfile
                         {
                             FirstName = "Harry",
                             LastName = "Hacker", 
                             Oid = _hackerOid
                         },
-                    ProCoSysPlants = new List<PCSPlant>
+                    AccessablePlants = new List<AccessablePlant>
                     {
-                        new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
-                        new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
+                        new AccessablePlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
+                        new AccessablePlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
                     },
-                    ProCoSysPermissions = new List<string>(),
-                    ProCoSysProjects = new List<PCSProject>(),
-                    ProCoSysRestrictions = new List<string>()
+                    Permissions = new List<string>(),
+                    AccessableProjects = new List<AccessableProject>(),
+                    Restrictions = new List<string>()
                 });
 
         // Authenticated client with necessary roles to perform preservation work
         private void SetupPreserverUser(
-            List<PCSPlant> commonProCoSysPlants,
-            List<PCSProject> commonProCoSysProjects,
+            List<AccessablePlant> commonAccessablePlants,
+            List<AccessableProject> accessableProjects,
             List<string> commonProCoSysRestrictions)
             => _testUsers.Add(UserType.Preserver,
                 new TestUser
                 {
                     Profile =
-                        new TokenProfile
+                        new TestProfile
                         {
                             FirstName = "Peder",
                             LastName = "Preserver",
                             Oid = _preserverOid
                         },
-                    ProCoSysPerson = new PCSPerson
-                    {
-                        FirstName = "Peder",
-                        LastName = "Preserver"
-                    },
-                    ProCoSysPlants = commonProCoSysPlants,
-                    ProCoSysPermissions = new List<string>
+                    AccessablePlants = commonAccessablePlants,
+                    Permissions = new List<string>
                     {
                         Permissions.PRESERVATION_CREATE,
                         Permissions.PRESERVATION_DELETE,
@@ -404,32 +394,27 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         Permissions.PRESERVATION_ATTACHFILE,
                         Permissions.PRESERVATION_DETACHFILE
                     },
-                    ProCoSysProjects = commonProCoSysProjects,
-                    ProCoSysRestrictions = commonProCoSysRestrictions
+                    AccessableProjects = accessableProjects,
+                    Restrictions = commonProCoSysRestrictions
                 });
 
         // Authenticated user with necessary roles to Create and Update in Scope
         private void SetupPlannerUser(
-            List<PCSPlant> commonProCoSysPlants,
-            List<PCSProject> commonProCoSysProjects,
+            List<AccessablePlant> commonAccessablePlants,
+            List<AccessableProject> accessableProjects,
             List<string> commonProCoSysRestrictions)
             => _testUsers.Add(UserType.Planner,
                 new TestUser
                 {
                     Profile =
-                        new TokenProfile
+                        new TestProfile
                         {
                             FirstName = "Pernilla",
                             LastName = "Planner",
                             Oid = _plannerOid
                         },
-                    ProCoSysPerson = new PCSPerson
-                    {
-                        FirstName = "Pernilla",
-                        LastName = "Planner",
-                    },
-                    ProCoSysPlants = commonProCoSysPlants,
-                    ProCoSysPermissions = new List<string>
+                    AccessablePlants = commonAccessablePlants,
+                    Permissions = new List<string>
                     {
                         Permissions.PRESERVATION_PLAN_READ,
                         Permissions.PRESERVATION_PLAN_CREATE,
@@ -439,32 +424,27 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         Permissions.PRESERVATION_PLAN_ATTACHFILE,
                         Permissions.PRESERVATION_PLAN_DETACHFILE
                     },
-                    ProCoSysProjects = commonProCoSysProjects,
-                    ProCoSysRestrictions = commonProCoSysRestrictions
+                    AccessableProjects = accessableProjects,
+                    Restrictions = commonProCoSysRestrictions
                 });
 
         // Authenticated client with necessary roles to Create and Update in Library
         private void SetupLibraryAdminUser(
-            List<PCSPlant> commonProCoSysPlants,
-            List<PCSProject> commonProCoSysProjects,
+            List<AccessablePlant> accessablePlants,
+            List<AccessableProject> accessableProjects,
             List<string> commonProCoSysRestrictions)
             => _testUsers.Add(UserType.LibraryAdmin,
                 new TestUser
                 {
                     Profile =
-                        new TokenProfile
+                        new TestProfile
                         {
                             FirstName = "Arne",
                             LastName = "Admin",
                             Oid = _libraryAdminOid
                         },
-                    ProCoSysPerson = new PCSPerson
-                    {
-                        FirstName = "Arne",
-                        LastName = "Admin",
-                    },
-                    ProCoSysPlants = commonProCoSysPlants,
-                    ProCoSysPermissions = new List<string>
+                    AccessablePlants = accessablePlants,
+                    Permissions = new List<string>
                     {
                         Permissions.LIBRARY_PRESERVATION_CREATE,
                         Permissions.LIBRARY_PRESERVATION_DELETE,
@@ -472,43 +452,33 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         Permissions.LIBRARY_PRESERVATION_VOIDUNVOID,
                         Permissions.LIBRARY_PRESERVATION_WRITE
                     },
-                    ProCoSysProjects = commonProCoSysProjects,
-                    ProCoSysRestrictions = commonProCoSysRestrictions
+                    AccessableProjects = accessableProjects,
+                    Restrictions = commonProCoSysRestrictions
                 });
         
         // Authenticated Application client without any ProCoSys roles. Configured with app role to allow using cross plant endpoints
         private void SetupCrossPlantApp()
-        {
-            var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
-
-            var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
-
-            _testUsers.Add(UserType.CrossPlantApp,
+            => _testUsers.Add(UserType.CrossPlantApp,
                 new TestUser
                 {
                     Profile =
-                        new TokenProfile
+                        new TestProfile
                         {
-                            // no names in token for app
-                            Oid = preservationApiObjectId,
+                            FirstName = "XPlant",
+                            LastName = "App",
+                            Oid = _crossPlantAppOid,
                             IsAppToken = true,
                             AppRoles = new[] {AppRoles.CROSSPLANT}
                         },
-                    ProCoSysPerson = new PCSPerson
+                    AccessablePlants = new List<AccessablePlant>
                     {
-                        FirstName = "XPlant",
-                        LastName = "App",
+                        new AccessablePlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
+                        new AccessablePlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
                     },
-                    ProCoSysPlants = new List<PCSPlant>
-                    {
-                        new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
-                        new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
-                    },
-                    ProCoSysPermissions = new List<string>(),
-                    ProCoSysProjects = new List<PCSProject>(),
-                    ProCoSysRestrictions = new List<string>()
+                    Permissions = new List<string>(),
+                    AccessableProjects = new List<AccessableProject>(),
+                    Restrictions = new List<string>()
                 });
-        }
 
         private void SetupAnonymousUser() => _testUsers.Add(UserType.Anonymous, new TestUser());
 

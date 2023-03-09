@@ -8,12 +8,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 {
     internal abstract class TestRepository<T> where T : EntityBase
     {
-        private readonly PlantProvider _plantProvider;
+        private readonly PlantProviderForTest _plantProvider;
         private readonly List<T> _sourceItems;
         protected readonly List<T> _targetItems = new List<T>();
         private readonly string _targetPlant;
 
-        protected TestRepository(PlantProvider plantProvider, List<T> sourceModes)
+        protected TestRepository(PlantProviderForTest plantProvider, List<T> sourceModes)
         {
             _plantProvider = plantProvider;
             _sourceItems = sourceModes;

@@ -9,8 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.7.0" />
     <PackageReference Include="ClosedXML" Version="0.96.0" />
-    <PackageReference Include="Equinor.ProCoSys.PcsServiceBus" Version="3.4.0" />
+    <PackageReference Include="Equinor.ProCoSys.PcsServiceBus" Version="3.8.5" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1" />
@@ -35,7 +36,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.BlobStorage\Equinor.ProCoSys.Preservation.BlobStorage.csproj" />
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Command\Equinor.ProCoSys.Preservation.Command.csproj" />
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Domain\Equinor.ProCoSys.Preservation.Domain.csproj" />
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Infrastructure\Equinor.ProCoSys.Preservation.Infrastructure.csproj" />

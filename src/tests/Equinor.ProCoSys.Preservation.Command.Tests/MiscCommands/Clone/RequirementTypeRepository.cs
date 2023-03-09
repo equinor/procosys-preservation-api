@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 {
     internal class RequirementTypeRepository : TestRepository<RequirementType>, IRequirementTypeRepository
     {
-        public RequirementTypeRepository(PlantProvider plantProvider, List<RequirementType> sourceRequirementTypes)
+        public RequirementTypeRepository(PlantProviderForTest plantProvider, List<RequirementType> sourceRequirementTypes)
             :base(plantProvider, sourceRequirementTypes)
         {
         }

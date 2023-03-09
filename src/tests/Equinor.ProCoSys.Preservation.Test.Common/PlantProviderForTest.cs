@@ -1,10 +1,10 @@
-﻿using Equinor.ProCoSys.Preservation.Domain;
+﻿using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Test.Common
 {
-    public class PlantProvider : IPlantProvider, IPlantSetter
+    public class PlantProviderForTest : IPlantProvider, IPlantSetter
     {
-        public PlantProvider(string plant) => Plant = plant;
+        public PlantProviderForTest(string plant) => Plant = plant;
 
         public string Plant { get; private set; }
         public bool IsCrossPlantQuery { get; private set; }

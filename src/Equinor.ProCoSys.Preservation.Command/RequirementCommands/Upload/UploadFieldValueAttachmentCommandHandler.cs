@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -18,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
-        private readonly IBlobStorage _blobStorage;
+        private readonly IAzureBlobService _azureBlobService;
         private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
         public UploadFieldValueAttachmentCommandHandler(
@@ -26,13 +27,13 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
-            IBlobStorage blobStorage,
+            IAzureBlobService azureBlobService,
             IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
-            _blobStorage = blobStorage;
+            _azureBlobService = azureBlobService;
             _blobStorageOptions = blobStorageOptions;
             _requirementTypeRepository = requirementTypeRepository;
         }
@@ -54,14 +55,21 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
             }
             else
             {
-                fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
-                await _blobStorage.DeleteAsync(fullBlobPath, cancellationToken);
+                fullBlobPath = attachment.GetFullBlobPath();
+                await _azureBlobService.DeleteAsync(
+                    _blobStorageOptions.Value.BlobContainer,
+                    fullBlobPath, 
+                    cancellationToken);
                 attachment.SetFileName(request.FileName);
             }
 
-            fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
-
-            await _blobStorage.UploadAsync(fullBlobPath, request.Content, true, cancellationToken);
+            fullBlobPath = attachment.GetFullBlobPath();
+            await _azureBlobService.UploadAsync(
+                _blobStorageOptions.Value.BlobContainer,
+                fullBlobPath, 
+                request.Content, 
+                true, 
+                cancellationToken);
 
             requirement.RecordAttachment(attachment, request.FieldId, requirementDefinition);
 

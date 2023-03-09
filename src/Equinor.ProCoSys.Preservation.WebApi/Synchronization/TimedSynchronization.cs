@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -31,6 +30,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
+            // THIS CODE WAS WRITTEN TO RUN A ONETIME TRANSFORMATION WHEN WE INTRODUCED ProCoSysGuid
+            // WE KEEP THE CODE ... MAYBE WE WANT TO DO SIMILAR STUFF LATER
+
             //_timer = new System.Timers.Timer
             //{
             //    Interval = _options.CurrentValue.Interval.TotalMilliseconds,

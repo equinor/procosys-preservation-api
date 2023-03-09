@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
-using Equinor.ProCoSys.Preservation.MainApi.Person;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Common.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -20,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             ILogger<PersonValidatorMiddleware> logger)
         {
             logger.LogInformation($"----- {GetType().Name} start");
-            if (currentUserProvider.HasCurrentUser())
+            if (currentUserProvider.HasCurrentUser)
             {
                 var oid = currentUserProvider.GetCurrentUserOid();
                 if (!await personCache.ExistsAsync(oid))

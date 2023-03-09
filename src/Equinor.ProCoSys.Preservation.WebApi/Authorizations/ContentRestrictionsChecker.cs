@@ -1,22 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Auth.Misc;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
-    public class ContentRestrictionsChecker : IContentRestrictionsChecker
+    public class RestrictionRolesChecker : IRestrictionRolesChecker
     {
-        private readonly IClaimsProvider _claimsProvider;
+        private readonly IClaimsPrincipalProvider _claimsPrincipalProvider;
 
-        public ContentRestrictionsChecker(IClaimsProvider claimsProvider) => _claimsProvider = claimsProvider;
+        public RestrictionRolesChecker(IClaimsPrincipalProvider claimsPrincipalProvider) => _claimsPrincipalProvider = claimsPrincipalProvider;
 
         public bool HasCurrentUserExplicitNoRestrictions()
         {
-            var claimWithContentRestriction = GetContentRestrictionClaims(_claimsProvider.GetCurrentUser().Claims);
+            var claimWithRestrictionRole = GetRestrictionRoleClaims(_claimsPrincipalProvider.GetCurrentClaimsPrincipal().Claims);
 
-            // the rule for saying that a user do not have any restriction, is that user has one and only one restriction with value %
-            return claimWithContentRestriction.Count == 1 && HasContentRestrictionClaim(claimWithContentRestriction, ClaimsTransformation.NoRestrictions);
+            // the rule for saying that a user do not have any restriction, is that user has one and only one restriction role with value %
+            return claimWithRestrictionRole.Count == 1 && HasRestrictionRoleClaim(claimWithRestrictionRole, ClaimsTransformation.NoRestrictions);
         }
 
         public bool HasCurrentUserExplicitAccessToContent(string responsibleCode)
@@ -26,20 +27,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
                 return false;
             }
             
-            var claimWithContentRestriction = GetContentRestrictionClaims(_claimsProvider.GetCurrentUser().Claims);
-            return HasContentRestrictionClaim(claimWithContentRestriction, responsibleCode);
+            var claimWithRestrictionRole = GetRestrictionRoleClaims(_claimsPrincipalProvider.GetCurrentClaimsPrincipal().Claims);
+            return HasRestrictionRoleClaim(claimWithRestrictionRole, responsibleCode);
         }
 
-        private bool HasContentRestrictionClaim(IEnumerable<Claim> claims, string responsibleCode)
+        private bool HasRestrictionRoleClaim(IEnumerable<Claim> claims, string responsibleCode)
         {
-            var contentRestrictionClaimValue = ClaimsTransformation.GetContentRestrictionClaimValue(responsibleCode);
+            var contentRestrictionClaimValue = ClaimsTransformation.GetRestrictionRoleClaimValue(responsibleCode);
             return claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == contentRestrictionClaimValue);
         }
 
-        private List<Claim> GetContentRestrictionClaims(IEnumerable<Claim> claims)
+        private List<Claim> GetRestrictionRoleClaims(IEnumerable<Claim> claims)
             => claims.Where(c =>
                     c.Type == ClaimTypes.UserData &&
-                    c.Value.StartsWith(ClaimsTransformation.ContentRestrictionPrefix))
+                    c.Value.StartsWith(ClaimsTransformation.RestrictionRolePrefix))
                 .ToList();
     }
 }
