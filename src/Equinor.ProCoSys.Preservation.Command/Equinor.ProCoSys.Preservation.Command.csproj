@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Equinor.ProCoSys.Auth" Version="0.1.1" />
     <PackageReference Include="Equinor.ProCoSys.BlobStorage" Version="1.0.1" />
-    <PackageReference Include="FluentValidation" Version="11.2.2" />
+    <PackageReference Include="FluentValidation" Version="11.5.1" />
     <PackageReference Include="MediatR" Version="10.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
     <PackageReference Include="ServiceResult" Version="1.0.1" />
