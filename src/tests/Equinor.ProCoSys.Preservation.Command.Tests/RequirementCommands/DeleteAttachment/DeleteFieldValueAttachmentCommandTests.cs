@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttachment;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
         private TagRequirement _requirement;
         private DeleteFieldValueAttachmentCommand _command;
         private DeleteFieldValueAttachmentCommandHandler _dut;
-        private Mock<IBlobStorage> _blobStorageMock;
+        private Mock<IAzureBlobService> _blobStorageMock;
 
         [TestInitialize]
         public void Setup()
@@ -71,7 +71,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
                 .Returns(Task.FromResult(_requirementDefinition.Object));
             
-            _blobStorageMock = new Mock<IBlobStorage>();
+            _blobStorageMock = new Mock<IAzureBlobService>();
             
             var blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
@@ -114,13 +114,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
             // Arrange
             _requirement.RecordAttachment(new FieldValueAttachment(TestPlant, Guid.Empty, "F"), _command.FieldId, _requirementDefinition.Object);
             var attachmentValue = (AttachmentValue)_requirement.ActivePeriod.FieldValues.Single();
-            var path = attachmentValue.FieldValueAttachment.GetFullBlobPath(_blobContainer);
+            var path = attachmentValue.FieldValueAttachment.GetFullBlobPath();
 
             // Act
             await _dut.Handle(_command, default);
 
             // Assert
-            _blobStorageMock.Verify(b => b.DeleteAsync(path, default), Times.Once);
+            _blobStorageMock.Verify(b => b.DeleteAsync(_blobContainer, path, default), Times.Once);
         }
 
         [TestMethod]
@@ -130,7 +130,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
             await _dut.Handle(_command, default);
 
             // Assert
-            _blobStorageMock.Verify(b => b.DeleteAsync(It.IsAny<string>(), default), Times.Never);
+            _blobStorageMock.Verify(b => b.DeleteAsync(It.IsAny<string>(), It.IsAny<string>(), default), Times.Never);
         }
 
         [TestMethod]

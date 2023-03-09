@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;

@@ -2,7 +2,7 @@
 using System.IO;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 
 namespace Equinor.ProCoSys.Preservation.Domain
 {
@@ -39,8 +39,8 @@ namespace Equinor.ProCoSys.Preservation.Domain
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
-        public string GetFullBlobPath(string blobContainer)
-            => Path.Combine(blobContainer, BlobPath, FileName).Replace("\\", "/");
+        public string GetFullBlobPath()
+            => Path.Combine(BlobPath, FileName).Replace("\\", "/");
 
         public void SetCreated(Person createdBy)
         {

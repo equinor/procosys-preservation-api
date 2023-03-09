@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.AspNetCore.Http;

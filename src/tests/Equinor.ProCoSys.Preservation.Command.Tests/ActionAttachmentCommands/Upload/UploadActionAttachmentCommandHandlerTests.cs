@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.U
         private UploadActionAttachmentCommand _commandWithoutOverwrite;
         private UploadActionAttachmentCommandHandler _dut;
 
-        private Mock<IBlobStorage> _blobStorageMock;
+        private Mock<IAzureBlobService> _blobStorageMock;
         private Action _action;
 
         [TestInitialize]
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.U
         {
             _commandWithoutOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, false, new MemoryStream());
 
-            _blobStorageMock = new Mock<IBlobStorage>();
+            _blobStorageMock = new Mock<IAzureBlobService>();
 
             var blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
@@ -129,9 +129,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.U
 
             // Assert
             var attachment = _action.Attachments.Single();
-            var p = attachment.GetFullBlobPath(_blobContainer);
+            var p = attachment.GetFullBlobPath();
             _blobStorageMock.Verify(b 
-                => b.UploadAsync(p, It.IsAny<Stream>(), _commandWithoutOverwrite.OverwriteIfExists, default), Times.Once);
+                => b.UploadAsync(
+                    _blobContainer, 
+                    p, 
+                    It.IsAny<Stream>(), 
+                    _commandWithoutOverwrite.OverwriteIfExists, 
+                    default), Times.Once);
         }
     }
 }

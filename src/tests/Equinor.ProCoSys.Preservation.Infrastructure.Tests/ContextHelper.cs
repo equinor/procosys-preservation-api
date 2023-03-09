@@ -1,4 +1,4 @@
-﻿using Equinor.ProCoSys.Auth.Misc;
+﻿using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 using Moq;

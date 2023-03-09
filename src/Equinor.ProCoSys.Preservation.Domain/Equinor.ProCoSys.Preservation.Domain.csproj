@@ -5,11 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Equinor.ProCoSys.Common" Version="1.0.1" />
     <PackageReference Include="MediatR" Version="10.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\procosys-invitation-for-punch-out-api\src\Equinor.ProCoSys.Auth\Equinor.ProCoSys.Auth.csproj" />
   </ItemGroup>
 
   <ItemGroup>

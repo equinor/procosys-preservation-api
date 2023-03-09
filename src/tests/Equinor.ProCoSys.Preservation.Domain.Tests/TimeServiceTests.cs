@@ -1,5 +1,5 @@
 ﻿using System;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Tests

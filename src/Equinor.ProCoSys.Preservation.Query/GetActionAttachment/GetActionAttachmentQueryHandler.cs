@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -17,13 +17,13 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachment
     public class GetActionAttachmentQueryHandler : IRequestHandler<GetActionAttachmentQuery, Result<Uri>>
     {
         private readonly IReadOnlyContext _context;
-        private readonly IBlobStorage _blobStorage;
+        private readonly IAzureBlobService _azureBlobService;
         private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
-        public GetActionAttachmentQueryHandler(IReadOnlyContext context, IBlobStorage blobStorage, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
+        public GetActionAttachmentQueryHandler(IReadOnlyContext context, IAzureBlobService azureBlobService, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
         {
             _context = context;
-            _blobStorage = blobStorage;
+            _azureBlobService = azureBlobService;
             _blobStorageOptions = blobStorageOptions;
         }
 
@@ -43,9 +43,9 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachment
             }
 
             var now = TimeService.UtcNow;
-            var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
-
-            var uri = _blobStorage.GetDownloadSasUri(
+            var fullBlobPath = attachment.GetFullBlobPath();
+            var uri = _azureBlobService.GetDownloadSasUri(
+                _blobStorageOptions.Value.BlobContainer,
                 fullBlobPath,
                 new DateTimeOffset(now.AddMinutes(_blobStorageOptions.Value.BlobClockSkewMinutes * -1)),
                 new DateTimeOffset(now.AddMinutes(_blobStorageOptions.Value.BlobClockSkewMinutes)));

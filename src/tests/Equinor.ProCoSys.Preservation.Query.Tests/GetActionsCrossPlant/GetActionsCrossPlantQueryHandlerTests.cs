@@ -9,7 +9,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant;
 using Equinor.ProCoSys.Preservation.Test.Common;
@@ -18,7 +18,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Auth.Permission;
 

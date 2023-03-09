@@ -13,12 +13,12 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
-using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Auth.Authentication;
+using Equinor.ProCoSys.Common.Telemetry;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 {

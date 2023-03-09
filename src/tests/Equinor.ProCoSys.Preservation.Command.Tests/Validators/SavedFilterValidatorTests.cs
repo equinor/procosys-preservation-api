@@ -8,7 +8,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Moq;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 {

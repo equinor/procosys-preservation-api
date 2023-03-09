@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.Exceptions;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;

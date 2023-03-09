@@ -2,7 +2,7 @@
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate
 {

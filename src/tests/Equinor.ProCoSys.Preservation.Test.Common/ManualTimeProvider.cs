@@ -1,5 +1,5 @@
 ﻿using System;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 
 namespace Equinor.ProCoSys.Preservation.Test.Common
 {

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Authorization;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 

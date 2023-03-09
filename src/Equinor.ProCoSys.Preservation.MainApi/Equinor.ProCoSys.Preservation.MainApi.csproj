@@ -5,13 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Equinor.ProCoSys.Auth" Version="0.1.1" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
     <PackageReference Include="System.Text.Json" Version="6.0.6" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\procosys-invitation-for-punch-out-api\src\Equinor.ProCoSys.Auth\Equinor.ProCoSys.Auth.csproj" />
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Domain\Equinor.ProCoSys.Preservation.Domain.csproj" />
   </ItemGroup>
 

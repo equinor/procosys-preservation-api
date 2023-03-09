@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
@@ -14,18 +14,18 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IBlobStorage _blobStorage;
+        private readonly IAzureBlobService _azureBlobService;
         private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
         public DeleteActionAttachmentCommandHandler(
             IProjectRepository projectRepository,
             IUnitOfWork unitOfWork,
-            IBlobStorage blobStorage,
+            IAzureBlobService azureBlobService,
             IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
-            _blobStorage = blobStorage;
+            _azureBlobService = azureBlobService;
             _blobStorageOptions = blobStorageOptions;
         }
 
@@ -37,9 +37,11 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete
 
             attachment.SetRowVersion(request.RowVersion);
 
-            var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
-
-            await _blobStorage.DeleteAsync(fullBlobPath, cancellationToken);
+            var fullBlobPath = attachment.GetFullBlobPath();
+            await _azureBlobService.DeleteAsync(
+                _blobStorageOptions.Value.BlobContainer, 
+                fullBlobPath, 
+                cancellationToken);
 
             action.RemoveAttachment(attachment);
 

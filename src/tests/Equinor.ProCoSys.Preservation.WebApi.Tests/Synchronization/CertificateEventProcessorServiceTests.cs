@@ -2,12 +2,12 @@
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.PcsServiceBus.Enums;
 using Equinor.ProCoSys.PcsServiceBus.Topics;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
-using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

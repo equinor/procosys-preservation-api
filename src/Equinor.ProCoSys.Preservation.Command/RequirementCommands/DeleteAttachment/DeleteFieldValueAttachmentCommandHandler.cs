@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -16,18 +16,18 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttach
         private readonly IProjectRepository _projectRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IBlobStorage _blobStorage;
+        private readonly IAzureBlobService _azureBlobService;
         private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
         public DeleteFieldValueAttachmentCommandHandler(
             IProjectRepository projectRepository, 
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
-            IBlobStorage blobStorage, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
+            IAzureBlobService azureBlobService, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
-            _blobStorage = blobStorage;
+            _azureBlobService = azureBlobService;
             _blobStorageOptions = blobStorageOptions;
             _requirementTypeRepository = requirementTypeRepository;
         }
@@ -44,8 +44,11 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttach
             
             if (attachment != null)
             {
-                var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
-                await _blobStorage.DeleteAsync(fullBlobPath, cancellationToken);
+                var fullBlobPath = attachment.GetFullBlobPath();
+                await _azureBlobService.DeleteAsync(
+                    _blobStorageOptions.Value.BlobContainer,
+                    fullBlobPath, 
+                    cancellationToken);
             }
 
             requirement.RecordAttachment(null, request.FieldId, requirementDefinition);

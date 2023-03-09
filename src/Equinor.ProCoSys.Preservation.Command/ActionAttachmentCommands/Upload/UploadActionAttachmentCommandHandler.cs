@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Auth.Misc;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
@@ -17,19 +17,19 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
-        private readonly IBlobStorage _blobStorage;
+        private readonly IAzureBlobService _azureBlobService;
         private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
         public UploadActionAttachmentCommandHandler(
             IProjectRepository projectRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
-            IBlobStorage blobStorage, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
+            IAzureBlobService azureBlobService, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
-            _blobStorage = blobStorage;
+            _azureBlobService = azureBlobService;
             _blobStorageOptions = blobStorageOptions;
         }
 
@@ -54,9 +54,13 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload
                 action.AddAttachment(attachment);
             }
 
-            var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.Value.BlobContainer);
-
-            await _blobStorage.UploadAsync(fullBlobPath, request.Content, request.OverwriteIfExists, cancellationToken);
+            var fullBlobPath = attachment.GetFullBlobPath();
+            await _azureBlobService.UploadAsync(
+                _blobStorageOptions.Value.BlobContainer,
+                fullBlobPath, 
+                request.Content, 
+                request.OverwriteIfExists, 
+                cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

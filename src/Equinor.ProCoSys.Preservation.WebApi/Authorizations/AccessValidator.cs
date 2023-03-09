@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Query;

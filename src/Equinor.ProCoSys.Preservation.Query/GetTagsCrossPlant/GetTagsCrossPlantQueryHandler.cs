@@ -9,13 +9,13 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 using PreservationAction = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 using Equinor.ProCoSys.Auth.Caches;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
 {

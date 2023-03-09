@@ -4,16 +4,17 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Auth.Misc;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

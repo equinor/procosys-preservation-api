@@ -1,6 +1,6 @@
 ﻿using Equinor.ProCoSys.PcsServiceBus.Receiver;
 using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers;
 using Equinor.ProCoSys.Preservation.Command.Validators;
 using Equinor.ProCoSys.Preservation.Command.Validators.ActionValidators;
@@ -43,11 +43,12 @@ using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Excel;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
-using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Equinor.ProCoSys.Auth.Authentication;
+using Equinor.ProCoSys.Common.Caches;
+using Equinor.ProCoSys.Common.Telemetry;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
@@ -56,9 +57,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
         public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
-            services.Configure<TagOptions>(configuration.GetSection("TagOptions"));
             services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
+
+            services.Configure<TagOptions>(configuration.GetSection("TagOptions"));
             services.Configure<PreservationAuthenticatorOptions>(configuration.GetSection("Authenticator"));
             services.Configure<SynchronizationOptions>(configuration.GetSection("Synchronization"));
 
@@ -113,7 +115,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IResponsibleApiService, MainApiResponsibleService>();
             services.AddScoped<ITagFunctionApiService, MainApiTagFunctionService>();
             services.AddScoped<ICertificateApiService, MainApiCertificateService>();
-            services.AddScoped<IBlobStorage, AzureBlobService>();
+            services.AddScoped<IAzureBlobService, AzureBlobService>();
             services.AddScoped<IBusReceiverService, BusReceiverService>();
             services.AddScoped<ICertificateEventProcessorService, CertificateEventProcessorService>();
 
@@ -132,7 +134,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<ISavedFilterValidator, SavedFilterValidator>();
 
             // Singleton - Created the first time they are requested
-            services.AddSingleton<ICacheManager, CacheManager>();
             services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();
         }
     }

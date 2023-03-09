@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.PcsServiceBus.Topics;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
-using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ServiceResult;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Telemetry;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {

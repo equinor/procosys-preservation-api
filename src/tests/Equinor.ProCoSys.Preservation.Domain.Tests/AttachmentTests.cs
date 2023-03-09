@@ -9,14 +9,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests
         private readonly string TestPlant = "PCS$PlantA";
         private readonly string FileName = "FileA";
         private static string Parent = "Test";
-        private readonly Guid BlobStorageId = new Guid("{6DB281E2-B667-4DCE-B74C-B9A9FBC94964}");
+        private readonly Guid BlobStorageId = new("{6DB281E2-B667-4DCE-B74C-B9A9FBC94964}");
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
             var dut = new TestAttachment(TestPlant, BlobStorageId, FileName, Parent);
             Assert.AreEqual(TestPlant, dut.Plant);
-            Assert.AreEqual($"PlantA/{Parent}/{BlobStorageId.ToString()}", dut.BlobPath);
+            Assert.AreEqual($"PlantA/{Parent}/{BlobStorageId}", dut.BlobPath);
             Assert.AreEqual(FileName, dut.FileName);
         }
 
@@ -27,11 +27,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests
             var dut = new TestAttachment(TestPlant, BlobStorageId, FileName, Parent);
 
             // Act
-            var blobContainer = "bc";
-            var result = dut.GetFullBlobPath(blobContainer);
+            var result = dut.GetFullBlobPath();
 
             // Arrange
-            Assert.AreEqual($"{blobContainer}/PlantA/{Parent}/{BlobStorageId.ToString()}/{FileName}", result);
+            Assert.AreEqual($"PlantA/{Parent}/{BlobStorageId}/{FileName}", result);
         }
 
         [TestMethod]

@@ -1,4 +1,4 @@
-﻿using Equinor.ProCoSys.Auth.Misc;
+﻿using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
 {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Auth.Permission;
 using Equinor.ProCoSys.Auth.Person;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public readonly Mock<IResponsibleApiService> ResponsibleApiServiceMock = new Mock<IResponsibleApiService>();
         public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();
         public readonly Mock<IAreaApiService> AreaApiServiceMock = new Mock<IAreaApiService>();
-        public readonly Mock<IBlobStorage> BlobStorageMock = new Mock<IBlobStorage>();
+        public readonly Mock<IAzureBlobService> BlobStorageMock = new Mock<IAzureBlobService>();
         public readonly Mock<ITagApiService> TagApiServiceMock = new Mock<ITagApiService>();
         public readonly Mock<ITagFunctionApiService> TagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
 

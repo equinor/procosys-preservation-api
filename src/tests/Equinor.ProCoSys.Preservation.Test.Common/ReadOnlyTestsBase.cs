@@ -10,12 +10,12 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Auth.Time;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Test.Common
 {

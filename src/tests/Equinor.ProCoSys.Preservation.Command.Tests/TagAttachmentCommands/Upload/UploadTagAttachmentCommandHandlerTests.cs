@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Upload;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         private UploadTagAttachmentCommand _commandWithoutOverwrite;
         private UploadTagAttachmentCommandHandler _dut;
 
-        private Mock<IBlobStorage> _blobStorageMock;
+        private Mock<IAzureBlobService> _blobStorageMock;
         private Tag _tag;
         private readonly int _tagId = 2;
 
@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         {
             _commandWithoutOverwrite = new UploadTagAttachmentCommand(_tagId, _fileName, false, new MemoryStream());
 
-            _blobStorageMock = new Mock<IBlobStorage>();
+            _blobStorageMock = new Mock<IAzureBlobService>();
 
             var blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
@@ -130,9 +130,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
 
             // Assert
             var attachment = _tag.Attachments.Single();
-            var p = attachment.GetFullBlobPath(_blobContainer);
+            var p = attachment.GetFullBlobPath();
             _blobStorageMock.Verify(b 
-                => b.UploadAsync(p, It.IsAny<Stream>(), _commandWithoutOverwrite.OverwriteIfExists, default), Times.Once);
+                => b.UploadAsync(
+                    _blobContainer,
+                    p,
+                    It.IsAny<Stream>(), 
+                    _commandWithoutOverwrite.OverwriteIfExists, 
+                    default), Times.Once);
         }
     }
 }

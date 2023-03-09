@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
         private DeleteActionAttachmentCommand _command;
         private DeleteActionAttachmentCommandHandler _dut;
 
-        private Mock<IBlobStorage> _blobStorageMock;
+        private Mock<IAzureBlobService> _blobStorageMock;
         private Action _action;
 
         [TestInitialize]
@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
         {
             _command = new DeleteActionAttachmentCommand(1, 2, 3, _rowVersion);
 
-            _blobStorageMock = new Mock<IBlobStorage>();
+            _blobStorageMock = new Mock<IAzureBlobService>();
 
             var blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
@@ -96,13 +96,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
         {
             // Arrange
             var attachment = _action.Attachments.Single();
-            var p = attachment.GetFullBlobPath(BlobContainer);
+            var p = attachment.GetFullBlobPath();
 
             // Act
             await _dut.Handle(_command, default);
 
             // Assert
-            _blobStorageMock.Verify(b => b.DeleteAsync(p, default), Times.Once);
+            _blobStorageMock.Verify(b => b.DeleteAsync(BlobContainer, p, default), Times.Once);
         }
     }
 }

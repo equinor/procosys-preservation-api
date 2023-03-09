@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Command.Validators.SavedFilterValidators
 {
