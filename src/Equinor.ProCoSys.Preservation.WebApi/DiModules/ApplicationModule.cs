@@ -132,6 +132,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<ITagFunctionValidator, TagFunctionValidator>();
             services.AddScoped<IRowVersionValidator, RowVersionValidator>();
             services.AddScoped<ISavedFilterValidator, SavedFilterValidator>();
+            services.AddScoped<IDebugConfigValues, DebugConfigValues>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();

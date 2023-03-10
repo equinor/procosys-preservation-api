@@ -4,6 +4,7 @@ using Equinor.ProCoSys.Common.Telemetry;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 {
@@ -13,11 +14,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
     {
         private readonly ILogger<HeartbeatController> _logger;
         private readonly ITelemetryClient _telemetryClient;
+        private readonly IDebugConfigValues _debugConfigValues;
 
-        public HeartbeatController(ILogger<HeartbeatController> logger, ITelemetryClient telemetryClient)
+        public HeartbeatController(
+            ILogger<HeartbeatController> logger,
+            ITelemetryClient telemetryClient,
+            IDebugConfigValues debugConfigValues)
         {
             _logger = logger;
             _telemetryClient = telemetryClient;
+            _debugConfigValues = debugConfigValues;
         }
 
         [AllowAnonymous]
@@ -40,6 +46,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
         [HttpPost("LogInfo")]
         public void LogInfo([Required] string info)
             => _logger.LogInformation($"Information: {info}");
+
+        [HttpPost("LogConfigs")]
+        public void LogConfigs()
+            => _logger.LogInformation(_debugConfigValues.GetValues());
 
         [HttpPost("LogWarning")]
         public void LogWarning([Required] string warning)
