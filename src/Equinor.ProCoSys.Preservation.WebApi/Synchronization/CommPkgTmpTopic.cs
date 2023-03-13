@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
+[Obsolete ("Revert to use Topic-classes from Equinor.ProCoSys.PcsServiceBus after ensuring real Guids on bus.")]
     public class CommPkgTmpTopic
     {
         public const string TopicName = "commpkg";

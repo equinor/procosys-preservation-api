@@ -1,5 +1,8 @@
-﻿namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
+﻿using System;
+
+namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
+    [Obsolete("Revert to use Topic-classes from Equinor.ProCoSys.PcsServiceBus after ensuring real Guids on bus.")]
     public class ProjectTmpTopic
     {
         public const string TopicName = "project";
