@@ -19,9 +19,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
         private static readonly string _actionsSheet = "Actions";
         private static readonly string _historySheet = "History";
 
-        private static readonly string[] _expected3Sheets = {_filtersSheet, _tagsSheet, _actionsSheet};
-        private static readonly string[] _expected4Sheets = {_filtersSheet, _tagsSheet, _actionsSheet, _historySheet};
-        
+        private static readonly string[] _expected3Sheets = { _filtersSheet, _tagsSheet, _actionsSheet };
+        private static readonly string[] _expected4Sheets = { _filtersSheet, _tagsSheet, _actionsSheet, _historySheet };
+
         private ExcelConverter _dut;
         private UsedFilterDto _usedFilterDto;
         private ExportTagDto _exportTagDtoWithoutActionsAndHistory;
@@ -34,28 +34,28 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             _dut = new ExcelConverter(new Mock<ILogger<ExcelConverter>>().Object);
             _usedFilterDto = new UsedFilterDto(
                 "presActions",
-                new List<string>{"ac1", "ac2"}, 
+                new List<string> { "ac1", "ac2" },
                 "callOffStartsWith",
                 "commPkgNoStartsWith",
-                new List<string>{"dc1", "dc2"},
-                new List<string>{"df1", "df2"},
-                new List<string>{"j1", "j2"},
+                new List<string> { "dc1", "dc2" },
+                new List<string> { "df1", "df2" },
+                new List<string> { "j1", "j2" },
                 "mcPkgNoStartsWith",
-                new List<string>{"m1", "m2"},
+                new List<string> { "m1", "m2" },
                 "preservationStatus",
                 "projectDescription",
                 "plant",
                 "projectName",
                 "purchaseOrderNoStartsWith",
-                new List<string>{"rt1", "rt2"},
-                new List<string>{"r1", "r2"},
+                new List<string> { "rt1", "rt2" },
+                new List<string> { "r1", "r2" },
                 "storageAreaStartsWith",
-                new List<string>{"tf"},
+                new List<string> { "tf" },
                 "tagNoStartsWith",
                 "voidedFilter");
-            
+
             _exportTagDtoWithoutActionsAndHistory = new ExportTagDto(
-                new List<ExportActionDto>(), 
+                new List<ExportActionDto>(),
                 new List<ExportRequirementDto>(),
                 "actionStatus1",
                 1,
@@ -191,7 +191,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
             AssertSheetExists(workbook, _historySheet, false);
         }
-        
+
         [TestMethod]
         public void Convert_DtoWithOneTag_ShouldCreateExcelWith4Sheets()
         {
@@ -286,7 +286,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
             AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
         }
-        
+
         [TestMethod]
         public void Convert_DtoWithOneTagWithActionsAndHistory_ShouldCreateExcelWithCorrectDataInAllSheets()
         {
@@ -308,7 +308,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
             AssertHistorySheet(workbook.Worksheets.Worksheet(_historySheet), exportDto.Tags.Single());
         }
-        
+
         [TestMethod]
         public void Convert_DtoWithManyTagsWithActionsAndHistory_ShouldCreateExcelWithCorrectDataInAllSheets()
         {
@@ -366,7 +366,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             Assert.IsNotNull(worksheet);
             AssertHeadingsInTagSheet(worksheet);
 
-            var rowCount = expectedTagData.SelectMany(t => t.Requirements).Count();            
+            var rowCount = expectedTagData.SelectMany(t => t.Requirements).Count();
             Assert.AreEqual(rowCount + 1, worksheet.RowsUsed().Count());
 
             var rowIndex = 1; // start at 1 because Row(1) is the header
@@ -549,17 +549,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             Assert.AreEqual("Preservation details", row.Cell(ExcelConverter.HistorySheetColumns.Details).Value);
             Assert.AreEqual("Preservation comment", row.Cell(ExcelConverter.HistorySheetColumns.Comment).Value);
         }
-         
+
         private void AssertInt(int? expectedValue, object value)
         {
             if (expectedValue.HasValue)
             {
-                Assert.AreEqual((double)expectedValue.Value, value);
+                Assert.AreEqual((double)expectedValue.Value, (double)(XLCellValue)value);
 
             }
             else
             {
-                Assert.AreEqual(string.Empty, value);
+                Assert.IsTrue(((XLCellValue)value).IsBlank);
             }
         }
 
@@ -570,13 +570,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
         {
             if (expectedUtcValue.HasValue)
             {
-                Assert.IsInstanceOfType(cell.Value, typeof(DateTime));
+                Assert.IsTrue(cell.Value.IsDateTime);
                 Assert.AreEqual("yyyy-mm-dd", cell.Style.DateFormat.Format);
                 Assert.AreEqual(expectedUtcValue.Value.Date, ((DateTime)cell.Value).Date);
             }
             else
             {
-                Assert.AreEqual(string.Empty, cell.Value);
+                Assert.IsTrue(cell.Value.IsBlank);
             }
         }
     }

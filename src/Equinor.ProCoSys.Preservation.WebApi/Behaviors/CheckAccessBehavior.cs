@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Behaviors
             _accessValidator = accessValidator;
         }
 
-        public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
             var typeName = request.GetGenericTypeName();
 
