@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.PersonAggre
         {
             var dut = new Person(Oid, "firstName", "lastName");
 
-            var project = new Project(TestPlant, "Project", "");
+            var project = new Project(TestPlant, "Project", "", new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8"));
             var savedFilter = new SavedFilter(TestPlant, project, "title", "criteria")
             {
                 DefaultFilter = true

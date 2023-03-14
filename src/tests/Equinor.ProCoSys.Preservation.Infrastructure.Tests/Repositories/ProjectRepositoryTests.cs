@@ -21,6 +21,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
     {
         private const string ProjectNameWithTags = "ProjectName1";
         private const string ProjectNameWithoutTags = "ProjectName2";
+        private readonly Guid _projectProCoSysGuidWithTags = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
+        private readonly Guid _projectProCoSysGuidWithoutTags = new Guid("6afabbbf-cf21-4533-93ff-73fe6fdfd27a");
         private const int StepId = 61;
         private const int StandardTagId1 = 71;
         private const int StandardTagId2 = 81;
@@ -54,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1");
+            var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1", _projectProCoSysGuidWithTags);
             var req1 = new TagRequirement(TestPlant, 1, rdMock.Object);
             var req2 = new TagRequirement(TestPlant, 2, rdMock.Object);
             var req3 = new TagRequirement(TestPlant, 4, rdMock.Object);
@@ -103,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             poTag.SetProtectedIdForTesting(PoTagId);
             project1.AddTag(poTag);
 
-            var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2");
+            var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2", _projectProCoSysGuidWithoutTags);
 
             var projects = new List<Project> {project1, project2};
             var projectsSetMock = projects.AsQueryable().BuildMockDbSet();

@@ -22,6 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
         private const string TestTagNo2 = "TagNo2";
         private const string TestProjectName = "TestProjectX";
         private const string TestProjectDescription = "TestProjectXDescription";
+        private readonly Guid _projectProCoSysGuid = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
         private const int ModeId = 2;
         private const int StepId = 11;
         private const int ReqDefId1 = 99;
@@ -165,7 +166,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
         public async Task HandlingCreateTagsCommand_ShouldNotAddAnyProjectToRepository_WhenProjectAlreadyExists()
         {
             // Arrange
-            var project = new Project(TestPlant, TestProjectName, "");
+            var project = new Project(TestPlant, TestProjectName, "", _projectProCoSysGuid);
             _projectRepositoryMock.Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
 
             // Act
@@ -196,7 +197,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
         public async Task HandlingCreateTagsCommand_ShouldAdd2TagsToExistingProject_WhenProjectAlreadyExists()
         {
             // Arrange
-            var project = new Project(TestPlant, TestProjectName, "");
+            var project = new Project(TestPlant, TestProjectName, "", _projectProCoSysGuid);
             _projectRepositoryMock.Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);
             

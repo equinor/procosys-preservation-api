@@ -5,6 +5,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     public class KnownTestData
     {
         public static string ProjectName => "TestProject";
+        public static Guid ProjectProCoSysGuid = new Guid("{aec8297b-b010-4c5d-91e0-7b1c8664ced8}");
         public static string ProjectDescription => "Test - Project";
         public static string SupModeA => "SUP-A";
         public static string SupModeB => "SUP-B";

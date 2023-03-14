@@ -18,6 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
     public class AutoTransferCommandHandlerTests : CommandHandlerTestsBase
     {
         private readonly string _testProjectName = "ProjectA";
+        private new readonly Guid _projectProCoSysGuid = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
         private readonly string _testTagNo = "TagA";
         private readonly string _certificateNo = "CertificateA";
         private readonly Guid _rfccGuid = new Guid("{4270C978-D0A7-4485-82E0-146B6084FB20}");
@@ -104,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(_testProjectName))
-                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc")));
+                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc", _projectProCoSysGuid)));
             _projectRepoMock
                 .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> {_testTagNo},
                     new List<int> {_step1OnJourneyId}))
@@ -222,7 +223,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             // Arrange
             _projectRepoMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(_testProjectName))
-                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc"){IsClosed = true}));
+                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc",_projectProCoSysGuid){IsClosed = true}));
 
             // Act
             await _dut.Handle(_commandForRfcc, default);

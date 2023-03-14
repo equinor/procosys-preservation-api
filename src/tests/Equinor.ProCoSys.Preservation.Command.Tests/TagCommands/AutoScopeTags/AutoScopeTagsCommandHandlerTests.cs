@@ -197,7 +197,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public async Task HandlingAutoScopeTagsCommand_ShouldNotAddAnyProjectToRepository_WhenProjectAlreadyExists()
         {
             // Arrange
-            var project = new Project(TestPlant, TestProjectName, "");
+            var project = new Project(TestPlant, TestProjectName, "", _projectProCoSysGuid);
             _projectRepositoryMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
 
@@ -229,7 +229,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public async Task HandlingAutoScopeTagsCommand_ShouldAdd2TagsToExistingProject_WhenProjectAlreadyExists()
         {
             // Arrange
-            var project = new Project(TestPlant, TestProjectName, "");
+            var project = new Project(TestPlant, TestProjectName, "", _projectProCoSysGuid);
             _projectRepositoryMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);

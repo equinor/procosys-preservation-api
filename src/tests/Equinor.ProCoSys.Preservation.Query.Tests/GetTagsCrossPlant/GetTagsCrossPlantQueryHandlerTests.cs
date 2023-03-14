@@ -32,6 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         protected IEventDispatcher _eventDispatcher;
         protected ManualTimeProvider _timeProvider;
         protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
+        private readonly Guid _projectProCoSysGuid = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
 
         private readonly PlantProviderForTest _plantProvider = new PlantProviderForTest(null);
         private readonly Mock<IPermissionCache> _permissionCacheMock = new Mock<IPermissionCache>();
@@ -257,7 +258,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             requirementType.AddRequirementDefinition(requirementDefinition);
             context.SaveChangesAsync().Wait();
 
-            var project = new Project(plantId, projectName, $"{projectName} Desc");
+            var project = new Project(plantId, projectName, $"{projectName} Desc", _projectProCoSysGuid);
             context.Projects.Add(project);
 
             var tag = new Tag(
