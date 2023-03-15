@@ -261,7 +261,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 return;
             }
 
-            if (commPkgEvent.Plant.IsEmpty() ||
+            if (commPkgEvent == null ||
+                commPkgEvent.Plant.IsEmpty() ||
                 commPkgEvent.CommPkgNo.IsEmpty() ||
                 commPkgEvent.ProjectName.IsEmpty())
             {

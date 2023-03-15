@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
@@ -59,6 +59,11 @@ namespace Equinor.ProCoSys.Preservation.Query.GetPreservationRecord
                         RequirementDefinition = requirementDefinition,
                     }
                 ).SingleOrDefaultAsync(cancellationToken);
+            
+            if (requirementDto == null)
+            {
+                return new NotFoundResult<PreservationRecordDto>(Strings.EntityNotFound(nameof(RequirementDefinition), tagRequirement.RequirementDefinitionId));
+            }
 
 
             var orderedPreservationPeriods = tagRequirement.PreservationPeriods

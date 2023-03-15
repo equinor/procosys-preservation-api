@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UnvoidJourney;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Reflection;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods
 {

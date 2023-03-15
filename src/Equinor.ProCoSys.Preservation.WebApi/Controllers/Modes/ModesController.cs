@@ -6,7 +6,7 @@ using Equinor.ProCoSys.Preservation.Command.ModeCommands.DeleteMode;
 using Equinor.ProCoSys.Preservation.Command.ModeCommands.UnvoidMode;
 using Equinor.ProCoSys.Preservation.Command.ModeCommands.UpdateMode;
 using Equinor.ProCoSys.Preservation.Command.ModeCommands.VoidMode;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Query.ModeAggregate;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;

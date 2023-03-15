@@ -13,7 +13,7 @@ using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequir
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Query.GetAllRequirementTypes;
 using Equinor.ProCoSys.Preservation.Query.GetRequirementTypeById;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;

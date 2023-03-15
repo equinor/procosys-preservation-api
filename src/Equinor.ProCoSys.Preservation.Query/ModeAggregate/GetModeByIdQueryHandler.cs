@@ -1,7 +1,8 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using MediatR;
@@ -31,7 +32,13 @@ namespace Equinor.ProCoSys.Preservation.Query.ModeAggregate
                 where s.ModeId == mode.Id
                 select s).AnyAsync(cancellationToken);
 
-            return new SuccessResult<ModeDto>(new ModeDto(mode.Id, mode.Title, mode.IsVoided, mode.ForSupplier, inUse, mode.RowVersion.ConvertToString()));
+            return new SuccessResult<ModeDto>(new ModeDto(
+                mode.Id,
+                mode.Title,
+                mode.IsVoided,
+                mode.ForSupplier,
+                inUse,
+                mode.RowVersion.ConvertToString()));
         }
     }
 }

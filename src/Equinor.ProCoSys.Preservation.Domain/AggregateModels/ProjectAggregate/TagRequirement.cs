@@ -4,8 +4,10 @@ using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {

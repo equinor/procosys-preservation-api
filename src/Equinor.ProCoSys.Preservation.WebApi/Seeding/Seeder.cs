@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;

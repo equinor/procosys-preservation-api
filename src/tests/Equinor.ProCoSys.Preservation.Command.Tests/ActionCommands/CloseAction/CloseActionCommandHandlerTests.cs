@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;

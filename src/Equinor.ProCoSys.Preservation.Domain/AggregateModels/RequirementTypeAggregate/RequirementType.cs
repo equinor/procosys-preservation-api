@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
     public class RequirementType : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable
     {
-        private readonly List<RequirementDefinition> _requirementDefinitions = new List<RequirementDefinition>();
+        private readonly List<RequirementDefinition> _requirementDefinitions = new();
 
         public const int CodeLengthMax = 32;
         public const int TitleLengthMax = 64;

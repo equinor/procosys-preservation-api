@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -8,6 +8,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Microsoft.EntityFrameworkCore;
 using PreservationAction = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries
 {
@@ -22,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries
             var startOfFourWeeksUtc = DateTime.MinValue;
             if (filter.DueFilters.Any())
             {
-                startOfThisWeekUtc = utcNow.StartOfPreservationWeek();
+                startOfThisWeekUtc = utcNow.StartOfWeek();
                 startOfNextWeekUtc = startOfThisWeekUtc.AddWeeks(1);
                 startOfTwoWeeksUtc = startOfThisWeekUtc.AddWeeks(2);
                 startOfThreeWeeksUtc = startOfThisWeekUtc.AddWeeks(3);

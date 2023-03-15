@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using MediatR;
@@ -24,10 +25,16 @@ namespace Equinor.ProCoSys.Preservation.Query.ModeAggregate
                 select m).ToListAsync(cancellationToken);
 
             return new SuccessResult<IEnumerable<ModeDto>>(modes.Select(mode
-                => new ModeDto(mode.Id, mode.Title, mode.IsVoided, mode.ForSupplier, IsInUse(mode.Id, cancellationToken).Result, mode.RowVersion.ConvertToString())));
+                => new ModeDto(
+                    mode.Id,
+                    mode.Title,
+                    mode.IsVoided,
+                    mode.ForSupplier,
+                    IsInUseAsync(mode.Id, cancellationToken).Result,
+                    mode.RowVersion.ConvertToString())));
         }
 
-        private async Task<bool> IsInUse(int modeId, CancellationToken cancellationToken) 
+        private async Task<bool> IsInUseAsync(int modeId, CancellationToken cancellationToken) 
             => await (from s in _context.QuerySet<Step>()
                 where s.ModeId == modeId
                 select s).AnyAsync(cancellationToken);

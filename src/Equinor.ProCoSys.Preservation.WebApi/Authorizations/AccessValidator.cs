@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Query;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using MediatR;

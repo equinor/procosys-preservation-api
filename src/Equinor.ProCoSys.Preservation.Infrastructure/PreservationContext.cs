@@ -2,8 +2,9 @@
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -14,9 +15,8 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.Domain.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using IDomainMarker = Equinor.ProCoSys.Preservation.Domain.IDomainMarker;
 
 namespace Equinor.ProCoSys.Preservation.Infrastructure
 {
@@ -98,7 +98,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await DispatchEventsAsync(cancellationToken);
+            await DispatchPreSaveEventsAsync(cancellationToken);
             await SetAuditDataAsync();
             UpdateConcurrencyToken();
 
@@ -129,13 +129,13 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             }
         }
 
-        private async Task DispatchEventsAsync(CancellationToken cancellationToken = default)
+        private async Task DispatchPreSaveEventsAsync(CancellationToken cancellationToken = default)
         {
             var entities = ChangeTracker
                 .Entries<EntityBase>()
-                .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
+                .Where(x => x.Entity.PreSaveDomainEvents != null && x.Entity.PreSaveDomainEvents.Any())
                 .Select(x => x.Entity);
-            await _eventDispatcher.DispatchAsync(entities, cancellationToken);
+            await _eventDispatcher.DispatchPreSaveAsync(entities, cancellationToken);
         }
 
         private async Task SetAuditDataAsync()

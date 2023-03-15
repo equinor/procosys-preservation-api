@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;

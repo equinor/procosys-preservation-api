@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.PcsServiceBus;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -16,9 +16,9 @@ using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Common.Telemetry;
+using Equinor.ProCoSys.Preservation.Domain;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 {

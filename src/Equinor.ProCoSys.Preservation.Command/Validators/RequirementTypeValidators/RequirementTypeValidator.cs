@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.EntityFrameworkCore;
 
@@ -89,6 +89,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValida
                 .ThenInclude(r => r.Fields)
                 .SingleOrDefaultAsync(rt => rt.Id == requirementTypeId, token);
 
+            if (reqType == null)
+            {
+                return false;
+            }
+
             var reqDefinitions = reqType.RequirementDefinitions;
 
             return reqDefinitions.Any(rd => rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
@@ -107,6 +112,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValida
                 .Include(rt => rt.RequirementDefinitions)
                 .ThenInclude(r => r.Fields)
                 .SingleOrDefaultAsync(rt => rt.Id == requirementTypeId, token);
+
+            if (reqType == null)
+            {
+                return false;
+            }
 
             var reqDefinitions = reqType.RequirementDefinitions;
 

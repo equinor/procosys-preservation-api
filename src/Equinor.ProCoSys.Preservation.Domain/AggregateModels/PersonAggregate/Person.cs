@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 {
@@ -11,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
         public const int FirstNameLengthMax = 64;
         public const int LastNameLengthMax = 64;
 
-        private readonly List<SavedFilter> _savedFilters = new List<SavedFilter>();
+        private readonly List<SavedFilter> _savedFilters = new();
 
         protected Person() : base()
         {

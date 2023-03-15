@@ -5,7 +5,7 @@ using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UnvoidTagFunction;
 using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
 using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Query.GetTagFunctionDetails;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;

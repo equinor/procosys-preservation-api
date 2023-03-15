@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Preservation.Domain.Exceptions;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

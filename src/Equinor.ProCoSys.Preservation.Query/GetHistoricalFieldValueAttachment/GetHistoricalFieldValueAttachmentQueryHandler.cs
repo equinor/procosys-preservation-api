@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Common.Time;
 using MediatR;
@@ -48,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetHistoricalFieldValueAttachment
                 return new NotFoundResult<Uri>($"{nameof(Tag)} with ID {request.TagId} not found");
             }
 
-            var tagRequirement = tag.Requirements.Single(r => r.Id == request.TagRequirementId);
+            var tagRequirement = tag.Requirements.SingleOrDefault(r => r.Id == request.TagRequirementId);
 
             if (tagRequirement == null)
             {
@@ -79,6 +80,11 @@ namespace Equinor.ProCoSys.Preservation.Query.GetHistoricalFieldValueAttachment
                  join t in _context.QuerySet<Tag>() on request.TagId equals t.Id
                  where a.Id == fieldValue.FieldValueAttachment.Id
                  select a).SingleOrDefaultAsync(cancellationToken);
+
+            if (attachment == null)
+            {
+                return new NotFoundResult<Uri>($"{nameof(Attachment)} with ID {fieldValue.FieldValueAttachment.Id} not found");
+            }
 
             var now = TimeService.UtcNow;
             var fullBlobPath = attachment.GetFullBlobPath();

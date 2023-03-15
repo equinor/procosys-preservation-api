@@ -4,14 +4,16 @@ using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class PreservationPeriod : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
-        private readonly List<FieldValue> _fieldValues = new List<FieldValue>();
+        private readonly List<FieldValue> _fieldValues = new();
 
         public const int CommentLengthMax = 2048;
 
@@ -70,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when updating status");
             }
 
-            var fieldNeedUserInput = requirementDefinition.Fields.Where(f => f.NeedsUserInput);
+            var fieldNeedUserInput = requirementDefinition.Fields.Where(f => f.NeedsUserInput).ToList();
             var fieldNeedUserInputIds = fieldNeedUserInput.Select(f => f.Id);
             var recordedIds = _fieldValues.Select(fv => fv.FieldId);
 

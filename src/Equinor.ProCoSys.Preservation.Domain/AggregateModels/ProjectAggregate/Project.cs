@@ -4,12 +4,13 @@ using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Project : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
-        private readonly List<Tag> _tags = new List<Tag>();
+        private readonly List<Tag> _tags = new();
 
         public const int NameLengthMax = 30;
         public const int DescriptionLengthMax = 1000;

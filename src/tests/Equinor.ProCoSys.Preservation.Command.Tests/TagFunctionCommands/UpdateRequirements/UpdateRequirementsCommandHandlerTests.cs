@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;

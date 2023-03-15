@@ -9,7 +9,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
