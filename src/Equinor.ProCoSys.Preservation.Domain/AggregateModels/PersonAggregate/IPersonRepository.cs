@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 {

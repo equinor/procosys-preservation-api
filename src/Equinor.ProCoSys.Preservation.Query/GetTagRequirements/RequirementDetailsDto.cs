@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagRequirements
 {

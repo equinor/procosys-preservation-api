@@ -1,5 +1,5 @@
 ﻿using System;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {

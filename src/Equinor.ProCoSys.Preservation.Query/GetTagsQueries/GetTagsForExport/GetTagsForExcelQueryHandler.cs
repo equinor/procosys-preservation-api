@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;

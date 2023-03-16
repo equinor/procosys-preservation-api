@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Test.Common;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone

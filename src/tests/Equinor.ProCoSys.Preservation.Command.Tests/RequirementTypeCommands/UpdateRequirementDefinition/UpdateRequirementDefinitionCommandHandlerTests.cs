@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

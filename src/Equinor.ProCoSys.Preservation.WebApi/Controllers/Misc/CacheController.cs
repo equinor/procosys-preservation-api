@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Auth.Permission;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

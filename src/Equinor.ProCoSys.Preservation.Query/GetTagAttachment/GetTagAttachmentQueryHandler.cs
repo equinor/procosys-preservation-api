@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.BlobStorage;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Common.Time;
 using MediatR;

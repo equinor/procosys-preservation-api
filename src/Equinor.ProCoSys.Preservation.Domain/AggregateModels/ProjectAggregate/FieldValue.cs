@@ -3,6 +3,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {

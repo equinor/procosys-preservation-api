@@ -16,6 +16,7 @@ using Equinor.ProCoSys.Preservation.Command.Validators.StepValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.TagFunctionValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -25,7 +26,6 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Preservation.Infrastructure.Repositories;

@@ -1,4 +1,4 @@
-﻿using Equinor.ProCoSys.Preservation.Domain;
+﻿using Equinor.ProCoSys.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -462,6 +462,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
                 where j.Steps.Any(s => s.Id == tag.StepId)
                 select j).SingleOrDefaultAsync(token);
+
+            if (journey == null)
+            {
+                return false;
+            }
 
             var nextStep = journey.GetNextStep(tag.StepId);
 

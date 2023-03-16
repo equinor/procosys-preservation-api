@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.ModeCommands.UnvoidMode;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

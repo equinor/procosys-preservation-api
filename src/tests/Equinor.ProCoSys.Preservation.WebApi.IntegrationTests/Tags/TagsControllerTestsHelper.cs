@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using ClosedXML.Excel;
 using Equinor.ProCoSys.Preservation.Domain.Events;

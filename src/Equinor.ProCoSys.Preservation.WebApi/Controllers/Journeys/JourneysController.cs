@@ -13,7 +13,7 @@ using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.VoidJourney;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.VoidStep;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Query.GetAllJourneys;
 using Equinor.ProCoSys.Preservation.Query.GetJourneyById;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;

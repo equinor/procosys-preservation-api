@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Misc

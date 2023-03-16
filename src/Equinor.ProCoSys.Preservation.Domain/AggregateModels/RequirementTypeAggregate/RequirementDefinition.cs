@@ -4,12 +4,13 @@ using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
     public class RequirementDefinition : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
     {
-        private readonly List<Field> _fields = new List<Field>();
+        private readonly List<Field> _fields = new();
         
         public const int TitleLengthMax = 64;
         public const int UsageMax = 32; // must be at least length of longest RequirementUsage enum

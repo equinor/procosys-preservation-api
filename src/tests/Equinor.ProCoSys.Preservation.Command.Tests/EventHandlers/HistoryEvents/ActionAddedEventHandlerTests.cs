@@ -1,10 +1,10 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvents
 {

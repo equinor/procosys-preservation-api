@@ -2,11 +2,12 @@
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {

@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Validators;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes;
 using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {

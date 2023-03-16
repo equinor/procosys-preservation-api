@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Common;
 using MediatR;
 using ServiceResult;
 

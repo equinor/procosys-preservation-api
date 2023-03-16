@@ -1,4 +1,6 @@
-﻿namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate
+﻿using Equinor.ProCoSys.Common;
+
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate
 {
     public class Setting : EntityBase, IAggregateRoot
     {
