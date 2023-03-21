@@ -63,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             _req1 = new TagRequirement(TestPlant, _interval1, _rd1Mock.Object);
             _req2 = new TagRequirement(TestPlant, _interval2, _rd2Mock.Object);
             
-            _project = new Project(TestPlant, "TestProjectName", "" ,_projectProCoSysGuid );
+            _project = new Project(TestPlant, "TestProjectName", "" ,ProjectProCoSysGuid );
             _sourceTag = new Tag(
                 TestPlant,
                 TagType.SiteArea,

@@ -111,7 +111,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             requirementType.AddRequirementDefinition(requirementDefinition);
             context.SaveChangesAsync().Wait();
 
-            var project = new Project(plantId, projectName, $"{projectName} Desc" , new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8")) {IsClosed = closeProject};
+            var project = new Project(plantId, projectName, $"{projectName} Desc", new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8")) {IsClosed = closeProject};
             context.Projects.Add(project);
 
             var tag = new Tag(

@@ -22,7 +22,6 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
     public abstract class ReadOnlyTestsBase
     {
         protected const string TestPlant = "PCS$PlantA";
-        protected readonly Guid _projectProCoSysGuid = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
         protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
 
         
@@ -124,7 +123,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
 
         protected Project AddProject(PreservationContext context, string name, string description, bool isClosed = false)
         {
-            var project = new Project(TestPlant, name, description,_projectProCoSysGuid);
+            var project = new Project(TestPlant, name, description,Guid.NewGuid());
             if (isClosed)
             {
                 project.Close();

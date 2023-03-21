@@ -21,7 +21,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.UpdateSaved
         private bool _newDefaultFilter = true;
         private readonly string _rowVersion = "AAAAAAAAABA=";
         private readonly Guid _currentUserOid = new Guid();
-        private readonly Guid _projectProCoSysGuid = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
 
         private UpdateSavedFilterCommand _command;
         private UpdateSavedFilterCommandHandler _dut;
@@ -36,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.UpdateSaved
         public void Setup()
         {
             _person = new Person(_currentUserOid, "Current", "User");
-            _project = new Project(TestPlant, "T", "D", _projectProCoSysGuid);
+            _project = new Project(TestPlant, "T", "D", Guid.NewGuid());
 
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
             _currentUserProviderMock.Setup(x => x.GetCurrentUserOid())

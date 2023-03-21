@@ -285,6 +285,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             // Assert
             Assert.IsNotNull(project);
             Assert.AreEqual(ProjectNameWithTags, project.Name);
+            Assert.AreEqual(_projectProCoSysGuidWithTags, project.ProCoSysGuid);
             Assert.IsNotNull(project.Tags);
             var tag = project.Tags.Single(t => t.Id == StandardTagId1);
             Assert.IsNotNull(tag);
