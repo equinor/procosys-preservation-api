@@ -13,7 +13,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 name: "ProCoSysGuid",
                 table: "Projects",
                 type: "uniqueidentifier",
-                nullable: true);
+                nullable: false,
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
