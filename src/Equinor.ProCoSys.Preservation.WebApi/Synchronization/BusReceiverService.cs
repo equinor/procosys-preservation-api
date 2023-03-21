@@ -195,7 +195,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {
                     throw new ArgumentException($"Unable to create local copy of {projectName}, not found.");
                 }
-                projectToMoveTagInto = new Project(plant, pcsProject.Name, pcsProject.Description, pcsProject.ProjectProCoSysGuid);
+                projectToMoveTagInto = new Project(plant, pcsProject.Name, pcsProject.Description, pcsProject.ProCoSysGuid);
                 _projectRepository.Add(projectToMoveTagInto);
             }
 
