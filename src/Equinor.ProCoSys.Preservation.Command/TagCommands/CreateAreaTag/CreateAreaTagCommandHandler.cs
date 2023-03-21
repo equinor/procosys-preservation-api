@@ -158,7 +158,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
                 return null;
             }
 
-            var project = new Project(_plantProvider.Plant, projectName, mainProject.Description);
+            var project = new Project(_plantProvider.Plant, projectName, mainProject.Description, mainProject.ProCoSysGuid);
             _projectRepository.Add(project);
             return project;
         }

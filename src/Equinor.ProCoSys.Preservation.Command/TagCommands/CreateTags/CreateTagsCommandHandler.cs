@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
 
                 if (project == null)
                 {
-                    project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
+                    project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription, tagDetails.ProjectProCoSysGuid);
                     _projectRepository.Add(project);
                 }
 

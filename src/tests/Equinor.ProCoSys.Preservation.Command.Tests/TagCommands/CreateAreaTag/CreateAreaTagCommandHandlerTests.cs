@@ -188,7 +188,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public async Task HandlingCreateAreaTagCommand_ShouldNotAddAnyProjectToRepository_WhenProjectAlreadyExists()
         {
             // Arrange
-            var project = new Project(TestPlant, TestProjectName, "");
+            var project = new Project(TestPlant, TestProjectName, "", ProjectProCoSysGuid);
             _projectRepositoryMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
 
@@ -217,7 +217,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public async Task HandlingCreateAreaTagCommand_ShouldAddTagToExistingProject_WhenProjectAlreadyExists()
         {
             // Arrange
-            var project = new Project(TestPlant, TestProjectName, "");
+            var project = new Project(TestPlant, TestProjectName, "", ProjectProCoSysGuid);
             _projectRepositoryMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);
@@ -292,7 +292,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public async Task HandlingCreateAreaTagCommand_ShouldSave()
         {
             _projectRepositoryMock
-                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(new Project(TestPlant, TestProjectName, "")));
+                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(new Project(TestPlant, TestProjectName, "", ProjectProCoSysGuid)));
             // Act
             await _dut.Handle(_createPreAreaCommand, default);
             

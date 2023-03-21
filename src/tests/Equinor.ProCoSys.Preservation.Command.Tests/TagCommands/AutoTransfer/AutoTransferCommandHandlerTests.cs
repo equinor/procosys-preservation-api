@@ -104,7 +104,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(_testProjectName))
-                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc")));
+                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc", Guid.NewGuid())));
             _projectRepoMock
                 .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> {_testTagNo},
                     new List<int> {_step1OnJourneyId}))
@@ -222,7 +222,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             // Arrange
             _projectRepoMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(_testProjectName))
-                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc"){IsClosed = true}));
+                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc",Guid.NewGuid()){IsClosed = true}));
 
             // Act
             await _dut.Handle(_commandForRfcc, default);

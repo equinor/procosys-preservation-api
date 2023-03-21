@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _tag2 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "Tag2", "", _stepMock.Object,
                     new List<TagRequirement> { _reqMock.Object })
             { McPkgNo = McPkgNo2, CommPkgNo = CommPkgNo2 };
-            _dut = new Project(TestPlant, "ProjectNameA", "DescA");
+            _dut = new Project(TestPlant, "ProjectNameA", "DescA", new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8"));
             _dut.AddTag(_tag1);
             _dut.AddTag(_tag2);
         }

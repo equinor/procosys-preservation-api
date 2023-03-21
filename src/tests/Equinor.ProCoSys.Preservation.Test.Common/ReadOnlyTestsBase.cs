@@ -23,6 +23,8 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
     {
         protected const string TestPlant = "PCS$PlantA";
         protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
+
+        
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IPlantProvider> _plantProviderMock;
         protected IPlantProvider _plantProvider;
@@ -121,7 +123,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
 
         protected Project AddProject(PreservationContext context, string name, string description, bool isClosed = false)
         {
-            var project = new Project(TestPlant, name, description);
+            var project = new Project(TestPlant, name, description,Guid.NewGuid());
             if (isClosed)
             {
                 project.Close();

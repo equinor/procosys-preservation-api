@@ -193,7 +193,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         private static Project SeedProject(PreservationContext dbContext, string plant)
         {
             var projectRepository = new ProjectRepository(dbContext);
-            var project = new Project(plant, KnownTestData.ProjectName, KnownTestData.ProjectDescription);
+            var project = new Project(plant, KnownTestData.ProjectName, KnownTestData.ProjectDescription, KnownTestData.ProjectProCoSysGuid);
             projectRepository.Add(project);
             dbContext.SaveChangesAsync().Wait();
             return project;

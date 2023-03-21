@@ -19,6 +19,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
         public string McPkgNo { get; set; }
         public Guid? McPkgProCoSysGuid { get; set; }
         public string ProjectDescription { get; set; }
+        public Guid ProjectProCoSysGuid { get; set; }
         public string PurchaseOrderNo { get; set; }
         public string RegisterCode { get; set; }
         public string TagFunctionCode { get; set; }

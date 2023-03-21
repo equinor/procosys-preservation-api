@@ -25,6 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
         private const string _title = "T1";
         private const string _criteria = "C1";
         private const string _projectName = "Project";
+
         private int _projectId = 1;
         private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
 
@@ -33,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
         {
             // Arrange
             
-            _project = new Project(TestPlant, _projectName, "desc");
+            _project = new Project(TestPlant, _projectName, "desc", ProjectProCoSysGuid);
             _project.SetProtectedIdForTesting(_projectId);
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(_projectName))

@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.UpdateSaved
         public void Setup()
         {
             _person = new Person(_currentUserOid, "Current", "User");
-            _project = new Project(TestPlant, "T", "D");
+            _project = new Project(TestPlant, "T", "D", Guid.NewGuid());
 
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
             _currentUserProviderMock.Setup(x => x.GetCurrentUserOid())

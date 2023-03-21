@@ -69,7 +69,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
         {
             for (var i = 0; i < entryCount; i++)
             {
-                var project = new Project(plant, $"Project-{i}", "Decription");
+                var project = new Project(plant, $"Project-{i}", "Decription", new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8"));
                 projectRepository.Add(project);
             }
         }

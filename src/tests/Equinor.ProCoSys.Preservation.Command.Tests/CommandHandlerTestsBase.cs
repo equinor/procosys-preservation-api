@@ -18,6 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests
         protected Mock<IPlantProvider> PlantProviderMock;
         protected ManualTimeProvider _timeProvider;
         protected DateTime _utcNow;
+        protected readonly Guid ProjectProCoSysGuid = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
 
         [TestInitialize]
         public void BaseSetup()

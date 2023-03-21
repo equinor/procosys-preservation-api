@@ -257,7 +257,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             requirementType.AddRequirementDefinition(requirementDefinition);
             context.SaveChangesAsync().Wait();
 
-            var project = new Project(plantId, projectName, $"{projectName} Desc");
+            var project = new Project(plantId, projectName, $"{projectName} Desc", Guid.NewGuid());
             context.Projects.Add(project);
 
             var tag = new Tag(

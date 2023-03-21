@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
             _tag.SetProtectedIdForTesting(2);
             _tag.IsVoided = true;
 
-            _project = new Project(TestPlant, _projectName, "");
+            _project = new Project(TestPlant, _projectName, "", ProjectProCoSysGuid);
             _project.AddTag(_tag);
             
             var projectRepositoryMock = new Mock<IProjectRepository>();

@@ -20,13 +20,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public Project(string plant, string name, string description)
+        public Project(string plant, string name, string description, Guid proCoSysGuid)
             : base(plant)
         {
             Name = name;
             Description = description;
+            ProCoSysGuid = proCoSysGuid;
         }
-
+        public Guid ProCoSysGuid { get; set; }
         public string Name { get; private set; }
         public string Description { get; set; }
         public bool IsClosed { get; set; }
