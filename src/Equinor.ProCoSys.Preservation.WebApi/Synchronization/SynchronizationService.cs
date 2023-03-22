@@ -15,6 +15,7 @@ using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
@@ -87,7 +88,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
                     var startTime = TimeService.UtcNow;
 
-                    var result = await _mediator.Send(new SyncTagDataCommand(saveChanges?.Value == "true"));
+                    //var result = await _mediator.Send(new SyncTagDataCommand(saveChanges?.Value == "true"));
+                    var result = await _mediator.Send(new FillPCSGuidsCommand(saveChanges?.Value == "true"));
 
                     var endTime = TimeService.UtcNow;
 
