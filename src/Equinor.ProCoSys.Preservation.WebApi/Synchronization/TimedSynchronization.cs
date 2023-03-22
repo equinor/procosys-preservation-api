@@ -64,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             }
             finally
             {
-                _timer.Start();
+               // _timer.Start(); - Do not want the timer to trigger 
             }
         }
 
