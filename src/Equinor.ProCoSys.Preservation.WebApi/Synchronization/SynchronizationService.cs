@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.SyncTagData;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
@@ -87,8 +86,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     await _claimsTransformation.TransformAsync(currentUser);
 
                     var startTime = TimeService.UtcNow;
-
-                    //var result = await _mediator.Send(new SyncTagDataCommand(saveChanges?.Value == "true"));
+                    
                     var result = await _mediator.Send(new FillPCSGuidsCommand(saveChanges?.Value == "true"));
 
                     var endTime = TimeService.UtcNow;

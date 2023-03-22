@@ -48,15 +48,22 @@ namespace Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids
                     if(pcsProjectDetails != null)
                     {
                         project.ProCoSysGuid = pcsProjectDetails.ProCoSysGuid;
+                        _logger.LogInformation($"FillPCSGuids: Project updated: {project.Name}");
                         count++;
                     }
                 }
-                _logger.LogInformation($"FillPCSGuids: Project updated: {project.Name}");
+                else
+                {
+                    _logger.LogInformation($"FillPCSGuids: Project already updated: {project.Name}");
+                }
+
+
             }
 
             if (request.SaveChanges && count > 0)
             {
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
+                _logger.LogInformation($"FillPCSGuids: {count} project updated");
             }
             return new SuccessResult<Unit>(Unit.Value);
         }
