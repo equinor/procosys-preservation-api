@@ -7,6 +7,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public interface IProjectRepository : IRepository<Project>
     {
+        Task<List<Project>> GetProjectsOnlyAsync();
         Task<List<Project>> GetProjectsWithTagsAsync();
         Task<Project> GetProjectOnlyByNameAsync(string projectName);
         Task<Tag> GetTagOnlyByTagIdAsync(int tagId);
