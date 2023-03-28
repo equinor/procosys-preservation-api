@@ -79,6 +79,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _logger.LogInformation($"SynchronizationService: Using oId {_preservationApiOid}");
             var plants = await _permissionCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid);
             _logger.LogInformation($"SynchronizationService: Plant count = {plants.Count}");
+            _logger.LogInformation($"SynchronizationService: Plants = {string.Join(",", plants)}");
+
             foreach (var plant in plants)
             {
                 _logger.LogInformation($"SynchronizationService: Synchronizing plant {plant}...");
@@ -101,6 +103,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     _logger.LogError(ex, $"SynchronizationService: Error synchronizing plant {plant}...");
                 }
             }
+            _logger.LogInformation("SynchronizationService: Synchronizing done");
         }
     }
 }
