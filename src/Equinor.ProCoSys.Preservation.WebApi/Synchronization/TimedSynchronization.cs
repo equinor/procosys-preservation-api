@@ -33,14 +33,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             // THIS CODE WAS WRITTEN TO RUN A ONETIME TRANSFORMATION WHEN WE INTRODUCED ProCoSysGuid
             // WE KEEP THE CODE ... MAYBE WE WANT TO DO SIMILAR STUFF LATER
 
-            //_timer = new System.Timers.Timer
-            //{
-            //    Interval = _options.CurrentValue.Interval.TotalMilliseconds,
-            //    AutoReset = false
-            //};
-            //_timer.Elapsed += Timer_Elapsed;
-            //_timer.Start();
-            //_logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.CurrentValue.Interval}");
+            _timer = new System.Timers.Timer
+            {
+                Interval = _options.CurrentValue.Interval.TotalMilliseconds,
+                AutoReset = false
+            };
+            _timer.Elapsed += Timer_Elapsed;
+            _timer.Start();
+            _logger.LogInformation($"Timed work configured on {_machine}. Interval = {_options.CurrentValue.Interval}");
 
             return Task.CompletedTask;
         }
@@ -64,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             }
             finally
             {
-                _timer.Start();
+               // _timer.Start(); - Do not want the timer to trigger 
             }
         }
 
