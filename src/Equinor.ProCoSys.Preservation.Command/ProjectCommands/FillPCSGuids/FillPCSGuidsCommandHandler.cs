@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids
 
         public async Task<Result<Unit>> Handle(FillPCSGuidsCommand request, CancellationToken cancellationToken)
         {
-            var allProjects = await _projectRepository.GetAllAsync();
+            var allProjects = await _projectRepository.GetProjectsOnlyAsync();
             var count = 0;
             foreach (var project in allProjects)
             {
