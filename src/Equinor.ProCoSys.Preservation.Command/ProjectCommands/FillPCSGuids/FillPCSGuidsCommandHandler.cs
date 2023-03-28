@@ -51,6 +51,10 @@ namespace Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids
                         _logger.LogInformation($"FillPCSGuids: Project updated: {project.Name}");
                         count++;
                     }
+                    else
+                    {
+                        _logger.LogInformation($"FillPCSGuids: pcsProjectDetails is NULL for {project.Plant}.{project.Name}");
+                    }
                 }
                 else
                 {

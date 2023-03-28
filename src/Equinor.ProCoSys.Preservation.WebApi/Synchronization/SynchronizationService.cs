@@ -76,7 +76,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             currentUser.AddIdentity(claimsIdentity);
 
             var saveChanges = _settingRepository.GetByCodeAsync("SaveChanges").Result;
-            foreach (var plant in await _permissionCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
+            _logger.LogInformation($"SynchronizationService: Using oId {_preservationApiOid}");
+            var plants = await _permissionCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid);
+            _logger.LogInformation($"SynchronizationService: Plant count = {plants.Count}");
+            foreach (var plant in plants)
             {
                 _logger.LogInformation($"SynchronizationService: Synchronizing plant {plant}...");
 
