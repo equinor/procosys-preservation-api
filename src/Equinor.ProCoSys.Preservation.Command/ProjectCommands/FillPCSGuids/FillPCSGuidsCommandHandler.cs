@@ -38,37 +38,40 @@ namespace Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids
 
         public async Task<Result<Unit>> Handle(FillPCSGuidsCommand request, CancellationToken cancellationToken)
         {
-            var allProjects = await _projectRepository.GetProjectsOnlyAsync();
-            var count = 0;
-            foreach (var project in allProjects)
-            {
-                if(project.ProCoSysGuid == Guid.Empty)
-                {
-                    var pcsProjectDetails = await _projectApiService.TryGetProjectAsync(project.Plant, project.Name);
-                    if(pcsProjectDetails != null)
-                    {
-                        project.ProCoSysGuid = pcsProjectDetails.ProCoSysGuid;
-                        _logger.LogInformation($"FillPCSGuids: Project updated: {project.Name}");
-                        count++;
-                    }
-                    else
-                    {
-                        _logger.LogInformation($"FillPCSGuids: pcsProjectDetails is NULL for {project.Plant}.{project.Name}");
-                    }
-                }
-                else
-                {
-                    _logger.LogInformation($"FillPCSGuids: Project already updated: {project.Name}");
-                }
+            // THIS CODE WAS WRITTEN TO RUN A ONETIME TRANSFORMATION WHEN WE INTRODUCED ProCoSysGuid
+            // WE KEEP THE CODE ... MAYBE WE WANT TO DO SIMILAR STUFF LATER
+
+            //var allProjects = await _projectRepository.GetProjectsOnlyAsync();
+            //var count = 0;
+            //foreach (var project in allProjects)
+            //{
+            //    if(project.ProCoSysGuid == Guid.Empty)
+            //    {
+            //        var pcsProjectDetails = await _projectApiService.TryGetProjectAsync(project.Plant, project.Name);
+            //        if(pcsProjectDetails != null)
+            //        {
+            //            project.ProCoSysGuid = pcsProjectDetails.ProCoSysGuid;
+            //            _logger.LogInformation($"FillPCSGuids: Project updated: {project.Name}");
+            //            count++;
+            //        }
+            //        else
+            //        {
+            //            _logger.LogInformation($"FillPCSGuids: pcsProjectDetails is NULL for {project.Plant}.{project.Name}");
+            //        }
+            //    }
+            //    else
+            //    {
+            //        _logger.LogInformation($"FillPCSGuids: Project already updated: {project.Name}");
+            //    }
 
 
-            }
+            //}
 
-            if (request.SaveChanges && count > 0)
-            {
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-                _logger.LogInformation($"FillPCSGuids: {count} project updated");
-            }
+            //if (request.SaveChanges && count > 0)
+            //{
+            //    await _unitOfWork.SaveChangesAsync(cancellationToken);
+            //    _logger.LogInformation($"FillPCSGuids: {count} project updated");
+            //}
             return new SuccessResult<Unit>(Unit.Value);
         }
     }
