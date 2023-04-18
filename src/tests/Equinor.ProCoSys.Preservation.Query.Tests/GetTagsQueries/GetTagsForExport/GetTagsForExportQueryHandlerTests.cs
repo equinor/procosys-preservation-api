@@ -163,16 +163,16 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         }
         
         [TestMethod]
-        public async Task HandleGetTagsForExportQuery_ShouldNotGetHistoryForManyTags()
+        public async Task HandleGetTagsForExportQuery_ShouldGetHistoryForManyTags()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsForExportQueryHandler(context, _plantProvider, _loggerMock.Object);
                 var result = await dut.Handle(_query, default);
-                Assert.IsTrue(result.Data.Tags.Count() > 1);
+                Assert.IsTrue(result.Data.Tags.Count > 1);
                 foreach (var tag in result.Data.Tags)
                 {
-                    Assert.AreEqual(0, tag.History.Count);
+                    Assert.IsTrue(tag.History.Count > 0);
                 }
             }
         }
