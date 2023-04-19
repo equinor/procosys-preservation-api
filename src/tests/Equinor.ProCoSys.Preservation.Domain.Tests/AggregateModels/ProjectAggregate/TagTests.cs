@@ -1625,16 +1625,53 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.IsTrue(dut.IsReadyToBeTransferred(_journey));
         }
-        
+
         [TestMethod]
-        public void IsReadyToBeTransferred_ShouldBeTrue_WhenPreservationActive()
+        public void IsReadyToBeTransferred_ShouldBeTrue_WhenPreservationActive_ForStandardTag()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsTrue(dut.IsReadyToBeTransferred(_journey));
         }
-        
+
+        [TestMethod]
+        public void IsReadyToBeTransferred_ShouldBeTrue_WhenPreservationActive_ForPreAreaTag()
+        {
+            var dut = new Tag(TestPlant, TagType.PreArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsTrue(dut.IsReadyToBeTransferred(_journey));
+        }
+
+        [TestMethod]
+        public void IsReadyToBeTransferred_ShouldBeFalse_WhenPreservationActive_ForSiteAreaTag()
+        {
+            var dut = new Tag(TestPlant, TagType.SiteArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsFalse(dut.IsReadyToBeTransferred(_journey));
+        }
+
+        [TestMethod]
+        public void IsReadyToBeTransferred_ShouldBeFalse_WhenPreservationActive_ForPoAreaTag()
+        {
+            var dut = new Tag(TestPlant, TagType.PoArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsFalse(dut.IsReadyToBeTransferred(_journey));
+        }
+
+        [TestMethod]
+        public void IsReadyToBeTransferred_ShouldBeTrue_WhenTagInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.SetInService();
+
+            Assert.IsTrue(dut.IsReadyToBeTransferred(_journey));
+        }
+
         [TestMethod]
         public void IsReadyToBeTransferred_ShouldBeFalse_WhenPreservationCompleted()
         {
@@ -1697,12 +1734,48 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToBeCompleted_ShouldBeFalse_WhenCurrentStepIsLastStepInJourney()
+        public void IsReadyToBeCompleted_ShouldBeTrue_WhenCurrentStepIsLastStepInJourney()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _lastStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsTrue(dut.IsReadyToBeCompleted(_journey));
+        }
+
+        [TestMethod]
+        public void IsReadyToBeCompleted_ShouldBeFalse_WhenCurrentStepIsNotLastStepInJourney_ForStandardTag()
         {
             var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsFalse(dut.IsReadyToBeCompleted(_journey));
+        }
+
+        [TestMethod]
+        public void IsReadyToBeCompleted_ShouldBeFalse_WhenCurrentStepIsNotLastStepInJourney_ForPreAreaTag()
+        {
+            var dut = new Tag(TestPlant, TagType.PreArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsFalse(dut.IsReadyToBeCompleted(_journey));
+        }
+
+        [TestMethod]
+        public void IsReadyToBeCompleted_ShouldBeTrue_WhenCurrentStepIsNotLastStepInJourney_ForSiteAreaTag()
+        {
+            var dut = new Tag(TestPlant, TagType.SiteArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsTrue(dut.IsReadyToBeCompleted(_journey));
+        }
+
+        [TestMethod]
+        public void IsReadyToBeCompleted_ShouldBeTrue_WhenCurrentStepIsNotLastStepInJourney_ForPoAreaTag()
+        {
+            var dut = new Tag(TestPlant, TagType.PoArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsTrue(dut.IsReadyToBeCompleted(_journey));
         }
 
         [TestMethod]
