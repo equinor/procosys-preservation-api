@@ -149,6 +149,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
+        public void HasNextStep_ShouldReturnedTrue_WhenNextStepExists()
+        {
+            Assert.IsTrue(_dutWith3Steps.HasNextStep(_stepAId));
+            Assert.IsTrue(_dutWith3Steps.HasNextStep(_stepBId));
+            Assert.IsFalse(_dutWith3Steps.HasNextStep(_stepCId));
+        }
+
+        [TestMethod]
         public void OrderedSteps_ShouldReturnedOrderedBySortKey()
         {
             var steps = _dutWith3Steps.OrderedSteps().ToList();

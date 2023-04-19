@@ -459,7 +459,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             return (Status == PreservationStatus.NotStarted || 
                     Status == PreservationStatus.Active || 
                     Status == PreservationStatus.InService)
-                   && FollowsAJourney && journey.GetNextStep(StepId) != null;
+                   && FollowsAJourney && journey.HasNextStep(StepId);
         }
 
         public bool IsReadyToBeCompleted(Journey journey)
@@ -470,7 +470,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             return (Status == PreservationStatus.Active || Status == PreservationStatus.InService) && 
-                   (!FollowsAJourney || FollowsAJourney && journey.GetNextStep(StepId) == null);
+                   (!FollowsAJourney || (FollowsAJourney && !journey.HasNextStep(StepId)));
         }
         
         public void UpdateStep(Step step)

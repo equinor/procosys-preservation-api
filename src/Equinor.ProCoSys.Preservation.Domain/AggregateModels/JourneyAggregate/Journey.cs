@@ -162,6 +162,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             return null;
         }
 
+        public bool HasNextStep(int stepId) => GetNextStep(stepId) != null;
+
         public IOrderedEnumerable<Step> OrderedSteps() => _steps.OrderBy(r => r.SortKey);
 
         public void SetCreated(Person createdBy)
