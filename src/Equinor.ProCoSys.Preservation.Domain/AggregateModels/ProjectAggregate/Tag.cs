@@ -470,7 +470,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             return (Status == PreservationStatus.Active || Status == PreservationStatus.InService) && 
-                   (!FollowsAJourney || (FollowsAJourney && !journey.HasNextStep(StepId)));
+                   (!FollowsAJourney || !journey.HasNextStep(StepId));
         }
         
         public void UpdateStep(Step step)
