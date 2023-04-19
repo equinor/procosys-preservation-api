@@ -456,7 +456,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(journey));
             }
 
-            return (Status == PreservationStatus.NotStarted || Status == PreservationStatus.Active)
+            return (Status == PreservationStatus.NotStarted || 
+                    Status == PreservationStatus.Active || 
+                    Status == PreservationStatus.InService)
                    && FollowsAJourney && journey.GetNextStep(StepId) != null;
         }
 

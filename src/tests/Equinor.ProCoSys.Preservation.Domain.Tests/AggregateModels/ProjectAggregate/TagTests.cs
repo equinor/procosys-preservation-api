@@ -1634,7 +1634,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.IsTrue(dut.IsReadyToBeTransferred(_journey));
         }
-        
+
+        [TestMethod]
+        public void IsReadyToBeTransferred_ShouldBeTrue_WhenTagInService()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.SetInService();
+
+            Assert.IsTrue(dut.IsReadyToBeTransferred(_journey));
+        }
+
         [TestMethod]
         public void IsReadyToBeTransferred_ShouldBeFalse_WhenPreservationCompleted()
         {
