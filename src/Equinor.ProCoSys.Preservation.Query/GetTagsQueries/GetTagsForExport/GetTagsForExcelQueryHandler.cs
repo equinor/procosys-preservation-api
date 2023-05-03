@@ -18,6 +18,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServiceResult;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Domain;
+using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
@@ -29,13 +31,19 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         private readonly DateTime _utcNow;
         private readonly ILogger<GetTagsForExportQueryHandler> _logger;
         private Domain.Time.Timer _timer;
+        private int _maxHistoryExport;
 
-        public GetTagsForExportQueryHandler(IReadOnlyContext context, IPlantProvider plantProvider, ILogger<GetTagsForExportQueryHandler> logger)
+        public GetTagsForExportQueryHandler(
+            IReadOnlyContext context, 
+            IOptionsSnapshot<TagOptions> options,
+            IPlantProvider plantProvider,
+            ILogger<GetTagsForExportQueryHandler> logger)
         {
             _context = context;
             _plantProvider = plantProvider;
             _logger = logger;
             _utcNow = TimeService.UtcNow;
+            _maxHistoryExport = options.Value.MaxHistoryExport;
         }
 
         public async Task<Result<ExportDto>> Handle(GetTagsForExportQuery request, CancellationToken cancellationToken)
@@ -59,7 +67,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             }
 
             var tagsIds = orderedDtos.Select(dto => dto.TagId).ToList();
-            var getHistory = tagsIds.Count < 50;
+            var getHistory = 
+                (request.HistoryExportMode == HistoryExportMode.ExportOne && tagsIds.Count == 1) || // Just to be compatible before client use new endpoint 
+                (request.HistoryExportMode == HistoryExportMode.ExportMax && tagsIds.Count <= _maxHistoryExport);
+
             var journeyIds = orderedDtos.Select(dto => dto.JourneyId).Distinct();
 
             var tagsWithIncludes = await GetTagsWithIncludesAsync(tagsIds, getHistory, cancellationToken);

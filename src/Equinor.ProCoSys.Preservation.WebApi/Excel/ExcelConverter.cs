@@ -137,7 +137,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
 
         private void CreateHistorySheets(XLWorkbook workbook, IList<ExportTagDto> tags)
         {
-            foreach (var tag in tags)
+            foreach (var tag in tags.Where(t => t.History.Count > 0))
             {
                 var sheetName = GetSheetName(tag.TagNo);
                 var sheet = workbook.Worksheets.Add(sheetName);
@@ -173,7 +173,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
             }
         }
 
-        private string GetSheetName(string tagNo)
+        public static string GetSheetName(string tagNo)
         {
             if (tagNo.Length < 32)
             {

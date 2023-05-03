@@ -94,6 +94,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Obsolete]
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("ExportTagsToExcel")]
         public async Task<ActionResult> ExportTagsToExcel(
@@ -116,6 +117,32 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             excelMemoryStream.Position = 0;
 
             return File(excelMemoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{_excelConverter.GetFileName()}.xlsx");  
+        }
+
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
+        [HttpGet("ExportTagsWithHistoryToExcel")]
+        public async Task<ActionResult> ExportTagsWithHistoryToExcel(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromQuery] bool exportHistory,
+            [FromQuery] FilterDto filter,
+            [FromQuery] SortingDto sorting)
+        {
+            var query = CreateGetTagsForExportQuery(filter, sorting);
+            query.HistoryExportMode = exportHistory ? HistoryExportMode.ExportMax : HistoryExportMode.ExportNone;
+
+            var result = await _mediator.Send(query);
+
+            if (result.ResultType != ResultType.Ok)
+            {
+                return this.FromResult(result);
+            }
+
+            var excelMemoryStream = _excelConverter.Convert(result.Data);
+            excelMemoryStream.Position = 0;
+
+            return File(excelMemoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{_excelConverter.GetFileName()}.xlsx");
         }
 
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
