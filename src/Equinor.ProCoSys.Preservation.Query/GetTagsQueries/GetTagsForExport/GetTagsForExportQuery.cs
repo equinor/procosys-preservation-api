@@ -24,5 +24,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         public string ProjectName { get; }
         public Sorting Sorting { get; }
         public Filter Filter { get; }
+        public HistoryExportMode HistoryExportMode { get; set; } = HistoryExportMode.ExportOne;
     }
 }

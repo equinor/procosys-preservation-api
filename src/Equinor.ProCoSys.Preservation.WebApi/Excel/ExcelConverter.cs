@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -113,8 +112,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
             // see https://github.com/ClosedXML/ClosedXML for sample code
             var excelStream = new MemoryStream();
 
-
-
             using (var workbook = new XLWorkbook())
             {
                 _logger.LogInformation($"ExcelConverter CreateFrontSheet. {_timer.Elapsed()}");
@@ -127,8 +124,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
                 _logger.LogInformation($"ExcelConverter CreateActionSheet. {_timer.Elapsed()}");
                 CreateActionSheet(workbook, exportTagDtos);
 
-                _logger.LogInformation($"ExcelConverter CreateHistorySheet. {_timer.Elapsed()}");
-                CreateHistorySheet(workbook, exportTagDtos);
+                _logger.LogInformation($"ExcelConverter CreateHistorySheets. {_timer.Elapsed()}");
+                CreateHistorySheets(workbook, exportTagDtos);
 
                 _logger.LogInformation($"ExcelConverter saving. {_timer.Elapsed()}");
                 workbook.SaveAs(excelStream);
@@ -138,44 +135,52 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Excel
             return excelStream;
         }
 
-        private void CreateHistorySheet(XLWorkbook workbook, IList<ExportTagDto> tags)
+        private void CreateHistorySheets(XLWorkbook workbook, IList<ExportTagDto> tags)
         {
-            if (tags.Count != 1)
+            foreach (var tag in tags.Where(t => t.History.Count > 0))
             {
-                return;
+                var sheetName = GetSheetName(tag.TagNo);
+                var sheet = workbook.Worksheets.Add(sheetName);
+
+                var rowIdx = 0;
+                var row = sheet.Row(++rowIdx);
+                row.Style.Font.SetBold();
+                row.Style.Font.SetFontSize(12);
+                row.Cell(HistorySheetColumns.TagNo).Value = "Tag nr";
+                row.Cell(HistorySheetColumns.Description).Value = "Description";
+                row.Cell(HistorySheetColumns.DueInWeeks).Value = "Due (weeks)";
+                row.Cell(HistorySheetColumns.Date).Value = "Date (UTC)";
+                row.Cell(HistorySheetColumns.User).Value = "User";
+                row.Cell(HistorySheetColumns.Details).Value = "Preservation details";
+                row.Cell(HistorySheetColumns.Comment).Value = "Preservation comment";
+
+                foreach (var history in tag.History)
+                {
+                    row = sheet.Row(++rowIdx);
+
+                    row.Cell(HistorySheetColumns.TagNo).SetValue(tag.TagNo);
+                    row.Cell(HistorySheetColumns.Description).SetValue(history.Description);
+                    row.Cell(HistorySheetColumns.DueInWeeks).SetValue(history.DueInWeeks);
+                    AddDateCell(row, HistorySheetColumns.Date, history.CreatedAtUtc);
+                    row.Cell(HistorySheetColumns.User).SetValue(history.CreatedBy);
+                    row.Cell(HistorySheetColumns.Details).SetValue(history.PreservationDetails);
+                    row.Cell(HistorySheetColumns.Comment).SetValue(history.PreservationComment);
+                }
+
+                const int minWidth = 10;
+                const int maxWidth = 100;
+                sheet.Columns(1, HistorySheetColumns.Last).AdjustToContents(1, rowIdx, minWidth, maxWidth);
+            }
+        }
+
+        public static string GetSheetName(string tagNo)
+        {
+            if (tagNo.Length < 32)
+            {
+                return tagNo;
             }
 
-            var sheet = workbook.Worksheets.Add("History");
-
-            var rowIdx = 0;
-            var row = sheet.Row(++rowIdx);
-            row.Style.Font.SetBold();
-            row.Style.Font.SetFontSize(12);
-            row.Cell(HistorySheetColumns.TagNo).Value = "Tag nr";
-            row.Cell(HistorySheetColumns.Description).Value = "Description";
-            row.Cell(HistorySheetColumns.DueInWeeks).Value = "Due (weeks)";
-            row.Cell(HistorySheetColumns.Date).Value = "Date (UTC)";
-            row.Cell(HistorySheetColumns.User).Value = "User";
-            row.Cell(HistorySheetColumns.Details).Value = "Preservation details";
-            row.Cell(HistorySheetColumns.Comment).Value = "Preservation comment";
-
-            var tag = tags.Single();
-            foreach (var history in tag.History)
-            {
-                row = sheet.Row(++rowIdx);
-
-                row.Cell(HistorySheetColumns.TagNo).SetValue(tag.TagNo);
-                row.Cell(HistorySheetColumns.Description).SetValue(history.Description);
-                row.Cell(HistorySheetColumns.DueInWeeks).SetValue(history.DueInWeeks);
-                AddDateCell(row, HistorySheetColumns.Date, history.CreatedAtUtc);
-                row.Cell(HistorySheetColumns.User).SetValue(history.CreatedBy);
-                row.Cell(HistorySheetColumns.Details).SetValue(history.PreservationDetails);
-                row.Cell(HistorySheetColumns.Comment).SetValue(history.PreservationComment);
-            }
-
-            const int minWidth = 10;
-            const int maxWidth = 100;
-            sheet.Columns(1, HistorySheetColumns.Last).AdjustToContents(1, rowIdx, minWidth, maxWidth);
+            return $"{tagNo.Substring(0, 28)}...";
         }
 
         private void CreateActionSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)

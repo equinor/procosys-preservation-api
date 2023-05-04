@@ -18,6 +18,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using ServiceResult;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Domain;
+using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
@@ -29,13 +31,19 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         private readonly DateTime _utcNow;
         private readonly ILogger<GetTagsForExportQueryHandler> _logger;
         private Domain.Time.Timer _timer;
+        private int _maxHistoryExport;
 
-        public GetTagsForExportQueryHandler(IReadOnlyContext context, IPlantProvider plantProvider, ILogger<GetTagsForExportQueryHandler> logger)
+        public GetTagsForExportQueryHandler(
+            IReadOnlyContext context, 
+            IOptionsSnapshot<TagOptions> options,
+            IPlantProvider plantProvider,
+            ILogger<GetTagsForExportQueryHandler> logger)
         {
             _context = context;
             _plantProvider = plantProvider;
             _logger = logger;
             _utcNow = TimeService.UtcNow;
+            _maxHistoryExport = options.Value.MaxHistoryExport;
         }
 
         public async Task<Result<ExportDto>> Handle(GetTagsForExportQuery request, CancellationToken cancellationToken)
@@ -59,7 +67,13 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             }
 
             var tagsIds = orderedDtos.Select(dto => dto.TagId).ToList();
-            var getHistory = tagsIds.Count == 1;
+            // Handling HistoryExportMode == HistoryExportMode.ExportOne is just to be compatible with existing client
+            // before client use new endpoint ExportTagsWithHistoryToExcel
+            // Old endpoint ExportTagsToExcel and HistoryExportMode.ExportOne will be removed in pbi 102394 after release of 102191 
+            var getHistory = 
+                (request.HistoryExportMode == HistoryExportMode.ExportOne && tagsIds.Count == 1) ||
+                (request.HistoryExportMode == HistoryExportMode.ExportMax && tagsIds.Count <= _maxHistoryExport);
+
             var journeyIds = orderedDtos.Select(dto => dto.JourneyId).Distinct();
 
             var tagsWithIncludes = await GetTagsWithIncludesAsync(tagsIds, getHistory, cancellationToken);
@@ -94,15 +108,15 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
 
             if (getHistory)
             {
-                await GetHistoryForSingleTagAsync(tagsIds.Single(), exportTagDtos, tagsWithIncludes, reqDefWithFields, cancellationToken);
+                await GetHistoryForTagsAsync(tagsIds, exportTagDtos, tagsWithIncludes, reqDefWithFields, cancellationToken);
             }
 
             _logger.LogInformation("GetTagsForExportQueryHandler end");
             return new SuccessResult<ExportDto>(new ExportDto(exportTagDtos, usedFilterDto));
         }
 
-        private async Task GetHistoryForSingleTagAsync(
-            int singleTagId,
+        private async Task GetHistoryForTagsAsync(
+            List<int> tagsIds,
             IList<ExportTagDto> exportTagDtos,
             List<Tag> tagsWithIncludes,
             List<RequirementDefinition> reqDefWithFields,
@@ -112,41 +126,50 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             var history = await (from h in _context.QuerySet<History>()
                     join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
                     join createdBy in _context.QuerySet<Person>() on h.CreatedById equals createdBy.Id
-                    where tag.Id == singleTagId
+                    where tagsIds.Contains(tag.Id)
                     select new
                     {
                         History = h,
+                        TagId = tag.Id,
                         CreatedBy = createdBy
                     })
                 .TagWith("GetTagsForExportQueryHandler: history")
                 .ToListAsync(cancellationToken);
             _logger.LogInformation($"GetTagsForExportQueryHandler got history. {_timer.Elapsed()}");
 
-            var singleExportTagDto = exportTagDtos.Single();
-            var singleTag = tagsWithIncludes.Single();
+            var groupedHistory = history.GroupBy(h => h.TagId);
 
-            foreach (var dto in history.OrderByDescending(x => x.History.CreatedAtUtc))
+            foreach (var historyGroup in groupedHistory)
             {
-                var preservationComment = string.Empty;
-                var preservationDetails = new StringBuilder();
+                var singleExportTagDto = exportTagDtos.Single(t => t.TagId == historyGroup.Key);
+                var singleTag = tagsWithIncludes.Single(t => t.Id == historyGroup.Key);
 
-                if (dto.History.PreservationRecordGuid.HasValue)
+                foreach (var dto in historyGroup.OrderByDescending(h => h.History.CreatedAtUtc))
                 {
-                    (preservationComment, preservationDetails) = GetPreservationDetailsFromPeriod(
-                        dto.History.PreservationRecordGuid.Value,
-                        singleTag,
-                        reqDefWithFields);
-                }
+                    var preservationComment = string.Empty;
+                    var preservationDetails = new StringBuilder();
 
-                singleExportTagDto.History.Add(new ExportHistoryDto(
-                    dto.History.Id,
-                    dto.History.Description,
-                    dto.History.CreatedAtUtc,
-                    $"{dto.CreatedBy.FirstName} {dto.CreatedBy.LastName}",
-                    dto.History.DueInWeeks,
-                    preservationDetails.ToString(),
-                    preservationComment));
+                    if (dto.History.PreservationRecordGuid.HasValue)
+                    {
+                        (preservationComment, preservationDetails) = GetPreservationDetailsFromPeriod(
+                            dto.History.PreservationRecordGuid.Value,
+                            singleTag,
+                            reqDefWithFields);
+                    }
+
+                    singleExportTagDto.History.Add(new ExportHistoryDto(
+                        dto.History.Id,
+                        dto.TagId,
+                        dto.History.Description,
+                        dto.History.CreatedAtUtc,
+                        $"{dto.CreatedBy.FirstName} {dto.CreatedBy.LastName}",
+                        dto.History.DueInWeeks,
+                        preservationDetails.ToString(),
+                        preservationComment));
+                }
             }
+
+
             _logger.LogInformation($"GetTagsForExportQueryHandler history dto made. {_timer.Elapsed()}");
         }
 
@@ -255,7 +278,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                             .ThenInclude(fv => fv.FieldValueAttachment)
                         .Include(t => t.Attachments)
                         .Include(t => t.Actions)
-                            where tag.Id == tagsIds.Single()
+                            where tagsIds.Contains(tag.Id)
                             select tag)
                     .TagWith("GetTagsForExportQueryHandler: tagsWithIncludes with details")
                     .ToListAsync(cancellationToken);
@@ -418,6 +441,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     .ThenBy(t => t.CreatedAtUtc);
 
                 return new ExportTagDto(
+                    dto.TagId,
                     orderedActions.Select(
                         action => new ExportActionDto(
                             action.Id,

@@ -75,6 +75,41 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             return result;
         }
 
+        public static async Task<XLFile> ExportTagsWithHistoryToExcelAsync(
+            UserType userType,
+            string plant,
+            string projectName,
+            bool exportHistory,
+            string tagNoStartsWith = null,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var parameters = new ParameterCollection
+            {
+                {"exportHistory", exportHistory.ToString().ToLower()},
+                {"ProjectName", projectName},
+                {"TagNoStartsWith", tagNoStartsWith}
+            };
+            var url = $"{_route}/ExportTagsWithHistoryToExcel{parameters}";
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            var result = new XLFile
+            {
+                Workbook = new XLWorkbook(stream),
+                ContentType = response.Content.Headers.ContentType?.MediaType
+            };
+
+            return result;
+        }
+
         public static async Task<TagDetailsDto> GetTagAsync(
             UserType userType, string plant,
             int tagId,

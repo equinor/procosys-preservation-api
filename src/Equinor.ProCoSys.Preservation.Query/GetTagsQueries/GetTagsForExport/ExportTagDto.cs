@@ -5,6 +5,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
     public class ExportTagDto
     {
         public ExportTagDto(
+            int tagId,
             List<ExportActionDto> actions,
             List<ExportRequirementDto> requirements,
             string actionStatus,
@@ -28,6 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             string tagDescription,
             string tagNo)
         {
+            TagId = tagId;
             Actions = actions;
             Requirements = requirements;
             ActionStatus = actionStatus;
@@ -54,6 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             History = new List<ExportHistoryDto>();
         }
 
+        public int TagId { get; }
         public List<ExportActionDto> Actions { get; }
         public List<ExportRequirementDto> Requirements { get; }
         public string ActionStatus { get; }

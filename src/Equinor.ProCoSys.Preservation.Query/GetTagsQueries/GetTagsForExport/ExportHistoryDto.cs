@@ -6,6 +6,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
     {
         public ExportHistoryDto(
             int id,
+            int tagId,
             string description,
             DateTime createdAtUtc,
             string createdBy,
@@ -14,6 +15,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             string preservationComment)
         {
             Id = id;
+            TagId = tagId;
             Description = description;
             CreatedAtUtc = createdAtUtc;
             CreatedBy = createdBy;
@@ -23,6 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         }
 
         public int Id { get; }
+        public int TagId { get; }
         public string Description { get; }
         public DateTime CreatedAtUtc { get; }
         public string CreatedBy { get; }

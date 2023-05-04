@@ -17,10 +17,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
         private static readonly string _filtersSheet = "Filters";
         private static readonly string _tagsSheet = "Tags";
         private static readonly string _actionsSheet = "Actions";
-        private static readonly string _historySheet = "History";
 
         private static readonly string[] _expected3Sheets = { _filtersSheet, _tagsSheet, _actionsSheet };
-        private static readonly string[] _expected4Sheets = { _filtersSheet, _tagsSheet, _actionsSheet, _historySheet };
 
         private ExcelConverter _dut;
         private UsedFilterDto _usedFilterDto;
@@ -55,6 +53,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 "voidedFilter");
 
             _exportTagDtoWithoutActionsAndHistory = new ExportTagDto(
+                100,
                 new List<ExportActionDto>(),
                 new List<ExportRequirementDto>(),
                 "actionStatus1",
@@ -101,7 +100,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             {
                 new ExportRequirementDto(1,"R1", new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc), 4, "Comm1")
             };
+            var _exportTagId1 = 200;
             _exportTagDtoWithTwoActionsAndTwoHistoryItems = new ExportTagDto(
+                _exportTagId1,
                 actionDtos1,
                 reqDtos1,
                 "actionStatus2",
@@ -123,12 +124,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 "step2",
                 "storageArea2",
                 "tagDescription2",
-                "tagNo2"
+                "tagNo_which_exceed_length_of_31_should_not_cause_problem"
             );
             _exportTagDtoWithTwoActionsAndTwoHistoryItems.History.Add(
-                new ExportHistoryDto(1, "H1", new DateTime(2021, 2, 3, 4, 5, 6, DateTimeKind.Utc), "Espen Askeladd", null, null, null));
+                new ExportHistoryDto(1, _exportTagId1, "H1", new DateTime(2021, 2, 3, 4, 5, 6, DateTimeKind.Utc), "Espen Askeladd", null, null, null));
             _exportTagDtoWithTwoActionsAndTwoHistoryItems.History.Add(
-                new ExportHistoryDto(2, "H2", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), "Espen Askeladd", 2, "Details2", "Comment2"));
+                new ExportHistoryDto(2, _exportTagId1, "H2", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), "Espen Askeladd", 2, "Details2", "Comment2"));
 
             var actionDtos2 = new List<ExportActionDto>
             {
@@ -147,7 +148,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 new ExportRequirementDto(3,"R3", new DateTime(2020, 2, 3, 4, 5, 6, DateTimeKind.Utc), 4, "Comm3")
             };
 
+            var _exportTagId2 = 300;
             _exportTagDtoWithOneActionAndOneHistoryItems = new ExportTagDto(
+                _exportTagId2,
                 actionDtos2,
                 reqDtos2,
                 "actionStatus3",
@@ -172,7 +175,35 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 "tagNo3"
             );
             _exportTagDtoWithOneActionAndOneHistoryItems.History.Add(
-                new ExportHistoryDto(3, "H3", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), "Espen Askeladd", 2, "Details3", "Comment3"));
+                new ExportHistoryDto(3, _exportTagId2, "H3", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), "Espen Askeladd", 2, "Details3", "Comment3"));
+        }
+
+        [TestMethod]
+        public void ExcelConverter_GetSheetName_ShouldReturnUnchangedString_WhenLessThan32Long()
+        {
+            // Arrange
+            var tagNo = "012345678901234567890123456789a";
+
+            // Act
+            var sheetName = ExcelConverter.GetSheetName(tagNo);
+
+            // Assert
+            Assert.AreEqual(tagNo, sheetName);
+        }
+
+        [TestMethod]
+        public void ExcelConverter_GetSheetName_ShouldReturnClippedString_When32Long()
+        {
+            // Arrange
+            var tagNo = "012345678901234567890123456789ab";
+
+            // Act
+            var sheetName = ExcelConverter.GetSheetName(tagNo);
+
+            // Assert
+            var expected = "0123456789012345678901234567...";
+            Assert.AreEqual(expected, sheetName);
+            Assert.AreEqual(31, sheetName.Length);
         }
 
         [TestMethod]
@@ -189,11 +220,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             // Assert
             var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
             AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
-            AssertSheetExists(workbook, _historySheet, false);
         }
 
         [TestMethod]
-        public void Convert_DtoWithOneTag_ShouldCreateExcelWith4Sheets()
+        public void Convert_DtoWithOneTag_NoHistory_ShouldCreateExcelWith3Sheets()
         {
             // Arrange
             var exportDto = new ExportDto(
@@ -207,13 +237,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             var xlStream = _dut.Convert(exportDto);
 
             // Assert
-            var workbook = AssertWorkbookFromStream(xlStream, _expected4Sheets);
+            var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
             AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
-            AssertSheetExists(workbook, _historySheet, true);
+            Assert.AreEqual(3, workbook.Worksheets.Count);
         }
 
         [TestMethod]
-        public void Convert_DtoWithManyTags_ShouldCreateExcelWith3Sheets()
+        public void Convert_DtoWithTwoTags_ShouldCreateExcelWith3Sheets_Plus1HistorySheet()
         {
             // Arrange
             var exportDto = new ExportDto(
@@ -230,7 +260,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             // Assert
             var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
             AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
-            AssertSheetExists(workbook, _historySheet, false);
+            AssertSheetExists(workbook, ExcelConverter.GetSheetName(_exportTagDtoWithOneActionAndOneHistoryItems.TagNo));
+            Assert.AreEqual(4, workbook.Worksheets.Count);
         }
 
         [TestMethod]
@@ -282,7 +313,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             var xlStream = _dut.Convert(exportDto);
 
             // Assert
-            var workbook = AssertWorkbookFromStream(xlStream, _expected4Sheets);
+            var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
             AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
             AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
         }
@@ -302,11 +333,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             var xlStream = _dut.Convert(exportDto);
 
             // Assert
-            var workbook = AssertWorkbookFromStream(xlStream, _expected4Sheets);
+            var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
             AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
             AssertTagSheet(workbook.Worksheets.Worksheet(_tagsSheet), exportDto.Tags);
             AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
-            AssertHistorySheet(workbook.Worksheets.Worksheet(_historySheet), exportDto.Tags.Single());
+            var expectedTagData = _exportTagDtoWithTwoActionsAndTwoHistoryItems;
+            AssertHistorySheet(workbook.Worksheets.Worksheet(
+                ExcelConverter.GetSheetName(expectedTagData.TagNo)), 
+                expectedTagData);
         }
 
         [TestMethod]
@@ -329,7 +363,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
             AssertTagSheet(workbook.Worksheets.Worksheet(_tagsSheet), exportDto.Tags);
             AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
-            AssertSheetExists(workbook, _historySheet, false);
+            var expectedTagData = _exportTagDtoWithTwoActionsAndTwoHistoryItems;
+            AssertHistorySheet(workbook.Worksheets.Worksheet(
+                ExcelConverter.GetSheetName(expectedTagData.TagNo)),
+                expectedTagData);
+            expectedTagData = _exportTagDtoWithOneActionAndOneHistoryItems;
+            AssertHistorySheet(workbook.Worksheets.Worksheet(
+                ExcelConverter.GetSheetName(expectedTagData.TagNo)),
+                expectedTagData);
         }
 
         private void AssertFiltersSheet(IXLWorksheet worksheet, UsedFilterDto expextedFilterDto)
@@ -479,18 +520,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             var workbook = new XLWorkbook(xlStream);
             Assert.IsNotNull(workbook);
             Assert.IsNotNull(workbook.Worksheets);
-            Assert.AreEqual(expectedSheets.Length, workbook.Worksheets.Count);
+            Assert.IsTrue(workbook.Worksheets.Count >= expectedSheets.Length);
             foreach (var expectedSheet in expectedSheets)
             {
-                AssertSheetExists(workbook, expectedSheet, true);
+                AssertSheetExists(workbook, expectedSheet);
             }
             return workbook;
         }
 
-        private static void AssertSheetExists(XLWorkbook workbook, string expectedSheet, bool shouldExists)
+        private static void AssertSheetExists(XLWorkbook workbook, string expectedSheet)
         {
             var sheetFound = workbook.Worksheets.TryGetWorksheet(expectedSheet, out _);
-            Assert.AreEqual(shouldExists, sheetFound);
+            Assert.IsTrue(sheetFound);
         }
 
         private static void AssertHeadingsInTagSheet(IXLWorksheet worksheet)

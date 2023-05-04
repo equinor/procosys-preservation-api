@@ -42,6 +42,34 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
+        public async Task ExportTagsWithHistoryToExcel_AsPreserver_ShouldGetAnExcelFile()
+        {
+            // Act
+            var file = await TagsControllerTestsHelper.ExportTagsWithHistoryToExcelAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                true);
+
+            // Assert
+            Assert.AreEqual("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.ContentType);
+        }
+
+        [TestMethod]
+        public async Task ExportTagsWithoutHistoryToExcel_AsPreserver_ShouldGetAnExcelFile()
+        {
+            // Act
+            var file = await TagsControllerTestsHelper.ExportTagsWithHistoryToExcelAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                false);
+
+            // Assert
+            Assert.AreEqual("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.ContentType);
+        }
+
+        [TestMethod]
         public async Task GetTag_AsPreserver_ShouldGetTag()
         {
             // Act
