@@ -67,8 +67,11 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             }
 
             var tagsIds = orderedDtos.Select(dto => dto.TagId).ToList();
+            // Handling HistoryExportMode == HistoryExportMode.ExportOne is just to be compatible with existing client
+            // before client use new endpoint ExportTagsWithHistoryToExcel
+            // Old endpoint ExportTagsToExcel and HistoryExportMode.ExportOne will be removed in pbi 102394 after release of 102191 
             var getHistory = 
-                (request.HistoryExportMode == HistoryExportMode.ExportOne && tagsIds.Count == 1) || // Just to be compatible before client use new endpoint 
+                (request.HistoryExportMode == HistoryExportMode.ExportOne && tagsIds.Count == 1) ||
                 (request.HistoryExportMode == HistoryExportMode.ExportMax && tagsIds.Count <= _maxHistoryExport);
 
             var journeyIds = orderedDtos.Select(dto => dto.JourneyId).Distinct();
