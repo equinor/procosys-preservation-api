@@ -2,7 +2,6 @@
 {
     public enum HistoryExportMode
     {
-        ExportOne,
         ExportNone,
         ExportMax
     }

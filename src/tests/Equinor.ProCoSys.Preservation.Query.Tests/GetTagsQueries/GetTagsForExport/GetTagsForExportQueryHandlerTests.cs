@@ -173,10 +173,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldGetHistoryForManyTags_WhenLessThenMax()
         {
-            var query = new GetTagsForExportQuery(_testDataSet.Project1.Name)
-            {
-                HistoryExportMode = HistoryExportMode.ExportMax
-            };
+            var query = new GetTagsForExportQuery(_testDataSet.Project1.Name, HistoryExportMode.ExportMax);
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -193,10 +190,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldNotGetHistoryForManyTags_WhenExceedMax()
         {
-            var query = new GetTagsForExportQuery(_testDataSet.Project1.Name)
-            {
-                HistoryExportMode = HistoryExportMode.ExportMax
-            };
+            var query = new GetTagsForExportQuery(_testDataSet.Project1.Name, HistoryExportMode.ExportMax);
 
             _apiOptionsMock
                 .Setup(x => x.Value)
@@ -301,7 +295,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
                 var filter = new Filter {TagNoStartsWith = tagNoStartsWith};
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, HistoryExportMode.ExportMax, filter: filter), default);
 
                 var tag = result.Data.Tags.Single();
                 Assert.AreEqual(2, tag.History.Count);
@@ -881,7 +875,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
                 var sorting = new Sorting(SortingDirection.Asc, SortingProperty.TagNo);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, sorting, filter), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, sorting: sorting, filter: filter), default);
                 var tags = result.Data.Tags.ToList();
                 Assert.AreEqual(10, tags.Count);
                 Assert.AreEqual($"{_testDataSet.StdTagPrefix}-0", tags.First().TagNo);
@@ -893,7 +887,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
                 var sorting = new Sorting(SortingDirection.Desc, SortingProperty.TagNo);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, sorting, filter), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, sorting: sorting, filter: filter), default);
                 var tags = result.Data.Tags.ToList();
                 Assert.AreEqual(10, tags.Count);
                 Assert.AreEqual($"{_testDataSet.StdTagPrefix}-9", tags.First().TagNo);

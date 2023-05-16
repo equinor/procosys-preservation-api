@@ -103,46 +103,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 HttpStatusCode.Forbidden);
         #endregion
 
-        #region ExportTagsToExcel
-        [TestMethod]
-        public async Task ExportTagsToExcel_AsAnonymous_ShouldReturnUnauthorized()
-            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
-                UserType.Anonymous, TestFactory.UnknownPlant,
-                TestFactory.ProjectWithAccess,
-                expectedStatusCode:HttpStatusCode.Unauthorized);
-
-        [TestMethod]
-        public async Task ExportTagsToExcel_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
-            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
-                UserType.Hacker, TestFactory.UnknownPlant,
-                TestFactory.ProjectWithAccess,
-                null,
-                HttpStatusCode.BadRequest,
-                "is not a valid plant");
-
-        [TestMethod]
-        public async Task ExportTagsToExcel_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
-            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
-                UserType.LibraryAdmin, TestFactory.UnknownPlant,
-                TestFactory.ProjectWithAccess,
-                expectedStatusCode:HttpStatusCode.BadRequest,
-                expectedMessageOnBadRequest:"is not a valid plant");
-
-        [TestMethod]
-        public async Task ExportTagsToExcel_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
-            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
-                UserType.Hacker, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
-                expectedStatusCode:HttpStatusCode.Forbidden);
-
-        [TestMethod]
-        public async Task ExportTagsToExcel_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
-            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
-                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
-                expectedStatusCode:HttpStatusCode.Forbidden);
-        #endregion
-
         #region ExportTagsWithHistoryToExcel
         [TestMethod]
         public async Task ExportTagsWithHistoryToExcel_AsAnonymous_ShouldReturnUnauthorized()

@@ -9,7 +9,6 @@ using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport;
 using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Equinor.ProCoSys.Preservation.WebApi.Excel;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
@@ -40,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public async Task GetExcelDocument_ShouldSendCommand()
         {
-            await _dut.ExportTagsToExcel("", _filterDto, _sortingDto);
+            await _dut.ExportTagsWithHistoryToExcel("", true, _filterDto, _sortingDto);
             _mediatorMock.Verify(x => x.Send(It.IsAny<GetTagsForExportQuery>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -79,7 +78,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             _sortingDto.Direction = SortingDirection.Desc;
             _sortingDto.Property = SortingProperty.Responsible;
 
-            await _dut.ExportTagsToExcel("", _filterDto, _sortingDto);
+            await _dut.ExportTagsWithHistoryToExcel("", true, _filterDto, _sortingDto);
 
             Assert.AreEqual(_filterDto.ProjectName, _createdQuery.ProjectName);
             Assert.IsNotNull(_createdQuery.Filter);
@@ -114,17 +113,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             
             Assert.AreEqual(_sortingDto.Direction, _createdQuery.Sorting.Direction);
             Assert.AreEqual(_sortingDto.Property, _createdQuery.Sorting.Property);
-        }
-
-        [TestMethod]
-        public async Task GetExcelDocument_ShouldReturnFile_WhenResultIsSuccessful()
-        {
-            var result = await _dut.ExportTagsToExcel("", _filterDto, _sortingDto);
-
-            _excelConverterMock.Verify(x => x.Convert(_exportDto), Times.Once);
-            _excelConverterMock.Verify(x => x.GetFileName(), Times.Once);
-
-            Assert.IsInstanceOfType(result, typeof(FileStreamResult));
         }
     }
 }
