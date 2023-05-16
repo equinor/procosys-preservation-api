@@ -30,18 +30,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
-        public async Task ExportTagsToExcel_AsPreserver_ShouldGetAnExcelFile()
-        {
-            // Act
-            var file = await TagsControllerTestsHelper.ExportTagsToExcelAsync(
-                UserType.Preserver, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess);
-
-            // Assert
-            Assert.AreEqual("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.ContentType);
-        }
-
-        [TestMethod]
         public async Task ExportTagsWithHistoryToExcel_AsPreserver_ShouldGetAnExcelFile()
         {
             // Act

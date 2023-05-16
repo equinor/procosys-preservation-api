@@ -41,39 +41,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<TagResultDto>(jsonString);
         }
-        
-        public static async Task<XLFile> ExportTagsToExcelAsync(
-            UserType userType,
-            string plant,
-            string projectName,
-            string tagNoStartsWith = null,
-            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
-            string expectedMessageOnBadRequest = null)
-        {
-            var parameters = new ParameterCollection
-            {
-                {"ProjectName", projectName},
-                {"TagNoStartsWith", tagNoStartsWith}
-            };
-            var url = $"{_route}/ExportTagsToExcel{parameters}";
-            var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
-
-            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
-
-            if (expectedStatusCode != HttpStatusCode.OK)
-            {
-                return null;
-            }
-
-            var stream = await response.Content.ReadAsStreamAsync();
-            var result = new XLFile
-            {
-                Workbook = new XLWorkbook(stream),
-                ContentType = response.Content.Headers.ContentType?.MediaType
-            };
-
-            return result;
-        }
 
         public static async Task<XLFile> ExportTagsWithHistoryToExcelAsync(
             UserType userType,
