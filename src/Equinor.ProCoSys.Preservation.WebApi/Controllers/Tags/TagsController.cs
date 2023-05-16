@@ -94,31 +94,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Obsolete]
-        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
-        [HttpGet("ExportTagsToExcel")]
-        public async Task<ActionResult> ExportTagsToExcel(
-            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
-            [Required]
-            string plant,
-            [FromQuery] FilterDto filter,
-            [FromQuery] SortingDto sorting)
-        {
-            var query = CreateGetTagsForExportQuery(filter, sorting);
-
-            var result = await _mediator.Send(query);
-
-            if (result.ResultType != ResultType.Ok)
-            {
-                return this.FromResult(result);
-            }
-
-            var excelMemoryStream = _excelConverter.Convert(result.Data);
-            excelMemoryStream.Position = 0;
-
-            return File(excelMemoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{_excelConverter.GetFileName()}.xlsx");  
-        }
-
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("ExportTagsWithHistoryToExcel")]
         public async Task<ActionResult> ExportTagsWithHistoryToExcel(
@@ -129,8 +104,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             [FromQuery] FilterDto filter,
             [FromQuery] SortingDto sorting)
         {
-            var query = CreateGetTagsForExportQuery(filter, sorting);
-            query.HistoryExportMode = exportHistory ? HistoryExportMode.ExportMax : HistoryExportMode.ExportNone;
+            var query = CreateGetTagsForExportQuery(exportHistory, filter, sorting);
 
             var result = await _mediator.Send(query);
 
@@ -981,10 +955,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             return query;
         }
 
-        private static GetTagsForExportQuery CreateGetTagsForExportQuery(FilterDto filter, SortingDto sorting)
+        private static GetTagsForExportQuery CreateGetTagsForExportQuery(bool exportHistory, FilterDto filter, SortingDto sorting)
         {
             var query = new GetTagsForExportQuery(
                 filter.ProjectName,
+                exportHistory ? HistoryExportMode.ExportMax : HistoryExportMode.ExportNone,
                 new Sorting(sorting.Direction, sorting.Property),
                 new Filter()
             );

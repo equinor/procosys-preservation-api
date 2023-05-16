@@ -10,20 +10,25 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         public const SortingDirection DefaultSortingDirection = SortingDirection.Asc;
         public const SortingProperty DefaultSortingProperty = SortingProperty.Due;
 
-        public GetTagsForExportQuery(string projectName, Sorting sorting = null, Filter filter = null)
+        public GetTagsForExportQuery(
+            string projectName,
+            HistoryExportMode historyExportMode = HistoryExportMode.ExportNone,
+            Sorting sorting = null,
+            Filter filter = null)
         {
             if (string.IsNullOrEmpty(projectName))
             {
                 throw new ArgumentNullException(nameof(projectName));
             }
             ProjectName = projectName;
+            HistoryExportMode = historyExportMode;
             Sorting = sorting ?? new Sorting(DefaultSortingDirection, DefaultSortingProperty);
             Filter = filter ?? new Filter();
         }
 
         public string ProjectName { get; }
+        public HistoryExportMode HistoryExportMode { get; }
         public Sorting Sorting { get; }
         public Filter Filter { get; }
-        public HistoryExportMode HistoryExportMode { get; set; } = HistoryExportMode.ExportOne;
     }
 }
