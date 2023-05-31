@@ -1,13 +1,13 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class PreservationCompletedEvent : INotification
+    public class PreservationCompletedEvent : DomainEvent
     {
         public PreservationCompletedEvent(
             string plant,
-            Guid objectGuid)
+            Guid objectGuid) : base("Preservation completed")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

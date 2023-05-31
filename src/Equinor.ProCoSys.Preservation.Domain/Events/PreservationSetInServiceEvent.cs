@@ -1,13 +1,13 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class PreservationSetInServiceEvent : INotification
+    public class PreservationSetInServiceEvent : DomainEvent
     {
         public PreservationSetInServiceEvent(
             string plant,
-            Guid objectGuid)
+            Guid objectGuid) : base("Set in service")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

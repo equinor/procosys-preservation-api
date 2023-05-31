@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers
             => Assert.ThrowsException<ArgumentNullException>(() => new EventDispatcher(null));
 
         [TestMethod]
-        public async Task DispatchPreSaveAsync_SendsOutEvents_Test()
+        public async Task DispatchDomainEventsAsync_SendsOutEvents_Test()
         {
             var mediator = new Mock<IMediator>();
             var dut = new EventDispatcher(mediator.Object);
@@ -27,16 +27,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers
             for (var i = 0; i < 3; i++)
             {
                 var entity = new Mock<TestableEntityBase>();
-                entity.Object.AddPreSaveDomainEvent(new Mock<INotification>().Object);
-                entity.Object.AddPostSaveDomainEvent(new Mock<INotification>().Object);
+                entity.Object.AddDomainEvent(new TestableDomainEvent());
+                entity.Object.AddPostSaveDomainEvent(new Mock<IPostSaveDomainEvent>().Object);
                 entities.Add(entity.Object);
             }
-            await dut.DispatchPreSaveAsync(entities);
+            await dut.DispatchDomainEventsAsync(entities);
 
             mediator.Verify(x
                 => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
 
-            entities.ForEach(e => Assert.AreEqual(0, e.PreSaveDomainEvents.Count));
+            entities.ForEach(e => Assert.AreEqual(0, e.DomainEvents.Count));
             entities.ForEach(e => Assert.AreEqual(1, e.PostSaveDomainEvents.Count));
         }
 
@@ -50,16 +50,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers
             for (var i = 0; i < 3; i++)
             {
                 var entity = new Mock<TestableEntityBase>();
-                entity.Object.AddPreSaveDomainEvent(new Mock<INotification>().Object);
-                entity.Object.AddPostSaveDomainEvent(new Mock<INotification>().Object);
+                entity.Object.AddDomainEvent(new TestableDomainEvent());
+                entity.Object.AddPostSaveDomainEvent(new Mock<IPostSaveDomainEvent>().Object);
                 entities.Add(entity.Object);
             }
-            await dut.DispatchPostSaveAsync(entities);
+            await dut.DispatchPostSaveEventsAsync(entities);
 
             mediator.Verify(x
                 => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Exactly(3));
 
-            entities.ForEach(e => Assert.AreEqual(1, e.PreSaveDomainEvents.Count));
+            entities.ForEach(e => Assert.AreEqual(1, e.DomainEvents.Count));
             entities.ForEach(e => Assert.AreEqual(0, e.PostSaveDomainEvents.Count));
         }
 
@@ -70,7 +70,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers
             var dut = new EventDispatcher(mediator.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
-                dut.DispatchPreSaveAsync(null));
+                dut.DispatchDomainEventsAsync(null));
         }
 
         [TestMethod]
@@ -80,12 +80,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers
             var dut = new EventDispatcher(mediator.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
-                dut.DispatchPostSaveAsync(null));
+                dut.DispatchPostSaveEventsAsync(null));
         }
     }
+}
 
-    public class TestableEntityBase : EntityBase
+public class TestableEntityBase : EntityBase
+{
+    // The base class is abstract, therefor a sub class is needed to test it.
+}
+
+public class TestableDomainEvent : DomainEvent
+{
+    public TestableDomainEvent() : base("Test")
     {
-        // The base class is abstract, therefor a sub class is needed to test it.
     }
 }

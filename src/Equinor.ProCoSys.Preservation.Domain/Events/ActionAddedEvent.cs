@@ -1,14 +1,14 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class ActionAddedEvent : INotification
+    public class ActionAddedEvent : DomainEvent
     {
         public ActionAddedEvent(
             string plant,
             Guid objectGuid,
-            string title)
+            string title) : base("Action added")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

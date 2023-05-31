@@ -1,16 +1,16 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagRequirementPreservedEvent : INotification
+    public class TagRequirementPreservedEvent : DomainEvent
     {
         public TagRequirementPreservedEvent(
             string plant,
             Guid objectGuid,
             int requirementDefinitionId,
             int? dueInWeeks,
-            Guid preservationRecordGuid)
+            Guid preservationRecordGuid) : base("Requirement preserved")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

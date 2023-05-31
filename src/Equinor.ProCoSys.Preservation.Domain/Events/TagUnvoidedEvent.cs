@@ -1,13 +1,13 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagUnvoidedEvent : INotification
+    public class TagUnvoidedEvent : DomainEvent
     {
         public TagUnvoidedEvent(
             string plant,
-            Guid objectGuid)
+            Guid objectGuid) : base("Tag unvoided")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

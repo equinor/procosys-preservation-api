@@ -1,16 +1,16 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class IntervalChangedEvent : INotification
+    public class IntervalChangedEvent : DomainEvent
     {
         public IntervalChangedEvent(
             string plant,
             Guid objectGuid,
             int requirementDefinitionId,
             int fromInterval,
-            int toInterval)
+            int toInterval) : base("Interval changed")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

@@ -98,9 +98,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await DispatchPreSaveEventsAsync(cancellationToken);
             await SetAuditDataAsync();
             UpdateConcurrencyToken();
+
+            await DispatchDomainEventsAsync(cancellationToken);
 
             try
             {
@@ -129,13 +130,13 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             }
         }
 
-        private async Task DispatchPreSaveEventsAsync(CancellationToken cancellationToken = default)
+        private async Task DispatchDomainEventsAsync(CancellationToken cancellationToken = default)
         {
             var entities = ChangeTracker
                 .Entries<EntityBase>()
-                .Where(x => x.Entity.PreSaveDomainEvents != null && x.Entity.PreSaveDomainEvents.Any())
+                .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
                 .Select(x => x.Entity);
-            await _eventDispatcher.DispatchPreSaveAsync(entities, cancellationToken);
+            await _eventDispatcher.DispatchDomainEventsAsync(entities, cancellationToken);
         }
 
         private async Task SetAuditDataAsync()

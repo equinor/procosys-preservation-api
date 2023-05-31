@@ -1,13 +1,13 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class ActionClosedEvent : INotification
+    public class ActionClosedEvent : DomainEvent
     {
         public ActionClosedEvent(
             string plant,
-            Guid objectGuid)
+            Guid objectGuid) : base("Action closed")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

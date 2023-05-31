@@ -1,14 +1,14 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagRequirementAddedEvent : INotification
+    public class TagRequirementAddedEvent : DomainEvent
     {
         public TagRequirementAddedEvent(
             string plant,
             Guid objectGuid,
-            int requirementDefinitionId)
+            int requirementDefinitionId) : base("Tag requirement added")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

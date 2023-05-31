@@ -1,15 +1,15 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TransferredManuallyEvent : INotification
+    public class TransferredManuallyEvent : DomainEvent
     {
         public TransferredManuallyEvent(
             string plant,
             Guid objectGuid,
             string fromStep,
-            string toStep)
+            string toStep) : base("Transferred manually")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

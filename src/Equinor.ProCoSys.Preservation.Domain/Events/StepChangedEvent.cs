@@ -1,15 +1,15 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class StepChangedEvent : INotification
+    public class StepChangedEvent : DomainEvent
     {
         public StepChangedEvent(
             string plant,
             Guid objectGuid,
             int fromStepId,
-            int toStepId)
+            int toStepId) : base("Step changed")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

@@ -1,14 +1,14 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagRequirementDeletedEvent : INotification
+    public class TagRequirementDeletedEvent : DomainEvent
     {
         public TagRequirementDeletedEvent(
             string plant,
             Guid objectGuid,
-            int requirementDefinitionId)
+            int requirementDefinitionId) : base("Requirement deleted")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

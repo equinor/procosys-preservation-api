@@ -14,22 +14,22 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers
 
         public EventDispatcher(IMediator mediator) => _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
-        public async Task DispatchPreSaveAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default)
+        public async Task DispatchDomainEventsAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default)
         {
             var allEntities = ConvertToList(entities);
 
             var events = allEntities
-                .SelectMany(x => x.PreSaveDomainEvents)
+                .SelectMany(x => x.DomainEvents)
                 .ToList();
 
-            allEntities.ForEach(e => e.ClearPreSaveDomainEvents());
+            allEntities.ForEach(e => e.ClearDomainEvents());
 
             var tasks = PublishToMediator(events, cancellationToken);
 
             await Task.WhenAll(tasks);
         }
 
-        public async Task DispatchPostSaveAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default)
+        public async Task DispatchPostSaveEventsAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default)
         {
             var allEntities = ConvertToList(entities);
 

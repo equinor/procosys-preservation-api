@@ -1,13 +1,13 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class UndoPreservationStartedEvent : INotification
+    public class UndoPreservationStartedEvent : DomainEvent
     {
         public UndoPreservationStartedEvent(
             string plant,
-            Guid objectGuid)
+            Guid objectGuid) : base("Undo \"Preservation started\"")
         {
             Plant = plant;
             ObjectGuid = objectGuid;

@@ -1,17 +1,17 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TransferredAutomaticallyEvent : INotification
+    public class TransferredAutomaticallyEvent : DomainEvent
     {
         public TransferredAutomaticallyEvent(
             string plant,
             Guid objectGuid,
             string fromStep,
             string toStep,
-            AutoTransferMethod autoTransferMethod)
+            AutoTransferMethod autoTransferMethod) : base("Transferred automatically")
         {
             Plant = plant;
             ObjectGuid = objectGuid;
