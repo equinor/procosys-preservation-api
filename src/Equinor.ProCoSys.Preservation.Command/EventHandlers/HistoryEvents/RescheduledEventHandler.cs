@@ -17,7 +17,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
         {
             var eventType = EventType.Rescheduled;
             var description = $"{eventType.GetDescription()} - {notification.Weeks} week(s) {notification.Direction.ToString().ToLower()}. {notification.Comment}";
-            var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
+            var history = new History(notification.Plant, description, notification.SourceGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
             return Task.CompletedTask;
         }

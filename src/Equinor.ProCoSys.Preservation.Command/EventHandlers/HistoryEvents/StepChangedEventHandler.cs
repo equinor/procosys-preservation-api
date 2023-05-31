@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
                 description = $"{eventType.GetDescription()} - From journey '{fromJourney.Title}' / step '{fromStep.Title}' to journey '{toJourney.Title}' / step '{toStep.Title}'";
             }
             
-            var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
+            var history = new History(notification.Plant, description, notification.SourceGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
             return Task.CompletedTask;
         }

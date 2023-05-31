@@ -25,9 +25,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             Name = name;
             Description = description;
-            ProCoSysGuid = proCoSysGuid;
+            Guid = proCoSysGuid;
         }
-        public Guid ProCoSysGuid { get; set; }
         public string Name { get; private set; }
         public string Description { get; set; }
         public bool IsClosed { get; set; }

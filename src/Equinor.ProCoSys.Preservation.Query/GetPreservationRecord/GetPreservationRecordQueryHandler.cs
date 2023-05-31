@@ -73,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetPreservationRecord
                 .ToList();
 
             var preservationPeriod = orderedPreservationPeriods
-                .Where(pp => pp.PreservationRecord.ObjectGuid == request.PreservationRecordGuid)
+                .Where(pp => pp.PreservationRecord.Guid == request.PreservationRecordGuid)
                 .Select(pp => pp)
                 .SingleOrDefault();
 

@@ -18,20 +18,20 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
         public History(
             string plant,
             string description,
-            Guid objectGuid,
+            Guid sourceGuid,
             ObjectType objectType,
             EventType eventType
         ) : base(plant)
         {
             Description = description;
-            ObjectGuid = objectGuid;
+            SourceGuid = sourceGuid;
             ObjectType = objectType;
             EventType = eventType;
         }
 
         public string Description { get; private set; }
         public int CreatedById { get; private set; }
-        public Guid ObjectGuid { get; private set; }
+        public Guid SourceGuid { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public EventType EventType { get; private set; }
         public ObjectType ObjectType { get; private set; }

@@ -7,12 +7,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Events
     {
         public TagDeletedInSourceEvent(
             string plant,
-            Guid objectGuid) : base("Tag deleted in source system")
+            Guid sourceGuid) : base("Tag deleted in source system")
         {
             Plant = plant;
-            ObjectGuid = objectGuid;
+            SourceGuid = sourceGuid;
         }
         public string Plant { get; }
-        public Guid ObjectGuid { get; }
+        public Guid SourceGuid { get; }
     }
 }

@@ -124,8 +124,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             Assert.IsNotNull(activePeriodForRequirementWithCheckboxField.PreservationRecord);
             context.SaveChangesAsync().Wait();
 
-            _preservationRecordGuidCheckbox = activePeriodForRequirementWithCheckboxField.PreservationRecord.ObjectGuid;
-            _preservationRecordGuidAttachment = activePeriodForRequirementWithAttachmentField.PreservationRecord.ObjectGuid;
+            _preservationRecordGuidCheckbox = activePeriodForRequirementWithCheckboxField.PreservationRecord.Guid;
+            _preservationRecordGuidAttachment = activePeriodForRequirementWithAttachmentField.PreservationRecord.Guid;
         }
 
         [TestMethod]

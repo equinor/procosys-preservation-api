@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigureModificationAudit();
             builder.ConfigureConcurrencyToken();
 
-            builder.HasIndex(x => x.Oid)
+            builder.HasIndex(x => x.Guid)
                 .IsUnique();
 
             builder.Property(x => x.FirstName)

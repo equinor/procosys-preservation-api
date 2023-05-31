@@ -51,18 +51,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             Assert.IsNull(_historyAdded);
 
             // Act
-            var objectGuid = Guid.NewGuid();
+            var sourceGuid = Guid.NewGuid();
             var plant = "TestPlant";
             var fromInterval = 1;
             var toInterval = 2;
-            _dut.Handle(new IntervalChangedEvent(plant, objectGuid, _requirementDefinitionId, fromInterval, toInterval), default);
+            _dut.Handle(new IntervalChangedEvent(plant, sourceGuid, _requirementDefinitionId, fromInterval, toInterval), default);
 
             // Assert
             var expectedDescription = $"{_historyAdded?.EventType.GetDescription()} - From {fromInterval} week(s) to {toInterval} week(s) in '{_reqTitle}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);
-            Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
+            Assert.AreEqual(sourceGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.IntervalChanged, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);

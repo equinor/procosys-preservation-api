@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 
             var eventType = EventType.IntervalChanged;
             var description = $"{eventType.GetDescription()} - From {notification.FromInterval} week(s) to {notification.ToInterval} week(s) in '{requirementDefinition.Result.Title}'";
-            var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
+            var history = new History(notification.Plant, description, notification.SourceGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
             return Task.CompletedTask;
         }

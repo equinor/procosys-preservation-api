@@ -7,12 +7,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Events
     {
         public PreservationCompletedEvent(
             string plant,
-            Guid objectGuid) : base("Preservation completed")
+            Guid sourceGuid) : base("Preservation completed")
         {
             Plant = plant;
-            ObjectGuid = objectGuid;
+            SourceGuid = sourceGuid;
         }
         public string Plant { get; }
-        public Guid ObjectGuid { get; }
+        public Guid SourceGuid { get; }
     }
 }

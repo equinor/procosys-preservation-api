@@ -33,10 +33,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetHistory
             }
 
             var tagHistory = await (from h in _context.QuerySet<History>()
-                join t in _context.QuerySet<Tag>() on h.ObjectGuid equals t.ObjectGuid
+                join t in _context.QuerySet<Tag>() on h.SourceGuid equals t.Guid
                 join createdBy in _context.QuerySet<Person>() on h.CreatedById equals createdBy.Id
                 from preservationRecord in _context.QuerySet<PreservationRecord>()
-                    .Where(pr => pr.ObjectGuid == EF.Property<Guid>(h, "PreservationRecordGuid")).DefaultIfEmpty() //left join
+                    .Where(pr => pr.Guid == EF.Property<Guid>(h, "PreservationRecordGuid")).DefaultIfEmpty() //left join
                 from preservationPeriod in _context.QuerySet<PreservationPeriod>()
                     .Where(pr => pr.PreservationRecord.Id == EF.Property<int>(preservationRecord, "Id")).DefaultIfEmpty() // left join
                 where t.Id == request.TagId

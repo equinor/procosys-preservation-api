@@ -60,7 +60,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var action = context.Actions.Single(a => a.Id == _actionId);
-                action.Close(DateTime.UtcNow, context.Persons.Single(p => p.Oid == _currentUserOid));
+                action.Close(DateTime.UtcNow, context.Persons.Single(p => p.Guid == _currentUserOid));
                 context.SaveChangesAsync().Wait();
             }
 

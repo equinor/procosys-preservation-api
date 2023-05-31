@@ -7,12 +7,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Events
     {
         public UndoPreservationStartedEvent(
             string plant,
-            Guid objectGuid) : base("Undo \"Preservation started\"")
+            Guid sourceGuid) : base("Undo \"Preservation started\"")
         {
             Plant = plant;
-            ObjectGuid = objectGuid;
+            SourceGuid = sourceGuid;
         }
         public string Plant { get; }
-        public Guid ObjectGuid { get; }
+        public Guid SourceGuid { get; }
     }
 }

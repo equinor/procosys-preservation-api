@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetSavedFiltersInProject
 
                 _savedFilter = new SavedFilter(TestPlant, _project, _title, _criteria)
                     { DefaultFilter =  _defaultFilter };
-                _person = context.Persons.Single(p => p.Oid == _currentUserOid);
+                _person = context.Persons.Single(p => p.Guid == _currentUserOid);
                 _person.AddSavedFilter(_savedFilter);
 
                 context.SaveChangesAsync().Wait();

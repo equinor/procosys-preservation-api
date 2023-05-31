@@ -23,11 +23,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             PreservedAtUtc = TimeService.UtcNow;
             PreservedById = preservedBy.Id;
             BulkPreserved = bulkPreserved;
-            ObjectGuid = Guid.NewGuid();
         }
 
-        // Todo Rename to PreservationRecordGuid
-        public Guid ObjectGuid { get; private set; }
         public DateTime PreservedAtUtc { get; private set; }
         public int PreservedById { get; private set; }
         public bool BulkPreserved { get; private set; }

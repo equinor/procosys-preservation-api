@@ -7,16 +7,16 @@ namespace Equinor.ProCoSys.Preservation.Domain.Events
     {
         public TagRequirementAddedEvent(
             string plant,
-            Guid objectGuid,
+            Guid sourceGuid,
             int requirementDefinitionId) : base("Tag requirement added")
         {
             Plant = plant;
-            ObjectGuid = objectGuid;
+            SourceGuid = sourceGuid;
             RequirementDefinitionId = requirementDefinitionId;
         }
 
         public string Plant { get; }
-        public Guid ObjectGuid { get; }
+        public Guid SourceGuid { get; }
         public int RequirementDefinitionId { get; }
     }
 }

@@ -16,7 +16,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.PersonAggre
         {
             var dut = new Person(Oid, "Espen", "Askeladd");
 
-            Assert.AreEqual(Oid, dut.Oid);
+            Assert.AreEqual(Oid, dut.Guid);
             Assert.AreEqual("Espen", dut.FirstName);
             Assert.AreEqual("Askeladd", dut.LastName);
         }

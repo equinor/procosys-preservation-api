@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired();
 
             builder
-                .HasIndex(p => p.ObjectGuid)
+                .HasIndex(p => p.SourceGuid)
                 .HasDatabaseName("IX_History_ObjectGuid_ASC");
 
             builder.HasCheckConstraint("constraint_history_check_valid_event_type", $"{nameof(History.EventType)} in ({GetValidEventTypes()})");

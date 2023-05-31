@@ -20,13 +20,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 
         public Person(Guid oid, string firstName, string lastName) : base()
         {
-            Oid = oid;
+            Guid = oid;
             FirstName = firstName;
             LastName = lastName;
         }
 
         public IReadOnlyCollection<SavedFilter> SavedFilters => _savedFilters.AsReadOnly();
-        public Guid Oid { get; private set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime? ModifiedAtUtc { get; private set; }

@@ -74,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetPreservationRecord
                 Assert.IsNotNull(activePeriodForRequirementWithOutField.PreservationRecord);
 
                 context.SaveChangesAsync().Wait();
-                _preservationRecordGuid = activePeriodForRequirementWithOutField.PreservationRecord.ObjectGuid;
+                _preservationRecordGuid = activePeriodForRequirementWithOutField.PreservationRecord.Guid;
                 _preservationRecordId = activePeriodForRequirementWithOutField.PreservationRecord.Id;
             }
         }
