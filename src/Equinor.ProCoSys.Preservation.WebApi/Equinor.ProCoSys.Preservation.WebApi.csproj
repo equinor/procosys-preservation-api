@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.8.2" />
+    <PackageReference Include="Azure.Identity" Version="1.9.0" />
     <PackageReference Include="ClosedXML" Version="0.100.3" />
     <PackageReference Include="Equinor.ProCoSys.PcsServiceBus" Version="3.8.6" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
