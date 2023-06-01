@@ -1033,7 +1033,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 var reqDef = context.RequirementDefinitions.Single(rd =>
                     rd.Id == _testDataSet.ReqType1.RequirementDefinitions.ElementAt(0).Id);
 
-                var tag = new Tag(TestPlant, TagType.SiteArea, null, tagTitle, "Description", step,
+                var tag = new Tag(TestPlant, TagType.SiteArea, Guid.NewGuid(), tagTitle, "Description", step,
                     new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, _testDataSet.IntervalWeeks, reqDef)

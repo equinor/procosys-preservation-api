@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public Tag(
             string plant,
             TagType tagType,
-            Guid? proCoSysGuid,
+            Guid guid,
             string tagNo,
             string description,
             Step step, 
@@ -74,32 +74,19 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"Can't relate item in {requirement.Plant} to item in {plant}");
             }
 
-            if (tagType == TagType.Standard && (!proCoSysGuid.HasValue || proCoSysGuid.Value == Guid.Empty))
-            {
-                throw new ArgumentException($"ProCoSysGuid for {tagType} can't be null or Guid.Empty");
-            }
-
-            if (tagType != TagType.Standard && proCoSysGuid.HasValue)
-            {
-                throw new ArgumentException($"ProCoSysGuid for {tagType} mus't be null");
-            }
-
             TagType = tagType;
             Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
-            ProCoSysGuid = proCoSysGuid;
-            if (proCoSysGuid.HasValue)
-            {
-                Guid = proCoSysGuid.Value;
-            }
+            // For Standard tags in preservetation, this Guid come from ProCoSysGuid in Main ProCoSys
+            // For Area tag types in preservetation, the preservation is master and Guid is created when made
+            Guid = guid;
             Description = description;
             StepId = step.Id;
             IsInSupplierStep = step.IsSupplierStep;
             _requirements.AddRange(reqList);
-            AddDomainEvent(new TagCreatedEvent(plant, Guid));
+            AddDomainEvent(new TagCreatedEvent(plant, base.Guid));
         }
 
-        public Guid? ProCoSysGuid { get; set; }
         public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string AreaDescription { get; private set; }
@@ -142,11 +129,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 _isVoided = value;
                 if (_isVoided)
                 {
-                    AddDomainEvent(new TagVoidedEvent(Plant, Guid));
+                    AddDomainEvent(new TagVoidedEvent(base.Plant, base.Guid));
                 }
                 else
                 {
-                    AddDomainEvent(new TagUnvoidedEvent(Plant, Guid));
+                    AddDomainEvent(new TagUnvoidedEvent(base.Plant, base.Guid));
                 }
             }
         }
@@ -168,11 +155,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
                 if (_isVoidedInSource)
                 {
-                    AddDomainEvent(new TagVoidedInSourceEvent(Plant, Guid));
+                    AddDomainEvent(new TagVoidedInSourceEvent(base.Plant, base.Guid));
                 }
                 else
                 {
-                    AddDomainEvent(new TagUnvoidedInSourceEvent(Plant, Guid));
+                    AddDomainEvent(new TagUnvoidedInSourceEvent(base.Plant, base.Guid));
                 }
             }
         }
@@ -199,7 +186,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 // Make sure to also set IsVoidedInSource when setting _isDeletedInSource
                 IsVoidedInSource = value;
 
-                AddDomainEvent(new TagDeletedInSourceEvent(Plant, Guid));
+                AddDomainEvent(new TagDeletedInSourceEvent(base.Plant, base.Guid));
             }
         }
 
@@ -257,7 +244,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 tagRequirement.StartPreservation();
             }
             UpdateNextDueTimeUtc();
-            AddDomainEvent(new TagRequirementAddedEvent(tagRequirement.Plant, Guid, tagRequirement.RequirementDefinitionId));
+            AddDomainEvent(new TagRequirementAddedEvent(tagRequirement.Plant, base.Guid, tagRequirement.RequirementDefinitionId));
         }
                 
         public void RemoveRequirement(int requirementId, string requirementRowVersion)
@@ -279,7 +266,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             _requirements.Remove(tagRequirement);
             
             UpdateNextDueTimeUtc();
-            AddDomainEvent(new TagRequirementDeletedEvent(Plant, Guid, tagRequirement.RequirementDefinitionId));
+            AddDomainEvent(new TagRequirementDeletedEvent(base.Plant, base.Guid, tagRequirement.RequirementDefinitionId));
         }
 
         public void AddAction(Action action)
@@ -295,7 +282,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _actions.Add(action);
-            AddDomainEvent(new ActionAddedEvent(action.Plant, Guid, action.Title));
+            AddDomainEvent(new ActionAddedEvent(action.Plant, base.Guid, action.Title));
         }
 
         public Action CloseAction(int actionId, Person closedBy, DateTime closedAtUtc, string rowVersion)
@@ -309,7 +296,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             action.Close(closedAtUtc, closedBy);
             action.SetRowVersion(rowVersion);
-            AddDomainEvent(new ActionClosedEvent(action.Plant, Guid));
+            AddDomainEvent(new ActionClosedEvent(action.Plant, base.Guid));
 
             return action;
         }
@@ -361,7 +348,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 UpdateNextDueTimeUtc();
             }
             Status = PreservationStatus.Active;
-            AddDomainEvent(new PreservationStartedEvent(Plant, Guid));
+            AddDomainEvent(new PreservationStartedEvent(base.Plant, base.Guid));
         }
 
         public void UndoStartPreservation()
@@ -377,7 +364,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             Status = PreservationStatus.NotStarted;
             UpdateNextDueTimeUtc();
-            AddDomainEvent(new UndoPreservationStartedEvent(Plant, Guid));
+            AddDomainEvent(new UndoPreservationStartedEvent(base.Plant, base.Guid));
         }
 
         public void SetInService()
@@ -388,7 +375,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             Status = PreservationStatus.InService;
-            AddDomainEvent(new PreservationSetInServiceEvent(Plant, Guid));
+            AddDomainEvent(new PreservationSetInServiceEvent(base.Plant, base.Guid));
         }
 
         public void CompletePreservation(Journey journey)
@@ -404,7 +391,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             Status = PreservationStatus.Completed;
             NextDueTimeUtc = null;
-            AddDomainEvent(new PreservationCompletedEvent(Plant, Guid));
+            AddDomainEvent(new PreservationCompletedEvent(base.Plant, base.Guid));
         }
 
         public bool IsReadyToBePreserved()
@@ -434,7 +421,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             var preservationRecordGuid = activePeriod.PreservationRecord.Guid;
 
-            AddDomainEvent(new TagRequirementPreservedEvent(Plant, Guid, requirement.RequirementDefinitionId, nextDueInWeeks, preservationRecordGuid));
+            AddDomainEvent(new TagRequirementPreservedEvent(base.Plant, base.Guid, requirement.RequirementDefinitionId, nextDueInWeeks, preservationRecordGuid));
         }
 
         public void BulkPreserve(Person preservedBy)
@@ -495,8 +482,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             var fromStepId = StepId;
         
             SetStep(step);
-            
-            AddDomainEvent(new StepChangedEvent(Plant, Guid, fromStepId, step.Id));
+
+            AddDomainEvent(new StepChangedEvent(base.Plant, base.Guid, fromStepId, step.Id));
         }
 
         public void Transfer(Journey journey)
@@ -512,7 +499,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             var toStep = journey.Steps.Single(s => s.Id == StepId);
 
-            AddDomainEvent(new TransferredManuallyEvent(Plant, Guid, fromStep.Title, toStep.Title));
+            AddDomainEvent(new TransferredManuallyEvent(base.Plant, base.Guid, fromStep.Title, toStep.Title));
         }
 
         public void AutoTransfer(Journey journey, AutoTransferMethod autoTransferMethod)
@@ -533,7 +520,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             var toStep = journey.Steps.Single(s => s.Id == StepId);
 
-            AddDomainEvent(new TransferredAutomaticallyEvent(Plant, Guid, fromStep.Title, toStep.Title, autoTransferMethod));
+            AddDomainEvent(new TransferredAutomaticallyEvent(base.Plant, base.Guid, fromStep.Title, toStep.Title, autoTransferMethod));
         }
 
         public void SetCreated(Person createdBy)
@@ -582,7 +569,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 if (isVoided)
                 {
                     tagRequirement.IsVoided = true;
-                    AddDomainEvent(new TagRequirementVoidedEvent(Plant, Guid, tagRequirement.RequirementDefinitionId));
+                    AddDomainEvent(new TagRequirementVoidedEvent(base.Plant, base.Guid, tagRequirement.RequirementDefinitionId));
                 }
                 else
                 {
@@ -592,7 +579,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                         tagRequirement.StartPreservation();
                     }
 
-                    AddDomainEvent(new TagRequirementUnvoidedEvent(Plant, Guid, tagRequirement.RequirementDefinitionId));
+                    AddDomainEvent(new TagRequirementUnvoidedEvent(base.Plant, base.Guid, tagRequirement.RequirementDefinitionId));
                 }
                 UpdateNextDueTimeUtc();
             }
@@ -617,7 +604,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             var toInterval = tagRequirement.IntervalWeeks;
 
             UpdateNextDueTimeUtc();
-            AddDomainEvent(new IntervalChangedEvent(Plant, Guid, tagRequirement.RequirementDefinitionId, fromInterval, toInterval));
+            AddDomainEvent(new IntervalChangedEvent(base.Plant, base.Guid, tagRequirement.RequirementDefinitionId, fromInterval, toInterval));
         }
         
         public bool IsAreaTag()
@@ -639,7 +626,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         
             UpdateNextDueTimeUtc();
 
-            AddDomainEvent(new RescheduledEvent(Plant, Guid, weeks, direction, comment));
+            AddDomainEvent(new RescheduledEvent(base.Plant, base.Guid, weeks, direction, comment));
         }
 
         private void Preserve(Person preservedBy, bool bulkPreserved)
@@ -658,7 +645,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
                 var preservationRecordGuid = activePeriod.PreservationRecord.Guid;
 
-                AddDomainEvent(new TagRequirementPreservedEvent(Plant, Guid, requirement.RequirementDefinitionId, nextDueInWeeks, preservationRecordGuid));
+                AddDomainEvent(new TagRequirementPreservedEvent(base.Plant, base.Guid, requirement.RequirementDefinitionId, nextDueInWeeks, preservationRecordGuid));
             }
         
             UpdateNextDueTimeUtc();

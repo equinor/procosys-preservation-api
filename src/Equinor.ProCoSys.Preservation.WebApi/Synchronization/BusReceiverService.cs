@@ -178,7 +178,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             _plantSetter.SetPlant(tagEvent.Plant);
 
-            var tagToDelete = await _projectRepository.GetTagOnlyByProCoSysGuidAsync(guid);
+            var tagToDelete = await _projectRepository.GetTagOnlyByGuidAsync(guid);
             if (tagToDelete != null)
             {
                 tagToDelete.IsDeletedInSource = true;

@@ -307,8 +307,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
             Assert.AreEqual(mainTagDetails.TagFunctionCode, tagAddedToProject.TagFunctionCode);
             Assert.AreEqual(mainTagDetails.TagNo, tagAddedToProject.TagNo);
-            Assert.IsNotNull(tagAddedToProject.ProCoSysGuid);
-            Assert.AreEqual(mainTagDetails.ProCoSysGuid, tagAddedToProject.ProCoSysGuid);
+            Assert.IsNotNull(tagAddedToProject.Guid);
+            Assert.AreEqual(mainTagDetails.ProCoSysGuid, tagAddedToProject.Guid);
             Assert.AreEqual(1, tagAddedToProject.Requirements.Count);
             var requirement = tagAddedToProject.Requirements.Single();
             Assert.AreEqual(regDefId, requirement.RequirementDefinitionId);

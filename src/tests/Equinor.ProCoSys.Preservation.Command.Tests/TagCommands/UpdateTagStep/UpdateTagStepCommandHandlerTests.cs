@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
 
             var reqMock2 = new Mock<TagRequirement>();
             reqMock2.SetupGet(r => r.Plant).Returns(TestPlant);
-            _poAreaTag = new Tag(TestPlant, TagType.PoArea, null, "", "", fromStepMock.Object,
+            _poAreaTag = new Tag(TestPlant, TagType.PoArea, Guid.NewGuid(), "", "", fromStepMock.Object,
                 new List<TagRequirement> { reqMock2.Object });
             _poAreaTag.SetProtectedIdForTesting(tagId2);
 

@@ -97,7 +97,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var poTag = new Tag(
                 TestPlant, 
                 TagType.PoArea, 
-                null,
+                Guid.NewGuid(),
                 PoTagNo, 
                 "Desc", 
                 step,
@@ -186,17 +186,17 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetTagOnlyByProCoSysGuid_ShouldReturnTag()
+        public async Task GetTagOnlyByGuid_ShouldReturnTag()
         {
-            var result = await _dut.GetTagOnlyByProCoSysGuidAsync(_standardTag1With3Reqs.ProCoSysGuid.Value);
+            var result = await _dut.GetTagOnlyByGuidAsync(_standardTag1With3Reqs.Guid);
 
             Assert.AreEqual(_standardTag1With3Reqs.Id, result.Id);
         }
 
         [TestMethod]
-        public async Task GetTagOnlyByProCoSysGuid_UnknownGuid_ShouldReturnNull()
+        public async Task GetTagOnlyByGuid_UnknownGuid_ShouldReturnNull()
         {
-            var result = await _dut.GetTagOnlyByProCoSysGuidAsync(Guid.NewGuid());
+            var result = await _dut.GetTagOnlyByGuidAsync(Guid.NewGuid());
 
             Assert.IsNull(result);
         }

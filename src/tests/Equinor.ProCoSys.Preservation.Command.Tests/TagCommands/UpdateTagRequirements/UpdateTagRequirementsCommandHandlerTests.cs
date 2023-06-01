@@ -73,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
             });
             _tagRequirement1OnAreaTag = new TagRequirement(TestPlant, ThreeWeekInterval, rdMock1.Object);
             _tagRequirement1OnAreaTag.SetProtectedIdForTesting(++reqId);
-            _areaTagWithOneRequirement = new Tag(TestPlant, TagType.PoArea, null, "T3", Description, stepMock.Object, new List<TagRequirement>
+            _areaTagWithOneRequirement = new Tag(TestPlant, TagType.PoArea, Guid.NewGuid(), "T3", Description, stepMock.Object, new List<TagRequirement>
             {
                 _tagRequirement1OnAreaTag
             });

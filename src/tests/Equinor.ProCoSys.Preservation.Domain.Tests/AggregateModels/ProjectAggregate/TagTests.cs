@@ -180,7 +180,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual("TagNoA", _dutWithOneReqNotNeedInputTwoWeekInterval.TagNo);
             Assert.AreEqual("DescA", _dutWithOneReqNotNeedInputTwoWeekInterval.Description);
             Assert.AreEqual(_supplierStep.Id, _dutWithOneReqNotNeedInputTwoWeekInterval.StepId);
-            Assert.AreEqual(_testGuid, _dutWithOneReqNotNeedInputTwoWeekInterval.ProCoSysGuid);
+            Assert.AreEqual(_testGuid, _dutWithOneReqNotNeedInputTwoWeekInterval.Guid);
             Assert.AreEqual(TagType.Standard, _dutWithOneReqNotNeedInputTwoWeekInterval.TagType);
             Assert.IsNull(_dutWithOneReqNotNeedInputTwoWeekInterval.NextDueTimeUtc);
             var requirements = _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements;
@@ -233,31 +233,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Constructor_ShouldThrowException_WhenRequirementsNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(()
                 => new Tag(TestPlant, TagType.Standard, _testGuid, "", "", _supplierStep, null));
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenProCoSysGuidNotGiven_ForStandardTag()
-            => Assert.ThrowsException<ArgumentException>(()
-                => new Tag(TestPlant, TagType.Standard, null, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther));
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenProCoSysGuidIsEmpty_ForStandardTag()
-            => Assert.ThrowsException<ArgumentException>(()
-                => new Tag(TestPlant, TagType.Standard, Guid.Empty, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther));
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenProCoSysGuidGiven_ForPreAreaTag()
-            => Assert.ThrowsException<ArgumentException>(()
-                => new Tag(TestPlant, TagType.PreArea, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther));
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenProCoSysGuidGiven_ForPoAreaTag()
-            => Assert.ThrowsException<ArgumentException>(()
-                => new Tag(TestPlant, TagType.PoArea, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther));
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenProCoSysGuidGiven_ForSiteAreTag()
-            => Assert.ThrowsException<ArgumentException>(()
-                => new Tag(TestPlant, TagType.SiteArea, _testGuid, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther));
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenEmptyListOfRequirementsGiven()
@@ -1392,7 +1367,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void UpdateStep_ShouldThrowException_WhenTagIsPoAreaAndStepIsNotSupplierStep()
         {
-            var dut = new Tag(TestPlant, TagType.PoArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PoArea, Guid.NewGuid(), "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
             Assert.ThrowsException<Exception>(() => dut.UpdateStep(_otherStep));
         }
@@ -1446,7 +1421,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Transfer_ShouldThrowException_WhenTagIsSiteArea()
         {
-            var dut = new Tag(TestPlant, TagType.SiteArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.SiteArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() => dut.Transfer(_journey));
@@ -1455,7 +1430,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Transfer_ShouldThrowException_WhenTagIsPoArea()
         {
-            var dut = new Tag(TestPlant, TagType.PoArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PoArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() => dut.Transfer(_journey));
@@ -1528,7 +1503,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var otherStep2 = new Step(TestPlant, "OTHER2", _mode, _responsible);
             otherStep2.SetProtectedIdForTesting(++_nextStepId);
             _journey.AddStep(otherStep2);
-            var dut = new Tag(TestPlant, TagType.SiteArea, null, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.SiteArea, _testGuid, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             // Act and assert
@@ -1542,7 +1517,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var otherStep2 = new Step(TestPlant, "OTHER2", _mode, _responsible);
             otherStep2.SetProtectedIdForTesting(++_nextStepId);
             _journey.AddStep(otherStep2);
-            var dut = new Tag(TestPlant, TagType.PoArea, null, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PoArea, _testGuid, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             // Act and assert
@@ -1594,7 +1569,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void CompletePreservation_ShouldSetStatusToCompleted_WhenNotInLastStepAndIsArea()
         {
-            var dut = new Tag(TestPlant, TagType.SiteArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.SiteArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             dut.CompletePreservation(_journey);
@@ -1638,7 +1613,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeTransferred_ShouldBeTrue_WhenPreservationActive_ForPreAreaTag()
         {
-            var dut = new Tag(TestPlant, TagType.PreArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PreArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsTrue(dut.IsReadyToBeTransferred(_journey));
@@ -1647,7 +1622,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeTransferred_ShouldBeFalse_WhenPreservationActive_ForSiteAreaTag()
         {
-            var dut = new Tag(TestPlant, TagType.SiteArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.SiteArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsFalse(dut.IsReadyToBeTransferred(_journey));
@@ -1656,7 +1631,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeTransferred_ShouldBeFalse_WhenPreservationActive_ForPoAreaTag()
         {
-            var dut = new Tag(TestPlant, TagType.PoArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PoArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsFalse(dut.IsReadyToBeTransferred(_journey));
@@ -1754,7 +1729,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeCompleted_ShouldBeFalse_WhenCurrentStepIsNotLastStepInJourney_ForPreAreaTag()
         {
-            var dut = new Tag(TestPlant, TagType.PreArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PreArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsFalse(dut.IsReadyToBeCompleted(_journey));
@@ -1763,7 +1738,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeCompleted_ShouldBeTrue_WhenCurrentStepIsNotLastStepInJourney_ForSiteAreaTag()
         {
-            var dut = new Tag(TestPlant, TagType.SiteArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.SiteArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsTrue(dut.IsReadyToBeCompleted(_journey));
@@ -1772,7 +1747,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeCompleted_ShouldBeTrue_WhenCurrentStepIsNotLastStepInJourney_ForPoAreaTag()
         {
-            var dut = new Tag(TestPlant, TagType.PoArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PoArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsTrue(dut.IsReadyToBeCompleted(_journey));
@@ -1920,7 +1895,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeDuplicated_ShouldBeTrue_ForSiteAreaTag()
         {
-            var dut = new Tag(TestPlant, TagType.SiteArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.SiteArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
             Assert.IsTrue(dut.IsReadyToBeDuplicated());
         }
@@ -1928,7 +1903,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeDuplicated_ShouldBeTrue_ForPreAreaTag()
         {
-            var dut = new Tag(TestPlant, TagType.PreArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PreArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
             Assert.IsTrue(dut.IsReadyToBeDuplicated());
         }
@@ -1944,7 +1919,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeDuplicated_ShouldBeFalse_ForPoAreaTag()
         {
-            var dut = new Tag(TestPlant, TagType.PoArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PoArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
             Assert.IsFalse(dut.IsReadyToBeDuplicated());
         }
@@ -2151,7 +2126,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void FollowsAJourney_ShouldGetBeFalseForSiteAreaTag()
         {
             // Arrange
-            var dut = new Tag(TestPlant, TagType.SiteArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.SiteArea, _testGuid, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
             // Act and Arrange
             Assert.IsFalse(dut.FollowsAJourney);
@@ -2161,7 +2136,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void FollowsAJourney_ShouldGetBeTrueForPreAreaTag()
         {
             // Arrange
-            var dut = new Tag(TestPlant, TagType.PreArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PreArea, Guid.NewGuid(), "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
             // Act and Arrange
             Assert.IsTrue(dut.FollowsAJourney);
@@ -2171,7 +2146,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void FollowsAJourney_ShouldGetBeFalseForPoAreaTag()
         {
             // Arrange
-            var dut = new Tag(TestPlant, TagType.PoArea, null, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.PoArea, Guid.NewGuid(), "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
             // Act and Arrange
             Assert.IsFalse(dut.FollowsAJourney);
@@ -2472,7 +2447,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(
                 TestPlant,
                 TagType.PoArea,
-                null,
+                Guid.NewGuid(),
                 "TagNoA",
                 "DescA", 
                 _supplierStep,
@@ -2486,7 +2461,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(
                 TestPlant,
                 TagType.PreArea,
-                null,
+                Guid.NewGuid(),
                 "TagNoA",
                 "DescA", 
                 _supplierStep,
@@ -2500,7 +2475,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(
                 TestPlant,
                 TagType.SiteArea,
-                null,
+                Guid.NewGuid(),
                 "TagNoA",
                 "DescA", 
                 _supplierStep,

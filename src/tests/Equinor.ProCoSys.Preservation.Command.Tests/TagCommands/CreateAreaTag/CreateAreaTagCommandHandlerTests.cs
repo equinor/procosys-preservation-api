@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag;
@@ -320,7 +321,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
             Assert.IsNull(tagAddedToProject.TagFunctionCode);
             Assert.AreEqual(command.GetTagNo(), tagAddedToProject.TagNo);
-            Assert.IsNull(tagAddedToProject.ProCoSysGuid);
+            Assert.IsNotNull(tagAddedToProject.Guid);
+            Assert.AreNotEqual(Guid.Empty, tagAddedToProject.Guid);
             Assert.AreEqual(2, tagAddedToProject.Requirements.Count);
             AssertReqProperties(tagAddedToProject.Requirements.First(), ReqDefId1, Interval1);
             AssertReqProperties(tagAddedToProject.Requirements.Last(), ReqDefId2, Interval2);

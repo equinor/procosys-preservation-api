@@ -260,8 +260,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
             Assert.AreEqual(mainTagDetails.TagFunctionCode, tagAddedToProject.TagFunctionCode);
             Assert.AreEqual(mainTagDetails.TagNo, tagAddedToProject.TagNo);
-            Assert.IsNotNull(tagAddedToProject.ProCoSysGuid);
-            Assert.AreEqual(mainTagDetails.ProCoSysGuid, tagAddedToProject.ProCoSysGuid);
+            Assert.AreEqual(mainTagDetails.ProCoSysGuid, tagAddedToProject.Guid);
             Assert.AreEqual(2, tagAddedToProject.Requirements.Count);
             AssertReqProperties(tagAddedToProject.Requirements.First(), ReqDefId1, Interval1);
             AssertReqProperties(tagAddedToProject.Requirements.Last(), ReqDefId2, Interval2);

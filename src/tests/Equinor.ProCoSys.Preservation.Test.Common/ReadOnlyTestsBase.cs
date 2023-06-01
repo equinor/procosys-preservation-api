@@ -137,7 +137,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             PreservationContext context, 
             Project parentProject, 
             TagType tagType,
-            Guid? proCoSysGuid,
+            Guid proCoSysGuid,
             string tagNo, 
             string description, 
             Step step, 
@@ -264,7 +264,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             {
                 var tag = new Tag(TestPlant,
                     TagType.SiteArea,
-                    null,
+                    Guid.NewGuid(),
                     $"{testDataSet.SiteTagPrefix}-{i}",
                     "Description",
                     testDataSet.Journey2With1Step.Steps.ElementAt(0),
