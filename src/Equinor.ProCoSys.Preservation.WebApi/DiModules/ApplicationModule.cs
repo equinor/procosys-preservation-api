@@ -49,6 +49,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Common.Caches;
 using Equinor.ProCoSys.Common.Telemetry;
+using Equinor.ProCoSys.Auth.Authorization;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
@@ -102,6 +103,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
             services.AddScoped<IRequirementTypeRepository, RequirementTypeRepository>();
             services.AddScoped<IPersonRepository, PersonRepository>();
+            services.AddScoped<ILocalPersonRepository, LocalPersonRepository>();
             services.AddScoped<ITagFunctionRepository, TagFunctionRepository>();
             services.AddScoped<IHistoryRepository, HistoryRepository>();
             services.AddScoped<ISettingRepository, SettingRepository>();
