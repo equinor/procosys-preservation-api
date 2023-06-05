@@ -8,7 +8,7 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Project : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class Project : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IHaveGuid
     {
         private readonly List<Tag> _tags = new();
 
@@ -35,6 +35,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+
+        public Guid Guid { get; }
 
         public void AddTag(Tag tag)
         {

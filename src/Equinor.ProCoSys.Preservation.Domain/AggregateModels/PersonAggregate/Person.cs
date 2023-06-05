@@ -7,7 +7,7 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 {
-    public class Person : EntityBase, IAggregateRoot, IModificationAuditable
+    public class Person : EntityBase, IAggregateRoot, IModificationAuditable, IHaveGuid
     {
         public const int FirstNameLengthMax = 64;
         public const int LastNameLengthMax = 64;
@@ -30,6 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
         public string LastName { get; set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+        public Guid Guid { get; }
 
         public void SetModified(Person modifiedBy)
         {
