@@ -77,9 +77,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             TagType = tagType;
             Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
-            // For Standard tags in preservetation, this Guid come from ProCoSysGuid in Main ProCoSys
-            // For Area tag types in preservetation, the preservation is master and Guid is created when made
+            // For Standard tags in preservation, this Guid come from ProCoSysGuid in Main ProCoSys
+            // For Area tag types in preservation, the preservation is master and Guid is created when made
             Guid = guid;
+            ObjectGuid = guid;
+            ProCoSysGuid = guid;
             Description = description;
             StepId = step.Id;
             IsInSupplierStep = step.IsSupplierStep;
@@ -109,8 +111,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public IReadOnlyCollection<TagAttachment> Attachments => _attachments.AsReadOnly();
+        public Guid Guid { get; private set; }
+        [Obsolete("Keep for migration only. To be removed in next version")]
+        public Guid ObjectGuid { get; private set; }
+        [Obsolete("Keep for migration only. To be removed in next version")]
+        public Guid? ProCoSysGuid { get; private set; }
 
-        public Guid Guid { get; }
         public bool IsVoided
         {
             get => _isVoided;

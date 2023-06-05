@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool BulkPreserved { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
-        public Guid Guid { get; }
+        public Guid Guid { get; private set; }
 
         public void SetCreated(Person createdBy)
         {

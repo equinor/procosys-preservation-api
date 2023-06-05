@@ -98,10 +98,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
+            await DispatchDomainEventsAsync(cancellationToken);
+
             await SetAuditDataAsync();
             UpdateConcurrencyToken();
-
-            await DispatchDomainEventsAsync(cancellationToken);
 
             try
             {

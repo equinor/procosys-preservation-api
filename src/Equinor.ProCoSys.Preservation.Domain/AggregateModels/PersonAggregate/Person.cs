@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
         public string LastName { get; set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-        public Guid Guid { get; }
+        public Guid Guid { get; private set; }
 
         public void SetModified(Person modifiedBy)
         {

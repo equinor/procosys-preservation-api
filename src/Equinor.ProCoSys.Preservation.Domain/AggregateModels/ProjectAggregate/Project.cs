@@ -35,8 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
-        public Guid Guid { get; }
+        public Guid Guid { get; private set; }
 
         public void AddTag(Tag tag)
         {
