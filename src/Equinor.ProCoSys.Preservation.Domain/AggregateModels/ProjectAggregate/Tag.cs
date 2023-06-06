@@ -89,6 +89,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             AddDomainEvent(new TagCreatedEvent(plant, Guid));
         }
 
+        // private setters needed for Entity Framework
         public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string AreaDescription { get; private set; }

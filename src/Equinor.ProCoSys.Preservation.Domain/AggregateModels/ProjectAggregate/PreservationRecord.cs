@@ -25,6 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             BulkPreserved = bulkPreserved;
             Guid = Guid.NewGuid();
         }
+        // private setters needed for Entity Framework
         public DateTime PreservedAtUtc { get; private set; }
         public int PreservedById { get; private set; }
         public bool BulkPreserved { get; private set; }

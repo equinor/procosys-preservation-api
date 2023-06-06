@@ -25,6 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
             LastName = lastName;
         }
 
+        // private setters needed for Entity Framework
         public IReadOnlyCollection<SavedFilter> SavedFilters => _savedFilters.AsReadOnly();
         public string FirstName { get; set; }
         public string LastName { get; set; }

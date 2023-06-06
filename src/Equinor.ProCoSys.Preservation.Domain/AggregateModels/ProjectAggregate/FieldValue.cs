@@ -23,7 +23,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             FieldId = field.Id;
         }
-        
+
+        // private setters needed for Entity Framework
         public int FieldId { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }

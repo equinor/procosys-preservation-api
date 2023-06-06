@@ -30,6 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
             EventType = eventType;
         }
 
+        // private setters needed for Entity Framework
         public string Description { get; private set; }
         public int CreatedById { get; private set; }
         public Guid SourceGuid { get; private set; }
