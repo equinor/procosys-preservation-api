@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    [Migration("20230605084137_MigrateTagGuid")]
-    partial class MigrateTagGuid
+    [Migration("20230606052515_ConsolidateGuids")]
+    partial class ConsolidateGuids
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.Property<string>("EventType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ObjectGuid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ObjectType")
                         .HasColumnType("int");

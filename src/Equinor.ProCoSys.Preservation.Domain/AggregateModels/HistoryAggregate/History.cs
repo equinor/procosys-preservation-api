@@ -25,6 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
         {
             Description = description;
             SourceGuid = sourceGuid;
+            ObjectGuid = sourceGuid;
             ObjectType = objectType;
             EventType = eventType;
         }
@@ -32,6 +33,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
         public string Description { get; private set; }
         public int CreatedById { get; private set; }
         public Guid SourceGuid { get; private set; }
+        [Obsolete("Keep for migration only. To be removed in next version")]
+        public Guid ObjectGuid { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public EventType EventType { get; private set; }
         public ObjectType ObjectType { get; private set; }

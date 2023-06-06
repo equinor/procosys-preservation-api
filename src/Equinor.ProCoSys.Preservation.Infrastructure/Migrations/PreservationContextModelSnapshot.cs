@@ -48,6 +48,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ObjectGuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("ObjectType")
                         .HasColumnType("int");
 
