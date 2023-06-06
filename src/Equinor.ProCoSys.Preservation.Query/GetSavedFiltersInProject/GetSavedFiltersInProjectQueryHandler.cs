@@ -39,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetSavedFiltersInProject
             
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var person = await (from p in _context.QuerySet<Person>().Include(p => p.SavedFilters)
-                where p.Oid == currentUserOid
+                where p.Guid == currentUserOid
                 select p).SingleAsync(cancellationToken);
 
             var savedFilterDtos = person.SavedFilters.Where(sf => sf.ProjectId == project.Id)

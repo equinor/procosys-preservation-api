@@ -38,19 +38,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             Assert.IsNull(_historyAdded);
 
             // Act
-            var objectGuid = Guid.NewGuid();
+            var sourceGuid = Guid.NewGuid();
             var plant = "TestPlant";
             var fromStep = "TRANSPORT";
             var toStep = "OPERATION";
             var autoTransferMethod = AutoTransferMethod.OnRfccSign;
-            _dut.Handle(new TransferredAutomaticallyEvent(plant, objectGuid, fromStep, toStep, autoTransferMethod), default);
+            _dut.Handle(new TransferredAutomaticallyEvent(plant, sourceGuid, fromStep, toStep, autoTransferMethod), default);
 
             // Assert
             var expectedDescription =
                 $"{EventType.TransferredAutomatically.GetDescription()} - From '{fromStep}' to '{toStep}'. Transfer method was {autoTransferMethod.CovertToString()}";
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);
-            Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
+            Assert.AreEqual(sourceGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.TransferredAutomatically, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);

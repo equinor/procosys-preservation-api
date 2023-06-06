@@ -18,6 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             : base(plant, field) =>
             Value = value;
 
+        // private setters needed for Entity Framework
         public double? Value { get; private set; }
     }
 }

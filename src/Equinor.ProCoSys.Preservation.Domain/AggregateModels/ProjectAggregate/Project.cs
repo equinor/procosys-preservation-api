@@ -8,7 +8,7 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Project : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class Project : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IHaveGuid
     {
         private readonly List<Tag> _tags = new();
 
@@ -20,14 +20,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public Project(string plant, string name, string description, Guid proCoSysGuid)
+        public Project(string plant, string name, string description, Guid guid)
             : base(plant)
         {
             Name = name;
             Description = description;
-            ProCoSysGuid = proCoSysGuid;
+            Guid = guid;
         }
-        public Guid ProCoSysGuid { get; set; }
+
+        // private setters needed for Entity Framework
         public string Name { get; private set; }
         public string Description { get; set; }
         public bool IsClosed { get; set; }
@@ -36,6 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+        public Guid Guid { get; private set; }
 
         public void AddTag(Tag tag)
         {

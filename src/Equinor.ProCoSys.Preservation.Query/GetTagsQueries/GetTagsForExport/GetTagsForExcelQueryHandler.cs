@@ -119,7 +119,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         {
             _logger.LogInformation($"GetTagsForExportQueryHandler querying history. {_timer.Elapsed()}");
             var history = await (from h in _context.QuerySet<History>()
-                    join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
+                    join tag in _context.QuerySet<Tag>() on h.SourceGuid equals tag.Guid
                     join createdBy in _context.QuerySet<Person>() on h.CreatedById equals createdBy.Id
                     where tagsIds.Contains(tag.Id)
                     select new
@@ -178,13 +178,13 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     .Single(r =>
                         r.PreservationPeriods.Any(pp =>
                             pp.PreservationRecord != null &&
-                            pp.PreservationRecord.ObjectGuid == preservationRecordGuid));
+                            pp.PreservationRecord.Guid == preservationRecordGuid));
 
             var preservationPeriod = tagRequirement
                 .PreservationPeriods
                 .Single(pp =>
                     pp.PreservationRecord != null &&
-                    pp.PreservationRecord.ObjectGuid == preservationRecordGuid);
+                    pp.PreservationRecord.Guid == preservationRecordGuid);
 
             var reqDefWithField = reqDefWithFields.Single(r => r.Id == tagRequirement.RequirementDefinitionId);
 

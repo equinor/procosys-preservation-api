@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             // ensure current user exists in db
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                if (context.Persons.SingleOrDefault(p => p.Oid == _currentUserOid) == null)
+                if (context.Persons.SingleOrDefault(p => p.Guid == _currentUserOid) == null)
                 {
                     AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
                 }
@@ -137,7 +137,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             PreservationContext context, 
             Project parentProject, 
             TagType tagType,
-            Guid? proCoSysGuid,
+            Guid proCoSysGuid,
             string tagNo, 
             string description, 
             Step step, 
@@ -210,7 +210,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
 
             var testDataSet = new TestDataSet
             {
-                CurrentUser = context.Persons.Single(p => p.Oid == _currentUserOid),
+                CurrentUser = context.Persons.Single(p => p.Guid == _currentUserOid),
                 Project1 = AddProject(context, _projectName1, "Project 1 description"),
                 Project2 = AddProject(context, _projectName2, "Project 2 description"),
                 Mode1 = AddMode(context, _mode1, true),
@@ -264,7 +264,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             {
                 var tag = new Tag(TestPlant,
                     TagType.SiteArea,
-                    null,
+                    Guid.NewGuid(),
                     $"{testDataSet.SiteTagPrefix}-{i}",
                     "Description",
                     testDataSet.Journey2With1Step.Steps.ElementAt(0),
@@ -310,7 +310,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             
             foreach (var tag in context.Tags)
             {
-                context.History.Add(new History(TestPlant, $"Description-{Guid.NewGuid()}", tag.ObjectGuid, ObjectType.Tag, EventType.TagCreated));
+                context.History.Add(new History(TestPlant, $"Description-{Guid.NewGuid()}", tag.Guid, ObjectType.Tag, EventType.TagCreated));
             }
             
             context.SaveChangesAsync().Wait();

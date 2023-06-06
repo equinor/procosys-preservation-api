@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(Unit.Value, result.Data);
-            Assert.AreEqual(_oid, _personAdded.Oid);
+            Assert.AreEqual(_oid, _personAdded.Guid);
             Assert.AreEqual(FirstName, _personAdded.FirstName);
             Assert.AreEqual(LastName, _personAdded.LastName);
         }

@@ -39,8 +39,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistory
                     new List<TagRequirement> { new TagRequirement(TestPlant, 2, rd) });
                 project.AddTag(_tagWithHistory);
 
-                _historyVoidTag = new History(TestPlant, "D", _tagWithHistory.ObjectGuid, ObjectType.Tag, EventType.TagVoided);
-                _historyCreateTag = new History(TestPlant, "D1", _tagWithHistory.ObjectGuid, ObjectType.Tag, EventType.TagCreated);
+                _historyVoidTag = new History(TestPlant, "D", _tagWithHistory.Guid, ObjectType.Tag, EventType.TagVoided);
+                _historyCreateTag = new History(TestPlant, "D1", _tagWithHistory.Guid, ObjectType.Tag, EventType.TagCreated);
 
                 context.History.Add(_historyVoidTag);
                 context.History.Add(_historyCreateTag);

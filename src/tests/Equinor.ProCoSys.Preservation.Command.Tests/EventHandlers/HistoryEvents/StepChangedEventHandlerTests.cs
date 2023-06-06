@@ -83,15 +83,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             Assert.IsNull(_historyAdded);
 
             // Act
-            var objectGuid = Guid.NewGuid();
-            await _dut.Handle(new StepChangedEvent(TestPlant, objectGuid, FromStepId, ToStepIdInJourney1), default);
+            var sourceGuid = Guid.NewGuid();
+            await _dut.Handle(new StepChangedEvent(TestPlant, sourceGuid, FromStepId, ToStepIdInJourney1), default);
 
             // Assert
             var expectedDescription = $"{EventType.StepChanged.GetDescription()} - From '{FromStep}' to '{ToStepInJourney1}' in journey '{Journey1}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(TestPlant, _historyAdded.Plant);
-            Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
+            Assert.AreEqual(sourceGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.StepChanged, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
@@ -107,15 +107,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             Assert.IsNull(_historyAdded);
 
             // Act
-            var objectGuid = Guid.NewGuid();
-            await _dut.Handle(new StepChangedEvent(TestPlant, objectGuid, FromStepId, ToStepIdInJourney2), default);
+            var sourceGuid = Guid.NewGuid();
+            await _dut.Handle(new StepChangedEvent(TestPlant, sourceGuid, FromStepId, ToStepIdInJourney2), default);
 
             // Assert
             var expectedDescription = $"{EventType.JourneyChanged.GetDescription()} - From journey '{Journey1}' / step '{FromStep}' to journey '{Journey2}' / step '{ToStepInJourney2}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(TestPlant, _historyAdded.Plant);
-            Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
+            Assert.AreEqual(sourceGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.JourneyChanged, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);

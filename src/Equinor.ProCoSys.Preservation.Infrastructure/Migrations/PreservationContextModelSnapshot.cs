@@ -17,10 +17,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "7.0.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate.History", b =>
                 {
@@ -28,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -67,16 +67,20 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
+                    b.Property<Guid>("SourceGuid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("ObjectGuid")
+                    b.HasIndex("SourceGuid")
                         .HasDatabaseName("IX_History_ObjectGuid_ASC");
 
-                    b.ToTable("History");
-
-                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed','Rescheduled','UndoPreservationStarted','TagVoidedInSource','TagUnvoidedInSource','TagDeletedInSource','PreservationSetInService')");
+                    b.ToTable("History", t =>
+                        {
+                            t.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed','Rescheduled','UndoPreservationStarted','TagVoidedInSource','TagUnvoidedInSource','TagDeletedInSource','PreservationSetInService')");
+                        });
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
@@ -85,7 +89,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -137,7 +141,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AutoTransferMethod")
                         .IsRequired()
@@ -207,9 +211,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("ResponsibleId");
 
-                    b.ToTable("Steps");
-
-                    b.HasCheckConstraint("constraint_step_check_valid_auto_transfer", "AutoTransferMethod in ('None','OnRfccSign','OnRfocSign')");
+                    b.ToTable("Steps", t =>
+                        {
+                            t.HasCheckConstraint("constraint_step_check_valid_auto_transfer", "AutoTransferMethod in ('None','OnRfccSign','OnRfocSign')");
+                        });
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate.Mode", b =>
@@ -218,7 +223,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -273,12 +278,15 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -291,9 +299,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("Oid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
@@ -301,10 +306,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ModifiedById");
-
-                    b.HasIndex("Oid")
+                    b.HasIndex("Guid")
                         .IsUnique();
+
+                    b.HasIndex("ModifiedById");
 
                     b.ToTable("Persons");
                 });
@@ -315,7 +320,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -369,7 +374,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("ClosedAtUtc")
                         .HasColumnType("datetime2");
@@ -434,7 +439,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -478,6 +483,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.ToTable("FieldValues");
 
                     b.HasDiscriminator<string>("FieldType").HasValue("FieldValue");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.PreservationPeriod", b =>
@@ -486,7 +493,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Comment")
                         .HasMaxLength(2048)
@@ -544,9 +551,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("TagRequirementId");
 
-                    b.ToTable("PreservationPeriods");
-
-                    b.HasCheckConstraint("constraint_period_check_valid_status", "Status in ('NeedsUserInput','ReadyToBePreserved','Preserved')");
+                    b.ToTable("PreservationPeriods", t =>
+                        {
+                            t.HasCheckConstraint("constraint_period_check_valid_status", "Status in ('NeedsUserInput','ReadyToBePreserved','Preserved')");
+                        });
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.PreservationRecord", b =>
@@ -555,7 +563,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("BulkPreserved")
                         .HasColumnType("bit");
@@ -566,7 +574,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.Property<int>("CreatedById")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("ObjectGuid")
+                    b.Property<Guid>("Guid")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Plant")
@@ -600,7 +608,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -612,6 +620,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsClosed")
                         .HasColumnType("bit");
@@ -631,9 +642,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid?>("ProCoSysGuid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
@@ -665,7 +673,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AreaCode")
                         .HasMaxLength(255)
@@ -703,6 +711,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.Property<string>("DisciplineDescription")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeletedInSource")
                         .HasColumnType("bit");
@@ -834,11 +845,12 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasIndex("Plant", "TagNo", "ProjectId")
                         .IsUnique();
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", t =>
+                        {
+                            t.HasCheckConstraint("constraint_tag_check_valid_statusenum", "Status in (0,1,2,-1)");
 
-                    b.HasCheckConstraint("constraint_tag_check_valid_statusenum", "Status in (0,1,2,-1)");
-
-                    b.HasCheckConstraint("constraint_tag_check_valid_tag_type", "TagType in ('Standard','PreArea','SiteArea','PoArea')");
+                            t.HasCheckConstraint("constraint_tag_check_valid_tag_type", "TagType in ('Standard','PreArea','SiteArea','PoArea')");
+                        });
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.TagRequirement", b =>
@@ -847,7 +859,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -910,11 +922,12 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("TagId");
 
-                    b.ToTable("TagRequirements");
+                    b.ToTable("TagRequirements", t =>
+                        {
+                            t.HasCheckConstraint("constraint_requirement_check_valid_initial_status", "_initialPreservationPeriodStatus in ('NeedsUserInput','ReadyToBePreserved')");
 
-                    b.HasCheckConstraint("constraint_requirement_check_valid_initial_status", "_initialPreservationPeriodStatus in ('NeedsUserInput','ReadyToBePreserved')");
-
-                    b.HasCheckConstraint("constraint_tagreq_check_valid_usage", "Usage in ('ForAll','ForSuppliersOnly','ForOtherThanSuppliers')");
+                            t.HasCheckConstraint("constraint_tagreq_check_valid_usage", "Usage in ('ForAll','ForSuppliersOnly','ForOtherThanSuppliers')");
+                        });
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.Field", b =>
@@ -923,7 +936,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -982,9 +995,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("RequirementDefinitionId");
 
-                    b.ToTable("Fields");
-
-                    b.HasCheckConstraint("constraint_field_check_valid_fieldtype", "FieldType in ('Info','Number','CheckBox','Attachment')");
+                    b.ToTable("Fields", t =>
+                        {
+                            t.HasCheckConstraint("constraint_field_check_valid_fieldtype", "FieldType in ('Info','Number','CheckBox','Attachment')");
+                        });
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", b =>
@@ -993,7 +1007,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -1054,9 +1068,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("RequirementTypeId");
 
-                    b.ToTable("RequirementDefinitions");
-
-                    b.HasCheckConstraint("constraint_reqdef_check_valid_usage", "Usage in ('ForAll','ForSuppliersOnly','ForOtherThanSuppliers')");
+                    b.ToTable("RequirementDefinitions", t =>
+                        {
+                            t.HasCheckConstraint("constraint_reqdef_check_valid_usage", "Usage in ('ForAll','ForSuppliersOnly','ForOtherThanSuppliers')");
+                        });
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType", b =>
@@ -1065,7 +1080,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1116,9 +1131,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("ModifiedById");
 
-                    b.ToTable("RequirementTypes");
-
-                    b.HasCheckConstraint("constraint_requirement_type_check_icon", "Icon in ('Other','Area','Battery','Bearings','Electrical','Heating','Installation','Nitrogen','Power','Pressure','Rotate')");
+                    b.ToTable("RequirementTypes", t =>
+                        {
+                            t.HasCheckConstraint("constraint_requirement_type_check_icon", "Icon in ('Other','Area','Battery','Bearings','Electrical','Heating','Installation','Nitrogen','Power','Pressure','Rotate')");
+                        });
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", b =>
@@ -1127,7 +1143,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1184,7 +1200,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1212,7 +1228,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1271,7 +1287,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("datetime2");
@@ -1331,7 +1347,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("AttachmentType")
                         .IsRequired()
@@ -1376,18 +1392,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.ToTable("Attachments");
 
                     b.HasDiscriminator<string>("AttachmentType").HasValue("Attachment");
-                });
 
-            modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.ActionAttachment", b =>
-                {
-                    b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.Attachment");
-
-                    b.Property<int>("ActionId")
-                        .HasColumnType("int");
-
-                    b.HasIndex("ActionId");
-
-                    b.HasDiscriminator().HasValue("ActionAttachment");
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.AttachmentValue", b =>
@@ -1404,13 +1410,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("CheckBoxChecked");
                 });
 
-            modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValueAttachment", b =>
-                {
-                    b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.Attachment");
-
-                    b.HasDiscriminator().HasValue("FieldValueAttachment");
-                });
-
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.NumberValue", b =>
                 {
                     b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue");
@@ -1419,6 +1418,25 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .HasColumnType("float");
 
                     b.HasDiscriminator().HasValue("NumberValue");
+                });
+
+            modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.ActionAttachment", b =>
+                {
+                    b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.Attachment");
+
+                    b.Property<int>("ActionId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("ActionId");
+
+                    b.HasDiscriminator().HasValue("ActionAttachment");
+                });
+
+            modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValueAttachment", b =>
+                {
+                    b.HasBaseType("Equinor.ProCoSys.Preservation.Domain.Attachment");
+
+                    b.HasDiscriminator().HasValue("FieldValueAttachment");
                 });
 
             modelBuilder.Entity("Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.TagAttachment", b =>

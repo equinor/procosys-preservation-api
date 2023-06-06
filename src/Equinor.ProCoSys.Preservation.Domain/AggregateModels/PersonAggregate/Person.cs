@@ -7,7 +7,7 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 {
-    public class Person : EntityBase, IAggregateRoot, IModificationAuditable
+    public class Person : EntityBase, IAggregateRoot, IModificationAuditable, IHaveGuid
     {
         public const int FirstNameLengthMax = 64;
         public const int LastNameLengthMax = 64;
@@ -20,17 +20,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 
         public Person(Guid oid, string firstName, string lastName) : base()
         {
-            Oid = oid;
+            Guid = oid;
             FirstName = firstName;
             LastName = lastName;
         }
 
+        // private setters needed for Entity Framework
         public IReadOnlyCollection<SavedFilter> SavedFilters => _savedFilters.AsReadOnly();
-        public Guid Oid { get; private set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+        public Guid Guid { get; private set; }
 
         public void SetModified(Person modifiedBy)
         {

@@ -778,9 +778,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandleDeleteTopic_ForTag_ShouldDeleteTag()
         {
             // Arrange
-            var guid = _tag1.ProCoSysGuid;
+            var guid = _tag1.Guid;
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProCoSysGuid\" : \"{guid}\",\"Behavior\" : \"delete\"}}";
-            _projectRepository.Setup(p => p.GetTagOnlyByProCoSysGuidAsync(guid.Value))
+            _projectRepository.Setup(p => p.GetTagOnlyByGuidAsync(guid))
                 .Returns(Task.FromResult(_tag1));
             Assert.IsFalse(_tag1.IsDeletedInSource);
             // Act

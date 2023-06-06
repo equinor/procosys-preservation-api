@@ -1,25 +1,25 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class RescheduledEvent : INotification
+    public class RescheduledEvent : DomainEvent
     {
         public RescheduledEvent(
             string plant,
-            Guid objectGuid,
+            Guid sourceGuid,
             int weeks,
             RescheduledDirection direction,
-            string comment)
+            string comment) : base("Rescheduled")
         {
             Plant = plant;
-            ObjectGuid = objectGuid;
+            SourceGuid = sourceGuid;
             Weeks = weeks;
             Direction = direction;
             Comment = comment;
         }
         public string Plant { get; }
-        public Guid ObjectGuid { get; }
+        public Guid SourceGuid { get; }
         public int Weeks { get; }
         public RescheduledDirection Direction { get; }
         public string Comment { get; }

@@ -228,7 +228,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                currentUser = context.Persons.Single(p => p.Oid == _currentUserOid);
+                currentUser = context.Persons.Single(p => p.Guid == _currentUserOid);
                 var tag = context.Tags
                     .Include(t => t.Requirements)
                     .ThenInclude(r => r.PreservationPeriods)
@@ -269,12 +269,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 history = new History(
                     TestPlant,
                     "Description",
-                    tag.ObjectGuid,
+                    tag.Guid,
                     ObjectType.Tag,
                     EventType.RequirementPreserved)
                 {
                     DueInWeeks = 1,
-                    PreservationRecordGuid = activePeriodBeforePreservation.PreservationRecord.ObjectGuid
+                    PreservationRecordGuid = activePeriodBeforePreservation.PreservationRecord.Guid
                 };
                 context.History.Add(history);
                 context.SaveChangesAsync().Wait();

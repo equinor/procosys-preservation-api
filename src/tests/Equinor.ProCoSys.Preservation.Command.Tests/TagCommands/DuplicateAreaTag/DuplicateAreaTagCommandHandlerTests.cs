@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag;
@@ -67,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             _sourceTag = new Tag(
                 TestPlant,
                 TagType.SiteArea,
-                null,
+                Guid.NewGuid(),
                 "TagNo",
                 "Desc",
                 stepMock.Object,

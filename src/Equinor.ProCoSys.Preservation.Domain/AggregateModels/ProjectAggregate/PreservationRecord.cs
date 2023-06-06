@@ -6,7 +6,7 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class PreservationRecord : PlantEntityBase, ICreationAuditable
+    public class PreservationRecord : PlantEntityBase, ICreationAuditable, IHaveGuid
     {
         protected PreservationRecord()
             : base(null)
@@ -23,16 +23,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             PreservedAtUtc = TimeService.UtcNow;
             PreservedById = preservedBy.Id;
             BulkPreserved = bulkPreserved;
-            ObjectGuid = Guid.NewGuid();
+            Guid = Guid.NewGuid();
         }
-
-        // Todo Rename to PreservationRecordGuid
-        public Guid ObjectGuid { get; private set; }
+        // private setters needed for Entity Framework
         public DateTime PreservedAtUtc { get; private set; }
         public int PreservedById { get; private set; }
         public bool BulkPreserved { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
+        public Guid Guid { get; private set; }
 
         public void SetCreated(Person createdBy)
         {

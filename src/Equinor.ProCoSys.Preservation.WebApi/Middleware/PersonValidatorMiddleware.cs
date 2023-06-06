@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Common.Misc;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +16,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
         public async Task InvokeAsync(
             HttpContext context,
             ICurrentUserProvider currentUserProvider,
+            ILocalPersonRepository localPersonRepository,
             IPersonCache personCache,
             ILogger<PersonValidatorMiddleware> logger)
         {
@@ -22,7 +24,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             if (currentUserProvider.HasCurrentUser)
             {
                 var oid = currentUserProvider.GetCurrentUserOid();
-                if (!await personCache.ExistsAsync(oid))
+                if (!await localPersonRepository.ExistsAsync(oid) &&
+                    !await personCache.ExistsAsync(oid))
                 {
                     await context.WriteForbidden(logger);
                     return;

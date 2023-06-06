@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
                     new SeederUserProvider()))
                 {
                     // If the seeder user exists in the database, it's already been seeded. Don't seed again.
-                    if (await dbContext.Persons.AnyAsync(p => p.Oid == _seederUser.Oid, cancellationToken))
+                    if (await dbContext.Persons.AnyAsync(p => p.Guid == _seederUser.Guid, cancellationToken))
                     {
                         return;
                     }
@@ -86,7 +86,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
 
         private class SeederUserProvider : ICurrentUserProvider
         {
-            public Guid GetCurrentUserOid() => _seederUser.Oid;
+            public Guid GetCurrentUserOid() => _seederUser.Guid;
             public bool HasCurrentUser => true;
         }
     }

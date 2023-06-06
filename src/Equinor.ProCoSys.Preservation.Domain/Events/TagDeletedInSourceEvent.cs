@@ -1,18 +1,18 @@
 ﻿using System;
-using MediatR;
+using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagDeletedInSourceEvent : INotification
+    public class TagDeletedInSourceEvent : DomainEvent
     {
         public TagDeletedInSourceEvent(
             string plant,
-            Guid objectGuid)
+            Guid sourceGuid) : base("Tag deleted in source system")
         {
             Plant = plant;
-            ObjectGuid = objectGuid;
+            SourceGuid = sourceGuid;
         }
         public string Plant { get; }
-        public Guid ObjectGuid { get; }
+        public Guid SourceGuid { get; }
     }
 }

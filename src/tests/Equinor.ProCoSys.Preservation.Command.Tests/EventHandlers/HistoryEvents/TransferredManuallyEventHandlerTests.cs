@@ -37,18 +37,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             Assert.IsNull(_historyAdded);
 
             // Act
-            var objectGuid = Guid.NewGuid();
+            var sourceGuid = Guid.NewGuid();
             var plant = "TestPlant";
             var fromStep = "TRANSPORT";
             var toStep = "OPERATION";
-            _dut.Handle(new TransferredManuallyEvent(plant, objectGuid, fromStep, toStep), default);
+            _dut.Handle(new TransferredManuallyEvent(plant, sourceGuid, fromStep, toStep), default);
 
             // Assert
             var expectedDescription = $"{EventType.TransferredManually.GetDescription()} - From '{fromStep}' to '{toStep}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);
-            Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
+            Assert.AreEqual(sourceGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.TransferredManually, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);

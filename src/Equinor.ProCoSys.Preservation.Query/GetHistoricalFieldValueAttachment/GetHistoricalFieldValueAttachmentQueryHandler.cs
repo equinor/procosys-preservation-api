@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetHistoricalFieldValueAttachment
 
             var preservationPeriod = tagRequirement.PreservationPeriods
                 .Where(pp => pp.PreservationRecord != null)
-                .Where(pp => pp.PreservationRecord.ObjectGuid == request.PreservationRecordGuid)
+                .Where(pp => pp.PreservationRecord.Guid == request.PreservationRecordGuid)
                 .Select(pp => pp)
                 .SingleOrDefault();
 
