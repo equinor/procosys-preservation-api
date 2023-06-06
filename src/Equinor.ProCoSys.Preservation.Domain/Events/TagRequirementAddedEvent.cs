@@ -8,7 +8,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Events
         public TagRequirementAddedEvent(
             string plant,
             Guid sourceGuid,
-            int requirementDefinitionId) : base("Tag requirement added")
+            int requirementDefinitionId) : base("Requirement added")
         {
             Plant = plant;
             SourceGuid = sourceGuid;
