@@ -3,14 +3,14 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagRequirementPreservedEvent : DomainEvent
+    public class TagRequirementPreservedEvent : IDomainEvent
     {
         public TagRequirementPreservedEvent(
             string plant,
             Guid sourceGuid,
             int requirementDefinitionId,
             int? dueInWeeks,
-            Guid preservationRecordGuid) : base("Requirement preserved")
+            Guid preservationRecordGuid)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

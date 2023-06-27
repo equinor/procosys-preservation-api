@@ -3,12 +3,9 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class ActionAddedEvent : DomainEvent
+    public class ActionAddedEvent : IDomainEvent
     {
-        public ActionAddedEvent(
-            string plant,
-            Guid sourceGuid,
-            string title) : base("Action added")
+        public ActionAddedEvent(string plant, Guid sourceGuid, string title)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

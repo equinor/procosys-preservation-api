@@ -3,12 +3,9 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagRequirementDeletedEvent : DomainEvent
+    public class TagRequirementDeletedEvent : IDomainEvent
     {
-        public TagRequirementDeletedEvent(
-            string plant,
-            Guid sourceGuid,
-            int requirementDefinitionId) : base("Requirement deleted")
+        public TagRequirementDeletedEvent(string plant, Guid sourceGuid, int requirementDefinitionId)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

@@ -3,11 +3,9 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagDeletedInSourceEvent : DomainEvent
+    public class TagDeletedInSourceEvent : IDomainEvent
     {
-        public TagDeletedInSourceEvent(
-            string plant,
-            Guid sourceGuid) : base("Tag deleted in source system")
+        public TagDeletedInSourceEvent(string plant, Guid sourceGuid)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

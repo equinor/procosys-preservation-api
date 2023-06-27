@@ -3,14 +3,14 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class RescheduledEvent : DomainEvent
+    public class RescheduledEvent : IDomainEvent
     {
         public RescheduledEvent(
             string plant,
             Guid sourceGuid,
             int weeks,
             RescheduledDirection direction,
-            string comment) : base("Rescheduled")
+            string comment)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

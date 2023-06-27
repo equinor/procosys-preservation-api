@@ -3,13 +3,13 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TransferredManuallyEvent : DomainEvent
+    public class TransferredManuallyEvent : IDomainEvent
     {
         public TransferredManuallyEvent(
             string plant,
             Guid sourceGuid,
             string fromStep,
-            string toStep) : base("Transferred manually")
+            string toStep)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

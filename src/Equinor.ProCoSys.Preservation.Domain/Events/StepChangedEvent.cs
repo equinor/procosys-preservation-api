@@ -3,13 +3,13 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class StepChangedEvent : DomainEvent
+    public class StepChangedEvent : IDomainEvent
     {
         public StepChangedEvent(
             string plant,
             Guid sourceGuid,
             int fromStepId,
-            int toStepId) : base("Step changed")
+            int toStepId)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

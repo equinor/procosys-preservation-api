@@ -3,11 +3,9 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagUnvoidedEvent : DomainEvent
+    public class TagUnvoidedEvent : IDomainEvent
     {
-        public TagUnvoidedEvent(
-            string plant,
-            Guid sourceGuid) : base("Tag unvoided")
+        public TagUnvoidedEvent(string plant, Guid sourceGuid)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

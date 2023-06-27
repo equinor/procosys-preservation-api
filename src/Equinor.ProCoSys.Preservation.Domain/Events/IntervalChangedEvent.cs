@@ -3,14 +3,14 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class IntervalChangedEvent : DomainEvent
+    public class IntervalChangedEvent : IDomainEvent
     {
         public IntervalChangedEvent(
             string plant,
             Guid sourceGuid,
             int requirementDefinitionId,
             int fromInterval,
-            int toInterval) : base("Interval changed")
+            int toInterval)
         {
             Plant = plant;
             SourceGuid = sourceGuid;
