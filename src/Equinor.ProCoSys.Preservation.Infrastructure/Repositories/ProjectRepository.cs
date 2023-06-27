@@ -22,9 +22,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
         {
         }
 
-        public Task<List<Project>> GetProjectsWithTagsAsync()
-            => Set.Include(p => p.Tags).ToListAsync();
-
         public Task<Project> GetProjectOnlyByNameAsync(string projectName)
             => Set.SingleOrDefaultAsync(p => p.Name == projectName);
 
