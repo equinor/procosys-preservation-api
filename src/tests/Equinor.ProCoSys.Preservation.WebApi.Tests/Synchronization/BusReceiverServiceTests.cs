@@ -187,7 +187,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
-        public async Task HandlingProjectTopic_ShouldFailIfMissingPlan()
+        public async Task HandlingProjectTopic_ShouldFailIfMissingPlant()
         {
             // Arrange
             var messageWithoutPlant = $"{{\"ProjectName\" : \"{Project1Name}\", \"IsClosed\" : true, \"Description\" : \"{NewDescription}\"}}";
