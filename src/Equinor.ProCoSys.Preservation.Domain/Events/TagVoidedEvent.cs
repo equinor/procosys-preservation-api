@@ -3,11 +3,9 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagVoidedEvent : DomainEvent
+    public class TagVoidedEvent : IDomainEvent
     {
-        public TagVoidedEvent(
-            string plant,
-            Guid sourceGuid) : base("Tag voided")
+        public TagVoidedEvent(string plant, Guid sourceGuid)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

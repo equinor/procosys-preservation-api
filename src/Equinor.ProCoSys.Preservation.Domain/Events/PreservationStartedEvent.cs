@@ -3,11 +3,9 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class PreservationStartedEvent : DomainEvent
+    public class PreservationStartedEvent : IDomainEvent
     {
-        public PreservationStartedEvent(
-            string plant,
-            Guid sourceGuid) : base("Preservation started")
+        public PreservationStartedEvent(string plant, Guid sourceGuid)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

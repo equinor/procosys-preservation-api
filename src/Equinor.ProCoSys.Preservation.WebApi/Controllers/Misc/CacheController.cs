@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("ProjectsFromCache")]
-        public async Task<IList<string>> GetProjectsFromCache(
+        public async Task<IList<AccessableProject>> GetProjectsFromCache(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant)

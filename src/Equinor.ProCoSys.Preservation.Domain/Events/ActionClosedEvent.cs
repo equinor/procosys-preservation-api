@@ -3,11 +3,9 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class ActionClosedEvent : DomainEvent
+    public class ActionClosedEvent : IDomainEvent
     {
-        public ActionClosedEvent(
-            string plant,
-            Guid sourceGuid) : base("Action closed")
+        public ActionClosedEvent(string plant, Guid sourceGuid)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

@@ -4,14 +4,14 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TransferredAutomaticallyEvent : DomainEvent
+    public class TransferredAutomaticallyEvent : IDomainEvent
     {
         public TransferredAutomaticallyEvent(
             string plant,
             Guid sourceGuid,
             string fromStep,
             string toStep,
-            AutoTransferMethod autoTransferMethod) : base("Transferred automatically")
+            AutoTransferMethod autoTransferMethod)
         {
             Plant = plant;
             SourceGuid = sourceGuid;

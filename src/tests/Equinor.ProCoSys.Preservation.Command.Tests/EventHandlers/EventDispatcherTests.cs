@@ -90,9 +90,6 @@ public class TestableEntityBase : EntityBase
     // The base class is abstract, therefor a sub class is needed to test it.
 }
 
-public class TestableDomainEvent : DomainEvent
+public class TestableDomainEvent : IDomainEvent
 {
-    public TestableDomainEvent() : base("Test")
-    {
-    }
 }
