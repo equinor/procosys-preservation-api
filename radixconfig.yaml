@@ -15,12 +15,10 @@ spec:
                 azure:
                     clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb
           image: procosys.azurecr.io/preservation/api:{imageTagName}
-
           privateImageHubs:
             procosys.azurecr.io:
-              username: procosys
+              username: 343069e3-ceaa-4256-bdc8-49fa3646c1c4
               email: arbje@equinor.com
-
           ports:
               - name: http
                 port: 5000
