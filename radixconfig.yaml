@@ -24,7 +24,7 @@ spec:
               - CONNECTIONSTRINGS__APPCONFIG
           environmentConfig:
               - environment: dev
-                imageTagName: asdfasdf
+                imageTagName: latest
                 variables:
                     ASPNETCORE_ENVIRONMENT: 'Development'
                     UseAzureAppConfiguration: 'true'
