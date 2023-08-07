@@ -9,6 +9,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi
 {
     public class Program
     {
+
+        int test = 32;
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
