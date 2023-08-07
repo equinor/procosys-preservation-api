@@ -45,7 +45,7 @@ RUN adduser --disabled-password --uid 9999 --gecos "" apprunner
 RUN mkdir /app && chown apprunner.apprunner /app
 
 # Change the user from root to non-root- From now on, all Docker commands are run as non-root user (except for COPY)
-USER apprunner
+USER 9999
 
 # Set the port to 5000 since the default production port is 80 and on-root users cannot bind to this port
 ENV ASPNETCORE_URLS http://+:5000
