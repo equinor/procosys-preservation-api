@@ -13,7 +13,7 @@ spec:
         - name: backend
           identity:
                 azure:
-                    clientId: cb7afa3f-d2ff-401b-83b6-f02cce85ce30
+                    clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb
           image: procosys.azurecr.io/preservation/api:{imageTagName}
     
           ports:
@@ -22,7 +22,6 @@ spec:
           publicPort: http 
           secrets:
               - CONNECTIONSTRINGS__APPCONFIG
-              - AZURE_CLIENT_SECRET
           environmentConfig:
               - environment: dev
                 imageTagName: latest
