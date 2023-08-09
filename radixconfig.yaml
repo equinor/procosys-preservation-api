@@ -5,8 +5,6 @@ metadata:
 spec:
     environments:
         - name: dev
-          build:
-              from: pbi/104952_Move_Preservation_API_to_Radix
 #        - name: test
 #        - name: prod
     components:
