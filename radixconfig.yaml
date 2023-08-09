@@ -7,15 +7,15 @@ spec:
         - name: dev
           build:
             from: pbi/104952_Move_Preservation_API_to_Radix
-        - name: test
-          build:
-            from: pbi/104952_Move_Preservation_API_to_Radix
+#        - name: test
+#          build:
+#            from: pbi/104952_Move_Preservation_API_to_Radix
 #        - name: prod
     components:
         - name: backend
           identity:
             azure:
-              clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb  
+              clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb
           image: procosys.azurecr.io/preservation/api:{imageTagName}  
           ports:
               - name: http
@@ -37,20 +37,24 @@ spec:
                     limits:
                         memory: '256Mi'
                         cpu: '250m'
-              - environment: test
-                imageTagName: latest
-                variables:
-                    ASPNETCORE_ENVIRONMENT: 'Test'
-                    UseAzureAppConfiguration: 'true'
-                monitoring: true
-                replicas: 2
-                resources:
-                    requests:
-                       memory: '128Mi'
-                       cpu: '100m'
-                    limits:
-                       memory: '256Mi'
-                       cpu: '250m'
+    privateImageHubs:
+      procosys.azurecr.io:
+        username: 9d3898e4-730f-4fb5-8ddf-a5de51537896
+        email: arbje@equinor.com
+ ##             - environment: test
+ #               imageTagName: latest
+ #               variables:
+ #                   ASPNETCORE_ENVIRONMENT: 'Test'
+ #                   UseAzureAppConfiguration: 'true'
+ #               monitoring: true
+ #               replicas: 2
+ #               resources:
+ #                   requests:
+ #                      memory: '128Mi'
+ #                      cpu: '100m'
+ #                   limits:
+ #                      memory: '256Mi'
+ #                      cpu: '250m'
  #             - environment: prod
  #               variables:
  #                   SEARCH_ENVIRONMENT_NAME: 'PROD'
@@ -63,7 +67,3 @@ spec:
  #                   limits:
  #                       memory: '256Mi'
  #                       cpu: '250m'
-    privateImageHubs:
-      procosys.azurecr.io:
-        username: 9d3898e4-730f-4fb5-8ddf-a5de51537896
-        email: arbje@equinor.com
