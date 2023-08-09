@@ -13,6 +13,9 @@ spec:
 #        - name: prod
     components:
         - name: backend
+          identity:
+            azure:
+              clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb  
           image: procosys.azurecr.io/preservation/api:{imageTagName}  
           ports:
               - name: http
