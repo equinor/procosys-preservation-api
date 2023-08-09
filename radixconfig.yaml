@@ -5,12 +5,11 @@ metadata:
 spec:
     environments:
         - name: dev
-#        - name: test
+        - name: test
 #        - name: prod
     components:
         - name: backend
-          image: procosys.azurecr.io/preservation/api:{imageTagName}
-    
+          image: procosys.azurecr.io/preservation/api:{imageTagName}  
           ports:
               - name: http
                 port: 5000
@@ -34,22 +33,24 @@ spec:
                     limits:
                         memory: '256Mi'
                         cpu: '250m'
-    privateImageHubs:
-      procosys.azurecr.io:
-        username: 9d3898e4-730f-4fb5-8ddf-a5de51537896
-        email: arbje@equinor.com
 
- #             - environment: test
- #               variables:
- #                   SEARCH_ENVIRONMENT_NAME: 'TEST'
- #               replicas: 2
- #               resources:
- #                   requests:
- #                       memory: '128Mi'
- #                       cpu: '100m'
- #                   limits:
- #                       memory: '256Mi'
- #                       cpu: '250m'
+              - environment: test
+                identity:
+                  azure:
+                    clientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7  
+                imageTagName: latest
+                variables:
+                    ASPNETCORE_ENVIRONMENT: 'Test'
+                    UseAzureAppConfiguration: 'true'
+                monitoring: true
+                replicas: 2
+                resources:
+                    requests:
+                       memory: '128Mi'
+                       cpu: '100m'
+                    limits:
+                       memory: '256Mi'
+                       cpu: '250m'
  #             - environment: prod
  #               variables:
  #                   SEARCH_ENVIRONMENT_NAME: 'PROD'
@@ -62,3 +63,7 @@ spec:
  #                   limits:
  #                       memory: '256Mi'
  #                       cpu: '250m'
+    privateImageHubs:
+      procosys.azurecr.io:
+        username: 9d3898e4-730f-4fb5-8ddf-a5de51537896
+        email: arbje@equinor.com
