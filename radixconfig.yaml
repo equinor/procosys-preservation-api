@@ -64,7 +64,7 @@ spec:
   # LeaderElector 
   #--------------------
   - name: leader-elector
-    image: procosys.azurecr.io/leader-elector:{imageTagName}'
+    image: procosys.azurecr.io/leader-elector:{imageTagName}
     ports:
     - name: http
       port: 3003
