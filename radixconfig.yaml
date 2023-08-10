@@ -64,14 +64,13 @@ spec:
   # LeaderElector 
   #--------------------
   - name: leader-elector
-    image: procosys.azurecr.io/leader-elector:{imageTagName}
+    image: procosys.azurecr.io/leader-elector:9
     ports:
     - name: http
       port: 3003
     publicPort: http
     environmentConfig:
     - environment: test
-      imageTagName: 9
       variables:
         LEASE_TIME: 5
       monitoring: true
