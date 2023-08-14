@@ -61,32 +61,32 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _preservationApiOid = options.Value.PreservationApiObjectId;
         }
 
-        public async Task ProcessMessageAsync(PcsTopic pcsTopic, string messageJson, CancellationToken cancellationToken)
+        public async Task ProcessMessageAsync(string pcsTopic, string messageJson, CancellationToken cancellationToken)
         {
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
             _mainApiAuthenticator.AuthenticationType = AuthenticationType.AsApplication;
 
             switch (pcsTopic)
             {
-                case PcsTopic.Project:
+                case ProjectTopic.TopicName:
                     await ProcessProjectEvent(messageJson);
                     break;
-                case PcsTopic.Responsible:
+                case ResponsibleTopic.TopicName:
                     await ProcessResponsibleEvent(messageJson);
                     break;
-                case PcsTopic.TagFunction:
+                case TagFunctionTopic.TopicName:
                     await ProcessTagFunctionEvent(messageJson);
                     break;
-                case PcsTopic.CommPkg:
+                case CommPkgTopic.TopicName:
                     await ProcessCommPkgEvent(messageJson);
                     break;
-                case PcsTopic.McPkg:
+                case McPkgTopic.TopicName:
                     await ProcessMcPkgEvent(messageJson);
                     break;
-                case PcsTopic.Tag:
+                case TagTopic.TopicName:
                     await ProcessTagEvent(messageJson);
                     break;
-                case PcsTopic.Certificate:
+                case CertificateTopic.TopicName:
                     await _certificateEventProcessorService.ProcessCertificateEventAsync(messageJson);
                     break;
             }
@@ -174,7 +174,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             }
 
             var guid = new Guid(tagEvent.ProCoSysGuid);
-            TrackDeleteEvent(PcsTopic.Tag, tagEvent.ProCoSysGuid, true);
+            TrackDeleteEvent(PcsTopicConstants.Tag, tagEvent.ProCoSysGuid, true);
 
             _plantSetter.SetPlant(tagEvent.Plant);
 
@@ -207,7 +207,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var mcPkgEvent = JsonSerializer.Deserialize<McPkgTmpTopic>(messageJson);
             if (mcPkgEvent != null && mcPkgEvent.Behavior == "delete")
             {
-                TrackDeleteEvent(PcsTopic.McPkg, mcPkgEvent.ProCoSysGuid, false);
+                TrackDeleteEvent(PcsTopicConstants.McPkg, mcPkgEvent.ProCoSysGuid, false);
                 return;
             }
 
@@ -257,7 +257,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var commPkgEvent = JsonSerializer.Deserialize<CommPkgTmpTopic>(messageJson);
             if (commPkgEvent != null && commPkgEvent.Behavior == "delete")
             {
-                TrackDeleteEvent(PcsTopic.CommPkg, commPkgEvent.ProCoSysGuid, false);
+                TrackDeleteEvent(PcsTopicConstants.CommPkg, commPkgEvent.ProCoSysGuid, false);
                 return;
             }
 
@@ -298,7 +298,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var tagFunctionEvent = JsonSerializer.Deserialize<TagFunctionTmpTopic>(messageJson);
             if (tagFunctionEvent != null && tagFunctionEvent.Behavior == "delete")
             {
-                TrackDeleteEvent(PcsTopic.TagFunction, tagFunctionEvent.ProCoSysGuid, false);
+                TrackDeleteEvent(PcsTopicConstants.TagFunction, tagFunctionEvent.ProCoSysGuid, false);
                 return;
             }
 
@@ -343,7 +343,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var projectEvent = JsonSerializer.Deserialize<ProjectTmpTopic>(messageJson);
             if (projectEvent != null && projectEvent.Behavior == "delete")
             {
-                TrackDeleteEvent(PcsTopic.Project, projectEvent.ProCoSysGuid, false);
+                TrackDeleteEvent(PcsTopicConstants.Project, projectEvent.ProCoSysGuid, false);
                 return;
             }
             if (projectEvent == null || projectEvent.Plant.IsEmpty() || projectEvent.ProjectName.IsEmpty())
@@ -368,7 +368,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var responsibleEvent = JsonSerializer.Deserialize<ResponsibleTmpTopic>(messageJson);
             if (responsibleEvent != null && responsibleEvent.Behavior == "delete")
             {
-                TrackDeleteEvent(PcsTopic.Responsible, responsibleEvent.ProCoSysGuid, false);
+                TrackDeleteEvent(PcsTopicConstants.Responsible, responsibleEvent.ProCoSysGuid, false);
                 return;
             }
             if (responsibleEvent == null || responsibleEvent.Plant.IsEmpty() || responsibleEvent.Code.IsEmpty())
@@ -466,11 +466,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     {nameof(tagEvent.ProjectName), tagEvent.ProjectName.Replace('$', '_')} //TODO: DRY, replace with NormalizeProjectName
                 });
 
-        private void TrackDeleteEvent(PcsTopic topic, string guid, bool supported) =>
+        private void TrackDeleteEvent(string topic, string guid, bool supported) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {"Event Delete", topic.ToString()},
+                    {"Event Delete", topic},
                     {"ProCoSysGuid", guid},
                     {"Supported", supported.ToString()}
                 });

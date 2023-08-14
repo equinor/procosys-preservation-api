@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using ServiceResult;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Telemetry;
+using Equinor.ProCoSys.PcsServiceBus.Enums;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
@@ -59,7 +60,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private async Task HandleAutoTransferIfRelevantAsync(CertificateTopic certificateEvent)
         {
-            if (certificateEvent.CertificateType == "RFOC" || certificateEvent.CertificateType == "RFCC")
+            if (certificateEvent.CertificateStatus == CertificateStatus.Accepted
+                && (certificateEvent.CertificateType == "RFOC" || certificateEvent.CertificateType == "RFCC"))
             {
                 var result = await _mediator.Send(new AutoTransferCommand(
                     certificateEvent.ProjectName,
