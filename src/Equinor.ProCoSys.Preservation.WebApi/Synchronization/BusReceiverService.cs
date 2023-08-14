@@ -68,25 +68,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             switch (pcsTopic)
             {
-                case ProjectTopic.TopicName:
+                case PcsTopicConstants.Project:
                     await ProcessProjectEvent(messageJson);
                     break;
-                case ResponsibleTopic.TopicName:
+                case PcsTopicConstants.Responsible:
                     await ProcessResponsibleEvent(messageJson);
                     break;
-                case TagFunctionTopic.TopicName:
+                case PcsTopicConstants.TagFunction:
                     await ProcessTagFunctionEvent(messageJson);
                     break;
-                case CommPkgTopic.TopicName:
+                case PcsTopicConstants.CommPkg:
                     await ProcessCommPkgEvent(messageJson);
                     break;
-                case McPkgTopic.TopicName:
+                case PcsTopicConstants.McPkg:
                     await ProcessMcPkgEvent(messageJson);
                     break;
-                case TagTopic.TopicName:
+                case PcsTopicConstants.Tag:
                     await ProcessTagEvent(messageJson);
                     break;
-                case CertificateTopic.TopicName:
+                case PcsTopicConstants.Certificate:
                     await _certificateEventProcessorService.ProcessCertificateEventAsync(messageJson);
                     break;
             }

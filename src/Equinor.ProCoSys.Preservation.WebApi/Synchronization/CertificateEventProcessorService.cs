@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var certificateEvent = JsonSerializer.Deserialize<CertificateTopic>(messageJson);
             if (certificateEvent != null && certificateEvent.Behavior == "delete")
             {
-                TrackUnsupportedDeleteEvent(PcsTopic.Certificate, certificateEvent.ProCoSysGuid);
+                TrackUnsupportedDeleteEvent(PcsTopicConstants.Certificate, certificateEvent.ProCoSysGuid);
                 return;
             }
 
@@ -104,11 +104,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     {nameof(certificateTopic.ProjectName), NormalizeProjectName(certificateTopic.ProjectName)}
                 });
 
-        private void TrackUnsupportedDeleteEvent(PcsTopic topic, Guid guid) =>
+        private void TrackUnsupportedDeleteEvent(string topic, Guid guid) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {"Event Delete", topic.ToString()},
+                    {"Event Delete", topic},
                     {"ProCoSysGuid", guid.ToString()},
                     {"Supported", "false"}
                 });
