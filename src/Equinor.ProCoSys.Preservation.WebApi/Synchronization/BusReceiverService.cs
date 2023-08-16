@@ -22,6 +22,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
     public class BusReceiverService : IBusReceiverService
     {
+
         private readonly IPlantSetter _plantSetter;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ITelemetryClient _telemetryClient;
