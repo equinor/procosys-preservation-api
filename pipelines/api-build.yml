@@ -10,6 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'equinor'
+    ref: 'pbi/105865_Clean_Up_PullRequestsin_Preservation-api'
 
 # Global variables for the pipeline
 variables:
