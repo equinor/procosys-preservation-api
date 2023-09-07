@@ -5,12 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Equinor.ProCoSys.Common" Version="1.0.15" />
+    <PackageReference Include="Equinor.ProCoSys.Common" Version="1.0.16" />
     <PackageReference Include="MediatR" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Time\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Equinor.ProCoSys.Common">
+      <HintPath>..\..\..\procosys-common\src\Equinor.ProCoSys.Common\bin\Debug\net7.0\Equinor.ProCoSys.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
