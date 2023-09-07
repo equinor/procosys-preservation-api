@@ -825,7 +825,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                     {"Event Delete", topic},
                     {"ProCoSysGuid", guid.ToString()},
                     {"Supported", "False"}
-                }),Times.Once());
+                }, null),Times.Once());
 
             // processing message should return before setting plant
             _plantSetter.VerifyNoOtherCalls();
