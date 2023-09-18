@@ -38,21 +38,21 @@ name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
 
 stages:
 # Run tests Stage
-- stage: runtests
-  displayName: 'Run tests'
-  variables:
-    envName: 'runtests'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'
+#- stage: runtests
+#  displayName: 'Run tests'
+#  variables:
+#    envName: 'runtests'
+#    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+#    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'#
 
-  jobs:
+#  jobs:
   # Run Test
-  #- template: /templates/pipelines/runtest.yml@templates
-  #  parameters:
-  #    deploymentName: 'runtests'
-  #    dependsOn: ''
-  #    envGroup: '${{ variables.envGroupName }}'
-  #    testPath: '${{ variables.testPath }}'
+#  - template: /templates/pipelines/runtest.yml@templates
+#    parameters:
+#      deploymentName: 'runtests'
+#      dependsOn: ''
+#      envGroup: '${{ variables.envGroupName }}'
+#      testPath: '${{ variables.testPath }}'
 
 # Build stage. Docker build, tag and push
 - stage: build
