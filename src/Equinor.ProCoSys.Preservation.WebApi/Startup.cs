@@ -177,13 +177,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     .UseBusConnection(Configuration.GetConnectionString("ServiceBus"))
                     .WithLeaderElector(leaderElectorUrl)
                     .WithRenewLeaseInterval(int.Parse(Configuration["ServiceBus:LeaderElectorRenewLeaseInterval"]))
-                    .WithSubscription(PcsTopic.Tag, "preservation_tag")
-                    .WithSubscription(PcsTopic.TagFunction, "preservation_tagfunction")
-                    .WithSubscription(PcsTopic.Project, "preservation_project")
-                    .WithSubscription(PcsTopic.CommPkg, "preservation_commpkg")
-                    .WithSubscription(PcsTopic.McPkg, "preservation_mcpkg")
-                    .WithSubscription(PcsTopic.Responsible, "preservation_responsible")
-                    .WithSubscription(PcsTopic.Certificate, "preservation_certificate")
+                    .WithSubscription(PcsTopicConstants.Tag, "preservation_tag")
+                    .WithSubscription(PcsTopicConstants.TagFunction, "preservation_tagfunction")
+                    .WithSubscription(PcsTopicConstants.Project, "preservation_project")
+                    .WithSubscription(PcsTopicConstants.CommPkg, "preservation_commpkg")
+                    .WithSubscription(PcsTopicConstants.McPkg, "preservation_mcpkg")
+                    .WithSubscription(PcsTopicConstants.Responsible, "preservation_responsible")
+                    .WithSubscription(PcsTopicConstants.Certificate, "preservation_certificate")
                     //THIS METHOD SHOULD BE FALSE IN NORMAL OPERATION.
                     //ONLY SET TO TRUE WHEN A LARGE NUMBER OF MESSAGES HAVE FAILED AND ARE COPIED TO DEAD LETTER.
                     //WHEN SET TO TRUE, MESSAGES ARE READ FROM DEAD LETTER QUEUE INSTEAD OF NORMAL QUEUE

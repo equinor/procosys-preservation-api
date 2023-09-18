@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using ServiceResult;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Telemetry;
+using Equinor.ProCoSys.PcsServiceBus.Enums;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
@@ -39,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var certificateEvent = JsonSerializer.Deserialize<CertificateTopic>(messageJson);
             if (certificateEvent != null && certificateEvent.Behavior == "delete")
             {
-                TrackUnsupportedDeleteEvent(PcsTopic.Certificate, certificateEvent.ProCoSysGuid);
+                TrackUnsupportedDeleteEvent(PcsTopicConstants.Certificate, certificateEvent.ProCoSysGuid);
                 return;
             }
 
@@ -59,7 +60,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private async Task HandleAutoTransferIfRelevantAsync(CertificateTopic certificateEvent)
         {
-            if (certificateEvent.CertificateType == "RFOC" || certificateEvent.CertificateType == "RFCC")
+            if (certificateEvent.CertificateStatus == CertificateStatus.Accepted
+                && (certificateEvent.CertificateType == "RFOC" || certificateEvent.CertificateType == "RFCC"))
             {
                 var result = await _mediator.Send(new AutoTransferCommand(
                     certificateEvent.ProjectName,
@@ -102,11 +104,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     {nameof(certificateTopic.ProjectName), NormalizeProjectName(certificateTopic.ProjectName)}
                 });
 
-        private void TrackUnsupportedDeleteEvent(PcsTopic topic, Guid guid) =>
+        private void TrackUnsupportedDeleteEvent(string topic, Guid guid) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {"Event Delete", topic.ToString()},
+                    {"Event Delete", topic},
                     {"ProCoSysGuid", guid.ToString()},
                     {"Supported", "false"}
                 });
