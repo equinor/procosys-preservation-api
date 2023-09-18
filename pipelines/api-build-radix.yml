@@ -83,4 +83,18 @@ stages:
       repository: '${{ variables.repositoryName }}'
       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
-  
+    # Docker Build and Push (Master Only)
+  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+    parameters:
+      deploymentName: 'docker_build_and_push_master_only'
+      dependsOn: ''
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/pbi/104952_Move_Preservation_API_to_Radix'))  #TODO: MÅ ENDRES TIL MASTER.
+      env: 'pcs-${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      buildCommand: buildAndPush
+      versionNumber: ${{ variables.versionNumber }}
+      arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
+      dockerfilePath: '${{ variables.dockerfilePath }}'
+      buildContext: '$(Build.SourcesDirectory)/src'
+      repository: '${{ variables.repositoryName }}'
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
