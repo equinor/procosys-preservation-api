@@ -1,0 +1,44 @@
+
+##
+## The template wraps api calls to the radix platform to promote a deploment from one environment to another.
+## As the radix jobs are async, the template will wait for a successfull or failed status by polling the api.
+## A 600 second timeout has been implemented.
+##
+## Parameters required are the source environment, the to environment and name of the deployment job.
+## 
+## The deployment job name changes for each environment, so the response must be emitted in the job output.
+## 
+## This should be fetched by using `$[ stageDependencies ]' syntax. The stage and job name must be referenced.
+## E.g. `$[ stageDependencies.STAGENAME.JOBNAME.outputs['JOBNAME.RADIXJOB.radixJobName'] ]`
+## 
+
+parameters:
+- name: fromEnvironment
+  type: string
+  displayName: RADIX environment to promote artifact from
+- name: toEnvironment
+  type: string
+  displayName: RADIX environment to promote artifact to
+- name: deploymentName
+  type: string
+  displayName: The deployment job name from the previous stage
+- name: radixResource
+  default: 6dae42f8-4368-4678-94ff-3960e28e3630
+- name: radixApplication
+  default: fusion-services-meetings
+- name: radixUrl
+  default: https://api.radix.equinor.com/api/v1
+
+
+
+steps:
+- task: AzureCLI@2
+  displayName: Trigger deploy to radix
+  name: RADIXJOB
+  inputs:
+    azureSubscription: $(subscriptionService)
+    addSpnToEnvironment: true
+    scriptType: pscore
+    scriptLocation: 'inlineScript'
+    FailOnStandardError: true
+    inlineScript: "$token = az account get-access-token --resource ${{ parameters.radixResource }} --query=accessToken -otsv\n#magic___^_^___line\n$body = ConvertTo-Json @{ \n  \"triggeredBy\" = \"Azure-Devops ($(Build.RequestedFor))\"\n  fromEnvironment = \"${{ parameters.fromEnvironment }}\"\n  toEnvironment = \"${{ parameters.toEnvironment }}\"\n  deploymentName = \"${{ parameters.deploymentName }}\"\n}\nWrite-Host \"Sending payload: $body\"\n  #magic___^_^___line\n$radixUrl = \"${{ parameters.radixUrl }}/applications/${{ parameters.radixApplication }}/pipelines/promote\"\n  #magic___^_^___line\nWrite-Host \"Sending POST to $radixUrl\"\n$resp = Invoke-RestMethod -Method Post -Uri $radixUrl -Headers @{\"Authorization\" = \"Bearer $token\"; \"Content-Type\" = \"application/json\" } -Body $body\nWrite-Host $resp\n  #magic___^_^___line\n$jobName = $resp.name\n  #magic___^_^___line\n$checkUrl = \"${{ parameters.radixUrl }}/applications/${{ parameters.radixApplication }}/jobs/$jobName\"\n  #magic___^_^___line\n$checkStarted = Get-Date\n  #magic___^_^___line\nwhile ($true) {\n  Write-Host \"Checking status...\"\n  $checkResp = Invoke-RestMethod -Uri $checkUrl -Headers @{\"Authorization\" = \"Bearer $token\" }                        \n  #magic___^_^___line\n  Write-Host (ConvertTo-Json $checkResp -Depth 10 -Compress)\n  ## We want to stop when status -not Running || Waiting\n  #magic___^_^___line\n  if ($checkResp.status -ne \"Running\" -and $checkResp.status -ne \"Waiting\") {              \n    break;\n  }\n    #magic___^_^___line\n  if ( ((Get-Date) - $checkStarted).Seconds -gt 600) {\n    Write-Host \"Timeout...\"\n    throw \"Radix job took over 600 seconds, aborting...\"\n  }\n    #magic___^_^___line\n  Start-Sleep -Seconds 10\n}\n    #magic___^_^___line\n    #magic___^_^___line\n## Do a last check for status -> If failed, write ERROR using #VSO commands \nWrite-Host \"Final status check...\"\n$checkResp = Invoke-RestMethod -Uri $checkUrl -Headers @{\"Authorization\" = \"Bearer $token\" }   \nif ($checkResp.status -ne \"Succeeded\") {              \n  Write-Host \"##vso[task.logissue type=error]Deployment to Radix failed.\"\n  throw \"Radix deployment failed\"\n}\n    #magic___^_^___line\n$deploymentName = $checkResp.deployments | select -Property name | select -First 1 -ExpandProperty name\nWrite-Host \"Setting deployment name: $deploymentName\"\nWrite-Host \"##vso[task.setvariable variable=radixJobName;isOutput=true;]$deploymentName\"\n"

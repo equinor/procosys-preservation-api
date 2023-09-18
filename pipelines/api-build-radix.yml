@@ -1,0 +1,86 @@
+trigger:
+  branches:
+    include:
+      - pbi/104952_Move_Preservation_API_to_Radix
+
+resources:
+  repositories:
+  - repository: self
+  - repository: templates
+    type: github
+    name: equinor/procosys-infra
+    endpoint: 'equinor'
+
+# Global variables for the pipeline
+variables:
+ - template: templates/variables/preservation-variables.yml@templates
+ - template: templates/variables/procosys-global-variables.yml@templates
+
+ - name: 'repositoryName'
+   value: 'preservation/api'
+
+ - name: 'versionNumber'
+   value: '1.000.0.'
+
+ - name: NUGET.PLUGIN.HANDSHAKE.TIMEOUT.IN.SECONDS
+   value: 40
+  
+ - name: NUGET.PLUGIN.REQUEST.TIMEOUT.IN.SECONDS
+   value: 40
+
+ - name: 'leaderElectorDockerImage'
+   value: '${{ variables.containerRegistryName }}.azurecr.io/leader-elector:9'
+
+ - name: 'leaderElectorLeaseTime'
+   value: '5'
+
+name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
+
+stages:
+# Run tests Stage
+- stage: runtests
+  displayName: 'Run tests'
+  variables:
+    envName: 'runtests'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'
+
+  jobs:
+  # Run Test
+  #- template: /templates/pipelines/runtest.yml@templates
+  #  parameters:
+  #    deploymentName: 'runtests'
+  #    dependsOn: ''
+  #    envGroup: '${{ variables.envGroupName }}'
+  #    testPath: '${{ variables.testPath }}'
+
+# Build stage. Docker build, tag and push
+- stage: build
+  displayName: 'Build'
+  dependsOn: '' #runtests
+  variables:
+    envName: 'build'
+    envRg: '${{ variables.envRgName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
+
+  jobs:
+  # Docker Build
+  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+    parameters:
+      deploymentName: 'docker_build'
+      dependsOn: ''
+      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+      env: 'pcs-${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      buildCommand: build
+      versionNumber: ${{ variables.versionNumber }}
+      arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
+      dockerfilePath: '${{ variables.dockerfilePath }}'
+      buildContext: '$(Build.SourcesDirectory)/src'
+      repository: '${{ variables.repositoryName }}'
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+
+  
