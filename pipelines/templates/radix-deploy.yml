@@ -13,7 +13,7 @@ steps:
   displayName: Trigger deploy to radix
   name: RADIXJOB
   inputs:
-    azureSubscription: '${{ parameters.serviceConnection }}'
+    azureSubscription: 'equinor-procosys-non-prod-devops' #todo ta bort hardkoding
     addSpnToEnvironment: true
     scriptType: pscore
     scriptLocation: 'inlineScript'
