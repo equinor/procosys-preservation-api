@@ -7,7 +7,9 @@ parameters:
   - name: radixUrl
     default: https://api.radix.equinor.com/api/v1
     displayName: Host of radix api, including version 
-  - serviceConnection: ''
+  - name: serviceConnection
+    default: ''
+    displayName: 'Service Connection'
 
 steps:
 - task: AzureCLI@2
