@@ -11,12 +11,15 @@ parameters:
     default: ''
     displayName: 'Service Connection'
 
+    #[error]Script failed with error: Error: Input required: connectedServiceNameARM
+
+
 steps:
 - task: AzureCLI@2
   displayName: Trigger deploy to radix
   name: RADIXJOB
   inputs:
-    azureSubscription: ${{ parameters.serviceConnection }}  #todo ta bort hardkoding
+    connectedServiceNameARM: ${{ parameters.serviceConnection }}  #todo ta bort hardkoding
     addSpnToEnvironment: true
     scriptType: pscore
     scriptLocation: 'inlineScript'
