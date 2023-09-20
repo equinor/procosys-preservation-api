@@ -7,13 +7,14 @@ parameters:
   - name: radixUrl
     default: https://api.radix.equinor.com/api/v1
     displayName: Host of radix api, including version 
-    
+  - serviceConnection: ''
+
 steps:
 - task: AzureCLI@2
   displayName: Trigger deploy to radix
   name: RADIXJOB
   inputs:
-    azureSubscription: 'equinor-procosys-non-prod-devops' #todo ta bort hardkoding
+    azureSubscription: ${{ parameters.serviceConnection }}  #todo ta bort hardkoding
     addSpnToEnvironment: true
     scriptType: pscore
     scriptLocation: 'inlineScript'
