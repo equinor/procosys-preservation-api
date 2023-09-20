@@ -10,6 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'equinor'
+    ref: 'pbi/105865_Clean_Up_PullRequestsin_Preservation-api'
 
 # Global variables for the pipeline
 variables:
@@ -54,7 +55,7 @@ stages:
 #      envGroup: '${{ variables.envGroupName }}'
 #      testPath: '${{ variables.testPath }}'
 
-# Build stage. Docker build, tag and push
+# Build stage. Docker build. If master, tag and push
 - stage: build
   displayName: 'Build'
   dependsOn: '' #runtests
@@ -67,21 +68,23 @@ stages:
     dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
 
   jobs:
+
   # Docker Build
-  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
-    parameters:
-      deploymentName: 'docker_build'
-      dependsOn: ''
-      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
-      env: 'pcs-${{ variables.envName }}'
-      envGroup: '${{ variables.envGroupName }}'
-      buildCommand: build
-      versionNumber: ${{ variables.versionNumber }}
-      arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
-      dockerfilePath: '${{ variables.dockerfilePath }}'
-      buildContext: '$(Build.SourcesDirectory)/src'
-      repository: '${{ variables.repositoryName }}'
-      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+  # - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+  # - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+  #  parameters:
+  #    deploymentName: 'docker_build'
+  #    dependsOn: ''
+  #    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  #    env: 'pcs-${{ variables.envName }}'
+  #    envGroup: '${{ variables.envGroupName }}'
+  #    buildCommand: build
+  #    versionNumber: ${{ variables.versionNumber }}
+  #    arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
+  #    dockerfilePath: '${{ variables.dockerfilePath }}'
+  #    buildContext: '$(Build.SourcesDirectory)/src'
+  #    repository: '${{ variables.repositoryName }}'
+  #    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
     # Docker Build and Push (Master Only)
   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
@@ -98,3 +101,33 @@ stages:
       buildContext: '$(Build.SourcesDirectory)/src'
       repository: '${{ variables.repositoryName }}'
       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+
+    # Create Migration Script
+  - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: 'create_migration_script'
+      envGroup: '${{ variables.envGroupName }}'
+      serviceConnection: '${{ variables.nonProdServiceConnection }}'
+
+# Development deploy stage
+- stage: dev
+  displayName: 'Deploy to Dev'
+  dependsOn: 'build'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/pbi/104952_Move_Preservation_API_to_Radix')) #TODO: MÅ ENDRES TIL MASTER
+  variables:
+    envName: 'dev'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+    aspNetCoreEnvironment: 'Development'
+
+  jobs:
+  - job: Deploy  #later: Vi kan gjøre build-deploy her istedenfor, altså at radix overtar bygging av docker image. 
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - template: templates/radix-deploy.yml
+
