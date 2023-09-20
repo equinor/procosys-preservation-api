@@ -13,7 +13,7 @@ steps:
   displayName: Trigger deploy to radix
   name: RADIXJOB
   inputs:
-    azureSubscription: $(subscriptionService)
+    azureSubscription: '${{ parameters.serviceConnection }}'
     addSpnToEnvironment: true
     scriptType: pscore
     scriptLocation: 'inlineScript'
