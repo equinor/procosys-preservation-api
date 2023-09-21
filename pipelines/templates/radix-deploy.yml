@@ -29,9 +29,9 @@ steps:
 
       ## Get current branch
       $body = ConvertTo-Json @{ 
-        "imageTagNames": "[backend=latest]"
-        "toEnvironment": "dev"
-        "triggeredBy": "Azure-Devops ($(Build.RequestedFor))"
+        "imageTagNames" = "[backend=latest]"
+        "toEnvironment" = "dev"
+        "triggeredBy" = "Azure-Devops ($(Build.RequestedFor))"
       }
 
       Write-Host "Sending payload: $body"
