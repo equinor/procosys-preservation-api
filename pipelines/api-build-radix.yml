@@ -67,7 +67,7 @@ stages:
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
     dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
 
-  jobs:
+  #jobs:
 
   # Docker Build
   # - template: /templates/pipelines/dockerbuild-preservation.yml@templates
