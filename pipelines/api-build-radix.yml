@@ -56,16 +56,16 @@ stages:
 #      testPath: '${{ variables.testPath }}'
 
 # Build stage. Docker build. If master, tag and push
-- stage: build
-  displayName: 'Build'
-  dependsOn: '' #runtests
-  variables:
-    envName: 'build'
-    envRg: '${{ variables.envRgName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
-    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
+#- stage: build
+#  displayName: 'Build'
+#  dependsOn: '' #runtests
+#  variables:
+#    envName: 'build'
+#    envRg: '${{ variables.envRgName }}'
+#    containerRegistry: '${{ variables.containerRegistryName }}'
+#    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+#    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+#    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
 
   #jobs:
 
