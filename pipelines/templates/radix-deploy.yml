@@ -29,7 +29,7 @@ steps:
 
       ## Get current branch
       $body = ConvertTo-Json @{ 
-        imageTagNames = "backend=latest"
+        imageTagNames = "backend:latest"
         toEnvironment = "dev"
         "triggeredBy" = "Azure-Devops ($(Build.RequestedFor))"
       }
