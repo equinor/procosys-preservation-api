@@ -29,7 +29,7 @@ steps:
 
       ## Get current branch
       $body = ConvertTo-Json @{ 
-        "imageTagNames": ["backend=latest"]
+        "imageTagNames": "[backend=latest]"
         "toEnvironment": "dev"
         "triggeredBy": "Azure-Devops ($(Build.RequestedFor))"
       }
@@ -66,7 +66,6 @@ steps:
 
         Start-Sleep -Seconds 10
       }
-
 
       ## Do a last check for status -> If failed, write ERROR using #VSO commands 
       Write-Host "Final status check..."
