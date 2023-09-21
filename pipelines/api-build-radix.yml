@@ -103,12 +103,12 @@ stages:
       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
     # Create Migration Script
-  - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: ''
-      deploymentName: 'create_migration_script'
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.nonProdServiceConnection }}'
+#  - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
+#    parameters:
+#      dependsOn: ''
+#      deploymentName: 'create_migration_script'
+#      envGroup: '${{ variables.envGroupName }}'
+#      serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
 # Development deploy stage
 - stage: dev
@@ -123,7 +123,7 @@ stages:
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
     aspNetCoreEnvironment: 'Development'
-
+    
   jobs:
   - job: Deploy  #later: Vi kan gjøre build-deploy her istedenfor, altså at radix overtar bygging av docker image. 
     pool:
