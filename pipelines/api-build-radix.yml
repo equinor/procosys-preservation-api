@@ -39,81 +39,81 @@ name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
 
 stages:
 # Run tests Stage
-#- stage: runtests
-#  displayName: 'Run tests'
-#  variables:
-#    envName: 'runtests'
-#    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-#    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'#
+- stage: runtests
+  displayName: 'Run tests'
+  variables:
+    envName: 'runtests'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'#
 
-#  jobs:
+  jobs:
   # Run Test
-#  - template: /templates/pipelines/runtest.yml@templates
-#    parameters:
-#      deploymentName: 'runtests'
-#      dependsOn: ''
-#      envGroup: '${{ variables.envGroupName }}'
-#      testPath: '${{ variables.testPath }}'
+  - template: /templates/pipelines/runtest.yml@templates
+    parameters:
+      deploymentName: 'runtests'
+      dependsOn: ''
+      envGroup: '${{ variables.envGroupName }}'
+      testPath: '${{ variables.testPath }}'
 
 # Build stage. Docker build. If master, tag and push
-#- stage: build
-#  displayName: 'Build'
-#  dependsOn: '' #runtests
-#  variables:
-#    envName: 'build'
-#    envRg: '${{ variables.envRgName }}'
-#    containerRegistry: '${{ variables.containerRegistryName }}'
-#    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-#    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
-#    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
+- stage: build
+  displayName: 'Build'
+  dependsOn: 'runtests' 
+  variables:
+    envName: 'build'
+    envRg: '${{ variables.envRgName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
 
-  #jobs:
+  jobs:
 
   # Docker Build
-  # - template: /templates/pipelines/dockerbuild-preservation.yml@templates
-  # - template: /templates/pipelines/dockerbuild-preservation.yml@templates
-  #  parameters:
-  #    deploymentName: 'docker_build'
-  #    dependsOn: ''
-  #    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
-  #    env: 'pcs-${{ variables.envName }}'
-  #    envGroup: '${{ variables.envGroupName }}'
-  #    buildCommand: build
-  #    versionNumber: ${{ variables.versionNumber }}
-  #    arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
-  #    dockerfilePath: '${{ variables.dockerfilePath }}'
-  #    buildContext: '$(Build.SourcesDirectory)/src'
-  #    repository: '${{ variables.repositoryName }}'
-  #    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+     parameters:
+       deploymentName: 'docker_build'
+       dependsOn: ''
+       condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+       env: 'pcs-${{ variables.envName }}'
+       envGroup: '${{ variables.envGroupName }}'
+       buildCommand: build
+       versionNumber: ${{ variables.versionNumber }}
+       arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
+       dockerfilePath: '${{ variables.dockerfilePath }}'
+       buildContext: '$(Build.SourcesDirectory)/src'
+       repository: '${{ variables.repositoryName }}'
+       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
-    # Docker Build and Push (Master Only)
-  #- template: /templates/pipelines/dockerbuild-preservation.yml@templates
-  #  parameters:
-  #    deploymentName: 'docker_build_and_push_master_only'
-  #    dependsOn: ''
-  #    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/pbi/104952_Move_Preservation_API_to_Radix'))  #TODO: MÅ ENDRES TIL MASTER.
-  #    env: 'pcs-${{ variables.envName }}'
-  #    envGroup: '${{ variables.envGroupName }}'
-  #    buildCommand: buildAndPush
-  #    versionNumber: ${{ variables.versionNumber }}
-  #    arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
-  #    dockerfilePath: '${{ variables.dockerfilePath }}'
-  #    buildContext: '$(Build.SourcesDirectory)/src'
-  #    repository: '${{ variables.repositoryName }}'
-  #    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+  # Docker Build and Push (Master Only)
+   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+     parameters:
+       deploymentName: 'docker_build_and_push_master_only'
+       dependsOn: ''
+       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/pbi/104952_Move_Preservation_API_to_Radix'))  #TODO: MÅ ENDRES TIL MASTER.
+       env: 'pcs-${{ variables.envName }}'
+       envGroup: '${{ variables.envGroupName }}'
+       buildCommand: buildAndPush
+       versionNumber: ${{ variables.versionNumber }}
+       arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
+       dockerfilePath: '${{ variables.dockerfilePath }}'
+       buildContext: '$(Build.SourcesDirectory)/src'
+       repository: '${{ variables.repositoryName }}'
+       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
     # Create Migration Script
-#  - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
-#    parameters:
-#      dependsOn: ''
-#      deploymentName: 'create_migration_script'
-#      envGroup: '${{ variables.envGroupName }}'
-#      serviceConnection: '${{ variables.nonProdServiceConnection }}'
+   - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
+     parameters:
+       dependsOn: ''
+       deploymentName: 'create_migration_script'
+       envGroup: '${{ variables.envGroupName }}'
+       serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
 # Development deploy stage
 - stage: dev
   displayName: 'Deploy to Dev'
-  dependsOn: '' #todo: build
+  dependsOn: 'build' 
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/pbi/104952_Move_Preservation_API_to_Radix')) #TODO: MÅ ENDRES TIL MASTER
   variables:
     envName: 'dev'
@@ -125,7 +125,7 @@ stages:
     aspNetCoreEnvironment: 'Development'
     
   jobs:
-  - job: Deploy  #later: Vi kan gjøre build-deploy her istedenfor, altså at radix overtar bygging av docker image. 
+  - job: Deploy   
     pool:
       vmImage: ubuntu-latest
     steps:
