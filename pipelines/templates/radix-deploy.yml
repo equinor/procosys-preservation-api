@@ -27,13 +27,14 @@ steps:
     inlineScript: |
       $token = az account get-access-token --resource ${{ parameters.radixResource }} --query=accessToken -otsv
 
+
       ## Get current branch
       $body = ConvertTo-Json @{ 
-        "imageTagNames" = {backend=latest}
-        "toEnvironment" = "dev"
+        "imageTagNames" = "backend=latest"  
+        "toEnvironment" = "dev"     
         "triggeredBy" = "Azure-Devops ($(Build.RequestedFor))"
       }
-
+ 
       Write-Host "Sending payload: $body"
 
       $radixUrl = "${{ parameters.radixUrl }}/applications/${{ parameters.radixApplication }}/pipelines/deploy"
