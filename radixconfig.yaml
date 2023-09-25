@@ -25,6 +25,7 @@ spec:
     secrets:
     - CONNECTIONSTRINGS__APPCONFIG
     environmentConfig:
+    # Development environment
     - environment: dev
       identity:
         azure:
@@ -41,6 +42,7 @@ spec:
         limits:
           memory: '256Mi'
           cpu: '250m'
+    # Test environment
     - environment: test
       identity:
         azure:
@@ -70,6 +72,12 @@ spec:
       port: 3003
     publicPort: http
     environmentConfig:
+    # Development environment
+    - environment: dev
+      variables:
+        LEASE_TIME: 5
+      monitoring: true
+    # Test environment
     - environment: test
       variables:
         LEASE_TIME: 5
