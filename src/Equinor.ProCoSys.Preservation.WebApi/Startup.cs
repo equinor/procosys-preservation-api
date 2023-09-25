@@ -168,11 +168,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 (!_environment.IsDevelopment() || Configuration.GetValue<bool>("ServiceBus:EnableInDevelopment"));
             if (serviceBusEnabled)
             {
-                // Env variable used in kubernetes. Configuration is added for easier use locally
+                // Env variable used in radix. Configuration is added for easier use locally
                 // Url will be validated during startup of service bus integration and give a
                 // Uri exception if invalid.
-                var leaderElectorUrl = "http://" + (Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE") ?? Configuration["ServiceBus:LeaderElectorUrl"]) + ":3003";
-               
+             
+                var leaderElectorUrl = Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE") ?? Configuration["ServiceBus:LeaderElectorUrl"];
+
+
                 services.AddPcsServiceBusIntegration(options => options
                     .UseBusConnection(Configuration.GetConnectionString("ServiceBus"))
                     .WithLeaderElector(leaderElectorUrl)

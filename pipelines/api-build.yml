@@ -30,7 +30,7 @@ variables:
    value: 40
 
  - name: 'leaderElectorDockerImage'
-   value: '${{ variables.containerRegistryName }}.azurecr.io/leader-elector:latest'
+   value: '${{ variables.containerRegistryName }}.azurecr.io/leader-elector:13'
 
  - name: 'leaderElectorLeaseTime'
    value: '5'

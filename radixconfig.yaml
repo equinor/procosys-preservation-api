@@ -49,7 +49,7 @@ spec:
       variables:
         ASPNETCORE_ENVIRONMENT: 'Test'
         UseAzureAppConfiguration: 'true'
-        LEADERELECTOR_SERVICE: https://leader-elector-procosys-preservation-api-test.radix.equinor.com/
+        LEADERELECTOR_SERVICE: http://leader-elector/
       monitoring: true
       replicas: 2
       resources:
@@ -64,7 +64,7 @@ spec:
   # LeaderElector 
   #--------------------
   - name: leader-elector
-    image: procosys.azurecr.io/leader-elector:9
+    image: procosys.azurecr.io/leader-elector:13
     ports:
     - name: http
       port: 3003
