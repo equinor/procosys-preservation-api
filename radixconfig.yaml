@@ -67,18 +67,20 @@ spec:
   # LeaderElector 
   #--------------------
   - name: leader-elector
-    image: procosys.azurecr.io/leader-elector:13
+    image: procosys.azurecr.io/leader-elector:{imageTagName}
     ports:
     - name: http
       port: 3003
     environmentConfig:
     # Development environment
     - environment: dev
+      imageTagName: latest
       variables:
         LEASE_TIME: 5
       monitoring: true
     # Test environment
     - environment: test
+      imageTagName: latest
       variables:
         LEASE_TIME: 5
       monitoring: true
