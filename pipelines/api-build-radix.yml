@@ -130,4 +130,4 @@ stages:
     steps:
     - template: templates/radix-deploy.yml
       parameters:
-        imageTagNameBackend: '${{ variables.versionNumber }}$(Build.BuildId))'
+        imageTagNameBackend: '${{ variables.versionNumber }}$(Build.BuildId)'
