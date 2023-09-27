@@ -37,7 +37,7 @@ steps:
 
       ## Get current branch
       $body = ConvertTo-Json @{ 
-        imageTagNames = @{ backend='${{ parameters.imageTagNameBackend}}'; leader-elector='13' }  
+        imageTagNames = @{ 'backend'='${{ parameters.imageTagNameBackend}}'; 'leader-elector'='13' }  
         toEnvironment = 'dev'     
         triggeredBy = 'Azure-Devops ($(Build.RequestedFor))'
       } 
