@@ -129,4 +129,5 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - template: templates/radix-deploy.yml
-
+      parameters:
+        imageTagNameBackend: '${{ parameters.versionNumber }}$(Build.BuildId))'

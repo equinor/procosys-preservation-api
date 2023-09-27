@@ -34,6 +34,7 @@ spec:
       variables:
         ASPNETCORE_ENVIRONMENT: 'Development'
         UseAzureAppConfiguration: 'true'
+        LEADERELECTOR_SERVICE: http://leader-elector:3003
       monitoring: true
       resources:
         requests:
@@ -51,7 +52,7 @@ spec:
       variables:
         ASPNETCORE_ENVIRONMENT: 'Test'
         UseAzureAppConfiguration: 'true'
-        LEADERELECTOR_SERVICE: http://leader-elector/
+        LEADERELECTOR_SERVICE: http://leader-elector:3003
       monitoring: true
       replicas: 2
       resources:
@@ -70,7 +71,6 @@ spec:
     ports:
     - name: http
       port: 3003
-    publicPort: http
     environmentConfig:
     # Development environment
     - environment: dev
