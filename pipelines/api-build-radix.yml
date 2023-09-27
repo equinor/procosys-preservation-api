@@ -122,6 +122,7 @@ stages:
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
     aspNetCoreEnvironment: 'Development'
+    imageTagNameBackend: '${{ parameters.versionNumber }}$(Build.BuildId))'
     
   jobs:
   - job: Deploy   
@@ -130,4 +131,4 @@ stages:
     steps:
     - template: templates/radix-deploy.yml
       parameters:
-        imageTagNameBackend: '${{ parameters.versionNumber }}$(Build.BuildId))'
+        imageTagNameBackend: '${{ variables.versionNumber }}$(Build.BuildId))'
