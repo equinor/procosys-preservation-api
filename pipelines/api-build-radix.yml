@@ -122,7 +122,6 @@ stages:
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
     aspNetCoreEnvironment: 'Development'
-    imageTagNameBackend: '${{ parameters.versionNumber }}$(Build.BuildId))'
     
   jobs:
   - job: Deploy   
