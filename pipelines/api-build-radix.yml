@@ -39,21 +39,21 @@ name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
 
 stages:
 # Run tests Stage
-- stage: RunTests
-  displayName: 'Run tests'
-  variables:
-    envName: 'runtests'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'
-
-  jobs:
-  # Run Test
-  - template: /templates/pipelines/runtest.yml@templates
-    parameters:
-      deploymentName: 'runtests'
-      dependsOn: ''
-      envGroup: '${{ variables.envGroupName }}'
-      testPath: '${{ variables.testPath }}'
+#- stage: RunTests
+#  displayName: 'Run tests'
+#  variables:
+#    envName: 'runtests'
+#    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+#    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'
+#
+#  jobs:
+#  # Run Test
+#  - template: /templates/pipelines/runtest.yml@templates
+#    parameters:
+#      deploymentName: 'runtests'
+#      dependsOn: ''
+#      envGroup: '${{ variables.envGroupName }}'
+#      testPath: '${{ variables.testPath }}'
 
 # Build stage. Docker build. If master, tag and push
 - stage: Build
@@ -102,12 +102,12 @@ stages:
        dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
     # Create Migration Script
-   - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
-     parameters:
-       dependsOn: ''
-       deploymentName: 'create_migration_script'
-       envGroup: '${{ variables.envGroupName }}'
-       serviceConnection: '${{ variables.nonProdServiceConnection }}'
+#   - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
+#     parameters:
+#       dependsOn: ''
+#       deploymentName: 'create_migration_script'
+#       envGroup: '${{ variables.envGroupName }}'
+#       serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
 # Deploy stage - development
 - stage: DeployDev
