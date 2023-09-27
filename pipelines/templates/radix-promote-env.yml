@@ -13,6 +13,10 @@
 ## 
 
 parameters:
+- name: serviceConnection
+  default: 'procosys - non-prod'
+  displayName: 'Service Connection'
+    
 - name: fromEnvironment
   type: string
   displayName: RADIX environment to promote artifact from
