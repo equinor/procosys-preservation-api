@@ -16,16 +16,21 @@ parameters:
 - name: fromEnvironment
   type: string
   displayName: RADIX environment to promote artifact from
+
 - name: toEnvironment
   type: string
   displayName: RADIX environment to promote artifact to
+
 - name: deploymentName
   type: string
   displayName: The deployment job name from the previous stage
+
 - name: radixResource
   default: 6dae42f8-4368-4678-94ff-3960e28e3630
+
 - name: radixApplication
-  default: fusion-services-meetings
+  default: procosys-preservation-api
+
 - name: radixUrl
   default: https://api.radix.equinor.com/api/v1
 

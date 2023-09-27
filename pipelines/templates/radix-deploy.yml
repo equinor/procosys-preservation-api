@@ -2,17 +2,25 @@
 parameters:
   - name: radixResource
     default: 6dae42f8-4368-4678-94ff-3960e28e3630
+
   - name: radixApplication
     default: procosys-preservation-api
+
   - name: radixUrl
     default: https://api.radix.equinor.com/api/v1
     displayName: Host of radix api, including version 
+
   - name: serviceConnection
     default: 'procosys - non-prod'
     displayName: 'Service Connection'
+
   - name: imageTagNameBackend
-    default: ''
+    type: string
     displayName: 'Image tag name for backend'
+
+  - name: imageTagNameLeaderElector
+    type: string 
+    displayName: 'Image tag name for leader elector'
 
 steps:
 - task: AzureCLI@2
@@ -27,10 +35,9 @@ steps:
     inlineScript: |
       $token = az account get-access-token --resource ${{ parameters.radixResource }} --query=accessToken -otsv
 
-
       ## Get current branch
       $body = ConvertTo-Json @{ 
-        imageTagNames = @{backend='${{ parameters.imageTagNameBackend}}'}  
+        imageTagNames = @{ backend='${{ parameters.imageTagNameBackend}}', leader-elector='${{ parameters.imageTagNameLeaderElector}}')}  
         toEnvironment = 'dev'     
         triggeredBy = 'Azure-Devops ($(Build.RequestedFor))'
       } 

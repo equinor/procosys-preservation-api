@@ -29,8 +29,8 @@ variables:
  - name: NUGET.PLUGIN.REQUEST.TIMEOUT.IN.SECONDS
    value: 40
 
- - name: 'leaderElectorDockerImage'
-   value: '${{ variables.containerRegistryName }}.azurecr.io/leader-elector:9'
+ - name: 'leaderElectorDockerImageTagName'
+   value: '13'
 
  - name: 'leaderElectorLeaseTime'
    value: '5'
@@ -39,7 +39,7 @@ name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
 
 stages:
 # Run tests Stage
-- stage: runtests
+- stage: RunTests
   displayName: 'Run tests'
   variables:
     envName: 'runtests'
@@ -56,7 +56,7 @@ stages:
       testPath: '${{ variables.testPath }}'
 
 # Build stage. Docker build. If master, tag and push
-- stage: build
+- stage: Build
   displayName: 'Build'
   dependsOn: 'runtests' 
   variables:
@@ -109,9 +109,9 @@ stages:
        envGroup: '${{ variables.envGroupName }}'
        serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
-# Development deploy stage
-- stage: dev
-  displayName: 'Deploy to Dev'
+# Deploy stage - development
+- stage: DeployDev
+  displayName: 'Deploy to dev'
   dependsOn: 'build' 
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/pbi/104952_Move_Preservation_API_to_Radix')) #TODO: MÅ ENDRES TIL MASTER
   variables:
@@ -131,3 +131,61 @@ stages:
     - template: templates/radix-deploy.yml
       parameters:
         imageTagNameBackend: '${{ variables.versionNumber }}$(Build.BuildId)'
+        imageTagNameLeaderElector: ${{ variables.leaderElectorDockerImageTagName }}
+
+  # Deploy stage - test
+- stage: DeployTest
+  displayName: 'Deploy to test'
+  dependsOn: 'dev'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  variables:
+    envName: 'test'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+    aspNetCoreEnvironment: 'Test'
+    radixPromoteFromEnv: 'dev'
+    radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ]
+
+  jobs:
+  # Run Migration Script (Predeploy)
+#  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+#    parameters:
+#      dependsOn: ''      
+#      deploymentName: 'run_migration_script'
+#      envGroup: '${{ variables.envGroupName }}'
+#      serviceConnection: '${{ variables.serviceConnection }}'
+#      kvName: '${{ variables.commonKeyVault }}'
+#      kvRgName: 'pcs-common-rg'
+#      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+#      serverName: '${{ variables.sqlServerName }}.database.windows.net'
+#      databaseName: '${{ variables.sqlDatabaseName }}'      
+
+  # Deploy to AKS
+  - template: templates/radix-promote-env.yml
+    parameters:
+      fromEnvironment: $(radixPromoteFromEnv)
+      toEnvironment: $(envName)
+      deploymentName: $(radixJobName)
+
+#      deploymentName: 'deploy_to_k8s'
+#      dependsOn: 'run_migration_script'
+#      serviceConnection: '${{ variables.serviceConnection }}'
+#      env: '${{ variables.envName }}'
+#      envRg: 'pcs-hosting-rg'
+#      envGroup: '${{ variables.envGroupName }}'
+#      dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
+#      clusterName: 'pcs-aks-test'
+#      kvClientIdName: '${{ variables.kvClientIdName }}'
+#      kvClientSecretName: '${{ variables.kvClientSecretName }}'
+#      kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
+#      kvTenantIdSecret: '${{ variables.kvTenantIdSecret }}'
+#      kvConnStringsSecret: '${{ variables.kvConnStringsSecret }}'
+#      kvName: '${{ variables.kvName }}'
+#      kvRgName: '${{ variables.envRgName }}'
+#     aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+#     replicas: 2
+#     leaderElectorDockerImage: '${{ variables.leaderElectorDockerImage }}'
+#     leaderElectorLeaseTime: '${{ variables.leaderElectorLeaseTime }}'
