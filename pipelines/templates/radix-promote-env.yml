@@ -35,7 +35,6 @@ parameters:
   default: https://api.radix.equinor.com/api/v1
 
 
-
 steps:
 - task: AzureCLI@2
   displayName: Trigger deploy to radix
