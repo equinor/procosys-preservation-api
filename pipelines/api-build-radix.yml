@@ -175,4 +175,3 @@ stages:
                   fromEnvironment: $(radixPromoteFromEnv)
                   toEnvironment: $(envName)
                   deploymentName: $(radixJobName)
-
