@@ -151,7 +151,7 @@ stages:
   jobs:
     - deployment: Deploy
       displayName: Migrate DB & promote
-      environment: '${{ variables.envGroupName }}'
+      environment: test
       strategy:
         runOnce:
           deploy:
