@@ -124,14 +124,17 @@ stages:
     aspNetCoreEnvironment: 'Development'
     
   jobs:
-  - job: Deploy   
-    pool:
-      vmImage: ubuntu-latest
-    steps:
-    - template: templates/radix-deploy.yml
-      parameters:
-        imageTagNameBackend: '${{ variables.versionNumber }}$(Build.BuildId)'
-        imageTagNameLeaderElector: ${{ variables.leaderElectorDockerImageTagName }}
+    - deployment: Deploy
+      displayName: Deploy to development
+      environment: '${{ variables.envGroupName }}'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - template: templates/radix-deploy.yml
+              parameters:
+                imageTagNameBackend: '${{ variables.versionNumber }}$(Build.BuildId)'
+                imageTagNameLeaderElector: ${{ variables.leaderElectorDockerImageTagName }}
 
 # Deploy stage - test
 - stage: DeployTest
@@ -152,7 +155,7 @@ stages:
   jobs:
     - deployment: Deploy
       displayName: Migrate DB & promote
-      environment: test
+      environment: '${{ variables.envGroupName }}'
       strategy:
         runOnce:
           deploy:
