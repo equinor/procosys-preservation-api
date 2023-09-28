@@ -147,7 +147,7 @@ stages:
     containerRegistry: '${{ variables.containerRegistryName }}' 
     aspNetCoreEnvironment: 'Test'
     radixPromoteFromEnv: 'dev'
-    radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['RADIXJOB.radixJobName'] ]
+    radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
 
   jobs:
     - deployment: Deploy

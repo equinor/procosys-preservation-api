@@ -100,6 +100,7 @@ steps:
         throw "Radix deployment failed"
       }
 
+      ## The deployment in Radix will have an id (or deployment name). This id is needed later to be able to promote to the next environment. We set a variable called radixJobName here, that is used next time the promote script is called.  
       $deploymentName = $checkResp.deployments | select -Property name | select -First 1 -ExpandProperty name
       Write-Host "Setting deployment name: $deploymentName"
       Write-Host "##vso[task.setvariable variable=radixJobName;isOutput=true;]$deploymentName"
