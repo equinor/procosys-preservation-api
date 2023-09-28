@@ -150,7 +150,72 @@ stages:
     containerRegistry: '${{ variables.containerRegistryName }}' 
     aspNetCoreEnvironment: 'Test'
     radixPromoteFromEnv: 'dev'
-    radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
+    radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
+
+  jobs:
+    - deployment: Deploy
+      displayName: Migrate DB & promote
+      environment: '${{ variables.envGroupName }}'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+  # Run Migration Script (Predeploy)
+#  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+#    parameters:
+#      dependsOn: ''      
+#      deploymentName: 'run_migration_script'
+#      envGroup: '${{ variables.envGroupName }}'
+#      serviceConnection: '${{ variables.serviceConnection }}'
+#      kvName: '${{ variables.commonKeyVault }}'
+#      kvRgName: 'pcs-common-rg'
+#      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+#      serverName: '${{ variables.sqlServerName }}.database.windows.net'
+#      databaseName: '${{ variables.sqlDatabaseName }}'      
+
+  # Promote to test
+
+              - template: templates/radix-promote-env.yml
+                parameters:
+                  fromEnvironment: $(radixPromoteFromEnv)
+                  toEnvironment: $(envName)
+                  deploymentName: $(radixJobName)
+
+#      deploymentName: 'deploy_to_k8s'
+#      dependsOn: 'run_migration_script'
+#      serviceConnection: '${{ variables.serviceConnection }}'
+#      env: '${{ variables.envName }}'
+#      envRg: 'pcs-hosting-rg'
+#      envGroup: '${{ variables.envGroupName }}'
+#      dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
+#      clusterName: 'pcs-aks-test'
+#      kvClientIdName: '${{ variables.kvClientIdName }}'
+#      kvClientSecretName: '${{ variables.kvClientSecretName }}'
+#      kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
+#      kvTenantIdSecret: '${{ variables.kvTenantIdSecret }}'
+#      kvConnStringsSecret: '${{ variables.kvConnStringsSecret }}'
+#      kvName: '${{ variables.kvName }}'
+#      kvRgName: '${{ variables.envRgName }}'
+#     aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+#     replicas: 2
+#     leaderElectorDockerImage: '${{ variables.leaderElectorDockerImage }}'
+#     leaderElectorLeaseTime: '${{ variables.leaderElectorLeaseTime }}'
+
+# Deploy stage - prod
+- stage: DeployProd
+  displayName: 'Deploy to prod'
+  dependsOn: 'DeployTest'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/pbi/104952_Move_Preservation_API_to_Radix')) # TODO: SETT TIL MASTER
+  variables:
+    envName: 'prod'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+    serviceConnection: '${{ variables.prodServiceConnection }}'
+    appServicePlan: '${{ variables.prodappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+    aspNetCoreEnvironment: 'Prod'
+    radixPromoteFromEnv: 'test'
+    radixJobName: $[ stageDependencies.DeployTest.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
 
   jobs:
     - deployment: Deploy
