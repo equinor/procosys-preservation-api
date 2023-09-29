@@ -126,6 +126,8 @@ stages:
     - deployment: Deploy
       displayName: Migrate DB & deploy
       environment: '${{ variables.envGroupName }}'
+      pool:
+        vmImage: 'windows-latest'
       strategy:
         runOnce:
           deploy:
