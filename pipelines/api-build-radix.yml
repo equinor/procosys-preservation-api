@@ -108,7 +108,7 @@ stages:
        envGroup: '${{ variables.envGroupName }}'
        serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
-# Deploy stage - development
+# Dev deploy stage
 - stage: DeployDev
   displayName: 'Deploy to dev'
   dependsOn: 'Build' 
@@ -123,10 +123,6 @@ stages:
     aspNetCoreEnvironment: 'Development'
     
   jobs:
-  - job: Deploy   
-    pool:
-      vmImage: ubuntu-latest
-    steps:
     # Run Migration Script (Predeploy)
     - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
       parameters:
@@ -140,10 +136,19 @@ stages:
         serverName: '${{ variables.sqlServerName }}.database.windows.net'
         databaseName: '${{ variables.sqlDatabaseName }}'      
 
-    - template: templates/radix-deploy.yml
-      parameters:
-        imageTagNameBackend: '${{ variables.versionNumber }}$(Build.BuildId)'
-        imageTagNameLeaderElector: ${{ variables.leaderElectorDockerImageTagName }}
+    - deployment: Deploy
+      displayName: Migrate DB & promote
+      environment: '${{ variables.envGroupName }}'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              # Run Migration Script (Predeploy)
+
+                - template: templates/radix-deploy.yml
+                  parameters:
+                    imageTagNameBackend: '${{ variables.versionNumber }}$(Build.BuildId)'
+                    imageTagNameLeaderElector: ${{ variables.leaderElectorDockerImageTagName }}
 
 # Deploy stage - test
 - stage: DeployTest
@@ -159,7 +164,7 @@ stages:
     containerRegistry: '${{ variables.containerRegistryName }}' 
     aspNetCoreEnvironment: 'Test'
     radixPromoteFromEnv: 'dev'
-    radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
+    radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
 
   jobs:
     - deployment: Deploy
