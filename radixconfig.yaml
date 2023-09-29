@@ -10,9 +10,7 @@ spec:
   - name: test
     build:
       from: pbi/104952_Move_Preservation_API_to_Radix
-  - name: prod
-    build:
-      from: pbi/104952_Move_Preservation_API_to_Radix
+      #  - name: prod
 
   components:
   # ---------
@@ -27,7 +25,6 @@ spec:
     secrets:
     - CONNECTIONSTRINGS__APPCONFIG
     environmentConfig:
-
     # Development environment
     - environment: dev
       identity:
@@ -46,7 +43,6 @@ spec:
         limits:
           memory: '256Mi'
           cpu: '250m'
-
     # Test environment
     - environment: test
       identity:
@@ -67,26 +63,6 @@ spec:
           memory: '256Mi'
           cpu: '250m'
 
-    # Prod environment
-    - environment: prod
-      identity:
-        azure:
-          clientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7
-      imageTagName: latest
-      variables:
-        ASPNETCORE_ENVIRONMENT: 'Prod'
-        UseAzureAppConfiguration: 'true'
-        LEADERELECTOR_SERVICE: http://leader-electorTULLBALL:3003  #TODO: MÅ FIKSES NÅR VI ER I PROD
-      monitoring: true
-      replicas: 2
-      resources:
-        requests:
-          memory: '128Mi'
-          cpu: '100m'
-        limits:
-          memory: '256Mi'
-          cpu: '250m'
-
   #--------------------
   # LeaderElector 
   #--------------------
@@ -96,27 +72,18 @@ spec:
     - name: http
       port: 3003
     environmentConfig:
-
     # Development environment
     - environment: dev
       imageTagName: latest
       variables:
         LEASE_TIME: 5
       monitoring: true
-
     # Test environment
     - environment: test
       imageTagName: latest
       variables:
         LEASE_TIME: 5
       monitoring: true
-
-    # Prod environment     #TODO FIKS NÅR VI GÅR I PROD
-    # environment: prod
-    #  imageTagName: latest
-    #  variables:
-    #    LEASE_TIME: 5
-    #  monitoring: true
   #--------------------------------
   # External docker image registry
   #--------------------------------
