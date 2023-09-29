@@ -68,7 +68,7 @@ spec:
     - environment: prod
       identity:
         azure:
-          clientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7
+          clientId: 1eb50c54-e897-4216-93d0-6ca86b0cf681
       imageTagName: latest
       variables:
         ASPNETCORE_ENVIRONMENT: 'Prod'
