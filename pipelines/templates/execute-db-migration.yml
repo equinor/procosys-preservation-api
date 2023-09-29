@@ -14,26 +14,26 @@ steps:
   - task: AzurePowerShell@5
     displayName: 'Get KeyVault Secret'
     inputs:
-    azurePowerShellVersion: LatestVersion
-    azureSubscription: '${{ parameters.serviceConnection }}'
-    ScriptType: InlineScript
-    pwsh: true
-    Inline: |
-        # Variables
-        $kvName = "${{ parameters.kvName }}"
-        $kvSecret = "${{ parameters.kvSecret }}"
-        $rgName = "${{ parameters.kvRgName }}"
+        azurePowerShellVersion: LatestVersion
+        azureSubscription: '${{ parameters.serviceConnection }}'
+        ScriptType: InlineScript
+        pwsh: true
+        Inline: |
+            # Variables
+            $kvName = "${{ parameters.kvName }}"
+            $kvSecret = "${{ parameters.kvSecret }}"
+            $rgName = "${{ parameters.kvRgName }}"
                         
-        # Temporarily disable firewall for Key Vault
-        Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Allow
-        $secretName = Get-AzKeyVaultSecret -VaultName $kvName -Name $kvSecret
-        $secretNamePlainText = ConvertFrom-SecureString -SecureString $secretName.SecretValue -AsPlainText
+            # Temporarily disable firewall for Key Vault
+            Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Allow
+            $secretName = Get-AzKeyVaultSecret -VaultName $kvName -Name $kvSecret
+            $secretNamePlainText = ConvertFrom-SecureString -SecureString $secretName.SecretValue -AsPlainText
                         
-        # Create reusable variable for env task with $(kvoSecret)
-        Write-Host "##vso[task.setvariable variable=kvoSecret;issecret=true;]$secretNamePlainText"
+            # Create reusable variable for env task with $(kvoSecret)
+            Write-Host "##vso[task.setvariable variable=kvoSecret;issecret=true;]$secretNamePlainText"
                         
-        # Enable firewall for Key Vault
-        Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Deny
+            # Enable firewall for Key Vault
+            Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Deny
 
     # Download Pipeline Artifact
   - task: DownloadPipelineArtifact@2
