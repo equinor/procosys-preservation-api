@@ -176,17 +176,17 @@ stages:
             steps:
               # Run Migration Script (Predeploy)
    
-              - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-                parameters:
-                  dependsOn: ''      
-                  deploymentName: 'run_migration_script'
-                  envGroup: '${{ variables.envGroupName }}'
-                  serviceConnection: '${{ variables.serviceConnection }}'
-                  kvName: '${{ variables.commonKeyVault }}'
-                  kvRgName: 'pcs-common-rg'
-                  kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-                  serverName: '${{ variables.sqlServerName }}.database.windows.net'
-                  databaseName: '${{ variables.sqlDatabaseName }}'      
+#              - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+ #               parameters:
+ #                 dependsOn: ''      
+ #                 deploymentName: 'run_migration_script'
+ #                 envGroup: '${{ variables.envGroupName }}'
+ #                 serviceConnection: '${{ variables.serviceConnection }}'
+ #                 kvName: '${{ variables.commonKeyVault }}'
+ #                 kvRgName: 'pcs-common-rg'
+ #                 kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+ #                 serverName: '${{ variables.sqlServerName }}.database.windows.net'
+ #                 databaseName: '${{ variables.sqlDatabaseName }}'      
 
               # Promote to test
               - template: templates/radix-promote-env.yml
@@ -220,17 +220,17 @@ stages:
           deploy:
             steps:
               # Run Migration Script (Predeploy)
-              - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-                parameters:
-                  dependsOn: ''      
-                  deploymentName: 'run_migration_script'
-                  envGroup: '${{ variables.envGroupName }}'
-                  serviceConnection: '${{ variables.serviceConnection }}'
-                  kvName: '${{ variables.commonKeyVault }}'
-                  kvRgName: 'pcs-common-rg'
-                  kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-                  serverName: '${{ variables.sqlServerName }}.database.windows.net'
-                  databaseName: '${{ variables.sqlDatabaseName }}'      
+          #    - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+          #      parameters:
+          #        dependsOn: ''      
+          #        deploymentName: 'run_migration_script'
+          #        envGroup: '${{ variables.envGroupName }}'
+          #        serviceConnection: '${{ variables.serviceConnection }}'
+          #        kvName: '${{ variables.commonKeyVault }}'
+          #        kvRgName: 'pcs-common-rg'
+          #        kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+          #        serverName: '${{ variables.sqlServerName }}.database.windows.net'
+          #        databaseName: '${{ variables.sqlDatabaseName }}'      
 
               # Promote to test
               - template: templates/radix-promote-env.yml
