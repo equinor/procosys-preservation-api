@@ -38,18 +38,18 @@ steps:
     # Download Pipeline Artifact
   - task: DownloadPipelineArtifact@2
     inputs:
-    artifact: 'SQLMigration'
-    path: $(System.DefaultWorkingDirectory)
+        artifact: 'SQLMigration'
+        path: $(System.DefaultWorkingDirectory)
 
     # Deploy Script
   - task: SqlAzureDacpacDeployment@1
     inputs:
-    azureSubscription: '${{ parameters.serviceConnection }}'
-    AuthenticationType: 'server'
-    ServerName: '${{ parameters.serverName }}'
-    DatabaseName: '${{ parameters.databaseName }}'
-    SqlUsername: 'pcssqladmin'
-    SqlPassword: '$(kvoSecret)'
-    deployType: 'SqlTask'
-    SqlFile: '$(System.DefaultWorkingDirectory)/migration.sql'
-    IpDetectionMethod: 'AutoDetect'
+        azureSubscription: '${{ parameters.serviceConnection }}'
+        AuthenticationType: 'server'
+        ServerName: '${{ parameters.serverName }}'
+        DatabaseName: '${{ parameters.databaseName }}'
+        SqlUsername: 'pcssqladmin'
+        SqlPassword: '$(kvoSecret)'
+        deployType: 'SqlTask'
+        SqlFile: '$(System.DefaultWorkingDirectory)/migration.sql'
+        IpDetectionMethod: 'AutoDetect'
