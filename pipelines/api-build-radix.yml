@@ -131,7 +131,7 @@ stages:
           deploy:
             steps:
             # Run Migration Script (Predeploy)
-              - template: /templates/execute-db-migration.yml
+              - template: templates/execute-db-migration.yml
                 parameters:
                   dependsOn: ''      
                   deploymentName: 'run_migration_script'
