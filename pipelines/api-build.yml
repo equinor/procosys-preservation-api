@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - master
+      ##- master    Ikke trigge denne pipelinen når vi bruker Radix.
 
 resources:
   repositories:
