@@ -57,7 +57,7 @@ stages:
 # Build stage. Docker build. If master, tag and push
 - stage: Build
   displayName: 'Build'
-  dependsOn: '' #  TODO'RunTests'
+  dependsOn: 'RunTests'
   variables:
     envName: 'build'
     envRg: '${{ variables.envRgName }}'
@@ -119,7 +119,6 @@ stages:
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Development'
     
   jobs:
     - deployment: Deploy
@@ -162,7 +161,6 @@ stages:
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Test'
     radixPromoteFromEnv: 'dev'
     radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
 
@@ -207,7 +205,6 @@ stages:
     serviceConnection: '${{ variables.prodServiceConnection }}'
     appServicePlan: '${{ variables.prodappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Prod'
     radixPromoteFromEnv: 'test'
     radixJobName: $[ stageDependencies.DeployTest.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
 
