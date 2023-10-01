@@ -1,6 +1,6 @@
-trigger:
-  branches:
-    include:
+#trigger:
+#  branches:
+#    include:
       ##- master    Ikke trigge denne pipelinen når vi bruker Radix.
 
 resources:
