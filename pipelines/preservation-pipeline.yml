@@ -11,7 +11,7 @@ resources:
     name: equinor/procosys-infra
     endpoint: 'equinor'
     ref: 'master'
-
+        
 # Global variables for the pipeline
 variables:
  - template: templates/variables/preservation-variables.yml@templates
