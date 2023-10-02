@@ -31,7 +31,7 @@ spec:
         ASPNETCORE_ENVIRONMENT: 'Development'
         UseAzureAppConfiguration: 'true'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
-      monitoring: true
+      monitoring: false
       resources:
         requests:
           memory: '128Mi'
@@ -49,7 +49,7 @@ spec:
         ASPNETCORE_ENVIRONMENT: 'Test'
         UseAzureAppConfiguration: 'true'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
-      monitoring: true
+      monitoring: false
       replicas: 2
       resources:
         requests:
@@ -68,7 +68,7 @@ spec:
         ASPNETCORE_ENVIRONMENT: 'Prod'
         UseAzureAppConfiguration: 'true'
         LEADERELECTOR_SERVICE: http://leader-electorTULL:3003
-      monitoring: true
+      monitoring: false
       replicas: 2
       resources:
         requests:
@@ -92,7 +92,7 @@ spec:
       imageTagName: latest
       variables:
         LEASE_TIME: 5
-      monitoring: true
+      monitoring: false
     # Test environment
     - environment: test
       imageTagName: latest
@@ -104,7 +104,7 @@ spec:
       imageTagName: latest
       variables:
          LEASE_TIME: 5
-      monitoring: true
+      monitoring: false
   #--------------------------------
   # External docker image registry
   #--------------------------------
