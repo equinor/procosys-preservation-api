@@ -10,7 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'equinor'
-    ref: 'pbi/105865_Clean_Up_PullRequestsin_Preservation-api'
+    ref: 'master'
 
 # Global variables for the pipeline
 variables:
@@ -31,9 +31,6 @@ variables:
 
  - name: 'leaderElectorDockerImageTagName'
    value: '13'
-
- - name: 'leaderElectorLeaseTime'
-   value: '5'
 
 name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
 
@@ -60,8 +57,6 @@ stages:
   dependsOn: 'RunTests'
   variables:
     envName: 'build'
-    envRg: '${{ variables.envRgName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
     dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
@@ -114,11 +109,8 @@ stages:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) 
   variables:
     envName: 'dev'
-    envRg: '${{ variables.envRgName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
     
   jobs:
     - deployment: Deploy
@@ -156,11 +148,8 @@ stages:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) 
   variables:
     envName: 'test'
-    envRg: '${{ variables.envRgName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
     radixPromoteFromEnv: 'dev'
     radixJobName: $[ stageDependencies.DeployDev.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
 
@@ -200,11 +189,8 @@ stages:
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) 
   variables:
     envName: 'prod'
-    envRg: '${{ variables.envRgName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
     serviceConnection: '${{ variables.prodServiceConnection }}'
-    appServicePlan: '${{ variables.prodappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
     radixPromoteFromEnv: 'test'
     radixJobName: $[ stageDependencies.DeployTest.Deploy.outputs['Deploy.RADIXJOB.radixJobName'] ] # This variable must have been set by previous step
 
@@ -231,7 +217,7 @@ stages:
                   serverName: '${{ variables.sqlServerName }}.database.windows.net'
                   databaseName: '${{ variables.sqlDatabaseName }}'      
 
-              # Promote to test
+              # Promote to prod
               - template: templates/radix-promote-env.yml
                 parameters:
                   fromEnvironment: $(radixPromoteFromEnv)

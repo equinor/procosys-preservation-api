@@ -1,6 +1,6 @@
 parameters:
   - name: radixResource
-    default: 6dae42f8-4368-4678-94ff-3960e28e3630
+    default: 6dae42f8-4368-4678-94ff-3960e28e3630 # Azure Kubernetes Service AAD Server
 
   - name: radixApplication
     default: procosys-preservation-api
