@@ -69,11 +69,11 @@ spec:
         UseAzureAppConfiguration: 'true'
         LEADERELECTOR_SERVICE: http://leader-electorTULL:3003
       monitoring: false
-      replicas: 2
+      replicas: 3
       resources:
         requests:
           memory: '128Mi'
-          cpu: '1000m'
+          cpu: '100m'
         limits:
           memory: '2048Mi'
           cpu: '1000m'
