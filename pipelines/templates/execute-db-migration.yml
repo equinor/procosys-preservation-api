@@ -1,0 +1,55 @@
+parameters:
+  dependsOn: ''
+  deploymentName: ''
+  serviceConnection: ''
+  envGroup: ''
+  connectionString: ''
+  kvName: ''
+  kvRgName: ''
+  kvSecret: ''
+  serverName: ''
+  databaseName: ''
+
+steps:
+  - task: AzurePowerShell@5
+    displayName: 'Get KeyVault Secret'
+    inputs:
+        azurePowerShellVersion: LatestVersion
+        azureSubscription: '${{ parameters.serviceConnection }}'
+        ScriptType: InlineScript
+        pwsh: true
+        Inline: |
+            # Variables
+            $kvName = "${{ parameters.kvName }}"
+            $kvSecret = "${{ parameters.kvSecret }}"
+            $rgName = "${{ parameters.kvRgName }}"
+                        
+            # Temporarily disable firewall for Key Vault
+            Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Allow
+            $secretName = Get-AzKeyVaultSecret -VaultName $kvName -Name $kvSecret
+            $secretNamePlainText = ConvertFrom-SecureString -SecureString $secretName.SecretValue -AsPlainText
+                        
+            # Create reusable variable for env task with $(kvoSecret)
+            Write-Host "##vso[task.setvariable variable=kvoSecret;issecret=true;]$secretNamePlainText"
+                        
+            # Enable firewall for Key Vault
+            Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Deny
+
+    # Download Pipeline Artifact
+  - task: DownloadPipelineArtifact@2
+    inputs:
+        artifact: 'SQLMigration'
+        path: $(System.DefaultWorkingDirectory)
+
+    # Deploy Script
+  - task: SqlAzureDacpacDeployment@1
+    inputs:
+        azureSubscription: '${{ parameters.serviceConnection }}'
+        AuthenticationType: 'server'
+        ServerName: '${{ parameters.serverName }}'
+        DatabaseName: '${{ parameters.databaseName }}'
+        SqlUsername: 'pcssqladmin'
+        SqlPassword: '$(kvoSecret)'
+        deployType: 'SqlTask'
+        SqlFile: '$(System.DefaultWorkingDirectory)/migration.sql'
+        IpDetectionMethod: 'AutoDetect'
