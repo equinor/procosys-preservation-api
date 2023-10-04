@@ -68,7 +68,7 @@ spec:
       variables:
         ASPNETCORE_ENVIRONMENT: 'Prod'
         UseAzureAppConfiguration: 'true'
-        LEADERELECTOR_SERVICE: http://leader-electorTULL:3003
+        LEADERELECTOR_SERVICE: http://leader-elector:3003
       monitoring: false
       replicas: 3
       resources:
