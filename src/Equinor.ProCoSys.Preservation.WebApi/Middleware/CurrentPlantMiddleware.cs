@@ -31,9 +31,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             {
                 var plant = headers[PlantHeader].ToString().ToUpperInvariant();
                 plantSetter.SetPlant(plant);
+                logger.LogInformation($"----- {GetType().Name} complete setting plant {plant}");
             }
-
-            logger.LogInformation($"----- {GetType().Name} complete");
+            else
+            {
+                logger.LogInformation($"----- {GetType().Name} complete. No plant set");
+            }
             // Call the next delegate/middleware in the pipeline
             await _next(context);
         }
