@@ -29,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                             options.Connect(connectionString)
                                 .ConfigureKeyVault(kv =>
                                 {
-                                    kv.SetCredential(new ManagedIdentityCredential());
+                                    kv.SetCredential(new DefaultAzureCredential());
                                 })
                                 .Select(KeyFilter.Any)
                                 .Select(KeyFilter.Any, context.HostingEnvironment.EnvironmentName)
