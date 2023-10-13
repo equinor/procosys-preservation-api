@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Microsoft.AspNetCore.Http;
@@ -20,22 +21,22 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             IPlantSetter plantSetter,
             ILogger<CurrentPlantMiddleware> logger)
         {
-            logger.LogInformation($"----- {GetType().Name} start");
+            logger.LogInformation("----- {Name} start", GetType().Name);
             var headers = httpContextAccessor?.HttpContext?.Request.Headers;
             if (headers == null)
             {
                 throw new Exception("Could not determine request headers");
             }
 
-            if (headers.Keys.Contains(PlantHeader))
+            if (headers.Keys.Select(h=> h.ToString()).Contains(PlantHeader, StringComparer.OrdinalIgnoreCase))
             {
                 var plant = headers[PlantHeader].ToString().ToUpperInvariant();
                 plantSetter.SetPlant(plant);
-                logger.LogInformation($"----- {GetType().Name} complete setting plant {plant}");
+                logger.LogInformation("----- {Name} complete setting plant {Plant}", GetType().Name, plant);
             }
             else
             {
-                logger.LogInformation($"----- {GetType().Name} complete. No plant set");
+                logger.LogInformation("----- {Name} complete. No plant set", GetType().Name);
             }
             // Call the next delegate/middleware in the pipeline
             await _next(context);
