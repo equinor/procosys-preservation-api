@@ -115,6 +115,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
         public Task<Project> GetProjectOnlyByTagGuidAsync(Guid tagGuid)
             => Set
                 .Where(project => project.Tags.Any(tag => tag.Guid == tagGuid))
-                .SingleOrDefaultAsync();
+                .SingleAsync();
     }
 }
