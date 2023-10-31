@@ -131,6 +131,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 }
 
                 var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tagGuid);
+                if (project == null)
+                {
+                    throw new ArgumentException($"Tag {tagToUpdate.TagNo} found, but project for tag not found.");
+                }
                 if (project.Name != tagEvent.ProjectName)
                 {
                     var projectToMoveTagInto = await FindOrCreatePreservationCopyOfProjectAsync(tagEvent.Plant, tagEvent.ProjectName);
