@@ -119,6 +119,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 .Returns(Task.FromResult(_project1));
             _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project1Name))
                 .Returns(Task.FromResult(_project1));
+
             _projectRepository.Setup(p => p.GetProjectOnlyByTagGuidAsync(Guid.Parse(ProCoSysTagGuid)))
                 .Returns(Task.FromResult(_project1));
             _project2 = new Project(Plant, Project2Name, Project2Description, ProjectProCoSysGuid2);
@@ -128,6 +129,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 .Returns(Task.FromResult(_project2));
             _projectRepository.Setup(p => p.Add(It.IsAny<Project>())).Callback((Project p) => _newProjectCreated = p);
             _projectRepository.Setup(p => p.GetTagOnlyByGuidAsync(Guid.Parse(ProCoSysTagGuid))).Returns(Task.FromResult(_tag1));
+
+
+            _projectRepository.Setup(p => p.GetTagOnlyByGuidAsync(Guid.ParseExact("EB38CCCAAE98D926E0532810000AC5B2", "N"))).Returns(Task.FromResult(_tag1));
 
 
             _tagFunction = new TagFunction(Plant, TagFunctionCode, TagFunctionDescription, RegisterCode);
