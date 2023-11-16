@@ -27,23 +27,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.StepValidators
             return step != null && step.IsVoided;
         }
 
-        public async Task<bool> IsFirstStepOrModeIsNotForSupplierAsync(int journeyId, int modeId,
-            int stepId,
-            CancellationToken token)
-        {
-            var journey = await _context.QuerySet<Journey>()
-                .Include(j => j.Steps)
-                .SingleAsync(j => j.Id == journeyId, token);
-
-            if (journey.OrderedSteps().First().Id == stepId)
-            {
-                return true;
-            }
-
-            var mode = await _context.QuerySet<Mode>().SingleAsync(m => m.Id == modeId, token);
-            return !mode.ForSupplier;
-        }
-
         public async Task<bool> IsForSupplierAsync(int stepId, CancellationToken token)
         {
             var mode = await (from s in _context.QuerySet<Step>()
