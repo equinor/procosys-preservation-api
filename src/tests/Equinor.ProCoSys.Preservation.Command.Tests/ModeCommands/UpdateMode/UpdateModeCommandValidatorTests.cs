@@ -15,21 +15,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UpdateMode
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private UpdateModeCommand _command;
 
-        private int _id = 1;
-        private string _title = "Title";
-        private bool _forSupplier = true;
-        private readonly string _rowVersion = "AAAAAAAAJ00=";
-
         [TestInitialize]
         public void Setup_OkState()
         {
+            _command = new UpdateModeCommand(1, "title", true, "AAAAAAAAJ00=");
+
             _modeValidatorMock = new Mock<IModeValidator>();
-            _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
+            _modeValidatorMock.Setup(r => r.ExistsAsync(_command.ModeId, default)).ReturnsAsync(true);
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
-
-            _command = new UpdateModeCommand(_id, _title, _forSupplier, _rowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_command.RowVersion)).Returns(true);
 
             _dut = new UpdateModeCommandValidator(_modeValidatorMock.Object, _rowVersionValidatorMock.Object);
         }
@@ -45,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UpdateMode
         [TestMethod]
         public async Task Validate_ShouldFail_WhenModeNotExists()
         {
-            _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(false));
+            _modeValidatorMock.Setup(r => r.ExistsAsync(_command.ModeId, default)).Returns(Task.FromResult(false));
 
             var result = await _dut.ValidateAsync(_command);
 
@@ -57,7 +52,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UpdateMode
         [TestMethod]
         public async Task Validate_ShouldFail_WhenAnotherModeWithSameTitleAlreadyExists()
         {
-            _modeValidatorMock.Setup(r => r.ExistsAnotherModeWithSameTitleAsync(_id, _title, default)).Returns(Task.FromResult(true));
+            _modeValidatorMock.Setup(r => r.ExistsAnotherModeWithSameTitleAsync(_command.ModeId, _command.Title, default)).ReturnsAsync(true);
 
             var result = await _dut.ValidateAsync(_command);
 
@@ -69,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UpdateMode
         [TestMethod]
         public async Task Validate_ShouldFail_WhenModeIsVoided()
         {
-            _modeValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(true));
+            _modeValidatorMock.Setup(r => r.IsVoidedAsync(_command.ModeId, default)).ReturnsAsync(true);
 
             var result = await _dut.ValidateAsync(_command);
 
@@ -81,7 +76,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UpdateMode
         [TestMethod]
         public async Task Validate_ShouldFail_WhenAnotherModeForSupplierAlreadyExists_AndUpdatingModeToForSupplier()
         {
-            _modeValidatorMock.Setup(r => r.ExistsAnotherModeForSupplierAsync(_id, default)).Returns(Task.FromResult(true));
+            _modeValidatorMock.Setup(r => r.ExistsAnotherModeForSupplierAsync(_command.ModeId, default)).ReturnsAsync(true);
 
             var result = await _dut.ValidateAsync(_command);
 
@@ -93,7 +88,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UpdateMode
         [TestMethod]
         public async Task Validate_ShouldBeValid_WhenAnotherModeForSupplierAlreadyExists_AndNotUpdatingModeToForSupplier()
         {
-            _modeValidatorMock.Setup(r => r.ExistsAnotherModeForSupplierAsync(_id, default)).Returns(Task.FromResult(false));
+            _modeValidatorMock.Setup(r => r.ExistsAnotherModeForSupplierAsync(_command.ModeId, default)).Returns(Task.FromResult(false));
 
             var result = await _dut.ValidateAsync(_command);
 
@@ -104,16 +99,50 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UpdateMode
         [TestMethod]
         public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
-            const string invalidRowVersion = "String";
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_command.RowVersion)).Returns(false);
 
-            var command = new UpdateModeCommand(_id, _title, _forSupplier, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
-
-            var result = await _dut.ValidateAsync(command);
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid row version!"));
+        }
+
+        [TestMethod]
+        public async Task Validate_ShouldFail_WhenUpdatingForSupplierInUsedMode()
+        {
+            _modeValidatorMock.Setup(r => r.ExistsWithForSupplierValueAsync(_command.ModeId, _command.ForSupplier, default)).ReturnsAsync(false);
+            _modeValidatorMock.Setup(r => r.IsUsedInStepAsync(_command.ModeId, default)).ReturnsAsync(true);
+
+            var result = await _dut.ValidateAsync(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Can't change 'For supplier' when mode is used in step(s)!"));
+        }
+
+        [TestMethod]
+        public async Task Validate_ShouldBeValid_WhenUpdatingForSupplierInUnusedMode()
+        {
+            _modeValidatorMock.Setup(r => r.ExistsWithForSupplierValueAsync(_command.ModeId, _command.ForSupplier, default)).ReturnsAsync(false);
+            _modeValidatorMock.Setup(r => r.IsUsedInStepAsync(_command.ModeId, default)).ReturnsAsync(false);
+
+            var result = await _dut.ValidateAsync(_command);
+
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(0, result.Errors.Count);
+        }
+
+        [TestMethod]
+        public async Task Validate_ShouldBeValid_WhenNotUpdatingForSupplierInUsedMode()
+        {
+            _modeValidatorMock.Setup(r => r.ExistsWithForSupplierValueAsync(_command.ModeId, _command.ForSupplier, default)).ReturnsAsync(true);
+            _modeValidatorMock.Setup(r => r.IsUsedInStepAsync(_command.ModeId, default)).ReturnsAsync(true);
+
+            var result = await _dut.ValidateAsync(_command);
+
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(0, result.Errors.Count);
         }
     }
 }
