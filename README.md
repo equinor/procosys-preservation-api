@@ -1,5 +1,5 @@
 # pcs-preservation-api
-REST API for the preservation module in Project Completion System (ProCoSys (PCS)) using ASP.NET 5 and Entity Framework 5.
+REST API for the preservation module in Project Completion System (ProCoSys (PCS)) using ASP.NET and Entity Framework.
 
 ## Notes
 
