@@ -24,6 +24,9 @@ namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.UpdateMode
                 .MustAsync((command, token) => IsUniqueForSupplierAsync(command.ModeId, token))
                 .WithMessage(command => $"Another mode for supplier already exists! Mode={command.Title}")
                 .When(command => command.ForSupplier, ApplyConditionTo.CurrentValidator)
+                .MustAsync((command, token) => NotChangeForSupplierAsync(command.ModeId, command.ForSupplier, token))
+                .WithMessage(command => $"Can't change 'For supplier' when mode is used in step(s)! Mode={command.Title}")
+                .WhenAsync((command, token) => UsedInAnyStepAsync(command.ModeId, token), ApplyConditionTo.CurrentValidator)
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
@@ -35,6 +38,10 @@ namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.UpdateMode
                 => !await modeValidator.IsVoidedAsync(modeId, token);
             async Task<bool> IsUniqueForSupplierAsync(int modeId, CancellationToken token) =>
                 !await modeValidator.ExistsAnotherModeForSupplierAsync(modeId, token);
+            async Task<bool> NotChangeForSupplierAsync(int modeId, bool forSupplier, CancellationToken token) =>
+                await modeValidator.ExistsWithForSupplierValueAsync(modeId, forSupplier, token);
+            async Task<bool> UsedInAnyStepAsync(int modeId, CancellationToken token)
+                => await modeValidator.IsUsedInStepAsync(modeId, token);
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);
         }

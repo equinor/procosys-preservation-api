@@ -120,21 +120,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             TrackTagEvent(tagEvent);
 
             _plantSetter.SetPlant(tagEvent.Plant);
-
-            var tagToUpdateProjectName = !tagEvent.ProjectNameOld.IsEmpty()
-                ? tagEvent.ProjectNameOld
-                : tagEvent.ProjectName;
-            var tagToUpdateTagNo = !tagEvent.TagNoOld.IsEmpty()
-                ? tagEvent.TagNoOld
-                : tagEvent.TagNo;
-
-            var project = await _projectRepository.GetProjectWithTagsByNameAsync(tagToUpdateProjectName);
-            if (project == null)
-            {
-                return;
-            }
-
-            var tagToUpdate = project.Tags.SingleOrDefault(t => t.TagNo == tagToUpdateTagNo);
+            var tagGuid = Guid.ParseExact(tagEvent.ProCoSysGuid, "N");
+            var tagToUpdate = await _projectRepository.GetTagOnlyByGuidAsync(tagGuid);
 
             if (tagToUpdate != null)
             {
@@ -143,11 +130,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     tagToUpdate.Rename(tagEvent.TagNo);
                 }
 
-                if (!tagEvent.ProjectNameOld.IsEmpty() &&
-                    tagEvent.ProjectName != tagEvent.ProjectNameOld)
+                var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tagGuid);
+                if (project == null)
+                {
+                    throw new ArgumentException($"Tag {tagToUpdate.TagNo} found, but project for tag not found.");
+                }
+                if (project.Name != tagEvent.ProjectName)
                 {
                     var projectToMoveTagInto = await FindOrCreatePreservationCopyOfProjectAsync(tagEvent.Plant, tagEvent.ProjectName);
-
                     project.MoveToProject(tagToUpdate, projectToMoveTagInto);
                 }
 

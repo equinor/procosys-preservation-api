@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
         public void Setup_OkState()
         {
             _modeValidatorMock = new Mock<IModeValidator>();
-            _modeValidatorMock.Setup(r => r.ExistsModeForSupplierAsync(default)).Returns(Task.FromResult(false));
+            _modeValidatorMock.Setup(r => r.ExistsAnyModeWithForSupplierAsync(default)).Returns(Task.FromResult(false));
             _command = new CreateModeCommand(_title, _forSupplier);
 
             _dut = new CreateModeCommandValidator(_modeValidatorMock.Object);
@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
         [TestMethod]
         public async Task Validate_ShouldFail_WhenAnotherModeForSupplierAlreadyExists_AndCreatingModeForSupplier()
         {
-            _modeValidatorMock.Setup(r => r.ExistsModeForSupplierAsync(default)).Returns(Task.FromResult(true));
+            _modeValidatorMock.Setup(r => r.ExistsAnyModeWithForSupplierAsync(default)).Returns(Task.FromResult(true));
 
             var result = await _dut.ValidateAsync(_command);
 
@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
         [TestMethod]
         public async Task Validate_ShouldBeValid_WhenAnotherModeForSupplierAlreadyExists_AndNotCreatingModeForSupplier()
         {
-            _modeValidatorMock.Setup(r => r.ExistsModeForSupplierAsync(default)).Returns(Task.FromResult(false));
+            _modeValidatorMock.Setup(r => r.ExistsAnyModeWithForSupplierAsync(default)).Returns(Task.FromResult(false));
 
             var result = await _dut.ValidateAsync(_command);
 

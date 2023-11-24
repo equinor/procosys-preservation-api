@@ -120,7 +120,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             PCSTagSearchResult tagSearchResult;
             do
             {
-                var url = $"{_baseAddress}Tag/Search/ByTagFunction" +
+                var url = $"{_baseAddress}Tag/Search/ByTagFunctions" +
                           $"?plantId={plant}" +
                           $"&projectName={WebUtility.UrlEncode(projectName)}" +
                           $"&currentPage={currentPage++}" +

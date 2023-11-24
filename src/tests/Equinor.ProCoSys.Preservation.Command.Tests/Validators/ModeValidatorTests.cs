@@ -12,8 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
     public class ModeValidatorTests : ReadOnlyTestsBase
     {
         private const string ModeTitle = "TestMode";
-        private int _modeId;
-        private int _supplierModeId;
+        private int _nonSupplierModeId;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -22,13 +21,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var mode = AddMode(context, ModeTitle, false);
                 var responsible = AddResponsible(context, "R");
                 AddJourneyWithStep(context, "J", "S", mode, responsible);
-                _modeId = mode.Id;
-                _supplierModeId = AddMode(context, "SUPPLIER", true).Id;
+                _nonSupplierModeId = mode.Id;
             }
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownTitle_ShouldReturnTrue()
+        public async Task ExistsWithSameTitleAsync_ShouldReturnTrue_WhenKnownTitle()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -39,18 +37,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownId_ShouldReturnTrue()
+        public async Task ExistsAsync_ShouldReturnTrue_WhenKnownId()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.ExistsAsync(_modeId, default);
+                var result = await dut.ExistsAsync(_nonSupplierModeId, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownTitle_ShouldReturnFalse()
+        public async Task ExistsWithSameTitleAsync_ShouldReturnFalse_WhenUnknownTitle()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -61,7 +59,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownId_ShouldReturnFalse()
+        public async Task ExistsAsync_ShouldReturnFalse_WhenUnknownId()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -72,11 +70,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownVoided_ShouldReturnTrue()
+        public async Task IsVoidedAsync_ShouldReturnTrue_WhenKnownVoided()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var mode = context.Modes.Single(m => m.Id == _modeId);
+                var mode = context.Modes.Single(m => m.Id == _nonSupplierModeId);
                 mode.IsVoided = true;
                 context.SaveChangesAsync().Wait();
             }
@@ -84,24 +82,24 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.IsVoidedAsync(_modeId, default);
+                var result = await dut.IsVoidedAsync(_nonSupplierModeId, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownNotVoided_ShouldReturnFalse()
+        public async Task IsVoidedAsync_ShouldReturnFalse_WhenKnownNotVoided()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.IsVoidedAsync(_modeId, default);
+                var result = await dut.IsVoidedAsync(_nonSupplierModeId, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_UnknownId_ShouldReturnFalse()
+        public async Task IsVoidedAsync_ShouldReturnFalse_WhenUnknownId()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -112,18 +110,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsUsedInStepAsync_KnownId_ShouldReturnTrue()
+        public async Task IsUsedInStepAsync_ShouldReturnTrue_WhenKnownId()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.IsUsedInStepAsync(_modeId, default);
+                var result = await dut.IsUsedInStepAsync(_nonSupplierModeId, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsUsedInStepAsync_UnknownId_ShouldReturnFalse()
+        public async Task IsUsedInStepAsync_ShouldReturnFalse_WhenUnknownId()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -134,19 +132,29 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAnotherModeForSupplierAsync_KnownId_ShouldReturnTrue()
+        public async Task ExistsAnotherModeForSupplierAsync_ShouldReturnTrue_WhenKnownIdAndModeWithForSupplierExists()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
+                AddMode(context, "SUPPLIER", true);
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
                 var dut = new ModeValidator(context);
-                var result = await dut.ExistsAnotherModeForSupplierAsync(_modeId, default);
+                var result = await dut.ExistsAnotherModeForSupplierAsync(_nonSupplierModeId, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task ExistsAnotherModeForSupplierAsync_UnknownId_ShouldReturnTrue()
+        public async Task ExistsAnotherModeForSupplierAsync_ShouldReturnTrue_WhenUnknownIdAndModeWithForSupplierExists()
         {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                AddMode(context, "SUPPLIER", true);
+            }
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
@@ -156,13 +164,107 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsModeForSupplierAsync_ShouldReturnTrue()
+        public async Task ExistsAnotherModeForSupplierAsync_ShouldReturnFalse_WhenKnownIdAndNoModeWithForSupplierExists()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.ExistsModeForSupplierAsync(default);
+                var result = await dut.ExistsAnotherModeForSupplierAsync(_nonSupplierModeId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsAnotherModeForSupplierAsync_ShouldReturnFalse_WhenUnknownIdAndNoModeWithForSupplierExists()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsAnotherModeForSupplierAsync(126234, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsAnyModeWithForSupplierAsync_ShouldReturnTrue_WhenModeWithForSupplierExists()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                AddMode(context, "SUPPLIER", true);
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsAnyModeWithForSupplierAsync(default);
                 Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsAnyModeWithForSupplierAsync_ShouldReturnFalse_WhenNoModeWithForSupplierExists()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsAnyModeWithForSupplierAsync(default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsWithForSupplierValueAsync_ShouldReturnTrue_WhenCheckingNonSupplierModeForFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsWithForSupplierValueAsync(_nonSupplierModeId, false, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsWithForSupplierValueAsync_ShouldReturnFalse_WhenCheckingNonSupplierModeForTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsWithForSupplierValueAsync(_nonSupplierModeId, true, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsWithForSupplierValueAsync_ShouldReturnTrue_WhenCheckingSupplierModeForTrue()
+        {
+            int supplierModeId;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                supplierModeId = AddMode(context, "SUPPLIER", true).Id;
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsWithForSupplierValueAsync(supplierModeId, true, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsWithForSupplierValueAsync_ShouldReturnFalse_WhenCheckingSupplierModeForFalse()
+        {
+            int supplierModeId;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                supplierModeId = AddMode(context, "SUPPLIER", true).Id;
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsWithForSupplierValueAsync(supplierModeId, false, default);
+                Assert.IsFalse(result);
             }
         }
     }

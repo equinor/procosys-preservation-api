@@ -30,9 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators
 
         public async Task<bool> IsVoidedAsync(int modeId, CancellationToken token)
         {
-            var mode = await (from m in _context.QuerySet<Mode>()
-                where m.Id == modeId
-                select m).SingleOrDefaultAsync(token);
+            var mode = await GetModeAsync(modeId, token);
             return mode != null && mode.IsVoided;
         }
 
@@ -41,23 +39,26 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators
                 where s.ModeId == modeId
                 select s).AnyAsync(token);
 
-        public async Task<bool> IsForSupplierAsync(int modeId, CancellationToken token)
-        {
-            var mode = await (from m in _context.QuerySet<Mode>()
-                where m.Id == modeId
-                select m).SingleOrDefaultAsync(token);
-            return mode != null && mode.ForSupplier;
-        }
-
         public async Task<bool> ExistsAnotherModeForSupplierAsync(int modeId, CancellationToken token) => 
             await (from m in _context.QuerySet<Mode>()
                           where m.Id != modeId &&
                                 m.ForSupplier
                           select m).AnyAsync(token);
 
-        public async Task<bool> ExistsModeForSupplierAsync(CancellationToken token) =>
+        public async Task<bool> ExistsAnyModeWithForSupplierAsync(CancellationToken token) =>
             await (from m in _context.QuerySet<Mode>()
                 where m.ForSupplier
                 select m).AnyAsync(token);
+
+        public async Task<bool> ExistsWithForSupplierValueAsync(int modeId, bool forSupplier, CancellationToken token)
+        {
+            var mode = await GetModeAsync(modeId, token);
+            return mode != null && mode.ForSupplier == forSupplier;
+        }
+
+        private async Task<Mode> GetModeAsync(int modeId, CancellationToken token)
+            => await (from m in _context.QuerySet<Mode>()
+                where m.Id == modeId
+                select m).SingleOrDefaultAsync(token);
     }
 }

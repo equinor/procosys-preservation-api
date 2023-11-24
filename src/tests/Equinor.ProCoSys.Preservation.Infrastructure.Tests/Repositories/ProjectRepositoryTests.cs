@@ -29,6 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         private const int PoTagId = 72;
         private const string StandardTagNo1 = "TagNo1";
         private const string StandardTagNo2 = "TagNo3";
+        private readonly Guid _StandardTagGuid1 = new Guid("eb3821c2-bda3-8683-e053-2910000a2633");
         private const string PoTagNo = "TagNo2";
         private const string CommPkg1 = "CommPkg1";
         private const string McPkg1 = "McPkg1";
@@ -62,16 +63,17 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var req3 = new TagRequirement(TestPlant, 4, rdMock.Object);
             _standardTag1With3Reqs = new Tag(
                 TestPlant, 
-                TagType.Standard, 
-                Guid.NewGuid(),
+                TagType.Standard,
+                _StandardTagGuid1,
                 StandardTagNo1, 
                 "Desc", 
                 step,
                 new List<TagRequirement> {req1, req2, req3}) 
             {
                 CommPkgNo = CommPkg1,
-                McPkgNo = McPkg1
+                McPkgNo = McPkg1,
             };
+
             _standardTag1With3Reqs.SetProtectedIdForTesting(StandardTagId1);
             project1.AddTag(_standardTag1With3Reqs);
 
@@ -141,6 +143,14 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 .Returns(_reqsSetMock.Object);
 
             _dut = new ProjectRepository(ContextHelper.ContextMock.Object);
+        }
+
+        [TestMethod]
+        public async Task GetProjectOnlyByTagGuidAsync_ExistingTag_ShouldReturnProjectWithoutTags()
+        {
+            var result = await _dut.GetProjectOnlyByTagGuidAsync(_StandardTagGuid1);
+
+            Assert.AreEqual(ProjectNameWithTags, result.Name);
         }
 
         [TestMethod]

@@ -63,6 +63,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private const string OldTagDescription1 = "OldTagDescription1";
         private const string OldTagDescription2 = "OldTagDescription2";
 
+        private const string ProCoSysTagGuid = "EB38CCCAAE98D926E0532810000AC5B2";
+
         private const string CommPkg1 = "Comm1";
         private const string CommPkg2 = "Comm2";
         private const string McPkg1 = "MC1";
@@ -117,12 +119,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 .Returns(Task.FromResult(_project1));
             _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project1Name))
                 .Returns(Task.FromResult(_project1));
+
+            _projectRepository.Setup(p => p.GetProjectOnlyByTagGuidAsync(Guid.Parse(ProCoSysTagGuid)))
+                .Returns(Task.FromResult(_project1));
             _project2 = new Project(Plant, Project2Name, Project2Description, ProjectProCoSysGuid2);
             _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(Project2Name))
                 .Returns(Task.FromResult(_project2));
             _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project2Name))
                 .Returns(Task.FromResult(_project2));
             _projectRepository.Setup(p => p.Add(It.IsAny<Project>())).Callback((Project p) => _newProjectCreated = p);
+            _projectRepository.Setup(p => p.GetTagOnlyByGuidAsync(Guid.Parse(ProCoSysTagGuid))).Returns(Task.FromResult(_tag1));
+
+
+            _projectRepository.Setup(p => p.GetTagOnlyByGuidAsync(Guid.ParseExact("EB38CCCAAE98D926E0532810000AC5B2", "N"))).Returns(Task.FromResult(_tag1));
+
 
             _tagFunction = new TagFunction(Plant, TagFunctionCode, TagFunctionDescription, RegisterCode);
             _tagFunctionRepository.Setup(t => t.GetByCodesAsync(TagFunctionCode, RegisterCode))
@@ -598,7 +608,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var poNo = "321";
             var tagFunctionCodeNew = "FCS123";
             var message =
-                $"{{\"TagNo\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
+                $"{{\"TagNo\" : \"{TagNo1}\",\"ProCoSysGuid\" : \"{ProCoSysTagGuid}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopicConstants.Tag, message, default);
@@ -626,7 +636,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var poNo = "321";
             var tagFunctionCodeNew = "FCS123";
             var message =
-                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
+                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"ProCoSysGuid\" : \"{ProCoSysTagGuid}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopicConstants.Tag, message, default);
@@ -654,7 +664,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var poNo = "321";
             var tagFunctionCodeNew = "FCS123";
             var message =
-                $"{{\"TagNo\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
+                $"{{\"TagNo\" : \"{TagNo1}\",\"ProCoSysGuid\" : \"{ProCoSysTagGuid}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             Assert.IsFalse(_tag1.IsVoided);
             Assert.IsFalse(_tag1.IsVoidedInSource);
@@ -680,7 +690,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var poNo = "321";
             var tagFunctionCodeNew = "FCS123";
             var message =
-                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{Project1Name}\",\"ProjectName\" : \"{Project2Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
+                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"ProCoSysGuid\" : \"{ProCoSysTagGuid}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{Project1Name}\",\"ProjectName\" : \"{Project2Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Assert
             Assert.IsTrue(_project1.Tags.Contains(_tag1));
@@ -715,7 +725,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var tagFunctionCodeNew = "FCS123";
 
             var message =
-                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{Project1Name}\",\"ProjectName\" : \"{_projectNotInPreservation}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
+                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"ProCoSysGuid\" : \"{ProCoSysTagGuid}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{Project1Name}\",\"ProjectName\" : \"{_projectNotInPreservation}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Assert
             Assert.IsTrue(_project1.Tags.Contains(_tag1));
