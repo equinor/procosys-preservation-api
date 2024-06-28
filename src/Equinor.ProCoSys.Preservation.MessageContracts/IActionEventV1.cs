@@ -2,7 +2,7 @@
 
 public interface IActionEventV1 : IIntegrationEvent
 {
-    string TagNr { get; }
+    Guid TagGuid { get; }
     string Title { get; }
     string Description { get; }
     DateOnly? DueDate { get; }

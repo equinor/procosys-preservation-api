@@ -5,12 +5,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 public class ActionEvent : IActionEventV1
 {
-    public ActionEvent(Guid guid, string plant, string projectName, string tagNr, string title, string description, DateOnly? dueDate, bool overdue, DateOnly? closed)
+    public ActionEvent(Guid guid, string plant, string projectName, Guid tagGuid, string title, string description, DateOnly? dueDate, bool overdue, DateOnly? closed)
     {
         Guid = guid;
         Plant = plant;
         ProjectName = projectName;
-        TagNr = tagNr;
+        TagGuid = tagGuid;
         Title = title;
         Description = description;
         DueDate = dueDate;
@@ -22,7 +22,7 @@ public class ActionEvent : IActionEventV1
     public Guid ProCoSysGuid => Guid;
     public string Plant { get; }
     public string ProjectName { get; }
-    public string TagNr { get; }
+    public Guid TagGuid { get; }
     public string Title { get; }
     public string Description { get; }
     public DateOnly? DueDate { get; }

@@ -176,7 +176,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
 
                 services.AddPcsServiceBusIntegration(options => options
                     .UseBusConnection(Configuration.GetConnectionString("ServiceBus"))
-                   // .WithLeaderElector(leaderElectorUrl)
+                    .WithLeaderElector(leaderElectorUrl)
                     .WithRenewLeaseInterval(int.Parse(Configuration["ServiceBus:LeaderElectorRenewLeaseInterval"]))
                     .WithSubscription(PcsTopicConstants.Tag, "preservation_tag")
                     .WithSubscription(PcsTopicConstants.TagFunction, "preservation_tagfunction")

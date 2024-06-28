@@ -25,12 +25,12 @@ public class CreateEventHelper : ICreateEventHelper
             action.Guid,
             action.Plant,
             project.Name,
-            tag.TagNo,
+            tag.Guid,
             action.Title,
             action.Description,
-            action.DueTimeUtc != null ? DateOnly.FromDateTime(action.DueTimeUtc.GetValueOrDefault(DateTime.Now)) : null,
+            action.DueTimeUtc != null ? DateOnly.FromDateTime(action.DueTimeUtc.Value) : null,
             action.IsOverDue(),
-            action.ClosedAtUtc != null ? DateOnly.FromDateTime(action.ClosedAtUtc.GetValueOrDefault(DateTime.Now)) : null
+            action.ClosedAtUtc != null ? DateOnly.FromDateTime(action.ClosedAtUtc.Value) : null
             );
     }
 }

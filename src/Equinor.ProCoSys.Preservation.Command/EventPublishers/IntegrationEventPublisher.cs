@@ -21,7 +21,6 @@ public class IntegrationEventPublisher : IIntegrationEventPublisher
         => await _publishEndpoint.Publish(message,
             context =>
             {
-                context.SetSessionId(message.Guid.ToString());
                 _logger.LogInformation("Publishing: {Message}", context.Message.ToString());
             },
             cancellationToken);
