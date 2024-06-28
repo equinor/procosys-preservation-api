@@ -1931,7 +1931,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddAction_ShouldAddAction()
         {
-            var action = new Action(TestPlant, "", "", null);
+            var action = new Action(Guid.Empty, TestPlant, "", "", null);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
 
             Assert.AreEqual(action, _dutWithOneReqNotNeedInputTwoWeekInterval.Actions.First());
@@ -1944,7 +1944,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddAction_ShouldAddActionAddedEvent()
         {
-            var action = new Action(TestPlant, "", "", null);
+            var action = new Action(Guid.Empty, TestPlant, "", "", null);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
 
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
@@ -1958,7 +1958,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void CloseAction_ShouldCloseAction()
         {
-            var action = new Action(TestPlant, "", "", null);
+            var action = new Action(Guid.Empty, TestPlant, "", "", null);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
             var closedAction = _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
 
@@ -1968,7 +1968,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void CloseAction_ShouldSetClosedBy()
         {
-            var action = new Action(TestPlant, "", "", null);
+            var action = new Action(Guid.Empty, TestPlant, "", "", null);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
             var closedAction = _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
 
@@ -1982,7 +1982,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void CloseAction_ShouldAddActionClosedEvent()
         {
-            var action = new Action(TestPlant, "", "", null);
+            var action = new Action(Guid.Empty, TestPlant, "", "", null);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
             _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
 
@@ -1993,7 +1993,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void CloseAction_ShouldReturnClosedAction()
         {
-            var action = new Action(TestPlant, "", "", null);
+            var action = new Action(Guid.Empty, TestPlant, "", "", null);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
             var closedAction = _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
 

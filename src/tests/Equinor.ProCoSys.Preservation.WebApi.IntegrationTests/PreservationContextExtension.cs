@@ -167,7 +167,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         {
             var suffix = Guid.NewGuid().ToString().Substring(3,8);
             var title = $"{KnownTestData.Action}-{suffix}";
-            var action = new Action(tag.Plant, title, $"{title}-Desc", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+            var action = new Action(Guid.Empty, tag.Plant, title, $"{title}-Desc", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
             tag.AddAction(action);
             dbContext.SaveChangesAsync().Wait();
             return action;

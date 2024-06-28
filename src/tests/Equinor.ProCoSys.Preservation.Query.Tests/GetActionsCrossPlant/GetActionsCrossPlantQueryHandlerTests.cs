@@ -129,7 +129,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             }
             context.SaveChangesAsync().Wait();
 
-            var action = new Action(plantId, "A", "D", null);
+            var action = new Action(new Guid(), plantId, "A", "D", null);
             if (closeAction)
             {
                 _timeProvider.Elapse(new TimeSpan(0, 1, 0, 0));

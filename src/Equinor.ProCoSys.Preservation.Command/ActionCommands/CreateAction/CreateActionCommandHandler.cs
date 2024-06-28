@@ -1,10 +1,12 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
+using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CreateAction
 {
@@ -26,6 +28,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CreateAction
             var tag = await _projectRepository.GetTagWithActionsByTagIdAsync(request.TagId);
 
             var actionToAdd = new Action(
+                new Guid(),
                  _plantProvider.Plant,
                 request.Title,
                 request.Description,

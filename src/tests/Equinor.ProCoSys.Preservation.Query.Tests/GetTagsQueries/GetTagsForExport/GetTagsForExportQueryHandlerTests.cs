@@ -76,8 +76,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 tag = context.Tags.First();
-                tag.AddAction(new Action(TestPlant, "A1", "Desc", null));
-                tag.AddAction(new Action(TestPlant, "A2", "Desc", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
+                tag.AddAction(new Action(Guid.Empty, TestPlant, "A1", "Desc", null));
+                tag.AddAction(new Action(Guid.Empty, TestPlant, "A2", "Desc", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
                 tag.AddAttachment(new TagAttachment(TestPlant, Guid.Empty, "F.txt"));
                 context.SaveChangesAsync().Wait();
             }
@@ -438,7 +438,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.First();
-                tag.AddAction(new Action(TestPlant, "A", "Desc", null));
+                tag.AddAction(new Action(Guid.Empty, TestPlant, "A", "Desc", null));
                 context.SaveChangesAsync().Wait();
             }
 
@@ -467,7 +467,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.First();
-                var action = new Action(TestPlant, "A", "Desc", null);
+                var action = new Action(Guid.Empty, TestPlant, "A", "Desc", null);
                 action.Close(_timeProvider.UtcNow, context.Persons.First());
                 tag.AddAction(action);
                 context.SaveChangesAsync().Wait();
@@ -499,7 +499,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.First();
-                var action = new Action(TestPlant, "A", "Desc", _timeProvider.UtcNow.AddDays(-1));
+                var action = new Action(Guid.Empty, TestPlant, "A", "Desc", _timeProvider.UtcNow.AddDays(-1));
                 tag.AddAction(action);
                 context.SaveChangesAsync().Wait();
             }

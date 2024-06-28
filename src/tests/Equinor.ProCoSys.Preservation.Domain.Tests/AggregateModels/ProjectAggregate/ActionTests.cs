@@ -28,13 +28,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeProvider = new ManualTimeProvider(_utcNow);
             TimeService.SetProvider(_timeProvider);
-            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
+            _dut = new Action(Guid.Empty, TestPlant, "TitleA", "DescA", _utcNow);
         }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithoutDue()
         {
-            _dut = new Action(TestPlant, "TitleA", "DescA", null);
+            _dut = new Action(Guid.Empty, TestPlant, "TitleA", "DescA", null);
 
             Assert.AreEqual(TestPlant, _dut.Plant);
             Assert.IsFalse(_dut.DueTimeUtc.HasValue);
@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenDueIsNotUtc()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new Action(TestPlant, "", "", DateTime.Now)
+                new Action(Guid.Empty, TestPlant, "", "", DateTime.Now)
             );
 
         [TestMethod]
@@ -176,7 +176,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void IsOverDue_ShouldBeFalseWhenNoDueDate()
         {
             // Arrange
-            _dut = new Action(TestPlant, "TitleA", "DescA", null);
+            _dut = new Action(Guid.Empty, TestPlant, "TitleA", "DescA", null);
 
             // Act
             var overDue = _dut.IsOverDue();
@@ -189,7 +189,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void IsOverDue_ShouldBeFalseWhenDueDateExactNow()
         {
             // Arrange
-            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
+            _dut = new Action(Guid.Empty, TestPlant, "TitleA", "DescA", _utcNow);
 
             // Act
             var overDue = _dut.IsOverDue();
@@ -202,7 +202,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void IsOverDue_ShouldBeFalseWhenDueDateInFuture()
         {
             // Arrange
-            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow.AddHours(1));
+            _dut = new Action(Guid.Empty, TestPlant, "TitleA", "DescA", _utcNow.AddHours(1));
 
             // Act
             var overDue = _dut.IsOverDue();
@@ -215,7 +215,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void IsOverDue_ShouldBeTrueWhenDueDateInPast()
         {
             // Arrange
-            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
+            _dut = new Action(Guid.Empty, TestPlant, "TitleA", "DescA", _utcNow);
             _timeProvider.Elapse(new TimeSpan(1, 0, 0));
 
             // Act
@@ -229,7 +229,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void IsOverDue_ShouldBeFalseWhenDueDateInPast_ButClosed()
         {
             // Arrange
-            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
+            _dut = new Action(Guid.Empty, TestPlant, "TitleA", "DescA", _utcNow);
             _timeProvider.Elapse(new TimeSpan(1, 0, 0));
             _dut.Close(_utcNow, _personMock.Object);
 

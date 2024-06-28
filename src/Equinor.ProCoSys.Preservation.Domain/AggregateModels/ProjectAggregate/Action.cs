@@ -8,7 +8,7 @@ using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Action : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class Action : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
     {
         public const int TitleLengthMax = 128;
         public const int DescriptionLengthMax = 4096;
@@ -18,13 +18,21 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public Action(string plant, string title, string description, DateTime? dueTimeUtc)
+        public Action(Guid guid, string plant, string title, string description, DateTime? dueTimeUtc)
             : base(plant)
         {
+            Guid = guid;
+            ObjectGuid = guid;
+            ProCoSysGuid = guid;
+
             Title = title;
             Description = description;
             SetDueTime(dueTimeUtc);
         }
+
+        public Guid Guid { get; private set; }
+        public Guid ObjectGuid { get; private set; }
+        public Guid? ProCoSysGuid { get; private set; }
 
         public string Title { get; set; }
         public string Description { get; set; }

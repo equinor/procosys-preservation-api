@@ -34,11 +34,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionDetails
                 var tag = _testDataSet.Project1.Tags.First();
                 var attachment = new ActionAttachment(TestPlant, Guid.NewGuid(), "FileA");
 
-                _openAction = new Action(TestPlant, "Open", "Desc1", _dueUtc);
+                _openAction = new Action(Guid.Empty, TestPlant, "Open", "Desc1", _dueUtc);
                 _openAction.AddAttachment(attachment);
                 tag.AddAction(_openAction);
 
-                _closedAction = new Action(TestPlant, "Closed", "Desc2", _dueUtc);
+                _closedAction = new Action(Guid.Empty, TestPlant, "Closed", "Desc2", _dueUtc);
                 _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
                 context.SaveChangesAsync().Wait();

@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
             tagMock.SetupGet(t => t.Id).Returns(tagId);
-            _action = new Action(TestPlant, "T", "D", null);
+            _action = new Action(Guid.Empty, TestPlant, "T", "D", null);
             var actionId = 12;
             _action.SetProtectedIdForTesting(actionId);
             tagMock.Object.AddAction(_action);

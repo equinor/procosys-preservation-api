@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.U
 
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            _action = new Action(TestPlant, "T", "D", null);
+            _action = new Action(Guid.Empty, TestPlant, "T", "D", null);
             _action.SetProtectedIdForTesting(_commandWithoutOverwrite.ActionId);
             tagMock.Object.AddAction(_action);
 

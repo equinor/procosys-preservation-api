@@ -1,4 +1,5 @@
-﻿using Equinor.ProCoSys.PcsServiceBus.Receiver;
+﻿using System.Text.Json.Serialization;
+using Equinor.ProCoSys.PcsServiceBus.Receiver;
 using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
 using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers;
@@ -50,6 +51,10 @@ using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Common.Caches;
 using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
+using Equinor.ProCoSys.Preservation.Command.EventPublishers;
+using Equinor.ProCoSys.Preservation.WebApi.MassTransit;
+using MassTransit;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
@@ -69,6 +74,34 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             {
                 var connectionString = configuration.GetConnectionString("PreservationContext");
                 options.UseSqlServer(connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+            });
+
+            services.AddMassTransit(x =>
+            {
+                x.AddEntityFrameworkOutbox<PreservationContext>(o =>
+                {
+                    o.UseSqlServer();
+                    o.UseBusOutbox();
+                });
+
+                x.UsingAzureServiceBus((context, cfg) =>
+                {
+                    var connectionString = configuration.GetConnectionString("ServiceBus");
+                    cfg.Host(connectionString);
+
+                    cfg.MessageTopology.SetEntityNameFormatter(new PreservationNameFormatter());
+                    cfg.UseRawJsonSerializer();
+                    cfg.ConfigureJsonSerializerOptions(opts =>
+                    {
+                        opts.Converters.Add(new JsonStringEnumConverter());
+
+                        // Set it to null to use the default .NET naming convention (PascalCase)
+                        opts.PropertyNamingPolicy = null;
+                        return opts;
+                    });
+
+                    cfg.AutoStart = true;
+                });
             });
 
             // Hosted services
@@ -134,6 +167,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<ITagFunctionValidator, TagFunctionValidator>();
             services.AddScoped<IRowVersionValidator, RowVersionValidator>();
             services.AddScoped<ISavedFilterValidator, SavedFilterValidator>();
+
+            services.AddScoped<IIntegrationEventPublisher, IntegrationEventPublisher>();
+            services.AddScoped<ICreateEventHelper, CreateEventHelper>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();

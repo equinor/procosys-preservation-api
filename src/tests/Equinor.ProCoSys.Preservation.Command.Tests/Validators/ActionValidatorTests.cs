@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tag = AddTag(context, project, TagType.Standard, Guid.NewGuid(), "TagNo", "Tag description", journey.Steps.First(),
                     new List<TagRequirement> {new TagRequirement(TestPlant, 2, rd)});
 
-                var action = new Action(TestPlant, "A", "D", null);
+                var action = new Action(Guid.Empty, TestPlant, "A", "D", null);
                 tag.AddAction(action);
 
                 var attachment = new ActionAttachment(TestPlant, Guid.Empty, _filename);

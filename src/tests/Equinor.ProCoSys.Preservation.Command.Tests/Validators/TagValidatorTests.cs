@@ -257,7 +257,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tagAttachment = new TagAttachment(TestPlant, Guid.Empty, "fil1.txt");
                 poAreaTagStarted.AddAttachment(tagAttachment);
 
-                var action = new Action(TestPlant, "A", "D", null);
+                var action = new Action(Guid.Empty, TestPlant, "A", "D", null);
                 poAreaTagStarted.AddAction(action);
                 var actionAttachment = new ActionAttachment(TestPlant, Guid.Empty, "fil2.txt");
                 action.AddAttachment(actionAttachment);
@@ -1934,7 +1934,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.AreEqual(0, tag.Attachments.Count);
                 Assert.AreEqual(PreservationStatus.NotStarted, tag.Status);
 
-                tag.AddAction(new Action(TestPlant, "", "", null));
+                tag.AddAction(new Action(Guid.Empty, TestPlant, "", "", null));
                 context.SaveChangesAsync().Wait();
                 Assert.AreEqual(1, tag.Actions.Count);
             }

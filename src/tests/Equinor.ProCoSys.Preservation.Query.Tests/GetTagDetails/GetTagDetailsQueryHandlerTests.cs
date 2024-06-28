@@ -130,7 +130,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _testTagId);
-                tag.AddAction(new Action(TestPlant, "A", "D", null));
+                tag.AddAction(new Action(Guid.Empty, TestPlant, "A", "D", null));
                 context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
