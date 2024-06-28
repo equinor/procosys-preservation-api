@@ -18,12 +18,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public Action(Guid guid, string plant, string title, string description, DateTime? dueTimeUtc)
+        public Action(string plant, string title, string description, DateTime? dueTimeUtc)
             : base(plant)
         {
-            Guid = guid;
-            ObjectGuid = guid;
-            ProCoSysGuid = guid;
+            Guid = Guid.NewGuid();
+            ObjectGuid = Guid;
+            ProCoSysGuid = Guid;
 
             Title = title;
             Description = description;

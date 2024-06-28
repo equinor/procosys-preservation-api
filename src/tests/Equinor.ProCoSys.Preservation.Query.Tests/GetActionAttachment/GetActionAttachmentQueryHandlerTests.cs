@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionAttachment
             _testDataSet = AddTestDataSet(context);
 
             var tag = _testDataSet.Project1.Tags.First();
-            var action = new Action(Guid.Empty, TestPlant, "Open", "Desc1", _utcNow);
+            var action = new Action(TestPlant, "Open", "Desc1", _utcNow);
             tag.AddAction(action);
 
             _attachment = new ActionAttachment(TestPlant, Guid.NewGuid(), "FileA");

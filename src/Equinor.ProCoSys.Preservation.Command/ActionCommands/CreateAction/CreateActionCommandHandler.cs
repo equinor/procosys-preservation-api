@@ -27,9 +27,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CreateAction
         {
             var tag = await _projectRepository.GetTagWithActionsByTagIdAsync(request.TagId);
 
-            var actionToAdd = new Action(
-                new Guid(),
-                 _plantProvider.Plant,
+            var actionToAdd = new Action(_plantProvider.Plant,
                 request.Title,
                 request.Description,
                 request.DueTimeUtc);

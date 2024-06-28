@@ -28,14 +28,14 @@ public class ActionAddedEventHandler : INotificationHandler<ActionAddedEvent>
 
     public async Task Handle(ActionAddedEvent notification, CancellationToken cancellationToken)
     {
-        var tagObject = (from tag in _context.QuerySet<Tag>()
+        var tagObject = await (from tag in _context.QuerySet<Tag>()
                                         where tag.Guid == notification.SourceGuid
-                                        select tag).First();
+                                        select tag).SingleOrDefaultAsync(cancellationToken);
 
-        var actionObject = (from action in _context.QuerySet<Action>()
+        var actionObject = await (from action in _context.QuerySet<Action>()
                                 where EF.Property<int>(action, "TagId") == tagObject.Id
                                 where action.Title == notification.Title
-                                select action).First();
+                                select action).SingleOrDefaultAsync(cancellationToken);
 
         var actionEvent = await _createEventHelper.CreateActionEvent(actionObject, tagObject);
         await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);

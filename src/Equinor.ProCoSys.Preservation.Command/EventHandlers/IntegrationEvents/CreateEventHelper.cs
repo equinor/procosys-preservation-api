@@ -10,19 +10,21 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
 public class CreateEventHelper : ICreateEventHelper
 {
-    private readonly IPlantProvider _plantProvider;
+    private readonly IProjectRepository _projectRepository;
 
-    public CreateEventHelper(IPlantProvider plantProvider)
+    public CreateEventHelper(IProjectRepository projectRepository)
     {
-        _plantProvider = plantProvider;
+        _projectRepository = projectRepository;
     }
 
     public async Task<IActionEventV1> CreateActionEvent(Action action, Tag tag)
     {
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
+
         return new ActionEvent(
             action.Guid,
             action.Plant,
-            "",
+            project.Name,
             tag.TagNo,
             action.Title,
             action.Description,

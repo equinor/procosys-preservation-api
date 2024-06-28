@@ -42,9 +42,9 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActions
                 var tag = _testDataSet.Project1.Tags.First();
                 var attachment = new ActionAttachment(TestPlant, Guid.NewGuid(), "FileA");
 
-                _openAction = new Action(Guid.Empty, TestPlant, "Open", "Desc1", _utcNow);
+                _openAction = new Action(TestPlant, "Open", "Desc1", _utcNow);
                 tag.AddAction(_openAction);
-                _closedAction = new Action(Guid.Empty, TestPlant, "Closed", "Desc2", _utcNow);
+                _closedAction = new Action(TestPlant, "Closed", "Desc2", _utcNow);
                 _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
 
@@ -53,16 +53,16 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActions
                 var personMock = new Mock<Person>();
                 personMock.SetupGet(p => p.Id).Returns(7);
 
-                _openActionWithEarliestDueTime = new Action(Guid.Empty, TestPlant, "OpenWithEarliestDueTime", "D2", _dueTimeUtc);
-                _openActionWithDueTime = new Action(Guid.Empty, TestPlant, "OpenWithDueTime", "D1", _dueTimeUtc);
-                _openActionWithoutDueTime = new Action(Guid.Empty, TestPlant, "OpenWithoutDueTime", "D3", _dueTimeUtc);
+                _openActionWithEarliestDueTime = new Action(TestPlant, "OpenWithEarliestDueTime", "D2", _dueTimeUtc);
+                _openActionWithDueTime = new Action(TestPlant, "OpenWithDueTime", "D1", _dueTimeUtc);
+                _openActionWithoutDueTime = new Action(TestPlant, "OpenWithoutDueTime", "D3", _dueTimeUtc);
                 _openActionWithoutDueTime.SetDueTime(null);
                 _openAction.AddAttachment(attachment);
-                _closedActionWithEarliestDueTime = new Action(Guid.Empty, TestPlant, "ClosedWithEarliestDueTime", "D5", _dueTimeUtc);
+                _closedActionWithEarliestDueTime = new Action(TestPlant, "ClosedWithEarliestDueTime", "D5", _dueTimeUtc);
                 _closedActionWithEarliestDueTime.Close(_utcNow, personMock.Object);
-                _closedActionWithDueTime = new Action(Guid.Empty, TestPlant, "ClosedWithDueTime", "D4", _dueTimeUtc);
+                _closedActionWithDueTime = new Action(TestPlant, "ClosedWithDueTime", "D4", _dueTimeUtc);
                 _closedActionWithDueTime.Close(_utcNow, personMock.Object);
-                _closedActionWithoutDueTime = new Action(Guid.Empty, TestPlant, "ClosedWithoutDueTime", "D6", _dueTimeUtc);
+                _closedActionWithoutDueTime = new Action(TestPlant, "ClosedWithoutDueTime", "D6", _dueTimeUtc);
                 _closedActionWithoutDueTime.SetDueTime(null);
                 _closedActionWithoutDueTime.Close(_utcNow, personMock.Object);
 

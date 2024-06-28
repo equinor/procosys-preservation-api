@@ -480,7 +480,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.First();
-                tag.AddAction(new Action(Guid.Empty, TestPlant, "A", "Desc", null));
+                tag.AddAction(new Action(TestPlant, "A", "Desc", null));
                 context.SaveChangesAsync().Wait();
             }
 
@@ -506,7 +506,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.First();
-                var action = new Action(Guid.Empty, TestPlant, "A", "Desc", null);
+                var action = new Action(TestPlant, "A", "Desc", null);
                 action.Close(_timeProvider.UtcNow, context.Persons.First());
                 tag.AddAction(action);
                 context.SaveChangesAsync().Wait();
@@ -534,7 +534,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.First();
-                var action = new Action(Guid.Empty, TestPlant, "A", "Desc", _timeProvider.UtcNow.AddDays(-1));
+                var action = new Action(TestPlant, "A", "Desc", _timeProvider.UtcNow.AddDays(-1));
                 tag.AddAction(action);
                 context.SaveChangesAsync().Wait();
             }

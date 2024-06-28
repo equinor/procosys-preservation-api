@@ -104,8 +104,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 standardTag.StartPreservation();
                 siteTag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _siteTagId);
 
-                standardTag.AddAction(new Action(new Guid(), standardTag.Plant, "AcA", "AcA desc", null));
-                siteTag.AddAction(new Action(new Guid(), siteTag.Plant, "AcB", "AcB desc", _timeProvider.UtcNow));
+                standardTag.AddAction(new Action(standardTag.Plant, "AcA", "AcA desc", null));
+                siteTag.AddAction(new Action(siteTag.Plant, "AcB", "AcB desc", _timeProvider.UtcNow));
                 context.SaveChangesAsync().Wait();
             
                 _timeProvider.ElapseWeeks(standardTag.Requirements.Single().IntervalWeeks);
