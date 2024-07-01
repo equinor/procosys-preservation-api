@@ -22,7 +22,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             : base(plant)
         {
             Guid = Guid.NewGuid();
-            ProCoSysGuid = Guid;
 
             Title = title;
             Description = description;
@@ -30,7 +29,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public Guid Guid { get; private set; }
-        public Guid? ProCoSysGuid { get; private set; }
 
         public string Title { get; set; }
         public string Description { get; set; }

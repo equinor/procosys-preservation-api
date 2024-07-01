@@ -2,9 +2,11 @@
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Equinor.ProCoSys.Preservation.Domain.Events;
+using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvents
 {
@@ -40,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             var sourceGuid = Guid.NewGuid();
             var plant = "TestPlant";
             var title = "Action1";
-            _dut.Handle(new ActionAddedEvent(plant, sourceGuid, Guid.NewGuid(), title), default);
+            _dut.Handle(new ActionAddedEvent(plant, sourceGuid, new Action(plant, title, "", null), title), default);
 
             // Assert
             var expectedDescription = $"{EventType.ActionAdded.GetDescription()} - '{title}'";

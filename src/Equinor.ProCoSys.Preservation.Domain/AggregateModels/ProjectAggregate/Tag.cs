@@ -290,7 +290,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _actions.Add(action);
-            AddDomainEvent(new ActionAddedEvent(action.Plant, Guid, action.Guid, action.Title));
+            AddDomainEvent(new ActionAddedEvent(action.Plant, Guid, action, action.Title));
         }
 
         public Action CloseAction(int actionId, Person closedBy, DateTime closedAtUtc, string rowVersion)
@@ -304,7 +304,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             action.Close(closedAtUtc, closedBy);
             action.SetRowVersion(rowVersion);
-            AddDomainEvent(new ActionClosedEvent(action.Plant, Guid, action.Guid));
+            AddDomainEvent(new ActionClosedEvent(action.Plant, Guid, action));
 
             return action;
         }

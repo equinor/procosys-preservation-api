@@ -12,20 +12,17 @@ public class CreateEventHelper : ICreateEventHelper
 {
     private readonly IProjectRepository _projectRepository;
 
-    public CreateEventHelper(IProjectRepository projectRepository)
-    {
-        _projectRepository = projectRepository;
-    }
+    public CreateEventHelper(IProjectRepository projectRepository) => _projectRepository = projectRepository;
 
-    public async Task<IActionEventV1> CreateActionEvent(Action action, Tag tag)
+    public async Task<IActionEventV1> CreateActionEvent(Action action, Guid tagId)
     {
-        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tagId);
 
         return new ActionEvent(
             action.Guid,
             action.Plant,
             project.Name,
-            tag.Guid,
+            tagId,
             action.Title,
             action.Description,
             action.DueTimeUtc != null ? DateOnly.FromDateTime(action.DueTimeUtc.Value) : null,

@@ -17,30 +17,17 @@ public class ActionAddedEventHandler : INotificationHandler<ActionAddedEvent>
 {
     private readonly IIntegrationEventPublisher _integrationEventPublisher;
     private readonly ICreateEventHelper _createEventHelper;
-    private readonly IReadOnlyContext _context;
-    private readonly IProjectRepository _projectRepository;
 
     public ActionAddedEventHandler(IIntegrationEventPublisher integrationEventPublisher,
-        ICreateEventHelper createEventHelper,
-        IReadOnlyContext context,
-        IProjectRepository projectRepository)
+        ICreateEventHelper createEventHelper)
     {
         _integrationEventPublisher = integrationEventPublisher;
         _createEventHelper = createEventHelper;
-        _context = context;
-        _projectRepository = projectRepository;
     }
 
     public async Task Handle(ActionAddedEvent notification, CancellationToken cancellationToken)
     {
-        var tagObject = await _projectRepository.GetTagOnlyByGuidAsync(notification.SourceGuid);
-
-        var actionObject = await (from action in _context.QuerySet<Action>()
-                                where EF.Property<int>(action, "TagId") == tagObject.Id
-                                where action.Guid == notification.ActionGuid
-                                select action).SingleOrDefaultAsync(cancellationToken);
-
-        var actionEvent = await _createEventHelper.CreateActionEvent(actionObject, tagObject);
+        var actionEvent = await _createEventHelper.CreateActionEvent(notification.Action, notification.SourceGuid);
         await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);
     }
 }
