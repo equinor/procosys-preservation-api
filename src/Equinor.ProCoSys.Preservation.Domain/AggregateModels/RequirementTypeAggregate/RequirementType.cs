@@ -4,10 +4,11 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class RequirementType : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable
+    public class RequirementType : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
     {
         private readonly List<RequirementDefinition> _requirementDefinitions = new();
 
@@ -23,6 +24,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public RequirementType(string plant, string code, string title, RequirementTypeIcon icon, int sortKey)
             : base(plant)
         {
+            Guid = Guid.NewGuid();
+
             Code = code;
             Title = title;
             SortKey = sortKey;
@@ -41,6 +44,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
+        public Guid Guid { get; }
+
         public void AddRequirementDefinition(RequirementDefinition requirementDefinition)
         {
             if (requirementDefinition == null)
@@ -53,7 +58,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentException($"Can't relate item in {requirementDefinition.Plant} to item in {Plant}");
             }
 
+            requirementDefinition.RequirementTypeGuid = Guid;
             _requirementDefinitions.Add(requirementDefinition);
+            AddDomainEvent(new RequirementDefinitionAddedEvent(requirementDefinition));
         }
         
         public override string ToString() => Title;
@@ -96,6 +103,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
 
             _requirementDefinitions.Remove(requirementDefinition);
+            AddDomainEvent(new RequirementDefinitionDeletedEvent(requirementDefinition));
         }
     }
 }

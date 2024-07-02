@@ -11,7 +11,7 @@ using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class TagRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
+    public class TagRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
     {
         public const int InitialPreservationPeriodStatusMax = 64;
 
@@ -28,6 +28,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public TagRequirement(string plant, int intervalWeeks, RequirementDefinition requirementDefinition)
             : base(plant)
         {
+            Guid = Guid.NewGuid();
+
             if (requirementDefinition == null)
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
@@ -41,18 +43,22 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             IntervalWeeks = intervalWeeks;
             Usage = requirementDefinition.Usage;
             RequirementDefinitionId = requirementDefinition.Id;
-            
+            RequirementDefinitionGuid = requirementDefinition.Guid;
+
             _initialPreservationPeriodStatus = requirementDefinition.NeedsUserInput
                 ? PreservationPeriodStatus.NeedsUserInput
                 : PreservationPeriodStatus.ReadyToBePreserved;
         }
 
+        public Guid Guid { get; }
         public int IntervalWeeks { get; private set; }
         public RequirementUsage Usage { get; private set; }
         public DateTime? NextDueTimeUtc { get; private set; }
         public bool IsVoided { get; set; }
         public bool IsInUse => _preservationPeriods.Any();
         public int RequirementDefinitionId { get; private set; }
+        public Guid RequirementDefinitionGuid { get; private set; }
+
         public IReadOnlyCollection<PreservationPeriod> PreservationPeriods => _preservationPeriods.AsReadOnly();
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }

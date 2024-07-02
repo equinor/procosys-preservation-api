@@ -3,10 +3,11 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class Field : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
+    public class Field : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
     {
         public const int LabelLengthMax = 255;
         public const int UnitLengthMax = 32;
@@ -24,6 +25,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             bool? showPrevious = null)
             : base(plant)
         {
+            Guid = Guid.NewGuid();
+
             if (fieldType == FieldType.Number && string.IsNullOrEmpty(unit))
             {
                 throw new ArgumentException($"{nameof(Unit)} must have value for {nameof(FieldType)} {FieldType.Number}");
@@ -50,6 +53,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+        public Guid Guid { get; }
+        public Guid RequirementDefinitionGuid { get; set; }
 
         public override string ToString() => Label;
 
@@ -71,6 +76,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+            AddDomainEvent(new RequirementUpdatedFieldEvent(RequirementDefinitionGuid, this));
         }
     }
 }

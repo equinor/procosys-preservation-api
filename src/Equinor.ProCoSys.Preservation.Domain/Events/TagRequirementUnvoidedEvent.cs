@@ -1,19 +1,21 @@
 ﻿using System;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
     public class TagRequirementUnvoidedEvent : IDomainEvent
     {
-        public TagRequirementUnvoidedEvent(string plant, Guid sourceGuid, int requirementDefinitionId)
+        public TagRequirementUnvoidedEvent(string plant, Guid sourceGuid, TagRequirement tagRequirement)
         {
             Plant = plant;
             SourceGuid = sourceGuid;
-            RequirementDefinitionId = requirementDefinitionId;
+            TagRequirement = tagRequirement;
         }
 
         public string Plant { get; }
         public Guid SourceGuid { get; }
-        public int RequirementDefinitionId { get; }
+        public TagRequirement TagRequirement { get; }
+        public int RequirementDefinitionId => TagRequirement.RequirementDefinitionId;
     }
 }

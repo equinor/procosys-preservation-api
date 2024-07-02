@@ -17,6 +17,9 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Microsoft.EntityFrameworkCore;
 using IDomainMarker = Equinor.ProCoSys.Preservation.Domain.IDomainMarker;
+using MassTransit;
+using ConcurrencyException = Equinor.ProCoSys.Common.Misc.ConcurrencyException;
+
 
 namespace Equinor.ProCoSys.Preservation.Infrastructure
 {
@@ -38,6 +41,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             _currentUserProvider = currentUserProvider;
         }
 
+        private static void ConfigureOutBoxPattern(ModelBuilder modelBuilder)
+            => modelBuilder.AddTransactionalOutboxEntities();
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (DebugOptions.DebugEntityFrameworkInDevelopment)
@@ -51,6 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             SetGlobalPlantFilter(modelBuilder);
+            ConfigureOutBoxPattern(modelBuilder);
         }
 
         public static DateTimeKindConverter DateTimeKindConverter { get; } = new DateTimeKindConverter();

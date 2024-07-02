@@ -11,7 +11,7 @@ using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class PreservationPeriod : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class PreservationPeriod : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
     {
         private readonly List<FieldValue> _fieldValues = new();
 
@@ -25,6 +25,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public PreservationPeriod(string plant, int intervalWeeks, PreservationPeriodStatus status)
             : base(plant)
         {
+            Guid = Guid.NewGuid();
+
             if (status != PreservationPeriodStatus.NeedsUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
             {
                 throw new ArgumentException($"{status} is an illegal initial status for a {nameof(PreservationPeriod)}");
@@ -43,6 +45,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
         public int TagRequirementId { get; set; }
+        public Guid Guid { get; }
 
         public void Preserve(Person preservedBy, bool bulkPreserved)
         {
