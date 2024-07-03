@@ -17,4 +17,5 @@ public interface ICreateEventHelper
     Task<IFieldEventV1> CreateFieldEvent(Field field, Guid sourceGuid);
     Task<IRequirementDefinitionEventV1> CreateRequirementDefinitionEvent(RequirementDefinition requirementDefinition);
     Task<IRequirementTypeEventV1> CreateRequirementTypeEvent(RequirementType requirementType);
+    Task<ITagEventV1> CreateTagEvent(Tag tag);
 }

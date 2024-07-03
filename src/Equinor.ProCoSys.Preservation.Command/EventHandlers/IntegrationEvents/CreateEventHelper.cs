@@ -143,4 +143,37 @@ public class CreateEventHelper : ICreateEventHelper
             ModifiedAtUtc = requirementType.ModifiedAtUtc,
             ModifiedById = requirementType.ModifiedById
         };
+
+    public async Task<ITagEventV1> CreateTagEvent(Tag tag)
+    {
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
+
+        return new TagEvent
+        {
+            Guid = tag.Guid,
+            Plant = tag.Plant,
+            ProjectName = project.Name,
+            Description = tag.Description,
+            Remark = tag.Remark,
+            NextDueTimeUtc = tag.NextDueTimeUtc,
+            StepId = tag.StepId,
+            DisciplineCode = tag.DisciplineCode,
+            AreaCode = tag.AreaCode,
+            TagFunctionCode = tag.TagFunctionCode,
+            PurchaseOrderNo = tag.PurchaseOrderNo,
+            TagType = tag.TagType.ToString(),
+            StorageArea = tag.StorageArea,
+            AreaDescription = tag.AreaDescription,
+            DisciplineDescription = tag.DisciplineDescription,
+            CreatedAtUtc = tag.CreatedAtUtc,
+            CreatedById = tag.CreatedById,
+            ModifiedAtUtc = tag.ModifiedAtUtc,
+            ModifiedById = tag.ModifiedById,
+            Status = tag.Status.ToString(),
+            CommPkgGuid = tag.CommPkgProCoSysGuid,
+            McPkgGuid = tag.McPkgProCoSysGuid,
+            IsVoided = tag.IsVoided,
+            IsVoidedInSource = tag.IsVoidedInSource
+        };
+    }
 }

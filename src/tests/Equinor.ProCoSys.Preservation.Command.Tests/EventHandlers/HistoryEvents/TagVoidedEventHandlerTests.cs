@@ -1,6 +1,7 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -38,7 +39,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             // Act
             var sourceGuid = Guid.NewGuid();
             var plant = "TestPlant";
-            _dut.Handle(new TagVoidedEvent(plant, sourceGuid), default);
+
+            var tagMock = new Mock<Tag>();
+            tagMock.Setup(s => s.Plant).Returns(plant);
+            var tag = tagMock.Object;
+            tag.Guid = sourceGuid;
+
+            _dut.Handle(new TagVoidedEvent(plant, tag), default);
 
             // Assert
             Assert.IsNotNull(_historyAdded);

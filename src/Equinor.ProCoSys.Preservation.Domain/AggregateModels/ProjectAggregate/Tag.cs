@@ -86,7 +86,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             StepId = step.Id;
             IsInSupplierStep = step.IsSupplierStep;
             _requirements.AddRange(reqList);
-            AddDomainEvent(new TagCreatedEvent(plant, Guid));
+            AddDomainEvent(new TagCreatedEvent(plant, this));
         }
 
         // private setters needed for Entity Framework
@@ -112,7 +112,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public IReadOnlyCollection<TagAttachment> Attachments => _attachments.AsReadOnly();
-        public Guid Guid { get; private set; }
+        public Guid Guid { get; set; }
         [Obsolete("Keep for migration only. To be removed in next version")]
         public Guid ObjectGuid { get; private set; }
         [Obsolete("Keep for migration only. To be removed in next version")]
@@ -137,11 +137,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 _isVoided = value;
                 if (_isVoided)
                 {
-                    AddDomainEvent(new TagVoidedEvent(Plant, Guid));
+                    AddDomainEvent(new TagVoidedEvent(Plant, this));
                 }
                 else
                 {
-                    AddDomainEvent(new TagUnvoidedEvent(Plant, Guid));
+                    AddDomainEvent(new TagUnvoidedEvent(Plant, this));
                 }
             }
         }
@@ -163,11 +163,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
                 if (_isVoidedInSource)
                 {
-                    AddDomainEvent(new TagVoidedInSourceEvent(Plant, Guid));
+                    AddDomainEvent(new TagVoidedInSourceEvent(Plant, this));
                 }
                 else
                 {
-                    AddDomainEvent(new TagUnvoidedInSourceEvent(Plant, Guid));
+                    AddDomainEvent(new TagUnvoidedInSourceEvent(Plant, this));
                 }
             }
         }
@@ -549,6 +549,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+            AddDomainEvent(new TagUpdatedEvent(this));
         }
 
         public bool IsReadyToBeStarted() => Status != PreservationStatus.Active && Requirements.Any(r => !r.IsVoided);
