@@ -44,8 +44,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+
         public int TagRequirementId { get; set; }
-        public Guid Guid { get; }
+        public Guid TagRequirementGuid { get; set; }
+
+        public Guid Guid { get; private set; }
 
         public void Preserve(Person preservedBy, bool bulkPreserved)
         {
@@ -213,6 +216,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+            AddDomainEvent(new PreservationPeriodAddedEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -223,6 +227,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+            AddDomainEvent(new PreservationPeriodUpdatedEvent(this));
         }
 
         private void AddFieldValue(FieldValue fieldValue)

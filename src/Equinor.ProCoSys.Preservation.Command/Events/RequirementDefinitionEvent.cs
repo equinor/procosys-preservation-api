@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
@@ -6,9 +7,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 public class RequirementDefinitionEvent : IRequirementDefinitionEventV1
 {
     public Guid Guid { get; set; }
-    public Guid ProCoSysGuid { get; set; }
+    public Guid ProCoSysGuid => Guid;
     public string Plant { get; set; }
-    public string ProjectName { get; set; }
+
+    [JsonIgnore] //ProjectName isnt needed for RequirementDefinition but is required for IIntegrationEvent
+    public string ProjectName { get; set; } = null;
+
     public string Title { get; set; }
     public bool IsVoided { get; set; }
     public int DefaultIntervalWeeks { get; set; }

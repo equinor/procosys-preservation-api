@@ -8,8 +8,18 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
 public class TagRequirementAddedEventHandler  : INotificationHandler<TagRequirementAddedEvent>
 {
+    private readonly IIntegrationEventPublisher _integrationEventPublisher;
     private readonly ICreateEventHelper _createEventHelper;
-    public TagRequirementAddedEventHandler(ICreateEventHelper createEventHelper) => _createEventHelper = createEventHelper;
 
-    public async Task Handle(TagRequirementAddedEvent notification, CancellationToken cancellationToken) => await _createEventHelper.SendTagRequirementEvents(notification.TagRequirement, notification.SourceGuid, cancellationToken);
+    public TagRequirementAddedEventHandler(IIntegrationEventPublisher integrationEventPublisher, ICreateEventHelper createEventHelper)
+    {
+        _integrationEventPublisher = integrationEventPublisher;
+        _createEventHelper = createEventHelper;
+    }
+
+    public async Task Handle(TagRequirementAddedEvent notification, CancellationToken cancellationToken)
+    {
+        var actionEvent = await _createEventHelper.CreateRequirementEvent(notification.TagRequirement, notification.SourceGuid);
+        await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);
+    }
 }

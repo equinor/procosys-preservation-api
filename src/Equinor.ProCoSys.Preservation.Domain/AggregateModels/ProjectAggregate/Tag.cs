@@ -246,13 +246,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"{nameof(Tag)} {TagNo} already has a requirement with definition {tagRequirement.RequirementDefinitionId}");
             }
 
+            tagRequirement.TagGuid = Guid;
+
             _requirements.Add(tagRequirement);
             if (Status == PreservationStatus.Active || Status == PreservationStatus.InService)
             {
                 tagRequirement.StartPreservation();
             }
             UpdateNextDueTimeUtc();
-            AddDomainEvent(new TagRequirementAddedEvent(tagRequirement.Plant, Guid, tagRequirement));
         }
                 
         public void RemoveRequirement(int requirementId, string requirementRowVersion)
@@ -289,8 +290,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"Can't relate item in {action.Plant} to item in {Plant}");
             }
 
+            action.TagGuid = Guid;
+
             _actions.Add(action);
-            AddDomainEvent(new ActionAddedEvent(action.Plant, Guid, action, action.Title));
         }
 
         public Action CloseAction(int actionId, Person closedBy, DateTime closedAtUtc, string rowVersion)
@@ -304,8 +306,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             action.Close(closedAtUtc, closedBy);
             action.SetRowVersion(rowVersion);
-            AddDomainEvent(new ActionClosedEvent(action.Plant, Guid, action));
-
             return action;
         }
 

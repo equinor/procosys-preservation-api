@@ -8,14 +8,14 @@ using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
-public class RequirementFieldDeletedEventHandler  : INotificationHandler<RequirementDeletedFieldEvent>
+public class PreservationPeriodDeletedEventHandler  : INotificationHandler<PreservationPeriodDeletedEvent>
 {
     private readonly IIntegrationEventPublisher _integrationEventPublisher;
-    public RequirementFieldDeletedEventHandler(IIntegrationEventPublisher integrationEventPublisher) => _integrationEventPublisher = integrationEventPublisher;
+    public PreservationPeriodDeletedEventHandler(IIntegrationEventPublisher integrationEventPublisher) => _integrationEventPublisher = integrationEventPublisher;
 
-    public async Task Handle(RequirementDeletedFieldEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(PreservationPeriodDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent(notification.Field.Guid, notification.Field.Plant, "");
+        var deleteEvent = new DeleteEvent(notification.PreservationPeriod.Guid, notification.PreservationPeriod.Plant, "");
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

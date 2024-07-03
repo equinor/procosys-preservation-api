@@ -45,15 +45,6 @@ public class CreateEventHelper : ICreateEventHelper
     {
         var actionEvent = await CreateRequirementEvent(tagRequirement, tagGuid);
         await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);
-
-        foreach (var period in tagRequirement.PreservationPeriods)
-        {
-            var preservationPeriodEvent = await CreatePreservationPeriodEvent(period, tagRequirement.Guid, tagGuid);
-            await _integrationEventPublisher.PublishAsync(preservationPeriodEvent, cancellationToken);
-
-            var preservationRecordEvent = await CreatePreservationRecordEvent(period.PreservationRecord, tagRequirement.Guid, period.Guid, tagGuid);
-            await _integrationEventPublisher.PublishAsync(preservationRecordEvent, cancellationToken);
-        }
     }
 
     public async Task<ITagRequirementEventV1> CreateRequirementEvent(TagRequirement tagRequirement, Guid tagGuid)
@@ -63,7 +54,6 @@ public class CreateEventHelper : ICreateEventHelper
         return new TagRequirementEvent
         {
             Guid = tagRequirement.Guid,
-            ProCoSysGuid = tagRequirement.Guid,
             Plant = tagRequirement.Plant,
             ProjectName = project.Name,
             IntervalWeeks = tagRequirement.IntervalWeeks,
@@ -71,7 +61,6 @@ public class CreateEventHelper : ICreateEventHelper
             NextDueTimeUtc = tagRequirement.NextDueTimeUtc,
             IsVoided = tagRequirement.IsVoided,
             IsInUse = tagRequirement.IsInUse,
-            RequirementDefinitionId = tagRequirement.RequirementDefinitionId,
             RequirementDefinitionGuid = tagRequirement.RequirementDefinitionGuid,
             CreatedAtUtc = tagRequirement.CreatedAtUtc,
             CreatedById = tagRequirement.CreatedById,
@@ -81,13 +70,11 @@ public class CreateEventHelper : ICreateEventHelper
         };
     }
 
-    public async Task<IPreservationPeriodEventV1> CreatePreservationPeriodEvent(PreservationPeriod preservationPeriod, Guid tagRequirementGuid, Guid tagGuid)
+    public async Task<IPreservationPeriodEventV1> CreatePreservationPeriodEvent(PreservationPeriod preservationPeriod)
     {
-        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tagGuid);
-
+        var preservationRecord = preservationPeriod.PreservationRecord;
         return new PreservationPeriodsEvent
         {
-            TagRequirementGuid = tagRequirementGuid,
             Status = preservationPeriod.Status.ToString(),
             DueTimeUtc = preservationPeriod.DueTimeUtc,
             Comment = preservationPeriod.Comment,
@@ -96,30 +83,15 @@ public class CreateEventHelper : ICreateEventHelper
             CreatedById = preservationPeriod.CreatedById,
             ModifiedAtUtc = preservationPeriod.ModifiedAtUtc,
             ModifiedById = preservationPeriod.ModifiedById,
-            TagRequirementId = preservationPeriod.TagRequirementId,
+            TagRequirementGuid = preservationPeriod.TagRequirementGuid,
             Guid = preservationPeriod.Guid,
-            ProCoSysGuid = preservationPeriod.Guid,
             Plant = preservationPeriod.Plant,
-            ProjectName = project.Name
-        };
-    }
-
-    public async Task<IPreservationRecordEventV1> CreatePreservationRecordEvent(PreservationRecord preservationRecord, Guid tagRequirementGuid,
-        Guid preservationPeriodGuid, Guid tagGuid)
-    {
-        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tagGuid);
-
-        return new PreservationRecordEvent
-        {
-            PreservedAtUtc = preservationRecord.PreservedAtUtc,
-            PreservedById = preservationRecord.PreservedById,
-            BulkPreserved = preservationRecord.BulkPreserved,
-            CreatedAtUtc = preservationRecord.CreatedAtUtc,
-            CreatedById = preservationRecord.CreatedById,
-            Guid = preservationRecord.Guid,
-            ProCoSysGuid = preservationRecord.Guid,
-            Plant = preservationRecord.Plant,
-            ProjectName = project.Name
+            PreservationRecord =
+            {
+                PreservedAtUtc = preservationRecord.PreservedAtUtc,
+                PreservedById = preservationRecord.PreservedById,
+                BulkPreserved = preservationRecord.BulkPreserved
+            }
         };
     }
 
@@ -137,7 +109,6 @@ public class CreateEventHelper : ICreateEventHelper
             ModifiedAtUtc = field.ModifiedAtUtc,
             ModifiedById = field.ModifiedById,
             Guid = field.Guid,
-            ProCoSysGuid = field.Guid,
             Plant = field.Plant
         };
 
@@ -145,9 +116,7 @@ public class CreateEventHelper : ICreateEventHelper
         new RequirementDefinitionEvent
         {
             Guid = requirementDefinition.Guid,
-            ProCoSysGuid = requirementDefinition.Guid,
             Plant = requirementDefinition.Plant,
-            ProjectName = "",
             Title = requirementDefinition.Title,
             IsVoided = requirementDefinition.IsVoided,
             DefaultIntervalWeeks = requirementDefinition.DefaultIntervalWeeks,
@@ -158,5 +127,20 @@ public class CreateEventHelper : ICreateEventHelper
             CreatedById = requirementDefinition.CreatedById,
             ModifiedAtUtc = requirementDefinition.ModifiedAtUtc,
             ModifiedById = requirementDefinition.ModifiedById
+        };
+
+    public async Task<IRequirementTypeEventV1> CreateRequirementTypeEvent(RequirementType requirementType) =>
+        new RequirementTypeEvent
+        {
+            Guid = requirementType.Guid,
+            Plant = requirementType.Plant,
+            Code = requirementType.Code,
+            Title = requirementType.Title,
+            IsVoided = requirementType.IsVoided,
+            SortKey = requirementType.SortKey,
+            CreatedAtUtc = requirementType.CreatedAtUtc,
+            CreatedById = requirementType.CreatedById,
+            ModifiedAtUtc = requirementType.ModifiedAtUtc,
+            ModifiedById = requirementType.ModifiedById
         };
 }

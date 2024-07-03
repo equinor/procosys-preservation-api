@@ -11,5 +11,5 @@ public interface IPreservationPeriodEventV1 : IIntegrationEvent
     int CreatedById { get; }
     DateTime? ModifiedAtUtc { get; }
     int? ModifiedById { get; }
-    int TagRequirementId { get; }
+    dynamic PreservationRecord { get; }
 }

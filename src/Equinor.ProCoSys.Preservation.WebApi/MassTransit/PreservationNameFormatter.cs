@@ -18,6 +18,7 @@ public class PreservationNameFormatter : IEntityNameFormatter
             nameof(IIntegrationEvent) => nameof(IIntegrationEvent),
             nameof(ITagEventV1) => "preservationtag",
             nameof(ITagRequirementEventV1) => "preservationtagrequirement",
+            nameof(IRequirementTypeEventV1) => "preservationrequirementtype",
             nameof(IActionEventV1) => "preservationtagaction",
             nameof(IFieldEventV1) => "preservationfield",
             nameof(IPreservationPeriodEventV1) => "preservationperiod",

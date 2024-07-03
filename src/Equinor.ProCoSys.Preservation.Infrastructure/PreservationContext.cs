@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Microsoft.EntityFrameworkCore;
 using IDomainMarker = Equinor.ProCoSys.Preservation.Domain.IDomainMarker;
 using MassTransit;
+using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 using ConcurrencyException = Equinor.ProCoSys.Common.Misc.ConcurrencyException;
 
 
@@ -106,9 +108,12 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await DispatchDomainEventsAsync(cancellationToken);
-
+            //Some events are sent in SetCreated and SetModified which comes from SetAuditDataAsync, so queue those and then dispatches
+            //Then does SetAuditDataAsync again to update History objects that were created in the DomainEvents
             await SetAuditDataAsync();
+            await DispatchDomainEventsAsync(cancellationToken);
+            await SetAuditDataAsync();
+
             UpdateConcurrencyToken();
 
             try

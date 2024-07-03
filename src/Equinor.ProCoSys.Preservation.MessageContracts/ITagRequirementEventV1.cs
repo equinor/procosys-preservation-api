@@ -7,7 +7,6 @@ public interface ITagRequirementEventV1 : IIntegrationEvent
     DateTime? NextDueTimeUtc { get; }
     bool IsVoided { get; }
     bool IsInUse { get; }
-    int RequirementDefinitionId { get; }
     Guid RequirementDefinitionGuid { get; }
     DateTime CreatedAtUtc { get; }
     int CreatedById { get; }

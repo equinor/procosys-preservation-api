@@ -15,9 +15,9 @@ public class PreservationPeriodsEvent : IPreservationPeriodEventV1
     public int CreatedById { get; set; }
     public DateTime? ModifiedAtUtc { get; set; }
     public int? ModifiedById { get; set; }
-    public int TagRequirementId { get; set; }
     public Guid Guid { get; set; }
-    public Guid ProCoSysGuid { get; set; }
+    public Guid ProCoSysGuid => Guid;
     public string Plant { get; set; }
-    public string ProjectName { get; set; }
+    public string ProjectName { get; set; } = "";
+    public dynamic PreservationRecord { get; set; }
 }

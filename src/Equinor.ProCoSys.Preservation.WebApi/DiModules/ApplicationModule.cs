@@ -89,6 +89,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
                     var connectionString = configuration.GetConnectionString("ServiceBus");
                     cfg.Host(connectionString);
 
+                    cfg.OverrideDefaultBusEndpointQueueName("preservationfamtransferqueue");
+
                     cfg.MessageTopology.SetEntityNameFormatter(new PreservationNameFormatter());
                     cfg.UseRawJsonSerializer();
                     cfg.ConfigureJsonSerializerOptions(opts =>

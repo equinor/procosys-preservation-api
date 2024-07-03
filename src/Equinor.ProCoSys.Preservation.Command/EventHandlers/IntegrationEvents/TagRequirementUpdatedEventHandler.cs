@@ -6,18 +6,18 @@ using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
-public class TagRequirementVoidedEventHandler  : INotificationHandler<TagRequirementVoidedEvent>
+public class TagRequirementUpdatedEventHandler  : INotificationHandler<TagRequirementUpdatedEvent>
 {
     private readonly IIntegrationEventPublisher _integrationEventPublisher;
     private readonly ICreateEventHelper _createEventHelper;
 
-    public TagRequirementVoidedEventHandler(IIntegrationEventPublisher integrationEventPublisher, ICreateEventHelper createEventHelper)
+    public TagRequirementUpdatedEventHandler(IIntegrationEventPublisher integrationEventPublisher, ICreateEventHelper createEventHelper)
     {
         _integrationEventPublisher = integrationEventPublisher;
         _createEventHelper = createEventHelper;
     }
 
-    public async Task Handle(TagRequirementVoidedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(TagRequirementUpdatedEvent notification, CancellationToken cancellationToken)
     {
         var actionEvent = await _createEventHelper.CreateRequirementEvent(notification.TagRequirement, notification.SourceGuid);
         await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);

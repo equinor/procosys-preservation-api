@@ -50,7 +50,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 : PreservationPeriodStatus.ReadyToBePreserved;
         }
 
-        public Guid Guid { get; }
+        public Guid Guid { get; private set; }
+        public Guid TagGuid { get; set; }
+
         public int IntervalWeeks { get; private set; }
         public RequirementUsage Usage { get; private set; }
         public DateTime? NextDueTimeUtc { get; private set; }
@@ -239,6 +241,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+            AddDomainEvent(new TagRequirementAddedEvent(Plant, TagGuid, this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -249,6 +252,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+            AddDomainEvent(new TagRequirementUpdatedEvent(Plant, TagGuid, this));
         }
 
         private PreservationPeriod PeriodReadyToBePreserved
@@ -264,7 +268,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             else
             {
                 var preservationPeriod = new PreservationPeriod(Plant, IntervalWeeks, _initialPreservationPeriodStatus);
+                preservationPeriod.TagRequirementGuid = Guid;
                 _preservationPeriods.Add(preservationPeriod);
+                AddDomainEvent(new PreservationPeriodAddedEvent(preservationPeriod));
             }
 
             NextDueTimeUtc = ActivePeriod.DueTimeUtc;

@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             var sourceGuid = Guid.NewGuid();
             var plant = "TestPlant";
             var title = "Action1";
-            _dut.Handle(new ActionAddedEvent(plant, sourceGuid, new Action(plant, title, "", null), title), default);
+            _dut.Handle(new ActionAddedEvent(plant, sourceGuid, new Action(plant, title, "", null)), default);
 
             // Assert
             var expectedDescription = $"{EventType.ActionAdded.GetDescription()} - '{title}'";

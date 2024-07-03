@@ -10,12 +10,10 @@ public class DeleteEvent : IDeleteEventV1
         Guid = guid;
         Plant = plant;
         ProjectName = projectName;
-
-        ProCoSysGuid = guid;
     }
 
     public Guid Guid { get; }
-    public Guid ProCoSysGuid { get; }
+    public Guid ProCoSysGuid => Guid;
     public string Plant { get; }
     public string ProjectName { get; }
     public string Behavior { get; } = "delete";

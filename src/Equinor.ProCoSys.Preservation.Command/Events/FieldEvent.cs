@@ -18,7 +18,7 @@ public class FieldEvent : IFieldEventV1
     public int? ModifiedById { get; set; }
 
     public Guid Guid { get; set; }
-    public Guid ProCoSysGuid { get; set; }
+    public Guid ProCoSysGuid => Guid;
     public string Plant { get; set; }
     public string ProjectName { get; set; }
 }

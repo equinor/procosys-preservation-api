@@ -1,16 +1,17 @@
-﻿using Equinor.ProCoSys.Common;
+﻿using System;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
 public class RequirementAddedFieldEvent : IDomainEvent
 {
-    public RequirementAddedFieldEvent(RequirementDefinition requirementDefinition, Field field)
+    public RequirementAddedFieldEvent(Guid requirementDefinitionGuid, Field field)
     {
-        this.RequirementDefinition = requirementDefinition;
+        this.RequirementDefinitionGuid = requirementDefinitionGuid;
         this.Field = field;
     }
 
-    public RequirementDefinition RequirementDefinition { get; }
+    public Guid RequirementDefinitionGuid { get; }
     public Field Field { get; }
 }

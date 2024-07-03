@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
-        public Guid Guid { get; }
+        public Guid Guid { get; private set; }
 
         public void AddRequirementDefinition(RequirementDefinition requirementDefinition)
         {
@@ -60,7 +60,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
             requirementDefinition.RequirementTypeGuid = Guid;
             _requirementDefinitions.Add(requirementDefinition);
-            AddDomainEvent(new RequirementDefinitionAddedEvent(requirementDefinition));
         }
         
         public override string ToString() => Title;
@@ -73,6 +72,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+            AddDomainEvent(new RequirementTypeAddedEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -82,6 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             {
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
+            AddDomainEvent(new RequirementTypeUpdatedEvent(this));
             ModifiedById = modifiedBy.Id;
         }
 

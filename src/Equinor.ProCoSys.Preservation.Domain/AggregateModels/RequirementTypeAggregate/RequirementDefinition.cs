@@ -61,7 +61,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
 
             field.RequirementDefinitionGuid = Guid;
-            AddDomainEvent(new RequirementAddedFieldEvent(this, field));
             _fields.Add(field);
         }
 
@@ -101,6 +100,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+            AddDomainEvent(new RequirementDefinitionAddedEvent(this));
         }
 
         public void SetModified(Person modifiedBy)

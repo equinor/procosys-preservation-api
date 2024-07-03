@@ -16,7 +16,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
         public Task Handle(ActionAddedEvent notification, CancellationToken cancellationToken)
         {
             var eventType = EventType.ActionAdded;
-            var description = $"{eventType.GetDescription()} - '{notification.Title}'";
+            var description = $"{eventType.GetDescription()} - '{notification.Action.Title}'";
             var history = new History(notification.Plant, description, notification.SourceGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
             return Task.CompletedTask;

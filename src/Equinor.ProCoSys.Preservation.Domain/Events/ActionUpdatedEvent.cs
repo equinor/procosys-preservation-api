@@ -1,20 +1,19 @@
 ﻿using System;
 using Equinor.ProCoSys.Common;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class ActionAddedEvent : IDomainEvent
+    public class ActionUpdatedEvent : IDomainEvent
     {
-        public ActionAddedEvent(string plant, Guid sourceGuid, Action action)
+        public ActionUpdatedEvent(string plant, Guid tagGuid, Action action)
         {
             Plant = plant;
-            SourceGuid = sourceGuid;
+            TagGuid = tagGuid;
             Action = action;
         }
         public string Plant { get; }
-        public Guid SourceGuid { get; }
+        public Guid TagGuid { get; }
         public Action Action { get; }
     }
 }
