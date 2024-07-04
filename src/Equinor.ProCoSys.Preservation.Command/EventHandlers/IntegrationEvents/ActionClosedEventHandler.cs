@@ -27,7 +27,7 @@ public class ActionClosedEventHandler : INotificationHandler<ActionClosedEvent>
 
     public async Task Handle(ActionClosedEvent notification, CancellationToken cancellationToken)
     {
-        var actionEvent = await _createEventHelper.CreateActionEvent(notification.Action, notification.SourceGuid);
+        var actionEvent = await _createEventHelper.CreateActionEvent(notification.Action);
         await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);
     }
 }

@@ -9,8 +9,8 @@ public interface ITagRequirementEventV1 : IIntegrationEvent
     bool IsInUse { get; }
     Guid RequirementDefinitionGuid { get; }
     DateTime CreatedAtUtc { get; }
-    int CreatedById { get; }
+    Guid CreatedByGuid { get; }
     DateTime? ModifiedAtUtc { get; }
-    int? ModifiedById { get; }
+    Guid? ModifiedByGuid { get; }
     bool ReadyToBePreserved { get; }
 }

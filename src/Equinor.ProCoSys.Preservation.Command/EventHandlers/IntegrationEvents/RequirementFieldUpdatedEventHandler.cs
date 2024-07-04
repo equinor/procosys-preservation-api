@@ -19,7 +19,7 @@ public class RequirementFieldUpdatedEventHandler : INotificationHandler<Requirem
 
     public async Task Handle(RequirementUpdatedFieldEvent notification, CancellationToken cancellationToken)
     {
-        var updatedEvent = await _createEventHelper.CreateFieldEvent(notification.Field, notification.RequirementDefinitionGuid);
+        var updatedEvent = await _createEventHelper.CreateFieldEvent(notification.Field);
         await _integrationEventPublisher.PublishAsync(updatedEvent, cancellationToken);
     }
 }

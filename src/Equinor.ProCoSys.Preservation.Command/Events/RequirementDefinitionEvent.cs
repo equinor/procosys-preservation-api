@@ -6,21 +6,22 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 public class RequirementDefinitionEvent : IRequirementDefinitionEventV1
 {
-    public Guid Guid { get; set; }
-    public Guid ProCoSysGuid => Guid;
-    public string Plant { get; set; }
+    public Guid Guid { get; init; }
+    public string Plant { get; init; }
 
     [JsonIgnore] //ProjectName isnt needed for RequirementDefinition but is required for IIntegrationEvent
-    public string ProjectName { get; set; } = null;
+    public string ProjectName { get; init; } = null;
 
-    public string Title { get; set; }
-    public bool IsVoided { get; set; }
-    public int DefaultIntervalWeeks { get; set; }
-    public string Usage { get; set; }
-    public int SortKey { get; set; }
-    public bool NeedsUserInput { get; set; }
-    public DateTime CreatedAtUtc { get; set; }
-    public int CreatedById { get; set; }
-    public DateTime? ModifiedAtUtc { get; set; }
-    public int? ModifiedById { get; set; }
+    public string Title { get; init; }
+    public bool IsVoided { get; init; }
+    public int DefaultIntervalWeeks { get; init; }
+    public string Usage { get; init; }
+    public int SortKey { get; init; }
+    public bool NeedsUserInput { get; init; }
+    public DateTime CreatedAtUtc { get; init; }
+    public Guid CreatedByGuid { get; init; }
+    public DateTime? ModifiedAtUtc { get; init; }
+    public Guid? ModifiedByGuid { get; init; }
+    public Guid RequirementTypeGuid { get; init; }
+
 }

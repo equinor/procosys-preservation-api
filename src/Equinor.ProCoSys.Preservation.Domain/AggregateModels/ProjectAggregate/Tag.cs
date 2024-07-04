@@ -246,8 +246,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"{nameof(Tag)} {TagNo} already has a requirement with definition {tagRequirement.RequirementDefinitionId}");
             }
 
-            tagRequirement.TagGuid = Guid;
-
             _requirements.Add(tagRequirement);
             if (Status == PreservationStatus.Active || Status == PreservationStatus.InService)
             {
@@ -289,8 +287,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentException($"Can't relate item in {action.Plant} to item in {Plant}");
             }
-
-            action.TagGuid = Guid;
 
             _actions.Add(action);
         }

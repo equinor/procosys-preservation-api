@@ -6,12 +6,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
 public class RequirementUpdatedFieldEvent : IDomainEvent
 {
-    public RequirementUpdatedFieldEvent(Guid requirementDefinitionGuid, Field field)
-    {
-        RequirementDefinitionGuid = requirementDefinitionGuid;
-        Field = field;
-    }
-
-    public Guid RequirementDefinitionGuid { get; }
+    public RequirementUpdatedFieldEvent(Field field) => Field = field;
     public Field Field { get; }
 }

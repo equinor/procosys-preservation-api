@@ -17,10 +17,10 @@ public interface ITagEventV1 : IIntegrationEvent
     string DisciplineDescription { get; }
 
     DateTime CreatedAtUtc { get; }
-    int CreatedById { get; }
+    Guid CreatedByGuid { get; }
 
     DateTime? ModifiedAtUtc { get; }
-    int? ModifiedById { get; }
+    Guid? ModifiedByGuid { get; }
 
     string Status { get; }
 

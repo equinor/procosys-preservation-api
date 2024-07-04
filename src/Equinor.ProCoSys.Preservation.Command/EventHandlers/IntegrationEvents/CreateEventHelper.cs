@@ -4,11 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Command.Events;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.MessageContracts;
+using Microsoft.EntityFrameworkCore;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
@@ -16,23 +18,30 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 public class CreateEventHelper : ICreateEventHelper
 {
     private readonly IProjectRepository _projectRepository;
-    private readonly IIntegrationEventPublisher _integrationEventPublisher;
+    private readonly PreservationContext _context;
+    private readonly IRequirementTypeRepository _requirementTypeRepository;
+    private readonly IPersonRepository _personRepository;
 
-    public CreateEventHelper(IProjectRepository projectRepository, IIntegrationEventPublisher integrationEventPublisher)
+    public CreateEventHelper(IProjectRepository projectRepository, PreservationContext context, IRequirementTypeRepository requirementTypeRepository, IPersonRepository personRepository)
     {
         _projectRepository = projectRepository;
-        _integrationEventPublisher = integrationEventPublisher;
+        _context = context;
+        _requirementTypeRepository = requirementTypeRepository;
+        _personRepository = personRepository;
     }
 
-    public async Task<IActionEventV1> CreateActionEvent(Action action, Guid tagGuid)
+    public async Task<IActionEventV1> CreateActionEvent(Action action)
     {
-        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tagGuid);
+        var tagId = await _context.Actions.Where(s => s.Guid == action.Guid)
+            .Select(s => EF.Property<int>(s, "TagId")).SingleAsync();
+        var tag = await _projectRepository.GetTagOnlyByTagIdAsync(tagId);
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
 
         return new ActionEvent(
             action.Guid,
             action.Plant,
             project.Name,
-            tagGuid,
+            tag.Guid,
             action.Title,
             action.Description,
             action.DueTimeUtc != null ? DateOnly.FromDateTime(action.DueTimeUtc.Value) : null,
@@ -41,15 +50,17 @@ public class CreateEventHelper : ICreateEventHelper
             );
     }
 
-    public async Task SendTagRequirementEvents(TagRequirement tagRequirement, Guid tagGuid, CancellationToken cancellationToken)
+    public async Task<ITagRequirementEventV1> CreateRequirementEvent(TagRequirement tagRequirement)
     {
-        var actionEvent = await CreateRequirementEvent(tagRequirement, tagGuid);
-        await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);
-    }
+        var tagId = await _context.TagRequirements.Where(s => s.Guid == tagRequirement.Guid)
+            .Select(s => EF.Property<int>(s, "TagId")).SingleAsync();
+        var tag = await _projectRepository.GetTagOnlyByTagIdAsync(tagId);
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
+        var requirementDefinitions =
+            await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(tagRequirement.RequirementDefinitionId);
 
-    public async Task<ITagRequirementEventV1> CreateRequirementEvent(TagRequirement tagRequirement, Guid tagGuid)
-    {
-        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tagGuid);
+        var createdBy = await _personRepository.GetByIdAsync(tagRequirement.CreatedById);
+        var modifiedBy = tagRequirement.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(tagRequirement.ModifiedById.Value) : null;
 
         return new TagRequirementEvent
         {
@@ -61,11 +72,11 @@ public class CreateEventHelper : ICreateEventHelper
             NextDueTimeUtc = tagRequirement.NextDueTimeUtc,
             IsVoided = tagRequirement.IsVoided,
             IsInUse = tagRequirement.IsInUse,
-            RequirementDefinitionGuid = tagRequirement.RequirementDefinitionGuid,
+            RequirementDefinitionGuid = requirementDefinitions.Guid,
             CreatedAtUtc = tagRequirement.CreatedAtUtc,
-            CreatedById = tagRequirement.CreatedById,
+            CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = tagRequirement.ModifiedAtUtc,
-            ModifiedById = tagRequirement.ModifiedById,
+            ModifiedByGuid = modifiedBy?.Guid,
             ReadyToBePreserved = tagRequirement.ReadyToBePreserved
         };
     }
@@ -73,47 +84,64 @@ public class CreateEventHelper : ICreateEventHelper
     public async Task<IPreservationPeriodEventV1> CreatePreservationPeriodEvent(PreservationPeriod preservationPeriod)
     {
         var preservationRecord = preservationPeriod.PreservationRecord;
+        var tagRequirement = await _context.TagRequirements.SingleAsync(rd => rd.Id == preservationPeriod.TagRequirementId);
+
+        var createdBy = await _personRepository.GetByIdAsync(preservationPeriod.CreatedById);
+        var modifiedBy = preservationPeriod.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(preservationPeriod.ModifiedById.Value) : null;
+        var preservedBy = preservationPeriod.PreservationRecord != null ? await _personRepository.GetByIdAsync(preservationPeriod.PreservationRecord.PreservedById) : null;
+
         return new PreservationPeriodsEvent
         {
             Status = preservationPeriod.Status.ToString(),
             DueTimeUtc = preservationPeriod.DueTimeUtc,
             Comment = preservationPeriod.Comment,
-            PreservationRecordGuid = preservationPeriod.PreservationRecord.Guid,
+            PreservationRecordGuid = preservationPeriod.PreservationRecord?.Guid,
             CreatedAtUtc = preservationPeriod.CreatedAtUtc,
-            CreatedById = preservationPeriod.CreatedById,
+            CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = preservationPeriod.ModifiedAtUtc,
-            ModifiedById = preservationPeriod.ModifiedById,
-            TagRequirementGuid = preservationPeriod.TagRequirementGuid,
+            ModifiedByGuid = modifiedBy?.Guid,
+            TagRequirementGuid = tagRequirement.Guid,
             Guid = preservationPeriod.Guid,
             Plant = preservationPeriod.Plant,
-            PreservationRecord =
-            {
-                PreservedAtUtc = preservationRecord.PreservedAtUtc,
-                PreservedById = preservationRecord.PreservedById,
-                BulkPreserved = preservationRecord.BulkPreserved
-            }
+            PreservedAtUtc = preservationRecord?.PreservedAtUtc,
+            PreservedByGuid = preservedBy?.Guid,
+            BulkPreserved = preservationRecord?.BulkPreserved
         };
     }
 
-    public async Task<IFieldEventV1> CreateFieldEvent(Field field, Guid sourceGuid) =>
-        new FieldEvent
+    public async Task<IFieldEventV1> CreateFieldEvent(Field field)
+    {
+        var definitionId = await _context.Fields.Where(s => s.Guid == field.Guid)
+            .Select(s => EF.Property<int>(s, "RequirementDefinitionId")).SingleAsync();
+        var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(definitionId);
+
+        var createdBy = await _personRepository.GetByIdAsync(field.CreatedById);
+        var modifiedBy = field.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(field.ModifiedById.Value) : null;
+
+        return new FieldEvent
         {
-            RequirementDefinitionGuid = sourceGuid,
-            FieldId = field.Id,
+            RequirementDefinitionGuid = requirementDefinition.Guid,
             Label = field.Label,
             Unit = field.Unit,
             SortKey = field.SortKey,
             FieldType = field.FieldType.ToString(),
             CreatedAtUtc = field.CreatedAtUtc,
-            CreatedById = field.CreatedById,
+            CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = field.ModifiedAtUtc,
-            ModifiedById = field.ModifiedById,
+            ModifiedByGuid = modifiedBy?.Guid,
             Guid = field.Guid,
             Plant = field.Plant
         };
+    }
+    public async Task<IRequirementDefinitionEventV1> CreateRequirementDefinitionEvent(RequirementDefinition requirementDefinition){
+        var typeId = await _context.RequirementDefinitions.Where(s => s.Guid == requirementDefinition.Guid)
+            .Select(s => EF.Property<int>(s, "RequirementTypeId")).SingleAsync();
+        var requirementType = await _context.RequirementTypes.SingleAsync(rd => rd.Id == typeId);
 
-    public async Task<IRequirementDefinitionEventV1> CreateRequirementDefinitionEvent(RequirementDefinition requirementDefinition) =>
-        new RequirementDefinitionEvent
+        var createdBy = await _personRepository.GetByIdAsync(requirementDefinition.CreatedById);
+        var modifiedBy = requirementDefinition.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(requirementDefinition.ModifiedById.Value) : null;
+
+        return new RequirementDefinitionEvent
         {
             Guid = requirementDefinition.Guid,
             Plant = requirementDefinition.Plant,
@@ -124,13 +152,19 @@ public class CreateEventHelper : ICreateEventHelper
             SortKey = requirementDefinition.SortKey,
             NeedsUserInput = requirementDefinition.NeedsUserInput,
             CreatedAtUtc = requirementDefinition.CreatedAtUtc,
-            CreatedById = requirementDefinition.CreatedById,
+            CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = requirementDefinition.ModifiedAtUtc,
-            ModifiedById = requirementDefinition.ModifiedById
+            ModifiedByGuid = modifiedBy?.Guid,
+            RequirementTypeGuid = requirementType.Guid
         };
+    }
 
-    public async Task<IRequirementTypeEventV1> CreateRequirementTypeEvent(RequirementType requirementType) =>
-        new RequirementTypeEvent
+    public async Task<IRequirementTypeEventV1> CreateRequirementTypeEvent(RequirementType requirementType)
+    {
+        var createdBy = await _personRepository.GetByIdAsync(requirementType.CreatedById);
+        var modifiedBy = requirementType.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(requirementType.ModifiedById.Value) : null;
+
+        return new RequirementTypeEvent
         {
             Guid = requirementType.Guid,
             Plant = requirementType.Plant,
@@ -139,14 +173,17 @@ public class CreateEventHelper : ICreateEventHelper
             IsVoided = requirementType.IsVoided,
             SortKey = requirementType.SortKey,
             CreatedAtUtc = requirementType.CreatedAtUtc,
-            CreatedById = requirementType.CreatedById,
+            CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = requirementType.ModifiedAtUtc,
-            ModifiedById = requirementType.ModifiedById
+            ModifiedByGuid = modifiedBy?.Guid
         };
+    }
 
     public async Task<ITagEventV1> CreateTagEvent(Tag tag)
     {
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
+        var createdBy = await _personRepository.GetByIdAsync(tag.CreatedById);
+        var modifiedBy = tag.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(tag.ModifiedById.Value) : null;
 
         return new TagEvent
         {
@@ -166,9 +203,9 @@ public class CreateEventHelper : ICreateEventHelper
             AreaDescription = tag.AreaDescription,
             DisciplineDescription = tag.DisciplineDescription,
             CreatedAtUtc = tag.CreatedAtUtc,
-            CreatedById = tag.CreatedById,
+            CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = tag.ModifiedAtUtc,
-            ModifiedById = tag.ModifiedById,
+            ModifiedByGuid = modifiedBy?.Guid,
             Status = tag.Status.ToString(),
             CommPkgGuid = tag.CommPkgProCoSysGuid,
             McPkgGuid = tag.McPkgProCoSysGuid,

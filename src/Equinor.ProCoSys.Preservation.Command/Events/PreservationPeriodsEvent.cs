@@ -1,23 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 public class PreservationPeriodsEvent : IPreservationPeriodEventV1
 {
-    public Guid TagRequirementGuid { get; set; }
-    public string Status { get; set; }
-    public DateTime DueTimeUtc { get; set; }
-    public string Comment { get; set; }
-    public Guid PreservationRecordGuid { get; set; }
-    public DateTime CreatedAtUtc { get; set; }
-    public int CreatedById { get; set; }
-    public DateTime? ModifiedAtUtc { get; set; }
-    public int? ModifiedById { get; set; }
-    public Guid Guid { get; set; }
+    public Guid TagRequirementGuid { get; init; }
+    public string Status { get; init; }
+    public DateTime DueTimeUtc { get; init; }
+    public string Comment { get; init; }
+    public Guid? PreservationRecordGuid { get; init; }
+    public DateTime CreatedAtUtc { get; init; }
+    public Guid CreatedByGuid { get; init; }
+    public DateTime? ModifiedAtUtc { get; init; }
+    public Guid? ModifiedByGuid { get; init; }
+    public Guid Guid { get; init; }
     public Guid ProCoSysGuid => Guid;
-    public string Plant { get; set; }
-    public string ProjectName { get; set; } = "";
-    public dynamic PreservationRecord { get; set; }
+
+    public string Plant { get; init; }
+    [JsonIgnore] //ProjectName isnt needed for RequirementDefinition but is required for IIntegrationEvent
+    public string ProjectName { get; init; } = null;
+    public DateTime? PreservedAtUtc { get; init; }
+    public Guid? PreservedByGuid { get; init;}
+    public bool? BulkPreserved { get; init; }
+
 }

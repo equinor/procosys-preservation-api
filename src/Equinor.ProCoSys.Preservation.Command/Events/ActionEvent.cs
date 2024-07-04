@@ -18,14 +18,14 @@ public class ActionEvent : IActionEventV1
         Closed = closed;
     }
 
-    public Guid Guid { get; }
-    public Guid ProCoSysGuid => Guid;
-    public string Plant { get; }
-    public string ProjectName { get; }
-    public Guid TagGuid { get; }
-    public string Title { get; }
-    public string Description { get; }
-    public DateOnly? DueDate { get; }
-    public bool Overdue { get; }
-    public DateOnly? Closed { get; }
+    public Guid Guid { get; init; }
+
+    public string Plant { get; init; }
+    public string ProjectName { get; init; }
+    public Guid TagGuid { get; init; }
+    public string Title { get; init; }
+    public string Description { get; init; }
+    public DateOnly? DueDate { get; init; }
+    public bool Overdue { get; init; }
+    public DateOnly? Closed { get; init; }
 }

@@ -12,41 +12,74 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<Guid>(
-                name: "TagGuid",
-                table: "TagRequirements",
+                name: "Guid",
+                table: "RequirementDefinitions",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.NewGuid());
 
             migrationBuilder.AddColumn<Guid>(
-                name: "TagRequirementGuid",
-                table: "PreservationPeriods",
-                type: "uniqueidentifier",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "TagGuid",
+                name: "Guid",
                 table: "Actions",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
+                defaultValue: Guid.NewGuid());
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "Guid",
+                table: "TagRequirements",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValue: Guid.NewGuid());
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "Guid",
+                table: "RequirementTypes",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValue: Guid.NewGuid());
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "Guid",
+                table: "PreservationPeriods",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValue: Guid.NewGuid());
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "Guid",
+                table: "Fields",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValue: Guid.NewGuid());
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "TagGuid",
+                name: "Guid",
+                table: "RequirementDefinitions");
+
+            migrationBuilder.DropColumn(
+                name: "Guid",
+                table: "Actions");
+
+            migrationBuilder.DropColumn(
+                name: "Guid",
                 table: "TagRequirements");
 
             migrationBuilder.DropColumn(
-                name: "TagRequirementGuid",
+                name: "Guid",
+                table: "RequirementTypes");
+
+            migrationBuilder.DropColumn(
+                name: "Guid",
                 table: "PreservationPeriods");
 
             migrationBuilder.DropColumn(
-                name: "TagGuid",
-                table: "Actions");
+                name: "Guid",
+                table: "Fields");
         }
     }
 }

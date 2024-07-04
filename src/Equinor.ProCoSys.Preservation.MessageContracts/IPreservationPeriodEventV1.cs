@@ -6,10 +6,12 @@ public interface IPreservationPeriodEventV1 : IIntegrationEvent
     string Status { get; }
     DateTime DueTimeUtc { get; }
     string Comment { get; }
-    Guid PreservationRecordGuid { get; }
+    Guid? PreservationRecordGuid { get; }
     DateTime CreatedAtUtc { get; }
-    int CreatedById { get; }
+    Guid CreatedByGuid { get; }
     DateTime? ModifiedAtUtc { get; }
-    int? ModifiedById { get; }
-    dynamic PreservationRecord { get; }
+    Guid? ModifiedByGuid { get; }
+    DateTime? PreservedAtUtc { get; }
+    Guid? PreservedByGuid { get; }
+    bool? BulkPreserved { get; }
 }

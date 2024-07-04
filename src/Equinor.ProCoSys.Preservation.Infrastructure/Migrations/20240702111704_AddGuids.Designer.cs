@@ -418,8 +418,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<Guid>("TagGuid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TagId")
                         .HasColumnType("int");
@@ -541,9 +539,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(max)")
                         .HasDefaultValue("NeedsUserInput");
-
-                    b.Property<Guid>("TagRequirementGuid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TagRequirementId")
                         .HasColumnType("int");
@@ -899,9 +894,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid>("RequirementDefinitionGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("RequirementDefinitionId")
                         .HasColumnType("int");
 
@@ -909,9 +901,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
-
-                    b.Property<Guid>("TagGuid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TagId")
                         .HasColumnType("int");
@@ -987,9 +976,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid>("RequirementDefinitionGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("RequirementDefinitionId")
                         .HasColumnType("int");
 
@@ -1055,9 +1041,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("RequirementTypeGuid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("RequirementTypeId")
                         .HasColumnType("int");

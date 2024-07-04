@@ -24,7 +24,7 @@ public class TagDeletedEventHandler  : INotificationHandler<TagDeletedEvent>
     {
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(notification.Tag.Guid);
 
-        var deleteEvent = new DeleteEvent(notification.Tag.Guid, notification.Tag.Plant, project.Name);
+        var deleteEvent = new DeleteEvent.TagDeleteEvent(notification.Tag.Guid, notification.Tag.Plant, project.Name);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

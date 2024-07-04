@@ -3,7 +3,6 @@
 public interface IFieldEventV1 : IIntegrationEvent
 {
     Guid RequirementDefinitionGuid { get;}
-    int FieldId { get; }
 
     string Label { get; }
     string Unit { get; }
@@ -11,7 +10,7 @@ public interface IFieldEventV1 : IIntegrationEvent
     string FieldType { get; }
 
     DateTime CreatedAtUtc { get; }
-    int CreatedById { get; }
+    Guid CreatedByGuid { get; }
     DateTime? ModifiedAtUtc { get; }
-    int? ModifiedById { get; }
+    Guid? ModifiedByGuid { get; }
 }

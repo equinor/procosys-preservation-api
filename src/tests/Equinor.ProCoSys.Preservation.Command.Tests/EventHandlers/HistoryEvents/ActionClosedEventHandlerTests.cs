@@ -13,13 +13,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
     public class ActionClosedEventHandlerTests
     {
         private Mock<IHistoryRepository> _historyRepositoryMock;
+        private Mock<IProjectRepository> _projectRepository;
         private ActionClosedEventHandler _dut;
         private History _historyAdded;
+        private Guid _tagGuid;
 
         [TestInitialize]
         public void Setup()
         {
             // Arrange
+            _tagGuid = Guid.NewGuid();
+
+            var mockTag = new Mock<Tag>().Object;
+            mockTag.Guid = _tagGuid;
+
             _historyRepositoryMock = new Mock<IHistoryRepository>();
             _historyRepositoryMock
                 .Setup(repo => repo.Add(It.IsAny<History>()))
@@ -27,8 +34,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
                 {
                     _historyAdded = history;
                 });
+            _projectRepository = new Mock<IProjectRepository>();
+            _projectRepository
+                .Setup(p => p.GetTagOnlyByTagIdAsync(It.IsAny<int>()))
+                .ReturnsAsync(mockTag);
 
-            _dut = new ActionClosedEventHandler(_historyRepositoryMock.Object);
+            _dut = new ActionClosedEventHandler(_historyRepositoryMock.Object, _projectRepository.Object, null);
         }
 
         [TestMethod]
@@ -38,14 +49,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             Assert.IsNull(_historyAdded);
 
             // Act
-            var sourceGuid = Guid.NewGuid();
             var plant = "TestPlant";
-            _dut.Handle(new ActionClosedEvent(plant, sourceGuid, new Action(plant, "title", "", null)), default);
+            _dut.Handle(new ActionClosedEvent(plant, new Action(plant, "title", "", null)), default);
 
             // Assert
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);
-            Assert.AreEqual(sourceGuid, _historyAdded.SourceGuid);
+            Assert.AreEqual(_tagGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.ActionClosed, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);

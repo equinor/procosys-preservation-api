@@ -5,20 +5,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 public class FieldEvent : IFieldEventV1
 {
-    public Guid RequirementDefinitionGuid { get; set; }
-    public int FieldId { get; set; }
-    public string Label { get; set; }
-    public string Unit { get; set; }
-    public int SortKey { get; set; }
-    public bool? ShowPrevious { get; set; }
-    public string FieldType { get; set; }
-    public DateTime CreatedAtUtc { get; set; }
-    public int CreatedById { get; set; }
-    public DateTime? ModifiedAtUtc { get; set; }
-    public int? ModifiedById { get; set; }
-
-    public Guid Guid { get; set; }
-    public Guid ProCoSysGuid => Guid;
-    public string Plant { get; set; }
-    public string ProjectName { get; set; }
+    public Guid RequirementDefinitionGuid { get; init; }
+    public string Label { get; init; }
+    public string Unit { get; init; }
+    public int SortKey { get; init; }
+    public string FieldType { get; init; }
+    public DateTime CreatedAtUtc { get; init; }
+    public Guid CreatedByGuid { get; init; }
+    public DateTime? ModifiedAtUtc { get; init; }
+    public Guid? ModifiedByGuid { get; init; }
+    public Guid Guid { get; init; }
+    public string Plant { get; init; }
+    public string ProjectName { get; init; }
 }

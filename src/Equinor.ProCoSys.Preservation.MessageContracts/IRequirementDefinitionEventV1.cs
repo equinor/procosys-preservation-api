@@ -9,7 +9,8 @@ public interface IRequirementDefinitionEventV1 : IIntegrationEvent
     int SortKey { get; }
     bool NeedsUserInput { get; }
     DateTime CreatedAtUtc { get; }
-    int CreatedById { get; }
+    Guid CreatedByGuid { get; }
     DateTime? ModifiedAtUtc { get; }
-    int? ModifiedById { get; }
+    Guid? ModifiedByGuid { get; }
+    Guid RequirementTypeGuid { get; }
 }

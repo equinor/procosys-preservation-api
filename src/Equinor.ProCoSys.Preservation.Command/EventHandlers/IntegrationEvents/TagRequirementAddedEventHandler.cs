@@ -19,7 +19,7 @@ public class TagRequirementAddedEventHandler  : INotificationHandler<TagRequirem
 
     public async Task Handle(TagRequirementAddedEvent notification, CancellationToken cancellationToken)
     {
-        var actionEvent = await _createEventHelper.CreateRequirementEvent(notification.TagRequirement, notification.SourceGuid);
+        var actionEvent = await _createEventHelper.CreateRequirementEvent(notification.TagRequirement);
         await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);
     }
 }

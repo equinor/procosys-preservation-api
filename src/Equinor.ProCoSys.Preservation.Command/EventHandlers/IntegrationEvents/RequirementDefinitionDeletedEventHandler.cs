@@ -15,7 +15,7 @@ public class RequirementDefinitionDeletedEventHandler  : INotificationHandler<Re
 
     public async Task Handle(RequirementDefinitionDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent(notification.RequirementDefinition.Guid, notification.RequirementDefinition.Plant, "");
+        var deleteEvent = new DeleteEvent.RequirementDefinitionDeleteEvent(notification.RequirementDefinition.Guid, notification.RequirementDefinition.Plant, "");
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

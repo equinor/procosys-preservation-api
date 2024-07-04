@@ -5,29 +5,29 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 public class TagEvent : ITagEventV1
 {
-    public Guid Guid { get; set; }
-    public string Plant { get; set; }
-    public string ProjectName { get; set; }
-    public string Description { get; set; }
-    public string Remark { get; set; }
-    public DateTime? NextDueTimeUtc { get; set; }
-    public int StepId { get; set; }
-    public string DisciplineCode { get; set; }
-    public string AreaCode { get; set; }
-    public string TagFunctionCode { get; set; }
-    public string PurchaseOrderNo { get; set; }
-    public string TagType { get; set; }
-    public string StorageArea { get; set; }
-    public string AreaDescription { get; set; }
-    public string DisciplineDescription { get; set; }
-    public DateTime CreatedAtUtc { get; set; }
-    public int CreatedById { get; set; }
-    public DateTime? ModifiedAtUtc { get; set; }
-    public int? ModifiedById { get; set; }
-    public string Status { get; set; }
-    public Guid? CommPkgGuid { get; set; }
-    public Guid? McPkgGuid { get; set; }
-    public bool IsVoided { get; set; }
-    public bool IsVoidedInSource { get; set; }
-    public bool IsDeletedInSource { get; set; }
+    public Guid Guid { get; init; }
+    public string Plant { get; init; }
+    public string ProjectName { get; init; }
+    public string Description { get; init; }
+    public string Remark { get; init; }
+    public DateTime? NextDueTimeUtc { get; init; }
+    public int StepId { get; init; }
+    public string DisciplineCode { get; init; }
+    public string AreaCode { get; init; }
+    public string TagFunctionCode { get; init; }
+    public string PurchaseOrderNo { get; init; }
+    public string TagType { get; init; }
+    public string StorageArea { get; init; }
+    public string AreaDescription { get; init; }
+    public string DisciplineDescription { get; init; }
+    public DateTime CreatedAtUtc { get; init; }
+    public Guid CreatedByGuid { get; init; }
+    public DateTime? ModifiedAtUtc { get; init; }
+    public Guid? ModifiedByGuid { get; init; }
+    public string Status { get; init; }
+    public Guid? CommPkgGuid { get; init; }
+    public Guid? McPkgGuid { get; init; }
+    public bool IsVoided { get; init; }
+    public bool IsVoidedInSource { get; init; }
+    public bool IsDeletedInSource { get; init; }
 }

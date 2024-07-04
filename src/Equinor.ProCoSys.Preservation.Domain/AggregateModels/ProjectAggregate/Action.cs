@@ -30,7 +30,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public Guid Guid { get; private set; }
-        public Guid TagGuid { get; set; }
 
         public string Title { get; set; }
         public string Description { get; set; }
@@ -109,7 +108,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             ClosedAtUtc = closedAtUtc;
             ClosedById = closedBy.Id;
-            AddDomainEvent(new ActionClosedEvent(Plant, TagGuid, this));
+            AddDomainEvent(new ActionClosedEvent(Plant, this));
         }
 
         public void SetCreated(Person createdBy)
@@ -120,7 +119,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
-            AddDomainEvent(new ActionAddedEvent(Plant, TagGuid, this));
+            AddDomainEvent(new ActionAddedEvent(Plant, this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -131,7 +130,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
-            AddDomainEvent(new ActionUpdatedEvent(Plant, TagGuid, this));
+            AddDomainEvent(new ActionUpdatedEvent(Plant, this));
         }
     }
 }

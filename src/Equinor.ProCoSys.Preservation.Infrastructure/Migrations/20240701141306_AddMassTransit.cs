@@ -6,25 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddMassTransitAndGuids : Migration
+    public partial class AddMassTransit : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<Guid>(
-                name: "Guid",
-                table: "RequirementDefinitions",
-                type: "uniqueidentifier",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
-
-            migrationBuilder.AddColumn<Guid>(
-                name: "Guid",
-                table: "Actions",
-                type: "uniqueidentifier",
-                nullable: false,
-                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
-
             migrationBuilder.CreateTable(
                 name: "InboxState",
                 columns: table => new
@@ -142,14 +128,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "OutboxState");
-
-            migrationBuilder.DropColumn(
-                name: "Guid",
-                table: "RequirementDefinitions");
-
-            migrationBuilder.DropColumn(
-                name: "Guid",
-                table: "Actions");
         }
     }
 }

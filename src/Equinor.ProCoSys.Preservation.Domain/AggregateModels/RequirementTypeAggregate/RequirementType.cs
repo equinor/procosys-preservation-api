@@ -58,7 +58,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentException($"Can't relate item in {requirementDefinition.Plant} to item in {Plant}");
             }
 
-            requirementDefinition.RequirementTypeGuid = Guid;
             _requirementDefinitions.Add(requirementDefinition);
         }
         

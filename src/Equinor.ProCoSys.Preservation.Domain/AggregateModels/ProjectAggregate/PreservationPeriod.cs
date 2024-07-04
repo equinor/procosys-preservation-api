@@ -46,7 +46,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int? ModifiedById { get; private set; }
 
         public int TagRequirementId { get; set; }
-        public Guid TagRequirementGuid { get; set; }
 
         public Guid Guid { get; private set; }
 

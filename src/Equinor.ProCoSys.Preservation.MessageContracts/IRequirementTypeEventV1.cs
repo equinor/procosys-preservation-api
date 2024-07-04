@@ -7,7 +7,7 @@ public interface IRequirementTypeEventV1 : IIntegrationEvent
     bool IsVoided { get; }
     int SortKey { get; }
     DateTime CreatedAtUtc { get; }
-    int CreatedById { get; }
+    Guid CreatedByGuid { get; }
     DateTime? ModifiedAtUtc { get; }
-    int? ModifiedById { get; }
+    Guid? ModifiedByGuid { get; }
 }

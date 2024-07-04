@@ -33,7 +33,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         }
 
         public Guid Guid { get; private set; }
-        public Guid RequirementTypeGuid { get; set; }
 
         public string Title { get; set; }
         public bool IsVoided { get; set; }
@@ -60,7 +59,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentException($"Can't relate item in {field.Plant} to item in {Plant}");
             }
 
-            field.RequirementDefinitionGuid = Guid;
             _fields.Add(field);
         }
 

@@ -24,7 +24,7 @@ public class TagRequirementDeletedEventHandler  : INotificationHandler<TagRequir
     {
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(notification.SourceGuid);
 
-        var deleteEvent = new DeleteEvent(notification.TagRequirement.Guid, notification.Plant, project.Name);
+        var deleteEvent = new DeleteEvent.TagRequirementDeleteEvent(notification.TagRequirement.Guid, notification.Plant, project.Name);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }
