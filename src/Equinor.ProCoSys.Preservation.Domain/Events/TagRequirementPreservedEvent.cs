@@ -22,7 +22,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Events
         public string Plant { get; }
         public Guid SourceGuid { get; }
         public TagRequirement TagRequirement { get; }
-        public int RequirementDefinitionId => TagRequirement.RequirementDefinitionId;
         public int? DueInWeeks { get; }
         public Guid PreservationRecordGuid { get; }
     }
