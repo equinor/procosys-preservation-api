@@ -3,12 +3,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 using Microsoft.EntityFrameworkCore;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
@@ -18,11 +18,11 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 public class CreateEventHelper : ICreateEventHelper
 {
     private readonly IProjectRepository _projectRepository;
-    private readonly PreservationContext _context;
+    private readonly IReadOnlyContext _context;
     private readonly IRequirementTypeRepository _requirementTypeRepository;
     private readonly IPersonRepository _personRepository;
 
-    public CreateEventHelper(IProjectRepository projectRepository, PreservationContext context, IRequirementTypeRepository requirementTypeRepository, IPersonRepository personRepository)
+    public CreateEventHelper(IProjectRepository projectRepository, IReadOnlyContext context, IRequirementTypeRepository requirementTypeRepository, IPersonRepository personRepository)
     {
         _projectRepository = projectRepository;
         _context = context;
@@ -32,7 +32,7 @@ public class CreateEventHelper : ICreateEventHelper
 
     public async Task<IActionEventV1> CreateActionEvent(Action action)
     {
-        var tagId = await _context.Actions.Where(s => s.Guid == action.Guid)
+        var tagId = await _context.QuerySet<Action>().Where(s => s.Guid == action.Guid)
             .Select(s => EF.Property<int>(s, "TagId")).SingleAsync();
         var tag = await _projectRepository.GetTagOnlyByTagIdAsync(tagId);
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
@@ -52,7 +52,7 @@ public class CreateEventHelper : ICreateEventHelper
 
     public async Task<ITagRequirementEventV1> CreateRequirementEvent(TagRequirement tagRequirement)
     {
-        var tagId = await _context.TagRequirements.Where(s => s.Guid == tagRequirement.Guid)
+        var tagId = await _context.QuerySet<TagRequirement>().Where(s => s.Guid == tagRequirement.Guid)
             .Select(s => EF.Property<int>(s, "TagId")).SingleAsync();
         var tag = await _projectRepository.GetTagOnlyByTagIdAsync(tagId);
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
@@ -84,7 +84,7 @@ public class CreateEventHelper : ICreateEventHelper
     public async Task<IPreservationPeriodEventV1> CreatePreservationPeriodEvent(PreservationPeriod preservationPeriod)
     {
         var preservationRecord = preservationPeriod.PreservationRecord;
-        var tagRequirement = await _context.TagRequirements.SingleAsync(rd => rd.Id == preservationPeriod.TagRequirementId);
+        var tagRequirement = await _context.QuerySet<TagRequirement>().SingleAsync(rd => rd.Id == preservationPeriod.TagRequirementId);
 
         var createdBy = await _personRepository.GetByIdAsync(preservationPeriod.CreatedById);
         var modifiedBy = preservationPeriod.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(preservationPeriod.ModifiedById.Value) : null;
@@ -111,7 +111,7 @@ public class CreateEventHelper : ICreateEventHelper
 
     public async Task<IFieldEventV1> CreateFieldEvent(Field field)
     {
-        var definitionId = await _context.Fields.Where(s => s.Guid == field.Guid)
+        var definitionId = await _context.QuerySet<Field>().Where(s => s.Guid == field.Guid)
             .Select(s => EF.Property<int>(s, "RequirementDefinitionId")).SingleAsync();
         var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(definitionId);
 
@@ -134,9 +134,9 @@ public class CreateEventHelper : ICreateEventHelper
         };
     }
     public async Task<IRequirementDefinitionEventV1> CreateRequirementDefinitionEvent(RequirementDefinition requirementDefinition){
-        var typeId = await _context.RequirementDefinitions.Where(s => s.Guid == requirementDefinition.Guid)
+        var typeId = await _context.QuerySet<RequirementDefinition>().Where(s => s.Guid == requirementDefinition.Guid)
             .Select(s => EF.Property<int>(s, "RequirementTypeId")).SingleAsync();
-        var requirementType = await _context.RequirementTypes.SingleAsync(rd => rd.Id == typeId);
+        var requirementType = await _context.QuerySet<RequirementType>().SingleAsync(rd => rd.Id == typeId);
 
         var createdBy = await _personRepository.GetByIdAsync(requirementDefinition.CreatedById);
         var modifiedBy = requirementDefinition.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(requirementDefinition.ModifiedById.Value) : null;

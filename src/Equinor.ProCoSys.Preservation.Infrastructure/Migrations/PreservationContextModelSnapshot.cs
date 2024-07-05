@@ -415,9 +415,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<Guid>("TagGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
@@ -906,9 +903,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
-
-                    b.Property<Guid>("TagGuid")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("TagId")
                         .HasColumnType("int");
