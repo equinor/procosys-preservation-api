@@ -43,24 +43,24 @@ public class DeleteEvent : IDeleteEventV1
     [EntityName("PreservationRequirementFieldDelete")]
     public class RequirementFieldDeleteEvent : DeleteEvent
     {
-        public RequirementFieldDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
+        public RequirementFieldDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
     [EntityName("PreservationRequirementTypeDelete")]
     public class RequirementTypeDeleteEvent : DeleteEvent
     {
-        public RequirementTypeDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
+        public RequirementTypeDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
     [EntityName("PreservationRequirementDefinitionDelete")]
     public class RequirementDefinitionDeleteEvent : DeleteEvent
     {
-        public RequirementDefinitionDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
+        public RequirementDefinitionDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
     [EntityName("PreservationPeriodDelete")]
     public class PreservationPeriodDeleteEvent : DeleteEvent
     {
-        public PreservationPeriodDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
+        public PreservationPeriodDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 }

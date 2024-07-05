@@ -119,6 +119,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+
+            // Added event is sent in SetCreated instead of constructor to make sure it has been added to database before events try to query it
             AddDomainEvent(new ActionAddedEvent(Plant, this));
         }
 
