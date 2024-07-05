@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -15,6 +16,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 
         }
 
+
         public Task<RequirementDefinition> GetRequirementDefinitionByIdAsync(int requirementDefinitionId)
             => DefaultQuery
                 .SelectMany(rt => rt.RequirementDefinitions)
@@ -25,6 +27,16 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .SelectMany(rt => rt.RequirementDefinitions)
                 .Where(rd => requirementDefinitionIds.Contains(rd.Id))
                 .ToListAsync();
+
+        public Task<RequirementType> GetRequirementTypeByRequirementDefinitionGuidAsync(Guid requirementDefinitionGuid)
+            => DefaultQuery
+                .Where(rt => rt.RequirementDefinitions.Any(rd => rd.Guid == requirementDefinitionGuid))
+                .SingleAsync();
+
+        public Task<RequirementDefinition> GetRequirementDefinitionByFieldGuidAsync(Guid fieldGuid)
+            => DefaultQuery
+                .Select(rt => rt.RequirementDefinitions.First(rd => rd.Fields.Any(f => f.Guid == fieldGuid)))
+                .SingleAsync();
 
         public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition) 
             => _context.RequirementDefinitions.Remove(requirementDefinition);

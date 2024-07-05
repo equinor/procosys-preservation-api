@@ -32,9 +32,7 @@ public class CreateEventHelper : ICreateEventHelper
 
     public async Task<IActionEventV1> CreateActionEvent(Action action)
     {
-        var tagId = await _context.QuerySet<Action>().Where(s => s.Guid == action.Guid)
-            .Select(s => EF.Property<int>(s, "TagId")).SingleAsync();
-        var tag = await _projectRepository.GetTagOnlyByTagIdAsync(tagId);
+        var tag = await _projectRepository.GetTagByActionGuidAsync(action.Guid);
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
 
         return new ActionEvent(
@@ -52,9 +50,7 @@ public class CreateEventHelper : ICreateEventHelper
 
     public async Task<ITagRequirementEventV1> CreateRequirementEvent(TagRequirement tagRequirement)
     {
-        var tagId = await _context.QuerySet<TagRequirement>().Where(s => s.Guid == tagRequirement.Guid)
-            .Select(s => EF.Property<int>(s, "TagId")).SingleAsync();
-        var tag = await _projectRepository.GetTagOnlyByTagIdAsync(tagId);
+        var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(tagRequirement.Guid);
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
         var requirementDefinitions =
             await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(tagRequirement.RequirementDefinitionId);
@@ -111,10 +107,7 @@ public class CreateEventHelper : ICreateEventHelper
 
     public async Task<IFieldEventV1> CreateFieldEvent(Field field)
     {
-        var definitionId = await _context.QuerySet<Field>().Where(s => s.Guid == field.Guid)
-            .Select(s => EF.Property<int>(s, "RequirementDefinitionId")).SingleAsync();
-        var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(definitionId);
-
+        var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByFieldGuidAsync(field.Guid);
         var createdBy = await _personRepository.GetByIdAsync(field.CreatedById);
         var modifiedBy = field.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(field.ModifiedById.Value) : null;
 
@@ -134,10 +127,7 @@ public class CreateEventHelper : ICreateEventHelper
         };
     }
     public async Task<IRequirementDefinitionEventV1> CreateRequirementDefinitionEvent(RequirementDefinition requirementDefinition){
-        var typeId = await _context.QuerySet<RequirementDefinition>().Where(s => s.Guid == requirementDefinition.Guid)
-            .Select(s => EF.Property<int>(s, "RequirementTypeId")).SingleAsync();
-        var requirementType = await _context.QuerySet<RequirementType>().SingleAsync(rd => rd.Id == typeId);
-
+        var requirementType = await _requirementTypeRepository.GetRequirementTypeByRequirementDefinitionGuidAsync(requirementDefinition.Guid);
         var createdBy = await _personRepository.GetByIdAsync(requirementDefinition.CreatedById);
         var modifiedBy = requirementDefinition.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(requirementDefinition.ModifiedById.Value) : null;
 
