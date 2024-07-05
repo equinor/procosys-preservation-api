@@ -15,20 +15,16 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
     {
         private readonly IHistoryRepository _historyRepository;
         private readonly IProjectRepository _projectRepository;
-        private readonly IReadOnlyContext _context;
 
-        public ActionClosedEventHandler(IHistoryRepository historyRepository, IProjectRepository projectRepository, IReadOnlyContext context)
+        public ActionClosedEventHandler(IHistoryRepository historyRepository, IProjectRepository projectRepository)
         {
             _historyRepository = historyRepository;
             _projectRepository = projectRepository;
-            _context = context;
         }
 
         public async Task Handle(ActionClosedEvent notification, CancellationToken cancellationToken)
         {
-            var tagId = await _context.QuerySet<Action>().Where(s => s.Guid == notification.Action.Guid)
-                .Select(s => EF.Property<int>(s, "TagId")).SingleAsync(cancellationToken: cancellationToken);
-            var tag = await _projectRepository.GetTagOnlyByTagIdAsync(tagId);
+            var tag = await _projectRepository.GetTagByActionGuidAsync(notification.Action.Guid);
 
             var eventType = EventType.ActionClosed;
             var description = eventType.GetDescription();

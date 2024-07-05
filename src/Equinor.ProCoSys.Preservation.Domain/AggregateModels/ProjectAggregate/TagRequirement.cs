@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime? NextDueTimeUtc { get; private set; }
         public bool IsVoided { get; set; }
         public bool IsInUse => _preservationPeriods.Any();
-        public int RequirementDefinitionId { get; private set; }
+        public int RequirementDefinitionId { get; set; }
 
         public IReadOnlyCollection<PreservationPeriod> PreservationPeriods => _preservationPeriods.AsReadOnly();
         public DateTime CreatedAtUtc { get; private set; }

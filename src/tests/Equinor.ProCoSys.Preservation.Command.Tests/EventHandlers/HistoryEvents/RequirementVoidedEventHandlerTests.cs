@@ -54,10 +54,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             // Act
             var sourceGuid = Guid.NewGuid();
 
-            var tagRequirement = new Mock<TagRequirement>();
-            tagRequirement.Setup(r => r.RequirementDefinitionId).Returns(_requirementDefinitionId);
+            var tagRequirement = new Mock<TagRequirement>().Object;
+            tagRequirement.RequirementDefinitionId = _requirementDefinitionId;
 
-            _dut.Handle(new TagRequirementVoidedEvent(_plant, sourceGuid, tagRequirement.Object), default);
+            _dut.Handle(new TagRequirementVoidedEvent(_plant, sourceGuid, tagRequirement), default);
 
             // Assert
             var expectedDescription = $"{EventType.RequirementVoided.GetDescription()} - '{_requirementDefinition.Title}'";

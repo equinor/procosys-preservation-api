@@ -55,7 +55,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
                 .Setup(p => p.GetTagOnlyByTagIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(mockTag);
 
-            _dut = new TagRequirementAddedEventHandler(_historyRepositoryMock.Object, _requirementTypeRepositoryMock.Object, _projectRepository.Object, null);
+            _projectRepository
+                .Setup(p => p.GetTagByTagRequirementGuidAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(mockTag);
+
+            _dut = new TagRequirementAddedEventHandler(_historyRepositoryMock.Object, _requirementTypeRepositoryMock.Object, _projectRepository.Object);
         }
 
         [TestMethod]
@@ -65,10 +69,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             Assert.IsNull(_historyAdded);
 
             // Act
-            var tagRequirement = new Mock<TagRequirement>();
-            tagRequirement.Setup(r => r.RequirementDefinitionId).Returns(_requirementDefinitionId);
+            var tagRequirement = new Mock<TagRequirement>().Object;
+            tagRequirement.RequirementDefinitionId = _requirementDefinitionId;
 
-            _dut.Handle(new TagRequirementAddedEvent(_plant, tagRequirement.Object), default);
+            _dut.Handle(new TagRequirementAddedEvent(_plant, tagRequirement), default);
 
             // Assert
             var expectedDescription = $"{EventType.RequirementAdded.GetDescription()} - '{_requirementDefinition.Title}'";

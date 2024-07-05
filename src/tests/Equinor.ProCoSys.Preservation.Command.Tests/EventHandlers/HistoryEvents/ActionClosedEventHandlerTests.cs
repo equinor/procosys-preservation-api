@@ -39,7 +39,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
                 .Setup(p => p.GetTagOnlyByTagIdAsync(It.IsAny<int>()))
                 .ReturnsAsync(mockTag);
 
-            _dut = new ActionClosedEventHandler(_historyRepositoryMock.Object, _projectRepository.Object, null);
+            _projectRepository
+                .Setup(p => p.GetTagByActionGuidAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(mockTag);
+
+            _dut = new ActionClosedEventHandler(_historyRepositoryMock.Object, _projectRepository.Object);
         }
 
         [TestMethod]

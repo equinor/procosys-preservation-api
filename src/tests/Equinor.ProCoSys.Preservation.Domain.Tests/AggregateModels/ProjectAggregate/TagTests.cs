@@ -328,10 +328,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddRequirement_ShouldAddRequirementAddedEvent()
         {
+            _reqNeedInputThreeWeekInterval.SetCreated(new Mock<Person>().Object);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_reqNeedInputThreeWeekInterval);
 
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
-            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(TagRequirementAddedEvent));
+            Assert.AreEqual(1, _reqNeedInputThreeWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_reqNeedInputThreeWeekInterval.DomainEvents.Last(), typeof(TagRequirementAddedEvent));
         }
 
         #endregion
@@ -1945,10 +1946,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void AddAction_ShouldAddActionAddedEvent()
         {
             var action = new Action(TestPlant, "", "", null);
+            action.SetCreated(new Mock<Person>().Object);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
 
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
-            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(ActionAddedEvent));
+            Assert.AreEqual(1, action.DomainEvents.Count);
+            Assert.IsInstanceOfType(action.DomainEvents.Last(), typeof(ActionAddedEvent));
         }
 
         #endregion
@@ -1986,8 +1988,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
             _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
 
-            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
-            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(ActionClosedEvent));
+            Assert.AreEqual(1, action.DomainEvents.Count);
+            Assert.IsInstanceOfType(action.DomainEvents.Last(), typeof(ActionClosedEvent));
         }
 
         [TestMethod]
