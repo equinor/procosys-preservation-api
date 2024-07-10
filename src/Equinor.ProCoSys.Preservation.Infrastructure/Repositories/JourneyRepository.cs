@@ -30,13 +30,17 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .ToListAsync();
 
         public void RemoveStep(Step step)
-            => _context.Steps.Remove(step);
+        {
+            _context.Steps.Remove(step);
+            step.SetRemoved();
+        }
 
         public override void Remove(Journey journey)
         {
             foreach (var step in journey.Steps)
             {
                 _context.Steps.Remove(step);
+                step.SetRemoved();
             }
             base.Remove(journey);
             journey.SetRemoved();

@@ -11,6 +11,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 using Microsoft.EntityFrameworkCore;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
@@ -23,13 +24,17 @@ public class CreateEventHelper : ICreateEventHelper
     private readonly IReadOnlyContext _context;
     private readonly IRequirementTypeRepository _requirementTypeRepository;
     private readonly IPersonRepository _personRepository;
+    private readonly IModeRepository _modeRepository;
+    private readonly IResponsibleRepository _responsibleRepository;
 
-    public CreateEventHelper(IProjectRepository projectRepository, IReadOnlyContext context, IRequirementTypeRepository requirementTypeRepository, IPersonRepository personRepository)
+    public CreateEventHelper(IProjectRepository projectRepository, IReadOnlyContext context, IRequirementTypeRepository requirementTypeRepository, IPersonRepository personRepository, IModeRepository modeRepository, IResponsibleRepository responsibleRepository)
     {
         _projectRepository = projectRepository;
         _context = context;
         _requirementTypeRepository = requirementTypeRepository;
         _personRepository = personRepository;
+        _modeRepository = modeRepository;
+        _responsibleRepository = responsibleRepository;
     }
 
     public async Task<IActionEventV1> CreateActionEvent(Action action)
@@ -37,17 +42,25 @@ public class CreateEventHelper : ICreateEventHelper
         var tag = await _projectRepository.GetTagByActionGuidAsync(action.Guid);
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
 
-        return new ActionEvent(
-            action.Guid,
-            action.Plant,
-            project.Name,
-            tag.Guid,
-            action.Title,
-            action.Description,
-            action.DueTimeUtc != null ? DateOnly.FromDateTime(action.DueTimeUtc.Value) : null,
-            action.IsOverDue(),
-            action.ClosedAtUtc != null ? DateOnly.FromDateTime(action.ClosedAtUtc.Value) : null
-            );
+        var createdBy = await _personRepository.GetByIdAsync(action.CreatedById);
+        var modifiedBy = action.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(action.ModifiedById.Value) : null;
+
+        return new ActionEvent
+        {
+            ProCoSysGuid = action.Guid,
+            Plant = action.Plant,
+            ProjectName = project.Name,
+            TagGuid = tag.Guid,
+            Title = action.Title,
+            Description = action.Description,
+            DueDate = action.DueTimeUtc != null ? DateOnly.FromDateTime(action.DueTimeUtc.Value) : null,
+            Overdue = action.IsOverDue(),
+            Closed = action.ClosedAtUtc != null ? DateOnly.FromDateTime(action.ClosedAtUtc.Value) : null,
+            CreatedAtUtc = action.CreatedAtUtc,
+            CreatedByGuid = createdBy.Guid,
+            ModifiedAtUtc = action.ModifiedAtUtc,
+            ModifiedByGuid = modifiedBy?.Guid,
+        };
     }
 
     public async Task<ITagRequirementEventV1> CreateRequirementEvent(TagRequirement tagRequirement)
@@ -62,7 +75,7 @@ public class CreateEventHelper : ICreateEventHelper
 
         return new TagRequirementEvent
         {
-            Guid = tagRequirement.Guid,
+            ProCoSysGuid = tagRequirement.Guid,
             Plant = tagRequirement.Plant,
             ProjectName = project.Name,
             IntervalWeeks = tagRequirement.IntervalWeeks,
@@ -99,7 +112,7 @@ public class CreateEventHelper : ICreateEventHelper
             ModifiedAtUtc = preservationPeriod.ModifiedAtUtc,
             ModifiedByGuid = modifiedBy?.Guid,
             TagRequirementGuid = tagRequirement.Guid,
-            Guid = preservationPeriod.Guid,
+            ProCoSysGuid = preservationPeriod.Guid,
             Plant = preservationPeriod.Plant,
             PreservedAtUtc = preservationRecord?.PreservedAtUtc,
             PreservedByGuid = preservedBy?.Guid,
@@ -124,7 +137,7 @@ public class CreateEventHelper : ICreateEventHelper
             CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = field.ModifiedAtUtc,
             ModifiedByGuid = modifiedBy?.Guid,
-            Guid = field.Guid,
+            ProCoSysGuid = field.Guid,
             Plant = field.Plant
         };
     }
@@ -135,7 +148,7 @@ public class CreateEventHelper : ICreateEventHelper
 
         return new RequirementDefinitionEvent
         {
-            Guid = requirementDefinition.Guid,
+            ProCoSysGuid = requirementDefinition.Guid,
             Plant = requirementDefinition.Plant,
             Title = requirementDefinition.Title,
             IsVoided = requirementDefinition.IsVoided,
@@ -158,7 +171,7 @@ public class CreateEventHelper : ICreateEventHelper
 
         return new RequirementTypeEvent
         {
-            Guid = requirementType.Guid,
+            ProCoSysGuid = requirementType.Guid,
             Plant = requirementType.Plant,
             Code = requirementType.Code,
             Title = requirementType.Title,
@@ -179,7 +192,7 @@ public class CreateEventHelper : ICreateEventHelper
 
         return new TagEvent
         {
-            Guid = tag.Guid,
+            ProCoSysGuid = tag.Guid,
             Plant = tag.Plant,
             ProjectName = project.Name,
             Description = tag.Description,
@@ -213,7 +226,7 @@ public class CreateEventHelper : ICreateEventHelper
 
         return new ModeEvent
         {
-            Guid = mode.Guid,
+            ProCoSysGuid = mode.Guid,
             Plant = mode.Plant,
             Title = mode.Title,
             IsVoided = mode.IsVoided,
@@ -232,13 +245,58 @@ public class CreateEventHelper : ICreateEventHelper
 
         return new JourneyEvent
         {
-            Guid = journey.Guid,
+            ProCoSysGuid = journey.Guid,
             Plant = journey.Plant,
             Title = journey.Title,
             IsVoided = journey.IsVoided,
             CreatedAtUtc = journey.CreatedAtUtc,
             CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = journey.ModifiedAtUtc,
+            ModifiedByGuid = modifiedBy?.Guid
+        };
+    }
+
+    public async Task<IResponsibleEventV1> CreateResponsibleEvent(Responsible responsible)
+    {
+        var createdBy = await _personRepository.GetByIdAsync(responsible.CreatedById);
+        var modifiedBy = responsible.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(responsible.ModifiedById.Value) : null;
+
+        return new ResponsibleEvent
+        {
+            ProCoSysGuid = responsible.Guid,
+            Plant = responsible.Plant,
+            Code = responsible.Code,
+            Description = responsible.Description,
+            IsVoided = responsible.IsVoided,
+            CreatedAtUtc = responsible.CreatedAtUtc,
+            CreatedByGuid = createdBy.Guid,
+            ModifiedAtUtc = responsible.ModifiedAtUtc,
+            ModifiedByGuid = modifiedBy?.Guid
+        };
+    }
+
+    public async Task<IStepEventV1> CreateStepEvent(Step step)
+    {
+        var createdBy = await _personRepository.GetByIdAsync(step.CreatedById);
+        var modifiedBy = step.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(step.ModifiedById.Value) : null;
+
+        var mode = await _modeRepository.GetByIdAsync(step.ModeId);
+        var responsible = await _responsibleRepository.GetByIdAsync(step.ResponsibleId);
+
+        return new StepEvent
+        {
+            ProCoSysGuid = step.Guid,
+            ModeGuid = mode.Guid,
+            ResponsibleGuid = responsible.Guid,
+            Plant = step.Plant,
+            Title = step.Title,
+            IsSupplierStep = step.IsSupplierStep,
+            AutoTransferMethod = step.AutoTransferMethod.ToString(),
+            SortKey = step.SortKey,
+            IsVoided = step.IsVoided,
+            CreatedAtUtc = step.CreatedAtUtc,
+            CreatedByGuid = createdBy.Guid,
+            ModifiedAtUtc = step.ModifiedAtUtc,
             ModifiedByGuid = modifiedBy?.Guid
         };
     }

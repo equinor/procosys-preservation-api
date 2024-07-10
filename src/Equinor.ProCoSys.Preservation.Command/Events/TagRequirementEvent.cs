@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 public class TagRequirementEvent : ITagRequirementEventV1
 {
-    public Guid Guid { get; init; }
+    public Guid ProCoSysGuid { get; init; }
     public string Plant { get; init; }
     public string ProjectName { get; init; }
 

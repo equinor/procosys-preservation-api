@@ -155,6 +155,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.Property<int>("CreatedById")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsSupplierStep")
                         .HasColumnType("bit");
 

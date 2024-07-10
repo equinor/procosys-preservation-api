@@ -12,7 +12,6 @@ public class PreservationNameFormatter : IEntityNameFormatter
     public string FormatEntityName<T>() =>
         typeof(T).Name switch
         {
-            nameof(BusEventMessage) => "preservation",
             nameof(IIntegrationEvent) => nameof(IIntegrationEvent),
             nameof(ITagEventV1) => "PreservationTag",
             nameof(ITagRequirementEventV1) => "PreservationTagRequirement",
@@ -23,6 +22,8 @@ public class PreservationNameFormatter : IEntityNameFormatter
             nameof(IRequirementDefinitionEventV1) => "PreservationRequirementDefinition",
             nameof(IModeEventV1) => "PreservationModes",
             nameof(IJourneyEventV1) => "PreservationJourneys",
+            nameof(IStepEventV1) => "PreservationSteps",
+            nameof(IResponsibleEventV1) => "PreservationResponsible",
 
             _ => throw new ArgumentException($"Preservation error: {typeof(T).Name} is not configured with a topic name mapping.")
         };

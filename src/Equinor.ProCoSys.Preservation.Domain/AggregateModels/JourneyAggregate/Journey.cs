@@ -80,6 +80,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             _steps.Remove(step);
+            step.SetRemoved();
         }
 
         public void SwapSteps(int stepId1, int stepId2)

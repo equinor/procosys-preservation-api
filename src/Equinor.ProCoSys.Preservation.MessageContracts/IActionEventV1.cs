@@ -8,4 +8,9 @@ public interface IActionEventV1 : IIntegrationEvent
     DateOnly? DueDate { get; }
     bool Overdue { get; }
     DateOnly? Closed { get; }
+
+    DateTime CreatedAtUtc { get; }
+    Guid CreatedByGuid { get; }
+    DateTime? ModifiedAtUtc { get; }
+    Guid? ModifiedByGuid { get; }
 }

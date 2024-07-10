@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 public class FieldEvent : IFieldEventV1
 {
-    public Guid Guid { get; init; }
+    public Guid ProCoSysGuid { get; init; }
     public string Plant { get; init; }
     public string ProjectName { get; init; }
     public Guid RequirementDefinitionGuid { get; init; }
@@ -13,6 +14,7 @@ public class FieldEvent : IFieldEventV1
     public string Unit { get; init; }
     public int SortKey { get; init; }
     public string FieldType { get; init; }
+
     public DateTime CreatedAtUtc { get; init; }
     public Guid CreatedByGuid { get; init; }
     public DateTime? ModifiedAtUtc { get; init; }

@@ -6,7 +6,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 public class RequirementTypeEvent : IRequirementTypeEventV1
 {
-    public Guid Guid { get; init; }
+    public Guid ProCoSysGuid { get; init; }
     public string Plant { get; init; }
 
     [JsonIgnore] //ProjectName isnt needed for RequirementType but is required for IIntegrationEvent

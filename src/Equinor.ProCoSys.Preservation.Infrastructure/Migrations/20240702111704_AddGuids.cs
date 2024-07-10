@@ -73,6 +73,13 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 type: "uniqueidentifier",
                 nullable: false,
                 defaultValueSql: "NEWID()");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "Guid",
+                table: "Responsibles",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValueSql: "NEWID()");
         }
 
         /// <inheritdoc />
@@ -113,6 +120,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "Guid",
                 table: "Journeys");
+
+            migrationBuilder.DropColumn(
+                name: "Guid",
+                table: "Responsibles");
         }
     }
 }

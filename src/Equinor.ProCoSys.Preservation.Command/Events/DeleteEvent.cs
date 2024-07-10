@@ -10,13 +10,12 @@ public class DeleteEvent : IDeleteEventV1
 {
     private DeleteEvent(Guid guid, string plant, string projectName)
     {
-        Guid = guid;
+        ProCoSysGuid = guid;
         Plant = plant;
         ProjectName = projectName;
     }
 
-
-    public Guid Guid { get; init; }
+    public Guid ProCoSysGuid { get; init; }
     public string Plant { get; init; }
     public string ProjectName { get; init; }
     public string Behavior { get; init; } = "delete";
@@ -74,5 +73,17 @@ public class DeleteEvent : IDeleteEventV1
     public class JourneyDeleteEvent : DeleteEvent
     {
         public JourneyDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
+    }
+
+    [EntityName("PreservationStepDelete")]
+    public class StepDeleteEvent : DeleteEvent
+    {
+        public StepDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
+    }
+
+    [EntityName("PreservationResponsibleDelete")]
+    public class ResponsibleDeleteEvent : DeleteEvent
+    {
+        public ResponsibleDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 }

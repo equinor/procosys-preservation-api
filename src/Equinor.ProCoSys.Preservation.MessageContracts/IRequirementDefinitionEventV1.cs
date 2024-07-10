@@ -2,6 +2,7 @@
 
 public interface IRequirementDefinitionEventV1 : IIntegrationEvent
 {
+    Guid RequirementTypeGuid { get; }
     string Title { get; }
     bool IsVoided { get; }
     int DefaultIntervalWeeks { get; }
@@ -12,5 +13,4 @@ public interface IRequirementDefinitionEventV1 : IIntegrationEvent
     Guid CreatedByGuid { get; }
     DateTime? ModifiedAtUtc { get; }
     Guid? ModifiedByGuid { get; }
-    Guid RequirementTypeGuid { get; }
 }

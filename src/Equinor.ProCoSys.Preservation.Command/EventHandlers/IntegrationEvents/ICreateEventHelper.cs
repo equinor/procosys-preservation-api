@@ -5,6 +5,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
@@ -21,4 +22,6 @@ public interface ICreateEventHelper
     Task<ITagEventV1> CreateTagEvent(Tag tag);
     Task<IModeEventV1> CreateModeEvent(Mode mode);
     Task<IJourneyEventV1> CreateJourneyEvent(Journey journey);
+    Task<IResponsibleEventV1> CreateResponsibleEvent(Responsible responsible);
+    Task<IStepEventV1> CreateStepEvent(Step step);
 }
