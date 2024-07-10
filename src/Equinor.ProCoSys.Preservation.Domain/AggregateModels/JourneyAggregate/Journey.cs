@@ -5,10 +5,11 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
-    public class Journey : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable
+    public class Journey : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
     {
         public const string DuplicatePrefix = " - Copy";
         public const int TitleLengthMin = 3;
@@ -30,8 +31,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             Title = title;
+            Guid = Guid.NewGuid();
         }
 
+        public Guid Guid { get; }
         public IReadOnlyCollection<Step> Steps => _steps.AsReadOnly();
         public string Title { get; set; }
         public bool IsVoided { get; set; }
@@ -174,6 +177,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+            AddDomainEvent(new JourneyAddedEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -184,6 +188,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+            AddDomainEvent(new JourneyUpdatedEvent(this));
         }
+
+        public void SetRemoved() => AddDomainEvent(new JourneyDeletedEvent(this));
     }
 }

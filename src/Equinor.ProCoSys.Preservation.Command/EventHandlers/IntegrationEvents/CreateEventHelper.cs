@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.Events;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -201,6 +203,43 @@ public class CreateEventHelper : ICreateEventHelper
             McPkgGuid = tag.McPkgProCoSysGuid,
             IsVoided = tag.IsVoided,
             IsVoidedInSource = tag.IsVoidedInSource
+        };
+    }
+
+    public async Task<IModeEventV1> CreateModeEvent(Mode mode)
+    {
+        var createdBy = await _personRepository.GetByIdAsync(mode.CreatedById);
+        var modifiedBy = mode.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(mode.ModifiedById.Value) : null;
+
+        return new ModeEvent
+        {
+            Guid = mode.Guid,
+            Plant = mode.Plant,
+            Title = mode.Title,
+            IsVoided = mode.IsVoided,
+            CreatedAtUtc = mode.CreatedAtUtc,
+            CreatedByGuid = createdBy.Guid,
+            ModifiedAtUtc = mode.ModifiedAtUtc,
+            ModifiedByGuid = modifiedBy?.Guid,
+            ForSupplier = mode.ForSupplier
+        };
+    }
+
+    public async Task<IJourneyEventV1> CreateJourneyEvent(Journey journey)
+    {
+        var createdBy = await _personRepository.GetByIdAsync(journey.CreatedById);
+        var modifiedBy = journey.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(journey.ModifiedById.Value) : null;
+
+        return new JourneyEvent
+        {
+            Guid = journey.Guid,
+            Plant = journey.Plant,
+            Title = journey.Title,
+            IsVoided = journey.IsVoided,
+            CreatedAtUtc = journey.CreatedAtUtc,
+            CreatedByGuid = createdBy.Guid,
+            ModifiedAtUtc = journey.ModifiedAtUtc,
+            ModifiedByGuid = modifiedBy?.Guid
         };
     }
 }

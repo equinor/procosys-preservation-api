@@ -21,6 +21,8 @@ public class PreservationNameFormatter : IEntityNameFormatter
             nameof(IFieldEventV1) => "PreservationField",
             nameof(IPreservationPeriodEventV1) => "PreservationPeriod",
             nameof(IRequirementDefinitionEventV1) => "PreservationRequirementDefinition",
+            nameof(IModeEventV1) => "PreservationModes",
+            nameof(IJourneyEventV1) => "PreservationJourneys",
 
             _ => throw new ArgumentException($"Preservation error: {typeof(T).Name} is not configured with a topic name mapping.")
         };

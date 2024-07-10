@@ -63,4 +63,16 @@ public class DeleteEvent : IDeleteEventV1
     {
         public PreservationPeriodDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
+
+    [EntityName("PreservationModeDelete")]
+    public class ModeDeleteEvent : DeleteEvent
+    {
+        public ModeDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
+    }
+
+    [EntityName("PreservationJourneyDelete")]
+    public class JourneyDeleteEvent : DeleteEvent
+    {
+        public JourneyDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
+    }
 }

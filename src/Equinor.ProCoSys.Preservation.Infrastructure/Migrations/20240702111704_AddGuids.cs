@@ -16,42 +16,63 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                 table: "RequirementDefinitions",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: Guid.NewGuid());
+                defaultValueSql: "NEWID()");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "Guid",
                 table: "Actions",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: Guid.NewGuid());
+                defaultValueSql: "NEWID()");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "Guid",
                 table: "TagRequirements",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: Guid.NewGuid());
+                defaultValueSql: "NEWID()");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "Guid",
                 table: "RequirementTypes",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: Guid.NewGuid());
+                defaultValueSql: "NEWID()");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "Guid",
                 table: "PreservationPeriods",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: Guid.NewGuid());
+                defaultValueSql: "NEWID()");
 
             migrationBuilder.AddColumn<Guid>(
                 name: "Guid",
                 table: "Fields",
                 type: "uniqueidentifier",
                 nullable: false,
-                defaultValue: Guid.NewGuid());
+                defaultValueSql: "NEWID()");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "Guid",
+                table: "Steps",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValueSql: "NEWID()");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "Guid",
+                table: "Modes",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValueSql: "NEWID()");
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "Guid",
+                table: "Journeys",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValueSql: "NEWID()");
         }
 
         /// <inheritdoc />
@@ -80,6 +101,18 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
             migrationBuilder.DropColumn(
                 name: "Guid",
                 table: "Fields");
+
+            migrationBuilder.DropColumn(
+                name: "Guid",
+                table: "Steps");
+
+            migrationBuilder.DropColumn(
+                name: "Guid",
+                table: "Modes");
+
+            migrationBuilder.DropColumn(
+                name: "Guid",
+                table: "Journeys");
         }
     }
 }

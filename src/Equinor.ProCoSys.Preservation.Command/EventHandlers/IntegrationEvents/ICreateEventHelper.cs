@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.MessageContracts;
@@ -17,4 +19,6 @@ public interface ICreateEventHelper
     Task<IRequirementDefinitionEventV1> CreateRequirementDefinitionEvent(RequirementDefinition requirementDefinition);
     Task<IRequirementTypeEventV1> CreateRequirementTypeEvent(RequirementType requirementType);
     Task<ITagEventV1> CreateTagEvent(Tag tag);
+    Task<IModeEventV1> CreateModeEvent(Mode mode);
+    Task<IJourneyEventV1> CreateJourneyEvent(Journey journey);
 }

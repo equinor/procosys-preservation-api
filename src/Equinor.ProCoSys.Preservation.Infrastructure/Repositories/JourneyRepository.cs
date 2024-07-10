@@ -39,6 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 _context.Steps.Remove(step);
             }
             base.Remove(journey);
+            journey.SetRemoved();
         }
     }
 }
