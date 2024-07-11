@@ -26,8 +26,9 @@ public class CreateEventHelper : ICreateEventHelper
     private readonly IPersonRepository _personRepository;
     private readonly IModeRepository _modeRepository;
     private readonly IResponsibleRepository _responsibleRepository;
+    private readonly IJourneyRepository _journeyRepository;
 
-    public CreateEventHelper(IProjectRepository projectRepository, IReadOnlyContext context, IRequirementTypeRepository requirementTypeRepository, IPersonRepository personRepository, IModeRepository modeRepository, IResponsibleRepository responsibleRepository)
+    public CreateEventHelper(IProjectRepository projectRepository, IReadOnlyContext context, IRequirementTypeRepository requirementTypeRepository, IPersonRepository personRepository, IModeRepository modeRepository, IResponsibleRepository responsibleRepository, IJourneyRepository journeyRepository)
     {
         _projectRepository = projectRepository;
         _context = context;
@@ -35,6 +36,7 @@ public class CreateEventHelper : ICreateEventHelper
         _personRepository = personRepository;
         _modeRepository = modeRepository;
         _responsibleRepository = responsibleRepository;
+        _journeyRepository = journeyRepository;
     }
 
     public async Task<IActionEventV1> CreateActionEvent(Action action)
@@ -106,7 +108,6 @@ public class CreateEventHelper : ICreateEventHelper
             Status = preservationPeriod.Status.ToString(),
             DueTimeUtc = preservationPeriod.DueTimeUtc,
             Comment = preservationPeriod.Comment,
-            PreservationRecordGuid = preservationPeriod.PreservationRecord?.Guid,
             CreatedAtUtc = preservationPeriod.CreatedAtUtc,
             CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = preservationPeriod.ModifiedAtUtc,
@@ -189,6 +190,7 @@ public class CreateEventHelper : ICreateEventHelper
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
         var createdBy = await _personRepository.GetByIdAsync(tag.CreatedById);
         var modifiedBy = tag.ModifiedById.HasValue ? await _personRepository.GetByIdAsync(tag.ModifiedById.Value) : null;
+        var step = await _journeyRepository.GetStepByStepIdAsync(tag.StepId);
 
         return new TagEvent
         {
@@ -198,7 +200,7 @@ public class CreateEventHelper : ICreateEventHelper
             Description = tag.Description,
             Remark = tag.Remark,
             NextDueTimeUtc = tag.NextDueTimeUtc,
-            StepId = tag.StepId,
+            StepGuid = step.Guid,
             DisciplineCode = tag.DisciplineCode,
             AreaCode = tag.AreaCode,
             TagFunctionCode = tag.TagFunctionCode,

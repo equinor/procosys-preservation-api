@@ -10,11 +10,11 @@ public class TagEvent : ITagEventV1
     public string Plant { get; init; }
     public string ProjectName { get; init; }
 
+    public Guid StepGuid { get; init; }
 
     public string Description { get; init; }
     public string Remark { get; init; }
     public DateTime? NextDueTimeUtc { get; init; }
-    public int StepId { get; init; }
     public string DisciplineCode { get; init; }
     public string AreaCode { get; init; }
     public string TagFunctionCode { get; init; }

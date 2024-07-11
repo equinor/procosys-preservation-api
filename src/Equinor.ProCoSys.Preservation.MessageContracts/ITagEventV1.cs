@@ -6,7 +6,8 @@ public interface ITagEventV1 : IIntegrationEvent
     string Remark { get; }
     DateTime? NextDueTimeUtc { get; }
 
-    int StepId { get; }
+    Guid StepGuid { get; }
+
     string DisciplineCode { get; }
     string AreaCode { get; }
     string TagFunctionCode { get; }

@@ -16,7 +16,6 @@ public class PreservationPeriodsEvent : IPreservationPeriodEventV1
     public string Status { get; init; }
     public DateTime DueTimeUtc { get; init; }
     public string Comment { get; init; }
-    public Guid? PreservationRecordGuid { get; init; }
     public DateTime? PreservedAtUtc { get; init; }
     public Guid? PreservedByGuid { get; init;}
     public bool? BulkPreserved { get; init; }

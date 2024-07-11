@@ -6,7 +6,6 @@ public interface IPreservationPeriodEventV1 : IIntegrationEvent
     string Status { get; }
     DateTime DueTimeUtc { get; }
     string Comment { get; }
-    Guid? PreservationRecordGuid { get; }
     DateTime CreatedAtUtc { get; }
     Guid CreatedByGuid { get; }
     DateTime? ModifiedAtUtc { get; }
