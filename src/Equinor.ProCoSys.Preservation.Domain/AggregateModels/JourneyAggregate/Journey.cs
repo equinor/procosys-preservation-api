@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             Guid = Guid.NewGuid();
         }
 
-        public Guid Guid { get; }
+        public Guid Guid { get; private set; }
         public IReadOnlyCollection<Step> Steps => _steps.AsReadOnly();
         public string Title { get; set; }
         public bool IsVoided { get; set; }
@@ -178,7 +178,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
-            AddDomainEvent(new JourneyAddedEvent(this));
+            AddPostSaveDomainEvent(new JourneyAddedEvent(this));
         }
 
         public void SetModified(Person modifiedBy)

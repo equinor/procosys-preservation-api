@@ -118,7 +118,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
 
             try
             {
-                return await base.SaveChangesAsync(cancellationToken);
+                var result = await base.SaveChangesAsync(cancellationToken);
+                await DispatchPostSaveEventsEventsAsync(cancellationToken);
+                return result;
             }
             catch (DbUpdateConcurrencyException concurrencyException)
             {
@@ -150,6 +152,15 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
                 .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
                 .Select(x => x.Entity);
             await _eventDispatcher.DispatchDomainEventsAsync(entities, cancellationToken);
+        }
+
+        private async Task DispatchPostSaveEventsEventsAsync(CancellationToken cancellationToken = default)
+        {
+            var entities = ChangeTracker
+                .Entries<EntityBase>()
+                .Where(x => x.Entity.PostSaveDomainEvents != null && x.Entity.PostSaveDomainEvents.Any())
+                .Select(x => x.Entity);
+            await _eventDispatcher.DispatchPostSaveEventsAsync(entities, cancellationToken);
         }
 
         private async Task SetAuditDataAsync()

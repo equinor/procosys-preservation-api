@@ -7,9 +7,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 public class FieldEvent : IFieldEventV1
 {
     public Guid ProCoSysGuid { get; init; }
-    public string Plant { get; init; }
-    public string ProjectName { get; init; }
     public Guid RequirementDefinitionGuid { get; init; }
+
+    public string Plant { get; init; }
+
+    [JsonIgnore]
+    public string ProjectName { get; init; }
+
     public string Label { get; init; }
     public string Unit { get; init; }
     public int SortKey { get; init; }

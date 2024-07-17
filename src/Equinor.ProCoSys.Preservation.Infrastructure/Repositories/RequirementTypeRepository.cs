@@ -31,12 +31,17 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
         public Task<RequirementType> GetRequirementTypeByRequirementDefinitionGuidAsync(Guid requirementDefinitionGuid)
             => DefaultQuery
                 .Where(rt => rt.RequirementDefinitions.Any(rd => rd.Guid == requirementDefinitionGuid))
-                .SingleAsync();
+                .FirstOrDefaultAsync();
+
+        public Task<RequirementType> GetRequirementTypeByIdAsync(int requirementTypeId)
+            => DefaultQuery
+                .Where(rt => rt.Id == requirementTypeId)
+                .FirstOrDefaultAsync();
 
         public Task<RequirementDefinition> GetRequirementDefinitionByFieldGuidAsync(Guid fieldGuid)
             => DefaultQuery
                 .Select(rt => rt.RequirementDefinitions.First(rd => rd.Fields.Any(f => f.Guid == fieldGuid)))
-                .SingleAsync();
+                .FirstOrDefaultAsync();
 
         public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition) 
             => _context.RequirementDefinitions.Remove(requirementDefinition);

@@ -268,7 +268,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 var preservationPeriod = new PreservationPeriod(Plant, IntervalWeeks, _initialPreservationPeriodStatus);
                 _preservationPeriods.Add(preservationPeriod);
-                AddDomainEvent(new PreservationPeriodAddedEvent(preservationPeriod));
             }
 
             NextDueTimeUtc = ActivePeriod.DueTimeUtc;

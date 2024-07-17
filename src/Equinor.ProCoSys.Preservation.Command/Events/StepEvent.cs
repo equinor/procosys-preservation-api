@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 using Equinor.ProCoSys.Preservation.MessageContracts;
-using Newtonsoft.Json;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 

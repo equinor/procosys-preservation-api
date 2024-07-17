@@ -12,6 +12,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         Task<List<RequirementDefinition>> GetRequirementDefinitionsByIdsAsync(IList<int> requirementDefinitionIds);
 
         Task<RequirementType> GetRequirementTypeByRequirementDefinitionGuidAsync(Guid requirementDefinitionGuid);
+        Task<RequirementType> GetRequirementTypeByIdAsync(int requirementTypeId);
+
 
         void RemoveRequirementDefinition(RequirementDefinition requirementDefinition);
         void RemoveField(Field field);

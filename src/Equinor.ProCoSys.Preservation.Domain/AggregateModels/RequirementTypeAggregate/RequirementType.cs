@@ -72,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             CreatedById = createdBy.Id;
             // Added event is sent in SetCreated instead of constructor to make sure it has been added to database before events try to query it
-            AddDomainEvent(new RequirementTypeAddedEvent(this));
+            AddPostSaveDomainEvent(new RequirementTypeAddedEvent(this));
         }
 
         public void SetModified(Person modifiedBy)

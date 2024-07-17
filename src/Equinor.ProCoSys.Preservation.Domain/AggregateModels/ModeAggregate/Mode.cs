@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
             Guid = Guid.NewGuid();
         }
 
-        public Guid Guid { get; }
+        public Guid Guid { get; private set; }
         public string Title { get; set; }
         public bool IsVoided { get; set; }
         public bool ForSupplier { get; set; }
@@ -41,7 +41,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
-            AddDomainEvent(new ModeAddedEvent(this));
+            AddPostSaveDomainEvent(new ModeAddedEvent(this));
         }
 
         public void SetModified(Person modifiedBy)

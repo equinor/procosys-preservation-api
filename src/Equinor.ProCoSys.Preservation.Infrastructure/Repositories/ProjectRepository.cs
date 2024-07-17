@@ -124,11 +124,13 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 
         public Task<Project> GetProjectOnlyByTagIdAsync(int tagId)
             => Set
+                .Include(p => p.Tags)
                 .Where(project => project.Tags.Any(tag => tag.Id == tagId))
                 .SingleOrDefaultAsync();
 
         public Task<Project> GetProjectOnlyByTagGuidAsync(Guid tagGuid)
             => Set
+                .Include(p => p.Tags)
                 .Where(project => project.Tags.Any(tag => tag.Guid == tagGuid))
                 .SingleOrDefaultAsync();
     }

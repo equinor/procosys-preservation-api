@@ -4,7 +4,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
-public class RequirementAddedFieldEvent : IDomainEvent
+public class RequirementAddedFieldEvent : IPostSaveDomainEvent
 {
     public RequirementAddedFieldEvent(Field field) => this.Field = field;
     public Field Field { get; }

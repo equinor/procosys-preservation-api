@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             Description = description;
         }
 
-        public Guid Guid { get; init; }
+        public Guid Guid { get; private set; }
 
         public string Code { get; private set; }
         public string Description { get; set; }
@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
-            AddDomainEvent(new ResponsibleAddedEvent(this));
+            AddPostSaveDomainEvent(new ResponsibleAddedEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -55,7 +55,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
-            AddDomainEvent(new ResponsibleUpdatedEvent(this));
         }
 
         public void RenameResponsible(string newCode)
@@ -66,6 +65,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             }
 
             Code = newCode;
+            //The only update the responsible can get is rename, so sending update event in modified sends duplicate
+            AddDomainEvent(new ResponsibleUpdatedEvent(this));
         }
 
         public void SetRemoved() => AddDomainEvent(new ResponsibleDeletedEvent(this));

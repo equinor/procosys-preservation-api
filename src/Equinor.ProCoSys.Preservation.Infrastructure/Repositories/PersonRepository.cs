@@ -18,6 +18,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .Include(p => p.SavedFilters)
                 .SingleOrDefaultAsync(p => p.Guid == oid);
 
+        public Task<Person> GetReadOnlyByIdAsync(int personId)
+            => DefaultQuery.AsNoTracking().SingleOrDefaultAsync(p => p.Id == personId);
+
         public void RemoveSavedFilter(SavedFilter savedFilter)
             => _context.SavedFilters.Remove(savedFilter);
     }

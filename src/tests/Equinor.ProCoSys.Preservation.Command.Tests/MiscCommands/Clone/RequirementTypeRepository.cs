@@ -31,6 +31,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
         public Task<RequirementDefinition> GetRequirementDefinitionByIdAsync(int requirementDefinitionId) => throw new NotImplementedException();
         public Task<List<RequirementDefinition>> GetRequirementDefinitionsByIdsAsync(IList<int> requirementDefinitionIds) => throw new NotImplementedException();
         public Task<RequirementType> GetRequirementTypeByRequirementDefinitionGuidAsync(Guid requirementDefinitionGuid) => throw new NotImplementedException();
+        public Task<RequirementType> GetRequirementTypeByIdAsync(int requirementTypeId) => throw new NotImplementedException();
+
         public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition) => throw new NotImplementedException();
         public void RemoveField(Field field) => throw new NotImplementedException();
     }

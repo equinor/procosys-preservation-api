@@ -3,7 +3,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
-public class RequirementTypeAddedEvent : IDomainEvent
+public class RequirementTypeAddedEvent : IPostSaveDomainEvent
 {
     public RequirementType RequirementType { get; }
     public RequirementTypeAddedEvent(RequirementType requirementType) => RequirementType = requirementType;

@@ -83,7 +83,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             CreatedById = createdBy.Id;
-            AddDomainEvent(new StepAddedEvent(this));
+            AddPostSaveDomainEvent(new StepAddedEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
