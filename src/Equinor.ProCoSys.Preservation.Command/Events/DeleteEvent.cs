@@ -21,67 +21,67 @@ public class DeleteEvent : IDeleteEventV1
     public string Behavior { get; init; } = "delete";
 
 
-    [EntityName("PreservationTagDelete")]
+    [EntityName("PreservationTag")]
     public class TagDeleteEvent : DeleteEvent
     {
         public TagDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
     }
 
-    [EntityName("PreservationTagRequirementDelete")]
+    [EntityName("PreservationTagRequirement")]
     public class TagRequirementDeleteEvent : DeleteEvent
     {
         public TagRequirementDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
     }
 
-    [EntityName("PreservationActionDelete")]
+    [EntityName("PreservationAction")]
     public class ActionDeleteEvent : DeleteEvent
     {
         public ActionDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
     }
 
-    [EntityName("PreservationRequirementFieldDelete")]
+    [EntityName("PreservationRequirementField")]
     public class RequirementFieldDeleteEvent : DeleteEvent
     {
         public RequirementFieldDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationRequirementTypeDelete")]
+    [EntityName("PreservationRequirementType")]
     public class RequirementTypeDeleteEvent : DeleteEvent
     {
         public RequirementTypeDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationRequirementDefinitionDelete")]
+    [EntityName("PreservationRequirementDefinition")]
     public class RequirementDefinitionDeleteEvent : DeleteEvent
     {
         public RequirementDefinitionDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationPeriodDelete")]
+    [EntityName("PreservationPeriod")]
     public class PreservationPeriodDeleteEvent : DeleteEvent
     {
         public PreservationPeriodDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationModeDelete")]
+    [EntityName("PreservationModes")]
     public class ModeDeleteEvent : DeleteEvent
     {
         public ModeDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationJourneyDelete")]
+    [EntityName("PreservationJourneys")]
     public class JourneyDeleteEvent : DeleteEvent
     {
         public JourneyDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationStepDelete")]
+    [EntityName("PreservationSteps")]
     public class StepDeleteEvent : DeleteEvent
     {
         public StepDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationResponsibleDelete")]
+    [EntityName("PreservationResponsible")]
     public class ResponsibleDeleteEvent : DeleteEvent
     {
         public ResponsibleDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
