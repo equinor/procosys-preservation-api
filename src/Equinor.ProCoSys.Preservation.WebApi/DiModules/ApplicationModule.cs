@@ -53,6 +53,7 @@ using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Context;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.WebApi.MassTransit;
 using MassTransit;
@@ -117,6 +118,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddHttpClient();
 
             // Transient - Created each time it is requested from the service container
+            services.AddTransient<ICreateEventHelper<Action>, CreateActionEventHelper>();
+            services.AddTransient<ICreateEventHelper<Field>, CreateFieldEventHelper>();
+            services.AddTransient<ICreateEventHelper<Journey>, CreateJourneyEventHelper>();
+            services.AddTransient<ICreateEventHelper<Mode>, CreateModeEventHelper>();
+            services.AddTransient<ICreateEventHelper<PreservationPeriod>, CreatePreservationPeriodEventHelper>();
+            services.AddTransient<ICreateEventHelper<RequirementDefinition>, CreateRequirementDefinitionEventHelper>();
+            services.AddTransient<ICreateEventHelper<RequirementType>, CreateRequirementTypeEventHelper>();
+            services.AddTransient<ICreateEventHelper<Responsible>, CreateResponsibleEventHelper>();
+            services.AddTransient<ICreateEventHelper<Step>, CreateStepEventHelper>();
+            services.AddTransient<ICreateEventHelper<Tag>, CreateTagEventHelper>();
+            services.AddTransient<ICreateEventHelper<TagRequirement>, CreateTagRequirementEventEventHelper>();
             services.AddTransient<IPreservationPeriodTagRequirement, PreservationPeriodTagRequirement>();
             services.AddTransient<ITagProjectId, TagProjectId>();
 
@@ -174,7 +186,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<ISavedFilterValidator, SavedFilterValidator>();
 
             services.AddScoped<IIntegrationEventPublisher, IntegrationEventPublisher>();
-            services.AddScoped<ICreateEventHelper, CreateEventHelper>();
             services.AddScoped<IContextSemaphore, ContextSemaphore>();
 
             // Singleton - Created the first time they are requested
