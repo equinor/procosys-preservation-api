@@ -52,6 +52,7 @@ using Equinor.ProCoSys.Common.Caches;
 using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Context;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.WebApi.MassTransit;
 using MassTransit;
@@ -116,6 +117,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddHttpClient();
 
             // Transient - Created each time it is requested from the service container
+            services.AddTransient<IPreservationPeriodTagRequirement, PreservationPeriodTagRequirement>();
+            services.AddTransient<ITagProjectId, TagProjectId>();
 
             // Scoped - Created once per client request (connection)
             services.AddScoped<IExcelConverter, ExcelConverter>();
@@ -172,6 +175,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             services.AddScoped<IIntegrationEventPublisher, IntegrationEventPublisher>();
             services.AddScoped<ICreateEventHelper, CreateEventHelper>();
+            services.AddScoped<IContextSemaphore, ContextSemaphore>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();
