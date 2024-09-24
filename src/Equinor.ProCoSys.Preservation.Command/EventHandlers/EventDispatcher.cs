@@ -24,9 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers
 
             allEntities.ForEach(e => e.ClearDomainEvents());
 
-            var tasks = PublishToMediator(events, cancellationToken);
-
-            await Task.WhenAll(tasks);
+            await PublishToMediator(events, cancellationToken);
         }
 
         public async Task DispatchPostSaveEventsAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default)
@@ -39,9 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers
 
             allEntities.ForEach(e => e.ClearPostSaveDomainEvents());
 
-            var tasks = PublishToMediator(events, cancellationToken);
-
-            await Task.WhenAll(tasks);
+            await PublishToMediator(events, cancellationToken);
         }
 
         private static List<EntityBase> ConvertToList(IEnumerable<EntityBase> entities)
@@ -53,14 +49,12 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers
             return entities.ToList();
         }
 
-        private IEnumerable<Task> PublishToMediator(IList<INotification> domainEvents, CancellationToken cancellationToken)
+        private async Task PublishToMediator(IList<INotification> domainEvents, CancellationToken cancellationToken)
         {
-            var tasks = domainEvents
-                .Select(async (domainEvent) =>
-                {
-                    await _mediator.Publish(domainEvent, cancellationToken);
-                });
-            return tasks;
+            foreach (var domainEvent in domainEvents)
+            {
+                await _mediator.Publish(domainEvent, cancellationToken);
+            }
         }
     }
 }

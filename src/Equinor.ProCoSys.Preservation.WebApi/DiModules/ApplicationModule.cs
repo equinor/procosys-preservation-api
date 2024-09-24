@@ -51,8 +51,6 @@ using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Common.Caches;
 using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.Auth.Authorization;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Context;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.WebApi.MassTransit;
@@ -131,7 +129,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<TagRequirement>, CreateTagRequirementEventEventHelper>();
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
             services.AddTransient<IReadOnlyContext, PreservationContext>();
-            services.AddTransient<ITagProjectId, TagProjectId>();
 
             // Scoped - Created once per client request (connection)
             services.AddScoped<IExcelConverter, ExcelConverter>();
