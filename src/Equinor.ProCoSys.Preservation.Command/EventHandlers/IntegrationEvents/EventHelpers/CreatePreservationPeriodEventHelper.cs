@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Context;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -10,18 +11,18 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 public class CreatePreservationPeriodEventHelper : ICreateEventHelper<PreservationPeriod>
 {
     private readonly IPersonRepository _personRepository;
-    private readonly IPreservationPeriodTagRequirement _preservationPeriodTagRequirement;
+    private readonly IReadOnlyContext _context;
 
-    public CreatePreservationPeriodEventHelper(IPersonRepository personRepository, IPreservationPeriodTagRequirement preservationPeriodTagRequirement)
+    public CreatePreservationPeriodEventHelper(IPersonRepository personRepository, IReadOnlyContext context)
     {
         _personRepository = personRepository;
-        _preservationPeriodTagRequirement = preservationPeriodTagRequirement;
+        _context = context;
     }
 
     public async Task<IIntegrationEvent> CreateEvent(PreservationPeriod entity)
     {
         var preservationRecord = entity.PreservationRecord;
-        var tagRequirement = await _preservationPeriodTagRequirement.Retrieve(entity);
+        var tagRequirement = _context.QuerySet<TagRequirement>().Single(rd => rd.Id == entity.TagRequirementId);
 
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;

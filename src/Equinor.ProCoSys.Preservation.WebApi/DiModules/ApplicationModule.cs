@@ -129,7 +129,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Step>, CreateStepEventHelper>();
             services.AddTransient<ICreateEventHelper<Tag>, CreateTagEventHelper>();
             services.AddTransient<ICreateEventHelper<TagRequirement>, CreateTagRequirementEventEventHelper>();
-            services.AddTransient<IPreservationPeriodTagRequirement, PreservationPeriodTagRequirement>();
+            services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
+            services.AddTransient<IReadOnlyContext, PreservationContext>();
             services.AddTransient<ITagProjectId, TagProjectId>();
 
             // Scoped - Created once per client request (connection)
@@ -144,7 +145,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<ITagHelper, TagHelper>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
-            services.AddScoped<IReadOnlyContext, PreservationContext>();
             services.AddScoped<ISynchronizationService, SynchronizationService>();
 
             services.AddScoped<IProjectRepository, ProjectRepository>();
@@ -184,9 +184,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<ITagFunctionValidator, TagFunctionValidator>();
             services.AddScoped<IRowVersionValidator, RowVersionValidator>();
             services.AddScoped<ISavedFilterValidator, SavedFilterValidator>();
-
-            services.AddScoped<IIntegrationEventPublisher, IntegrationEventPublisher>();
-            services.AddScoped<IContextSemaphore, ContextSemaphore>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();
