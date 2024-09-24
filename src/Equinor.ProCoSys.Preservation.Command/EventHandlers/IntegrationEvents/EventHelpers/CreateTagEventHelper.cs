@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Context;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -13,24 +12,20 @@ public class CreateTagEventHelper  : ICreateEventHelper<Tag>
     private readonly IJourneyRepository _journeyRepository;
     private readonly IPersonRepository _personRepository;
     private readonly IProjectRepository _projectRepository;
-    private readonly ITagProjectId _tagProjectId;
 
     public CreateTagEventHelper(
         IJourneyRepository journeyRepository,
         IPersonRepository personRepository,
-        IProjectRepository projectRepository,
-        ITagProjectId tagProjectId)
+        IProjectRepository projectRepository)
     {
         _journeyRepository = journeyRepository;
         _personRepository = personRepository;
         _projectRepository = projectRepository;
-        _tagProjectId = tagProjectId;
     }
 
     public async Task<IIntegrationEvent> CreateEvent(Tag entity)
     {
-        var projectId = await _tagProjectId.Retrieve(entity);
-        var project = await _projectRepository.GetByIdAsync(projectId);
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(entity.Guid);
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
         var step = await _journeyRepository.GetStepByStepIdAsync(entity.StepId);

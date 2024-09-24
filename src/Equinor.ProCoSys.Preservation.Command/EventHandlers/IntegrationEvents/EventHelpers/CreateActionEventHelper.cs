@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Context;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -13,20 +12,17 @@ public class CreateActionEventHelper : ICreateEventHelper<Action>
 {
     private readonly IPersonRepository _personRepository;
     private readonly IProjectRepository _projectRepository;
-    private readonly ITagProjectId _tagProjectId;
 
-    public CreateActionEventHelper(IPersonRepository personRepository, IProjectRepository projectRepository, ITagProjectId tagProjectId)
+    public CreateActionEventHelper(IPersonRepository personRepository, IProjectRepository projectRepository)
     {
         _personRepository = personRepository;
         _projectRepository = projectRepository;
-        _tagProjectId = tagProjectId;
     }
 
     public async Task<IIntegrationEvent> CreateEvent(Action entity)
     {
         var tag = await _projectRepository.GetTagByActionGuidAsync(entity.Guid);
-        var projectId = await _tagProjectId.Retrieve(tag);
-        var project = await _projectRepository.GetByIdAsync(projectId);
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
 
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;

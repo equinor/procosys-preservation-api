@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Context;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -13,21 +12,21 @@ public class CreateTagRequirementEventEventHelper : ICreateEventHelper<TagRequir
     private readonly IPersonRepository _personRepository;
     private readonly IProjectRepository _projectRepository;
     private readonly IRequirementTypeRepository _requirementTypeRepository;
-    private readonly ITagProjectId _tagProjectId;
 
-    public CreateTagRequirementEventEventHelper(IPersonRepository personRepository, IProjectRepository projectRepository, IRequirementTypeRepository requirementTypeRepository, ITagProjectId tagProjectId)
+    public CreateTagRequirementEventEventHelper(
+        IPersonRepository personRepository,
+        IProjectRepository projectRepository,
+        IRequirementTypeRepository requirementTypeRepository)
     {
         _personRepository = personRepository;
         _projectRepository = projectRepository;
         _requirementTypeRepository = requirementTypeRepository;
-        _tagProjectId = tagProjectId;
     }
 
     public async Task<IIntegrationEvent> CreateEvent(TagRequirement entity)
     {
         var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(entity.Guid);
-        var projectId = await _tagProjectId.Retrieve(tag);
-        var project = await _projectRepository.GetByIdAsync(projectId);
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
         var requirementDefinitions = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(entity.RequirementDefinitionId);
 
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
