@@ -19,6 +19,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Behaviors
             _accessValidator = accessValidator;
         }
 
-        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken) => await next();
+        public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+        {
+            var typeName = request.GetGenericTypeName();
+
+            _logger.LogInformation($"----- Checking access for {typeName}");
+
+            if (!await _accessValidator.ValidateAsync(request as IBaseRequest))
+            {
+                _logger.LogWarning($"User do not have access - {typeName}");
+
+                throw new UnauthorizedAccessException();
+            }
+
+            return await next();
+        }
     }
 }

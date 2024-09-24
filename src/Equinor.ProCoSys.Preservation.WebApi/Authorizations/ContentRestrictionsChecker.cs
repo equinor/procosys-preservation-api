@@ -12,11 +12,30 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 
         public RestrictionRolesChecker(IClaimsPrincipalProvider claimsPrincipalProvider) => _claimsPrincipalProvider = claimsPrincipalProvider;
 
-        public bool HasCurrentUserExplicitNoRestrictions() => true;
+        public bool HasCurrentUserExplicitNoRestrictions()
+        {
+            var claimWithRestrictionRole = GetRestrictionRoleClaims(_claimsPrincipalProvider.GetCurrentClaimsPrincipal().Claims);
 
-        public bool HasCurrentUserExplicitAccessToContent(string responsibleCode) => true;
+            // the rule for saying that a user do not have any restriction, is that user has one and only one restriction role with value %
+            return claimWithRestrictionRole.Count == 1 && HasRestrictionRoleClaim(claimWithRestrictionRole, ClaimsTransformation.NoRestrictions);
+        }
 
-        private bool HasRestrictionRoleClaim(IEnumerable<Claim> claims, string responsibleCode) => true;
+        public bool HasCurrentUserExplicitAccessToContent(string responsibleCode)
+        {
+            if (string.IsNullOrEmpty(responsibleCode))
+            {
+                return false;
+            }
+            
+            var claimWithRestrictionRole = GetRestrictionRoleClaims(_claimsPrincipalProvider.GetCurrentClaimsPrincipal().Claims);
+            return HasRestrictionRoleClaim(claimWithRestrictionRole, responsibleCode);
+        }
+
+        private bool HasRestrictionRoleClaim(IEnumerable<Claim> claims, string responsibleCode)
+        {
+            var contentRestrictionClaimValue = ClaimsTransformation.GetRestrictionRoleClaimValue(responsibleCode);
+            return claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == contentRestrictionClaimValue);
+        }
 
         private List<Claim> GetRestrictionRoleClaims(IEnumerable<Claim> claims)
             => claims.Where(c =>
