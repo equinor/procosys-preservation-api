@@ -15,7 +15,7 @@ public class DeleteModeEventHandler  : INotificationHandler<ModeDeletedEvent>
 
     public async Task Handle(ModeDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent.ModeDeleteEvent(notification.Mode.Guid, notification.Mode.Plant);
+        var deleteEvent = new DeleteEvent.ModeDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

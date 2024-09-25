@@ -15,7 +15,7 @@ public class DeletePreservationPeriodEventHandler  : INotificationHandler<Preser
 
     public async Task Handle(PreservationPeriodDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent.PreservationPeriodDeleteEvent(notification.PreservationPeriod.Guid, notification.PreservationPeriod.Plant);
+        var deleteEvent = new DeleteEvent.PreservationPeriodDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

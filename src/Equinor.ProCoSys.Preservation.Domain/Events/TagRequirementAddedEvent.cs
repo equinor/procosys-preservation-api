@@ -4,15 +4,15 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagRequirementAddedEvent : IDomainEvent
+    public class TagRequirementAddedEvent : IPlantEntityEvent<TagRequirement>, IDomainEvent
     {
         public TagRequirementAddedEvent(string plant, TagRequirement tagRequirement)
         {
             Plant = plant;
-            TagRequirement = tagRequirement;
+            Entity = tagRequirement;
         }
 
         public string Plant { get; }
-        public TagRequirement TagRequirement { get; }
+        public TagRequirement Entity { get; }
     }
 }

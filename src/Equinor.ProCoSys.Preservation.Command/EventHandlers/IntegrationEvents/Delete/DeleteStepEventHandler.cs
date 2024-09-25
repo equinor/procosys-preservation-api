@@ -15,7 +15,7 @@ public class DeleteStepEventHandler  : INotificationHandler<StepDeletedEvent>
 
     public async Task Handle(StepDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent.StepDeleteEvent(notification.Step.Guid, notification.Step.Plant);
+        var deleteEvent = new DeleteEvent.StepDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

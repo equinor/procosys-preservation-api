@@ -3,8 +3,8 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
-public class RequirementTypeUpdatedEvent : IDomainEvent
+public class RequirementTypeUpdatedEvent : IPlantEntityEvent<RequirementType>, IDomainEvent
 {
-    public RequirementType RequirementType { get; }
-    public RequirementTypeUpdatedEvent(RequirementType requirementType) => RequirementType = requirementType;
+    public RequirementType Entity { get; }
+    public RequirementTypeUpdatedEvent(RequirementType requirementType) => Entity = requirementType;
 }

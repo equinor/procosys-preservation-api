@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
         public Task Handle(TagRequirementPreservedEvent notification, CancellationToken cancellationToken)
         {
             var requirementDefinition =
-                _requirementTypeRepository.GetRequirementDefinitionByIdAsync(notification.TagRequirement.RequirementDefinitionId);
+                _requirementTypeRepository.GetRequirementDefinitionByIdAsync(notification.Entity.RequirementDefinitionId);
 
             var eventType = EventType.RequirementPreserved;
             var description = $"{eventType.GetDescription()} - '{requirementDefinition.Result.Title}'";

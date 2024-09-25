@@ -21,10 +21,10 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 
         public async Task Handle(ActionAddedEvent notification, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByActionGuidAsync(notification.Action.Guid);
+            var tag = await _projectRepository.GetTagByActionGuidAsync(notification.Entity.Guid);
 
             var eventType = EventType.ActionAdded;
-            var description = $"{eventType.GetDescription()} - '{notification.Action.Title}'";
+            var description = $"{eventType.GetDescription()} - '{notification.Entity.Title}'";
             var history = new History(notification.Plant, description, tag.Guid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
         }

@@ -15,7 +15,7 @@ public class DeleteJourneyEventHandler  : INotificationHandler<JourneyDeletedEve
 
     public async Task Handle(JourneyDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent.JourneyDeleteEvent(notification.Journey.Guid, notification.Journey.Plant);
+        var deleteEvent = new DeleteEvent.JourneyDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

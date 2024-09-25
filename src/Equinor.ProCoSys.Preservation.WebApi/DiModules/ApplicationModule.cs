@@ -51,10 +51,13 @@ using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Common.Caches;
 using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.WebApi.MassTransit;
 using MassTransit;
+using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
@@ -128,7 +131,38 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Tag>, CreateTagEventHelper>();
             services.AddTransient<ICreateEventHelper<TagRequirement>, CreateTagRequirementEventEventHelper>();
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
-            services.AddTransient<IReadOnlyContext, PreservationContext>();
+            
+            services.AddTransient<INotificationHandler<ActionAddedEvent>, IntegrationEventHandler<ActionAddedEvent, Action>>();
+            services.AddTransient<INotificationHandler<JourneyAddedEvent>, IntegrationEventHandler<JourneyAddedEvent, Journey>>();
+            services.AddTransient<INotificationHandler<ModeAddedEvent>, IntegrationEventHandler<ModeAddedEvent, Mode>>();
+            services.AddTransient<INotificationHandler<PreservationPeriodAddedEvent>, IntegrationEventHandler<PreservationPeriodAddedEvent, PreservationPeriod>>();
+            services.AddTransient<INotificationHandler<RequirementDefinitionAddedEvent>, IntegrationEventHandler<RequirementDefinitionAddedEvent, RequirementDefinition>>();
+            services.AddTransient<INotificationHandler<RequirementAddedFieldEvent>, IntegrationEventHandler<RequirementAddedFieldEvent, Field>>();
+            services.AddTransient<INotificationHandler<RequirementTypeAddedEvent>, IntegrationEventHandler<RequirementTypeAddedEvent, RequirementType>>();
+            services.AddTransient<INotificationHandler<ResponsibleAddedEvent>, IntegrationEventHandler<ResponsibleAddedEvent, Responsible>>();
+            services.AddTransient<INotificationHandler<StepAddedEvent>, IntegrationEventHandler<StepAddedEvent, Step>>();
+            services.AddTransient<INotificationHandler<TagCreatedEvent>, IntegrationEventHandler<TagCreatedEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagRequirementAddedEvent>, IntegrationEventHandler<TagRequirementAddedEvent, TagRequirement>>();
+            
+            services.AddTransient<INotificationHandler<ActionClosedEvent>, IntegrationEventHandler<ActionClosedEvent, Action>>();
+            services.AddTransient<INotificationHandler<ActionUpdatedEvent>, IntegrationEventHandler<ActionUpdatedEvent, Action>>();
+            services.AddTransient<INotificationHandler<JourneyUpdatedEvent>, IntegrationEventHandler<JourneyUpdatedEvent, Journey>>();
+            services.AddTransient<INotificationHandler<ModeUpdatedEvent>, IntegrationEventHandler<ModeUpdatedEvent, Mode>>();
+            services.AddTransient<INotificationHandler<PreservationPeriodUpdatedEvent>, IntegrationEventHandler<PreservationPeriodUpdatedEvent, PreservationPeriod>>();
+            services.AddTransient<INotificationHandler<RequirementDefinitionUpdatedEvent>, IntegrationEventHandler<RequirementDefinitionUpdatedEvent, RequirementDefinition>>();
+            services.AddTransient<INotificationHandler<RequirementTypeUpdatedEvent>, IntegrationEventHandler<RequirementTypeUpdatedEvent, RequirementType>>();
+            services.AddTransient<INotificationHandler<RequirementUpdatedFieldEvent>, IntegrationEventHandler<RequirementUpdatedFieldEvent, Field>>();
+            services.AddTransient<INotificationHandler<ResponsibleUpdatedEvent>, IntegrationEventHandler<ResponsibleUpdatedEvent, Responsible>>();
+            services.AddTransient<INotificationHandler<StepUpdatedEvent>, IntegrationEventHandler<StepUpdatedEvent, Step>>();
+            services.AddTransient<INotificationHandler<TagRequirementPreservedEvent>, IntegrationEventHandler<TagRequirementPreservedEvent, TagRequirement>>();
+            services.AddTransient<INotificationHandler<TagUnvoidedInSourceEvent>, IntegrationEventHandler<TagUnvoidedInSourceEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagUnvoidedEvent>, IntegrationEventHandler<TagUnvoidedEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagRequirementUnvoidedEvent>, IntegrationEventHandler<TagRequirementUnvoidedEvent, TagRequirement>>();
+            services.AddTransient<INotificationHandler<TagRequirementUpdatedEvent>, IntegrationEventHandler<TagRequirementUpdatedEvent, TagRequirement>>();
+            services.AddTransient<INotificationHandler<TagUpdatedEvent>, IntegrationEventHandler<TagUpdatedEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagVoidedEvent>, IntegrationEventHandler<TagVoidedEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagVoidedInSourceEvent>, IntegrationEventHandler<TagVoidedInSourceEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagRequirementVoidedEvent>, IntegrationEventHandler<TagRequirementVoidedEvent, TagRequirement>>();
 
             // Scoped - Created once per client request (connection)
             services.AddScoped<IExcelConverter, ExcelConverter>();
@@ -142,6 +176,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<ITagHelper, TagHelper>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
+            services.AddScoped<IReadOnlyContext, PreservationContext>();
             services.AddScoped<ISynchronizationService, SynchronizationService>();
 
             services.AddScoped<IProjectRepository, ProjectRepository>();

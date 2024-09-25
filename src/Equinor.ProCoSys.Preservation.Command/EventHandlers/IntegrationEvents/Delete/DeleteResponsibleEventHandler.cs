@@ -15,7 +15,7 @@ public class DeleteResponsibleEventHandler  : INotificationHandler<ResponsibleDe
 
     public async Task Handle(ResponsibleDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent.ResponsibleDeleteEvent(notification.Responsible.Guid, notification.Responsible.Plant);
+        var deleteEvent = new DeleteEvent.ResponsibleDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

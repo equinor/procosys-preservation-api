@@ -3,14 +3,14 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
-public class RequirementDeletedFieldEvent : IDomainEvent
+public class RequirementDeletedFieldEvent : IPlantEntityEvent<Field>, IDomainEvent
 {
     public RequirementDeletedFieldEvent(RequirementDefinition requirementDefinition, Field field)
     {
         this.RequirementDefinition = requirementDefinition;
-        this.Field = field;
+        Entity = field;
     }
 
     public RequirementDefinition RequirementDefinition { get; }
-    public Field Field { get; }
+    public Field Entity { get; }
 }

@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 
         public async Task Handle(ActionClosedEvent notification, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByActionGuidAsync(notification.Action.Guid);
+            var tag = await _projectRepository.GetTagByActionGuidAsync(notification.Entity.Guid);
 
             var eventType = EventType.ActionClosed;
             var description = eventType.GetDescription();

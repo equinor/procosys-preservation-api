@@ -4,14 +4,14 @@ using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggre
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class ActionClosedEvent : IDomainEvent
+    public class ActionClosedEvent : IPlantEntityEvent<Action>, IDomainEvent
     {
         public ActionClosedEvent(string plant, Action action)
         {
             Plant = plant;
-            Action = action;
+            Entity = action;
         }
         public string Plant { get; }
-        public Action Action { get; }
+        public Action Entity { get; }
     }
 }

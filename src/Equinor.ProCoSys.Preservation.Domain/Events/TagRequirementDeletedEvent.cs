@@ -4,17 +4,17 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagRequirementDeletedEvent : IDomainEvent
+    public class TagRequirementDeletedEvent : IPlantEntityEvent<TagRequirement>, IDomainEvent
     {
         public TagRequirementDeletedEvent(string plant, Guid sourceGuid, TagRequirement tagRequirement)
         {
             Plant = plant;
             SourceGuid = sourceGuid;
-            TagRequirement = tagRequirement;
+            Entity = tagRequirement;
         }
 
         public string Plant { get; }
         public Guid SourceGuid { get; }
-        public TagRequirement TagRequirement { get; }
+        public TagRequirement Entity { get; }
     }
 }
