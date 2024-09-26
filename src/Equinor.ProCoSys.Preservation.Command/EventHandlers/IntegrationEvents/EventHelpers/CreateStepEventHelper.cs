@@ -8,7 +8,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateStepEventHelper : ICreateEventHelper<Step>
+public class CreateStepEventHelper : ICreateEventHelper<Step, StepEvent>
 {
     private readonly IModeRepository _modeRepository;
     private readonly IPersonRepository _personRepository;
@@ -21,7 +21,7 @@ public class CreateStepEventHelper : ICreateEventHelper<Step>
         _responsibleRepository = responsibleRepository;
     }
 
-    public async Task<IIntegrationEvent> CreateEvent(Step entity)
+    public async Task<StepEvent> CreateEvent(Step entity)
     {
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;

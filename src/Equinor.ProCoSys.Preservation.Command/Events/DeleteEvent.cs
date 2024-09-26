@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using Equinor.ProCoSys.Preservation.Command.Events.EntityNames;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 using MassTransit;
 using MediatR;
@@ -21,67 +22,67 @@ public class DeleteEvent : IDeleteEventV1
     public string Behavior { get; init; } = "delete";
 
 
-    [EntityName("PreservationTag")]
+    [TagEntityName]
     public class TagDeleteEvent : DeleteEvent
     {
         public TagDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
     }
 
-    [EntityName("PreservationTagRequirement")]
+    [TagRequirementEntityName]
     public class TagRequirementDeleteEvent : DeleteEvent
     {
         public TagRequirementDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
     }
 
-    [EntityName("PreservationAction")]
+    [ActionEntityName]
     public class ActionDeleteEvent : DeleteEvent
     {
         public ActionDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName) {}
     }
 
-    [EntityName("PreservationRequirementField")]
+    [RequirementFieldEntityName]
     public class RequirementFieldDeleteEvent : DeleteEvent
     {
         public RequirementFieldDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationRequirementType")]
+    [RequirementTypeEntityName]
     public class RequirementTypeDeleteEvent : DeleteEvent
     {
         public RequirementTypeDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationRequirementDefinition")]
+    [RequirementDefinitionEntityName]
     public class RequirementDefinitionDeleteEvent : DeleteEvent
     {
         public RequirementDefinitionDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationPeriod")]
+    [PreservationPeriodEntityName]
     public class PreservationPeriodDeleteEvent : DeleteEvent
     {
         public PreservationPeriodDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationModes")]
+    [ModeEntityName]
     public class ModeDeleteEvent : DeleteEvent
     {
         public ModeDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationJourneys")]
+    [JourneyEntityName]
     public class JourneyDeleteEvent : DeleteEvent
     {
         public JourneyDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationSteps")]
+    [StepEntityName]
     public class StepDeleteEvent : DeleteEvent
     {
         public StepDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
     }
 
-    [EntityName("PreservationResponsible")]
+    [ResponsibleEntityName]
     public class ResponsibleDeleteEvent : DeleteEvent
     {
         public ResponsibleDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}

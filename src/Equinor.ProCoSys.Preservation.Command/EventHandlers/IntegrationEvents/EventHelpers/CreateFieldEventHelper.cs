@@ -6,7 +6,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateFieldEventHelper : ICreateEventHelper<Field>
+public class CreateFieldEventHelper : ICreateEventHelper<Field, FieldEvent>
 {
     private readonly IPersonRepository _personRepository;
     private readonly IRequirementTypeRepository _requirementTypeRepository;
@@ -17,7 +17,7 @@ public class CreateFieldEventHelper : ICreateEventHelper<Field>
         _requirementTypeRepository = requirementTypeRepository;
     }
 
-    public async Task<IIntegrationEvent> CreateEvent(Field entity)
+    public async Task<FieldEvent> CreateEvent(Field entity)
     {
         var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByFieldGuidAsync(entity.Guid);
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);

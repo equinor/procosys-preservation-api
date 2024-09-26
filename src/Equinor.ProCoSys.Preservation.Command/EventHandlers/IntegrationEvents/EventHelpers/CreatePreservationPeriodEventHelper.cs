@@ -8,7 +8,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreatePreservationPeriodEventHelper : ICreateEventHelper<PreservationPeriod>
+public class CreatePreservationPeriodEventHelper : ICreateEventHelper<PreservationPeriod, PreservationPeriodsEvent>
 {
     private readonly IPersonRepository _personRepository;
     private readonly IReadOnlyContext _context;
@@ -19,7 +19,7 @@ public class CreatePreservationPeriodEventHelper : ICreateEventHelper<Preservati
         _context = context;
     }
 
-    public async Task<IIntegrationEvent> CreateEvent(PreservationPeriod entity)
+    public async Task<PreservationPeriodsEvent> CreateEvent(PreservationPeriod entity)
     {
         var preservationRecord = entity.PreservationRecord;
         var tagRequirement = _context.QuerySet<TagRequirement>().Single(rd => rd.Id == entity.TagRequirementId);

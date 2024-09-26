@@ -6,13 +6,13 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateRequirementTypeEventHelper : ICreateEventHelper<RequirementType>
+public class CreateRequirementTypeEventHelper : ICreateEventHelper<RequirementType, RequirementTypeEvent>
 {
     private readonly IPersonRepository _personRepository;
 
     public CreateRequirementTypeEventHelper(IPersonRepository personRepository) => _personRepository = personRepository;
 
-    public async Task<IIntegrationEvent> CreateEvent(RequirementType entity)
+    public async Task<RequirementTypeEvent> CreateEvent(RequirementType entity)
     {
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;

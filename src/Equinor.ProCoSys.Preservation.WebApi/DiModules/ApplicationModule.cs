@@ -54,8 +54,8 @@ using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
+using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.WebApi.MassTransit;
 using MassTransit;
 using MediatR;
 
@@ -93,8 +93,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
                     cfg.Host(connectionString);
 
                     cfg.OverrideDefaultBusEndpointQueueName("preservationfamtransferqueue");
-
-                    cfg.MessageTopology.SetEntityNameFormatter(new PreservationNameFormatter());
                     cfg.UseRawJsonSerializer();
                     cfg.ConfigureJsonSerializerOptions(opts =>
                     {
@@ -119,50 +117,61 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddHttpClient();
 
             // Transient - Created each time it is requested from the service container
-            services.AddTransient<ICreateEventHelper<Action>, CreateActionEventHelper>();
-            services.AddTransient<ICreateEventHelper<Field>, CreateFieldEventHelper>();
-            services.AddTransient<ICreateEventHelper<Journey>, CreateJourneyEventHelper>();
-            services.AddTransient<ICreateEventHelper<Mode>, CreateModeEventHelper>();
-            services.AddTransient<ICreateEventHelper<PreservationPeriod>, CreatePreservationPeriodEventHelper>();
-            services.AddTransient<ICreateEventHelper<RequirementDefinition>, CreateRequirementDefinitionEventHelper>();
-            services.AddTransient<ICreateEventHelper<RequirementType>, CreateRequirementTypeEventHelper>();
-            services.AddTransient<ICreateEventHelper<Responsible>, CreateResponsibleEventHelper>();
-            services.AddTransient<ICreateEventHelper<Step>, CreateStepEventHelper>();
-            services.AddTransient<ICreateEventHelper<Tag>, CreateTagEventHelper>();
-            services.AddTransient<ICreateEventHelper<TagRequirement>, CreateTagRequirementEventEventHelper>();
+            services.AddTransient<ICreateEventHelper<Action, ActionEvent>, CreateActionEventHelper>();
+            services.AddTransient<ICreateEventHelper<Field, FieldEvent>, CreateFieldEventHelper>();
+            services.AddTransient<ICreateEventHelper<Journey, JourneyEvent>, CreateJourneyEventHelper>();
+            services.AddTransient<ICreateEventHelper<Mode, ModeEvent>, CreateModeEventHelper>();
+            services.AddTransient<ICreateEventHelper<PreservationPeriod, PreservationPeriodsEvent>, CreatePreservationPeriodEventHelper>();
+            services.AddTransient<ICreateEventHelper<RequirementDefinition, RequirementDefinitionEvent>, CreateRequirementDefinitionEventHelper>();
+            services.AddTransient<ICreateEventHelper<RequirementType, RequirementTypeEvent>, CreateRequirementTypeEventHelper>();
+            services.AddTransient<ICreateEventHelper<Responsible, ResponsibleEvent>, CreateResponsibleEventHelper>();
+            services.AddTransient<ICreateEventHelper<Step, StepEvent>, CreateStepEventHelper>();
+            services.AddTransient<ICreateEventHelper<Tag, TagEvent>, CreateTagEventHelper>();
+            services.AddTransient<ICreateEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventEventHelper>();
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
+
+            services.AddTransient<IPublishEntityEventHelper<Action>, PublishEntityEventHelper<Action, ActionEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<Journey>, PublishEntityEventHelper<Journey, JourneyEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<PreservationPeriod>, PublishEntityEventHelper<PreservationPeriod, PreservationPeriodsEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<Mode>, PublishEntityEventHelper<Mode, ModeEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<Field>, PublishEntityEventHelper<Field, FieldEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<RequirementDefinition>, PublishEntityEventHelper<RequirementDefinition, RequirementDefinitionEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<RequirementType>, PublishEntityEventHelper<RequirementType, RequirementTypeEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<Responsible>, PublishEntityEventHelper<Responsible, ResponsibleEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<Tag>, PublishEntityEventHelper<Tag, TagEvent>>();
+            services.AddTransient<IPublishEntityEventHelper<TagRequirement>, PublishEntityEventHelper<TagRequirement, TagRequirementEvent>>();
             
             services.AddTransient<INotificationHandler<ActionAddedEvent>, IntegrationEventHandler<ActionAddedEvent, Action>>();
-            services.AddTransient<INotificationHandler<JourneyAddedEvent>, IntegrationEventHandler<JourneyAddedEvent, Journey>>();
-            services.AddTransient<INotificationHandler<ModeAddedEvent>, IntegrationEventHandler<ModeAddedEvent, Mode>>();
-            services.AddTransient<INotificationHandler<PreservationPeriodAddedEvent>, IntegrationEventHandler<PreservationPeriodAddedEvent, PreservationPeriod>>();
-            services.AddTransient<INotificationHandler<RequirementDefinitionAddedEvent>, IntegrationEventHandler<RequirementDefinitionAddedEvent, RequirementDefinition>>();
-            services.AddTransient<INotificationHandler<RequirementAddedFieldEvent>, IntegrationEventHandler<RequirementAddedFieldEvent, Field>>();
-            services.AddTransient<INotificationHandler<RequirementTypeAddedEvent>, IntegrationEventHandler<RequirementTypeAddedEvent, RequirementType>>();
-            services.AddTransient<INotificationHandler<ResponsibleAddedEvent>, IntegrationEventHandler<ResponsibleAddedEvent, Responsible>>();
-            services.AddTransient<INotificationHandler<StepAddedEvent>, IntegrationEventHandler<StepAddedEvent, Step>>();
-            services.AddTransient<INotificationHandler<TagCreatedEvent>, IntegrationEventHandler<TagCreatedEvent, Tag>>();
-            services.AddTransient<INotificationHandler<TagRequirementAddedEvent>, IntegrationEventHandler<TagRequirementAddedEvent, TagRequirement>>();
-            
             services.AddTransient<INotificationHandler<ActionClosedEvent>, IntegrationEventHandler<ActionClosedEvent, Action>>();
             services.AddTransient<INotificationHandler<ActionUpdatedEvent>, IntegrationEventHandler<ActionUpdatedEvent, Action>>();
+            services.AddTransient<INotificationHandler<JourneyAddedEvent>, IntegrationEventHandler<JourneyAddedEvent, Journey>>();
             services.AddTransient<INotificationHandler<JourneyUpdatedEvent>, IntegrationEventHandler<JourneyUpdatedEvent, Journey>>();
+            services.AddTransient<INotificationHandler<ModeAddedEvent>, IntegrationEventHandler<ModeAddedEvent, Mode>>();
             services.AddTransient<INotificationHandler<ModeUpdatedEvent>, IntegrationEventHandler<ModeUpdatedEvent, Mode>>();
+            services.AddTransient<INotificationHandler<PreservationPeriodAddedEvent>, IntegrationEventHandler<PreservationPeriodAddedEvent, PreservationPeriod>>();
             services.AddTransient<INotificationHandler<PreservationPeriodUpdatedEvent>, IntegrationEventHandler<PreservationPeriodUpdatedEvent, PreservationPeriod>>();
+            services.AddTransient<INotificationHandler<RequirementAddedFieldEvent>, IntegrationEventHandler<RequirementAddedFieldEvent, Field>>();
+            services.AddTransient<INotificationHandler<RequirementDefinitionAddedEvent>, IntegrationEventHandler<RequirementDefinitionAddedEvent, RequirementDefinition>>();
             services.AddTransient<INotificationHandler<RequirementDefinitionUpdatedEvent>, IntegrationEventHandler<RequirementDefinitionUpdatedEvent, RequirementDefinition>>();
+            services.AddTransient<INotificationHandler<RequirementTypeAddedEvent>, IntegrationEventHandler<RequirementTypeAddedEvent, RequirementType>>();
             services.AddTransient<INotificationHandler<RequirementTypeUpdatedEvent>, IntegrationEventHandler<RequirementTypeUpdatedEvent, RequirementType>>();
             services.AddTransient<INotificationHandler<RequirementUpdatedFieldEvent>, IntegrationEventHandler<RequirementUpdatedFieldEvent, Field>>();
+            services.AddTransient<INotificationHandler<ResponsibleAddedEvent>, IntegrationEventHandler<ResponsibleAddedEvent, Responsible>>();
             services.AddTransient<INotificationHandler<ResponsibleUpdatedEvent>, IntegrationEventHandler<ResponsibleUpdatedEvent, Responsible>>();
+            services.AddTransient<INotificationHandler<StepAddedEvent>, IntegrationEventHandler<StepAddedEvent, Step>>();
             services.AddTransient<INotificationHandler<StepUpdatedEvent>, IntegrationEventHandler<StepUpdatedEvent, Step>>();
+            services.AddTransient<INotificationHandler<TagCreatedEvent>, IntegrationEventHandler<TagCreatedEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagRequirementAddedEvent>, IntegrationEventHandler<TagRequirementAddedEvent, TagRequirement>>();
             services.AddTransient<INotificationHandler<TagRequirementPreservedEvent>, IntegrationEventHandler<TagRequirementPreservedEvent, TagRequirement>>();
-            services.AddTransient<INotificationHandler<TagUnvoidedInSourceEvent>, IntegrationEventHandler<TagUnvoidedInSourceEvent, Tag>>();
-            services.AddTransient<INotificationHandler<TagUnvoidedEvent>, IntegrationEventHandler<TagUnvoidedEvent, Tag>>();
             services.AddTransient<INotificationHandler<TagRequirementUnvoidedEvent>, IntegrationEventHandler<TagRequirementUnvoidedEvent, TagRequirement>>();
             services.AddTransient<INotificationHandler<TagRequirementUpdatedEvent>, IntegrationEventHandler<TagRequirementUpdatedEvent, TagRequirement>>();
-            services.AddTransient<INotificationHandler<TagUpdatedEvent>, IntegrationEventHandler<TagUpdatedEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagRequirementVoidedEvent>, IntegrationEventHandler<TagRequirementVoidedEvent, TagRequirement>>();
+            services.AddTransient<INotificationHandler<TagUnvoidedEvent>, IntegrationEventHandler<TagUnvoidedEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagUnvoidedInSourceEvent>, IntegrationEventHandler<TagUnvoidedInSourceEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagUpdatedEvent >, IntegrationEventHandler<TagUpdatedEvent, Tag>>();
             services.AddTransient<INotificationHandler<TagVoidedEvent>, IntegrationEventHandler<TagVoidedEvent, Tag>>();
             services.AddTransient<INotificationHandler<TagVoidedInSourceEvent>, IntegrationEventHandler<TagVoidedInSourceEvent, Tag>>();
-            services.AddTransient<INotificationHandler<TagRequirementVoidedEvent>, IntegrationEventHandler<TagRequirementVoidedEvent, TagRequirement>>();
 
             // Scoped - Created once per client request (connection)
             services.AddScoped<IExcelConverter, ExcelConverter>();

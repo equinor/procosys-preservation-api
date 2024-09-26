@@ -6,7 +6,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateRequirementDefinitionEventHelper : ICreateEventHelper<RequirementDefinition>
+public class CreateRequirementDefinitionEventHelper : ICreateEventHelper<RequirementDefinition, RequirementDefinitionEvent>
 {
     private readonly IPersonRepository _personRepository;
     private readonly IRequirementTypeRepository _requirementTypeRepository;
@@ -17,7 +17,7 @@ public class CreateRequirementDefinitionEventHelper : ICreateEventHelper<Require
         _requirementTypeRepository = requirementTypeRepository;
     }
 
-    public async Task<IIntegrationEvent> CreateEvent(RequirementDefinition entity)
+    public async Task<RequirementDefinitionEvent> CreateEvent(RequirementDefinition entity)
     {
         var requirementType = await _requirementTypeRepository.GetRequirementTypeByRequirementDefinitionGuidAsync(entity.Guid);
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);

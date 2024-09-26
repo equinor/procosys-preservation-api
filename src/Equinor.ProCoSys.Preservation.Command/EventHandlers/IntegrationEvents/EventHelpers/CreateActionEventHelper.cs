@@ -8,7 +8,7 @@ using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggre
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateActionEventHelper : ICreateEventHelper<Action>
+public class CreateActionEventHelper : ICreateEventHelper<Action, ActionEvent>
 {
     private readonly IPersonRepository _personRepository;
     private readonly IProjectRepository _projectRepository;
@@ -19,7 +19,7 @@ public class CreateActionEventHelper : ICreateEventHelper<Action>
         _projectRepository = projectRepository;
     }
 
-    public async Task<IIntegrationEvent> CreateEvent(Action entity)
+    public async Task<ActionEvent> CreateEvent(Action entity)
     {
         var tag = await _projectRepository.GetTagByActionGuidAsync(entity.Guid);
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);

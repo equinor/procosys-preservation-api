@@ -7,7 +7,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagEventHelper  : ICreateEventHelper<Tag>
+public class CreateTagEventHelper  : ICreateEventHelper<Tag, TagEvent>
 {
     private readonly IJourneyRepository _journeyRepository;
     private readonly IPersonRepository _personRepository;
@@ -23,7 +23,7 @@ public class CreateTagEventHelper  : ICreateEventHelper<Tag>
         _projectRepository = projectRepository;
     }
 
-    public async Task<IIntegrationEvent> CreateEvent(Tag entity)
+    public async Task<TagEvent> CreateEvent(Tag entity)
     {
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(entity.Guid);
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);

@@ -7,7 +7,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagRequirementEventEventHelper : ICreateEventHelper<TagRequirement>
+public class CreateTagRequirementEventEventHelper : ICreateEventHelper<TagRequirement, TagRequirementEvent>
 {
     private readonly IPersonRepository _personRepository;
     private readonly IProjectRepository _projectRepository;
@@ -23,7 +23,7 @@ public class CreateTagRequirementEventEventHelper : ICreateEventHelper<TagRequir
         _requirementTypeRepository = requirementTypeRepository;
     }
 
-    public async Task<IIntegrationEvent> CreateEvent(TagRequirement entity)
+    public async Task<TagRequirementEvent> CreateEvent(TagRequirement entity)
     {
         var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(entity.Guid);
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);

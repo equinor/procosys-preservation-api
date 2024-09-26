@@ -1,13 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public interface ICreateEventHelper<in TEntity, TEvent> 
+public interface IPublishEntityEventHelper<in TEntity> 
     where TEntity : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
-    where TEvent : class, IIntegrationEvent
 {
-    Task<TEvent> CreateEvent(TEntity entity);
+    Task PublishEvent(TEntity entity, CancellationToken cancellationToken);
 }

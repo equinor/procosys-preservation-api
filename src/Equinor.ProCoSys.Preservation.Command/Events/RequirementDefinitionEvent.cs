@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using Equinor.ProCoSys.Preservation.Command.Events.EntityNames;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
+[RequirementDefinitionEntityName]
 public class RequirementDefinitionEvent : IRequirementDefinitionEventV1
 {
     public Guid ProCoSysGuid { get; init; }
