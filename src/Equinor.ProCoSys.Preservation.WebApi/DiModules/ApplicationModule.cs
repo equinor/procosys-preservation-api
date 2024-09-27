@@ -124,6 +124,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Mode, ModeEvent>, CreateModeEventHelper>();
             services.AddTransient<ICreateEventHelper<Mode, ModeDeleteEvent>, CreateModeDeletedEventHelper>();
             services.AddTransient<ICreateEventHelper<PreservationPeriod, PreservationPeriodsEvent>, CreatePreservationPeriodEventHelper>();
+            services.AddTransient<ICreateEventHelper<PreservationPeriod, PreservationPeriodDeleteEvent>, CreatePreservationPeriodDeletedEventHelper>();
             services.AddTransient<ICreateEventHelper<RequirementDefinition, RequirementDefinitionEvent>, CreateRequirementDefinitionEventHelper>();
             services.AddTransient<ICreateEventHelper<RequirementType, RequirementTypeEvent>, CreateRequirementTypeEventHelper>();
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleEvent>, CreateResponsibleEventHelper>();
@@ -134,6 +135,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             services.AddTransient<IPublishDeleteEntityEventHelper<Journey>, PublishDeleteEntityEventHelper<Journey, JourneyDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Mode>, PublishDeleteEntityEventHelper<Mode, ModeDeleteEvent>>();
+            services.AddTransient<IPublishDeleteEntityEventHelper<PreservationPeriod>, PublishDeleteEntityEventHelper<PreservationPeriod, PreservationPeriodDeleteEvent>>();
             
             services.AddTransient<IPublishEntityEventHelper<Action>, PublishEntityEventHelper<Action, ActionEvent>>();
             services.AddTransient<IPublishEntityEventHelper<Journey>, PublishEntityEventHelper<Journey, JourneyEvent>>();
@@ -157,6 +159,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<ModeDeletedEvent>, IntegrationDeleteEventHandler<ModeDeletedEvent, Mode>>();
             services.AddTransient<INotificationHandler<ModeUpdatedEvent>, IntegrationEventHandler<ModeUpdatedEvent, Mode>>();
             services.AddTransient<INotificationHandler<PreservationPeriodAddedEvent>, IntegrationEventHandler<PreservationPeriodAddedEvent, PreservationPeriod>>();
+            services.AddTransient<INotificationHandler<PreservationPeriodDeletedEvent>, IntegrationDeleteEventHandler<PreservationPeriodDeletedEvent, PreservationPeriod>>();
             services.AddTransient<INotificationHandler<PreservationPeriodUpdatedEvent>, IntegrationEventHandler<PreservationPeriodUpdatedEvent, PreservationPeriod>>();
             services.AddTransient<INotificationHandler<RequirementAddedFieldEvent>, IntegrationEventHandler<RequirementAddedFieldEvent, Field>>();
             services.AddTransient<INotificationHandler<RequirementDefinitionAddedEvent>, IntegrationEventHandler<RequirementDefinitionAddedEvent, RequirementDefinition>>();
