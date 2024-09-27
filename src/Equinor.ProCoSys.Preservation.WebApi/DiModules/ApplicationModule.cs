@@ -133,6 +133,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleEvent>, CreateResponsibleEventHelper>();
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleDeleteEvent>, CreateResponsibleDeleteEventHelper>();
             services.AddTransient<ICreateEventHelper<Step, StepEvent>, CreateStepEventHelper>();
+            services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
             services.AddTransient<ICreateEventHelper<Tag, TagEvent>, CreateTagEventHelper>();
             services.AddTransient<ICreateEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventEventHelper>();
             
@@ -145,6 +146,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<IPublishDeleteEntityEventHelper<RequirementDefinition>, PublishDeleteEntityEventHelper<RequirementDefinition, RequirementDefinitionDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<RequirementType>, PublishDeleteEntityEventHelper<RequirementType, RequirementTypeDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Responsible>, PublishDeleteEntityEventHelper<Responsible, ResponsibleDeleteEvent>>();
+            services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
             
             services.AddTransient<IPublishEntityEventHelper<Action>, PublishEntityEventHelper<Action, ActionEvent>>();
             services.AddTransient<IPublishEntityEventHelper<Journey>, PublishEntityEventHelper<Journey, JourneyEvent>>();
@@ -162,24 +164,19 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<ActionClosedEvent>, IntegrationEventHandler<ActionClosedEvent, Action>>();
             services.AddTransient<INotificationHandler<ActionUpdatedEvent>, IntegrationEventHandler<ActionUpdatedEvent, Action>>();
             services.AddTransient<INotificationHandler<JourneyAddedEvent>, IntegrationEventHandler<JourneyAddedEvent, Journey>>();
-            services.AddTransient<INotificationHandler<JourneyDeletedEvent>, IntegrationDeleteEventHandler<JourneyDeletedEvent, Journey>>();
             services.AddTransient<INotificationHandler<JourneyUpdatedEvent>, IntegrationEventHandler<JourneyUpdatedEvent, Journey>>();
             services.AddTransient<INotificationHandler<ModeAddedEvent>, IntegrationEventHandler<ModeAddedEvent, Mode>>();
-            services.AddTransient<INotificationHandler<ModeDeletedEvent>, IntegrationDeleteEventHandler<ModeDeletedEvent, Mode>>();
             services.AddTransient<INotificationHandler<ModeUpdatedEvent>, IntegrationEventHandler<ModeUpdatedEvent, Mode>>();
             services.AddTransient<INotificationHandler<PreservationPeriodAddedEvent>, IntegrationEventHandler<PreservationPeriodAddedEvent, PreservationPeriod>>();
-            services.AddTransient<INotificationHandler<PreservationPeriodDeletedEvent>, IntegrationDeleteEventHandler<PreservationPeriodDeletedEvent, PreservationPeriod>>();
             services.AddTransient<INotificationHandler<PreservationPeriodUpdatedEvent>, IntegrationEventHandler<PreservationPeriodUpdatedEvent, PreservationPeriod>>();
             services.AddTransient<INotificationHandler<RequirementAddedFieldEvent>, IntegrationEventHandler<RequirementAddedFieldEvent, Field>>();
             services.AddTransient<INotificationHandler<RequirementDefinitionAddedEvent>, IntegrationEventHandler<RequirementDefinitionAddedEvent, RequirementDefinition>>();
             services.AddTransient<INotificationHandler<RequirementDefinitionDeletedEvent>, IntegrationEventHandler<RequirementDefinitionDeletedEvent, RequirementDefinition>>();
             services.AddTransient<INotificationHandler<RequirementDefinitionUpdatedEvent>, IntegrationEventHandler<RequirementDefinitionUpdatedEvent, RequirementDefinition>>();
-            services.AddTransient<INotificationHandler<RequirementDeletedFieldEvent>, IntegrationDeleteEventHandler<RequirementDeletedFieldEvent, Field>>();
             services.AddTransient<INotificationHandler<RequirementTypeAddedEvent>, IntegrationEventHandler<RequirementTypeAddedEvent, RequirementType>>();
             services.AddTransient<INotificationHandler<RequirementTypeUpdatedEvent>, IntegrationEventHandler<RequirementTypeUpdatedEvent, RequirementType>>();
             services.AddTransient<INotificationHandler<RequirementUpdatedFieldEvent>, IntegrationEventHandler<RequirementUpdatedFieldEvent, Field>>();
             services.AddTransient<INotificationHandler<ResponsibleAddedEvent>, IntegrationEventHandler<ResponsibleAddedEvent, Responsible>>();
-            services.AddTransient<INotificationHandler<ResponsibleDeletedEvent>, IntegrationDeleteEventHandler<ResponsibleDeletedEvent, Responsible>>();
             services.AddTransient<INotificationHandler<ResponsibleUpdatedEvent>, IntegrationEventHandler<ResponsibleUpdatedEvent, Responsible>>();
             services.AddTransient<INotificationHandler<StepAddedEvent>, IntegrationEventHandler<StepAddedEvent, Step>>();
             services.AddTransient<INotificationHandler<StepUpdatedEvent>, IntegrationEventHandler<StepUpdatedEvent, Step>>();
@@ -194,6 +191,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<TagUpdatedEvent >, IntegrationEventHandler<TagUpdatedEvent, Tag>>();
             services.AddTransient<INotificationHandler<TagVoidedEvent>, IntegrationEventHandler<TagVoidedEvent, Tag>>();
             services.AddTransient<INotificationHandler<TagVoidedInSourceEvent>, IntegrationEventHandler<TagVoidedInSourceEvent, Tag>>();
+
+            services.AddTransient<INotificationHandler<JourneyDeletedEvent>, IntegrationDeleteEventHandler<JourneyDeletedEvent, Journey>>();
+            services.AddTransient<INotificationHandler<RequirementDeletedFieldEvent>, IntegrationDeleteEventHandler<RequirementDeletedFieldEvent, Field>>();
+            services.AddTransient<INotificationHandler<ModeDeletedEvent>, IntegrationDeleteEventHandler<ModeDeletedEvent, Mode>>();
+            services.AddTransient<INotificationHandler<PreservationPeriodDeletedEvent>, IntegrationDeleteEventHandler<PreservationPeriodDeletedEvent, PreservationPeriod>>();
+            services.AddTransient<INotificationHandler<ResponsibleDeletedEvent>, IntegrationDeleteEventHandler<ResponsibleDeletedEvent, Responsible>>();
+            services.AddTransient<INotificationHandler<StepDeletedEvent>, IntegrationDeleteEventHandler<StepDeletedEvent, Step>>();
 
             // Scoped - Created once per client request (connection)
             services.AddScoped<IExcelConverter, ExcelConverter>();
