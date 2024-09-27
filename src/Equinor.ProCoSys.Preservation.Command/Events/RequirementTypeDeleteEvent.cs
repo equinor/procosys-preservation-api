@@ -1,10 +1,11 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Command.Events.EntityNames;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 [RequirementTypeEntityName]
-public class RequirementTypeDeleteEvent : DeleteEvent
+public class RequirementTypeDeleteEvent : DeleteEvent<RequirementType>
 {
     public RequirementTypeDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
 }

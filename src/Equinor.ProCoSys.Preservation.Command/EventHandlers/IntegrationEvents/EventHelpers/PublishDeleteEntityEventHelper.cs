@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
+using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 
@@ -9,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 
 public class PublishDeleteEntityEventHelper<TEntity, TEvent> : IPublishDeleteEntityEventHelper<TEntity>
     where TEntity : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
-    where TEvent : class, IDeleteEventV1
+    where TEvent : class, IEntityDeleteEvent<TEntity>
 {
     private readonly ICreateEventHelper<TEntity, TEvent> _createEventHelper;
     private readonly IIntegrationEventPublisher _integrationEventPublisher;

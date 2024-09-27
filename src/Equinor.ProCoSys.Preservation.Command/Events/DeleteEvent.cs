@@ -1,9 +1,11 @@
 ﻿using System;
-using Equinor.ProCoSys.Preservation.MessageContracts;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Audit;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-public abstract class DeleteEvent : IDeleteEventV1
+public abstract class DeleteEvent<TEntity> : IEntityDeleteEvent<TEntity>
+    where TEntity : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
 {
     protected DeleteEvent(Guid guid, string plant, string projectName)
     {

@@ -1,10 +1,11 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Command.Events.EntityNames;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
 [ModeEntityName]
-public class ModeDeleteEvent : DeleteEvent
+public class ModeDeleteEvent : DeleteEvent<Mode>
 {
     public ModeDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
 }
