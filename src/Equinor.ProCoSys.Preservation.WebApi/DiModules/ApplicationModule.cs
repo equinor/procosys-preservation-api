@@ -120,6 +120,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Action, ActionEvent>, CreateActionEventHelper>();
             services.AddTransient<ICreateEventHelper<Field, FieldEvent>, CreateFieldEventHelper>();
             services.AddTransient<ICreateEventHelper<Journey, JourneyEvent>, CreateJourneyEventHelper>();
+            services.AddTransient<ICreateEventHelper<Journey, JourneyDeleteEvent>, CreateJourneyDeletedEventHelper>();
             services.AddTransient<ICreateEventHelper<Mode, ModeEvent>, CreateModeEventHelper>();
             services.AddTransient<ICreateEventHelper<PreservationPeriod, PreservationPeriodsEvent>, CreatePreservationPeriodEventHelper>();
             services.AddTransient<ICreateEventHelper<RequirementDefinition, RequirementDefinitionEvent>, CreateRequirementDefinitionEventHelper>();
@@ -146,6 +147,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<ActionClosedEvent>, IntegrationEventHandler<ActionClosedEvent, Action>>();
             services.AddTransient<INotificationHandler<ActionUpdatedEvent>, IntegrationEventHandler<ActionUpdatedEvent, Action>>();
             services.AddTransient<INotificationHandler<JourneyAddedEvent>, IntegrationEventHandler<JourneyAddedEvent, Journey>>();
+            services.AddTransient<INotificationHandler<JourneyDeletedEvent>, IntegrationEventHandler<JourneyDeletedEvent, Journey>>();
             services.AddTransient<INotificationHandler<JourneyUpdatedEvent>, IntegrationEventHandler<JourneyUpdatedEvent, Journey>>();
             services.AddTransient<INotificationHandler<ModeAddedEvent>, IntegrationEventHandler<ModeAddedEvent, Mode>>();
             services.AddTransient<INotificationHandler<ModeUpdatedEvent>, IntegrationEventHandler<ModeUpdatedEvent, Mode>>();
