@@ -6,7 +6,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 
-namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
+namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Delete;
 
 public class DeleteTagEventHandler  : INotificationHandler<TagDeletedEvent>
 {
@@ -24,7 +24,7 @@ public class DeleteTagEventHandler  : INotificationHandler<TagDeletedEvent>
     {
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(notification.Entity.Guid);
 
-        var deleteEvent = new DeleteEvent.TagDeleteEvent(notification.Entity.Guid, notification.Entity.Plant, project.Name);
+        var deleteEvent = new TagDeleteEvent(notification.Entity.Guid, notification.Entity.Plant, project.Name);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

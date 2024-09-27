@@ -2,11 +2,10 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Command.Events;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 
-namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
+namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Delete;
 
 public class DeleteStepEventHandler  : INotificationHandler<StepDeletedEvent>
 {
@@ -15,7 +14,7 @@ public class DeleteStepEventHandler  : INotificationHandler<StepDeletedEvent>
 
     public async Task Handle(StepDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent.StepDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
+        var deleteEvent = new StepDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

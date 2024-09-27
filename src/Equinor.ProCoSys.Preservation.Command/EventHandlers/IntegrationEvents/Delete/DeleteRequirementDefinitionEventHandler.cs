@@ -2,11 +2,10 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Command.Events;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 
-namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
+namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Delete;
 
 public class DeleteRequirementDefinitionEventHandler  : INotificationHandler<RequirementDefinitionDeletedEvent>
 {
@@ -15,7 +14,7 @@ public class DeleteRequirementDefinitionEventHandler  : INotificationHandler<Req
 
     public async Task Handle(RequirementDefinitionDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent.RequirementDefinitionDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
+        var deleteEvent = new RequirementDefinitionDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

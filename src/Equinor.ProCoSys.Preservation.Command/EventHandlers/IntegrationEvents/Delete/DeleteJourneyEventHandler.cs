@@ -2,11 +2,10 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Command.Events;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 
-namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
+namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Delete;
 
 public class DeleteJourneyEventHandler  : INotificationHandler<JourneyDeletedEvent>
 {
@@ -15,7 +14,7 @@ public class DeleteJourneyEventHandler  : INotificationHandler<JourneyDeletedEve
 
     public async Task Handle(JourneyDeletedEvent notification, CancellationToken cancellationToken)
     {
-        var deleteEvent = new DeleteEvent.JourneyDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
+        var deleteEvent = new JourneyDeleteEvent(notification.Entity.Guid, notification.Entity.Plant);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }
