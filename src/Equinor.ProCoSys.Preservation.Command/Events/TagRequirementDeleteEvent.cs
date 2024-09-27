@@ -4,7 +4,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[TagRequirementEntityName]
+[EntityNameTagRequirement]
 public class TagRequirementDeleteEvent : DeleteEvent<TagRequirement>
 {
     public TagRequirementDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName)

@@ -5,7 +5,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[RequirementTypeEntityName]
+[EntityNameRequirementType]
 public class RequirementTypeEvent : IRequirementTypeEventV1
 {
     public Guid ProCoSysGuid { get; init; }

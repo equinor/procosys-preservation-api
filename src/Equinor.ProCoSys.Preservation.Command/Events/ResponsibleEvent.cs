@@ -5,7 +5,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[ResponsibleEntityName]
+[EntityNameResponsible]
 public class ResponsibleEvent : IResponsibleEventV1
 {
     public Guid ProCoSysGuid { get; init; }

@@ -5,7 +5,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[PreservationPeriodEntityName]
+[EntityNamePreservationPeriod]
 public class PreservationPeriodsEvent : IPreservationPeriodEventV1
 {
     public Guid ProCoSysGuid { get; init; }

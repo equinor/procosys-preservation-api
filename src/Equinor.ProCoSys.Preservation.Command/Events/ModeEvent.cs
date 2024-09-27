@@ -5,7 +5,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[ModeEntityName]
+[EntityNameMode]
 public class ModeEvent : IModeEventV1
 {
     public Guid ProCoSysGuid { get; init; }

@@ -4,7 +4,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[TagEntityName]
+[EntityNameTag]
 public class TagEvent : ITagEventV1
 {
     public Guid ProCoSysGuid { get; init; }

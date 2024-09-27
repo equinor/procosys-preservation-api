@@ -5,7 +5,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[FieldEntityName]
+[EntityNameField]
 public class FieldEvent : IFieldEventV1
 {
     public Guid ProCoSysGuid { get; init; }

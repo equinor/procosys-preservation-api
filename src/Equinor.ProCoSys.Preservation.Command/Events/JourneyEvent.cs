@@ -5,7 +5,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[JourneyEntityName]
+[EntityNameJourney]
 public class JourneyEvent : IJourneyEventV1
 {
     public Guid ProCoSysGuid { get; init; }

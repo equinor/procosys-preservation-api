@@ -4,7 +4,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[ModeEntityName]
+[EntityNameMode]
 public class ModeDeleteEvent : DeleteEvent<Mode>
 {
     public ModeDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}

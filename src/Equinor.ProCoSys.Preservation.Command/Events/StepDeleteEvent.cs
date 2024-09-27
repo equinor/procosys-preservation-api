@@ -4,7 +4,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[StepEntityName]
+[EntityNameStep]
 public class StepDeleteEvent : DeleteEvent<Step>
 {
     public StepDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
