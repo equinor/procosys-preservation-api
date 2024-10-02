@@ -4,7 +4,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Events.EntityNames;
 
 public class EntityNameJourneyAttribute : EntityNameAttribute
 {
-    public EntityNameJourneyAttribute() : base("PreservationJourneys")
+    public EntityNameJourneyAttribute() : base("PreservationJourney")
     {
     }
 }
