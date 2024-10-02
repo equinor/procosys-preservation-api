@@ -37,7 +37,7 @@ public class CreateTagRequirementEventEventHelper : ICreateEventHelper<TagRequir
             Plant = entity.Plant,
             ProjectName = project.Name,
             IntervalWeeks = entity.IntervalWeeks,
-            Usage = entity.Usage.ToString(),
+            Usage = nameof(entity.Usage),
             NextDueTimeUtc = entity.NextDueTimeUtc,
             IsVoided = entity.IsVoided,
             IsInUse = entity.IsInUse,

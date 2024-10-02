@@ -28,7 +28,7 @@ public class CreateFieldEventHelper : ICreateEventHelper<Field, FieldEvent>
             Label = entity.Label,
             Unit = entity.Unit,
             SortKey = entity.SortKey,
-            FieldType = entity.FieldType.ToString(),
+            FieldType = nameof(entity.FieldType),
             CreatedAtUtc = entity.CreatedAtUtc,
             CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = entity.ModifiedAtUtc,

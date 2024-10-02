@@ -29,7 +29,7 @@ public class CreateRequirementDefinitionEventHelper : ICreateEventHelper<Require
             Title = entity.Title,
             IsVoided = entity.IsVoided,
             DefaultIntervalWeeks = entity.DefaultIntervalWeeks,
-            Usage = entity.Usage.ToString(),
+            Usage = nameof(entity.Usage),
             SortKey = entity.SortKey,
             NeedsUserInput = entity.NeedsUserInput,
             CreatedAtUtc = entity.CreatedAtUtc,

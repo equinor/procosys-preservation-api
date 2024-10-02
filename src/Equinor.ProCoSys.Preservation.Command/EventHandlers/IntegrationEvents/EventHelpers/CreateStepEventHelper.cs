@@ -36,7 +36,7 @@ public class CreateStepEventHelper : ICreateEventHelper<Step, StepEvent>
             Plant = entity.Plant,
             Title = entity.Title,
             IsSupplierStep = entity.IsSupplierStep,
-            AutoTransferMethod = entity.AutoTransferMethod.ToString(),
+            AutoTransferMethod = nameof(entity.AutoTransferMethod),
             SortKey = entity.SortKey,
             IsVoided = entity.IsVoided,
             CreatedAtUtc = entity.CreatedAtUtc,
