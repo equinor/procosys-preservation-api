@@ -1,13 +1,10 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using MediatR;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 {
@@ -24,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 
         public async Task Handle(ActionClosedEvent notification, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByActionGuidAsync(notification.Action.Guid);
+            var tag = await _projectRepository.GetTagByActionGuidAsync(notification.Entity.Guid);
 
             var eventType = EventType.ActionClosed;
             var description = eventType.GetDescription();

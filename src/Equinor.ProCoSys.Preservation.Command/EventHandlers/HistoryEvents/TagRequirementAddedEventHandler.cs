@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -7,7 +6,6 @@ using MediatR;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 {
@@ -27,8 +25,8 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
         public async Task Handle(TagRequirementAddedEvent notification, CancellationToken cancellationToken)
         {
             var requirementDefinition =
-                _requirementTypeRepository.GetRequirementDefinitionByIdAsync(notification.TagRequirement.RequirementDefinitionId);
-            var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(notification.TagRequirement.Guid);
+                _requirementTypeRepository.GetRequirementDefinitionByIdAsync(notification.Entity.RequirementDefinitionId);
+            var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(notification.Entity.Guid);
 
             var eventType = EventType.RequirementAdded;
             var description = $"{eventType.GetDescription()} - '{requirementDefinition.Result.Title}'";

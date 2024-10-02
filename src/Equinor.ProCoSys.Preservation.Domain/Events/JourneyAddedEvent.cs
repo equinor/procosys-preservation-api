@@ -3,8 +3,8 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
-public class JourneyAddedEvent : IPostSaveDomainEvent
+public class JourneyAddedEvent : IPlantEntityEvent<Journey>, IPostSaveDomainEvent
 {
-    public JourneyAddedEvent(Journey journey) => Journey = journey;
-    public Journey Journey { get; }
+    public JourneyAddedEvent(Journey journey) => Entity = journey;
+    public Journey Entity { get; }
 }

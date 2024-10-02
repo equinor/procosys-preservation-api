@@ -3,8 +3,8 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
-public class ResponsibleAddedEvent : IPostSaveDomainEvent
+public class ResponsibleAddedEvent : IPlantEntityEvent<Responsible>, IPostSaveDomainEvent
 {
-    public ResponsibleAddedEvent(Responsible responsible) => Responsible = responsible;
-    public Responsible Responsible { get; }
+    public ResponsibleAddedEvent(Responsible responsible) => Entity = responsible;
+    public Responsible Entity { get; }
 }

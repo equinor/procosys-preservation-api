@@ -3,9 +3,9 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
-public class PreservationPeriodDeletedEvent : IDomainEvent
+public class PreservationPeriodDeletedEvent : IPlantEntityEvent<PreservationPeriod>, IDomainEvent
 {
-    public PreservationPeriodDeletedEvent(PreservationPeriod preservationPeriod) => PreservationPeriod = preservationPeriod;
+    public PreservationPeriodDeletedEvent(PreservationPeriod preservationPeriod) => Entity = preservationPeriod;
 
-    public PreservationPeriod PreservationPeriod { get; }
+    public PreservationPeriod Entity { get; }
 }

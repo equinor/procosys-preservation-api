@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Text.Json.Serialization;
+using Equinor.ProCoSys.Preservation.Command.Events.EntityNames;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
+[EntityNameTag]
 public class TagEvent : ITagEventV1
 {
     public Guid ProCoSysGuid { get; init; }

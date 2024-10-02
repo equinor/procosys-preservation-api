@@ -2740,10 +2740,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Assert
             Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource);
-            Assert.AreEqual(4, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.AreEqual(5, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(1), typeof(TagVoidedEvent));
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(2), typeof(TagVoidedInSourceEvent));
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(3), typeof(TagDeletedInSourceEvent));
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.ElementAt(4), typeof(TagDeletedEvent));
         }
 
         [TestMethod]
@@ -2780,13 +2781,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Arrange
             _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = true;
             Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource);
-            Assert.AreEqual(4, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.AreEqual(5, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
 
             // Act
             _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = true;
 
             // Assert
-            Assert.AreEqual(4, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.AreEqual(5, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
         }
 
         [TestMethod]

@@ -4,7 +4,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagRequirementPreservedEvent : IDomainEvent
+    public class TagRequirementPreservedEvent : IPlantEntityEvent<TagRequirement>, IDomainEvent
     {
         public TagRequirementPreservedEvent(
             string plant,
@@ -15,13 +15,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Events
         {
             Plant = plant;
             SourceGuid = sourceGuid;
-            TagRequirement = tagRequirement;
+            Entity = tagRequirement;
             DueInWeeks = dueInWeeks;
             PreservationRecordGuid = preservationRecordGuid;
         }
         public string Plant { get; }
         public Guid SourceGuid { get; }
-        public TagRequirement TagRequirement { get; }
+        public TagRequirement Entity { get; }
         public int? DueInWeeks { get; }
         public Guid PreservationRecordGuid { get; }
     }

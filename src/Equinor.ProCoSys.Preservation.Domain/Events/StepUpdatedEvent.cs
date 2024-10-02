@@ -3,8 +3,8 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
-public class StepUpdatedEvent : IDomainEvent
+public class StepUpdatedEvent : IPlantEntityEvent<Step>, IDomainEvent
 {
-    public StepUpdatedEvent(Step step) => Step = step;
-    public Step Step { get; }
+    public StepUpdatedEvent(Step step) => Entity = step;
+    public Step Entity { get; }
 }

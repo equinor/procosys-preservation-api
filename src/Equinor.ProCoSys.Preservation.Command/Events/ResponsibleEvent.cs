@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Text.Json.Serialization;
+using Equinor.ProCoSys.Preservation.Command.Events.EntityNames;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
+[EntityNameResponsible]
 public class ResponsibleEvent : IResponsibleEventV1
 {
     public Guid ProCoSysGuid { get; init; }
