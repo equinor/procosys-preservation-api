@@ -17,6 +17,7 @@ using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -52,6 +53,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public readonly Mock<IAzureBlobService> BlobStorageMock = new Mock<IAzureBlobService>();
         public readonly Mock<ITagApiService> TagApiServiceMock = new Mock<ITagApiService>();
         public readonly Mock<ITagFunctionApiService> TagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
+        public readonly Mock<IPublishEndpoint> PublishEndpointMock = new Mock<IPublishEndpoint>();
 
         public static string PlantWithAccess => KnownPlantData.PlantA;
         public static string PlantWithoutAccess => KnownPlantData.PlantB;
@@ -159,6 +161,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 services.AddScoped(_ => DisciplineApiServiceMock.Object);
                 services.AddScoped(_ => AreaApiServiceMock.Object);
                 services.AddScoped(_ => BlobStorageMock.Object);
+                services.AddScoped(_ => PublishEndpointMock.Object);
             });
 
             builder.ConfigureServices(services =>
