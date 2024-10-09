@@ -364,5 +364,15 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             // Assert
             Assert.AreEqual(_project1, result);
         }
+
+        [TestMethod]
+        public async Task GetProjectOnlyByTagGuidAsync_ShouldReturnProject()
+        {
+            // Acct
+            var result = await _dut.GetProjectOnlyByTagGuidAsync(_StandardTagGuid1);
+
+            // Assert
+            Assert.AreEqual(_project1, result);
+        }
     }
 }
