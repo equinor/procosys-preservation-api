@@ -24,6 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         private const string ProjectNameWithoutTags = "ProjectName2";
         private readonly Guid _projectProCoSysGuidWithTags = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
         private readonly Guid _projectProCoSysGuidWithoutTags = new Guid("6afabbbf-cf21-4533-93ff-73fe6fdfd27a");
+        private Project _project1;
         private const int StepId = 61;
         private const int StandardTagId1 = 71;
         private const int StandardTagId2 = 81;
@@ -38,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         private const string CommPkg2 = "CommPkg2";
         private const string McPkg2 = "McPkg2";
         private TagRequirement _standardTag1Requirement1;
-        private readonly Action _StandardTag3Action = new Action(TestPlant, "T", "D", null);
+        private readonly Action _standardTag3Action = new Action(TestPlant, "T", "D", null);
 
         private ProjectRepository _dut;
         private Tag _standardTag1With3Reqs;
@@ -62,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1", _projectProCoSysGuidWithTags);
+            _project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1", _projectProCoSysGuidWithTags);
             _standardTag1Requirement1 = new TagRequirement(TestPlant, 1, rdMock.Object);
             var req2 = new TagRequirement(TestPlant, 2, rdMock.Object);
             var req3 = new TagRequirement(TestPlant, 4, rdMock.Object);
@@ -80,7 +81,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             };
 
             _standardTag1With3Reqs.SetProtectedIdForTesting(StandardTagId1);
-            project1.AddTag(_standardTag1With3Reqs);
+            _project1.AddTag(_standardTag1With3Reqs);
 
             var reqTag2 = new TagRequirement(TestPlant, 1, rdMock.Object);
             _standardTag2 = new Tag(
@@ -96,7 +97,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 McPkgNo = McPkg2
             };
             _standardTag2.SetProtectedIdForTesting(StandardTagId2);
-            project1.AddTag(_standardTag2);
+            _project1.AddTag(_standardTag2);
 
             var reqTag3 = new TagRequirement(TestPlant, 1, rdMock.Object);
             _standardTag3WithAction = new Tag(
@@ -112,9 +113,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 McPkgNo = McPkg1,
             };
 
-            _standardTag3WithAction.AddAction(_StandardTag3Action);
+            _standardTag3WithAction.AddAction(_standardTag3Action);
 
-            project1.AddTag(_standardTag3WithAction);
+            _project1.AddTag(_standardTag3WithAction);
 
             var req4 = new TagRequirement(TestPlant, 1, rdMock.Object);
             var req5 = new TagRequirement(TestPlant, 2, rdMock.Object);
@@ -128,11 +129,11 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 step,
                 new List<TagRequirement> {req4, req5, req6});
             poTag.SetProtectedIdForTesting(PoTagId);
-            project1.AddTag(poTag);
+            _project1.AddTag(poTag);
 
             var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2", _projectProCoSysGuidWithoutTags);
 
-            var projects = new List<Project> {project1, project2};
+            var projects = new List<Project> {_project1, project2};
             var projectsSetMock = projects.AsQueryable().BuildMockDbSet();
 
             ContextHelper
@@ -338,7 +339,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         public async Task GetTagByActionGuidAsync_ShouldReturnTag()
         {
             // Acct
-            var result = await _dut.GetTagByActionGuidAsync(_StandardTag3Action.Guid);
+            var result = await _dut.GetTagByActionGuidAsync(_standardTag3Action.Guid);
 
             // Assert
             Assert.AreEqual(_standardTag3WithAction, result);
@@ -352,6 +353,16 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
             // Assert
             Assert.AreEqual(_standardTag1With3Reqs, result);
+        }
+
+        [TestMethod]
+        public async Task GetProjectOnlyByTagIdAsync_ShouldReturnProject()
+        {
+            // Acct
+            var result = await _dut.GetProjectOnlyByTagIdAsync(StandardTagId1);
+
+            // Assert
+            Assert.AreEqual(_project1, result);
         }
     }
 }
