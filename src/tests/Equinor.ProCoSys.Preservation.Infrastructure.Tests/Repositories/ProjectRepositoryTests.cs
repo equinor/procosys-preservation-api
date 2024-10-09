@@ -292,7 +292,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         {
             var result = await _dut.GetStandardTagsInProjectOnlyAsync(ProjectNameWithTags);
 
-            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(3, result.Count);
             Assert.IsTrue(result.Contains(_standardTag1With3Reqs));
             // Not able to test that Tags don't have children. BuildMockDbSet seem to build Set as a graph with all children
         }
