@@ -37,7 +37,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         private const string McPkg1 = "McPkg1";
         private const string CommPkg2 = "CommPkg2";
         private const string McPkg2 = "McPkg2";
-        private readonly Action _StandardTagAction = new Action(TestPlant, "T", "D", null);
+        private TagRequirement _standardTag1Requirement1;
+        private readonly Action _StandardTag3Action = new Action(TestPlant, "T", "D", null);
 
         private ProjectRepository _dut;
         private Tag _standardTag1With3Reqs;
@@ -62,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
             var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1", _projectProCoSysGuidWithTags);
-            var req1 = new TagRequirement(TestPlant, 1, rdMock.Object);
+            _standardTag1Requirement1 = new TagRequirement(TestPlant, 1, rdMock.Object);
             var req2 = new TagRequirement(TestPlant, 2, rdMock.Object);
             var req3 = new TagRequirement(TestPlant, 4, rdMock.Object);
             _standardTag1With3Reqs = new Tag(
@@ -72,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 StandardTagNo1, 
                 "Desc", 
                 step,
-                new List<TagRequirement> {req1, req2, req3}) 
+                new List<TagRequirement> { _standardTag1Requirement1, req2, req3}) 
             {
                 CommPkgNo = CommPkg1,
                 McPkgNo = McPkg1,
@@ -111,7 +112,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 McPkgNo = McPkg1,
             };
 
-            _standardTag3WithAction.AddAction(_StandardTagAction);
+            _standardTag3WithAction.AddAction(_StandardTag3Action);
 
             project1.AddTag(_standardTag3WithAction);
 
@@ -149,7 +150,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
             var reqs = new List<TagRequirement>
             {
-                req1,
+                _standardTag1Requirement1,
                 req2,
                 req3,
                 req4,
@@ -337,10 +338,20 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         public async Task GetTagByActionGuidAsync_ShouldReturnTag()
         {
             // Acct
-            var result = await _dut.GetTagByActionGuidAsync(_StandardTagAction.Guid);
+            var result = await _dut.GetTagByActionGuidAsync(_StandardTag3Action.Guid);
 
             // Assert
             Assert.AreEqual(_standardTag3WithAction, result);
+        }
+
+        [TestMethod]
+        public async Task GetTagByTagRequirementGuidAsync_ShouldReturnTag()
+        {
+            // Acct
+            var result = await _dut.GetTagByTagRequirementGuidAsync(_standardTag1Requirement1.Guid);
+
+            // Assert
+            Assert.AreEqual(_standardTag1With3Reqs, result);
         }
     }
 }
