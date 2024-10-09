@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MockQueryable.Moq;
 using Moq;
+using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 {
@@ -29,16 +30,19 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         private const int PoTagId = 72;
         private const string StandardTagNo1 = "TagNo1";
         private const string StandardTagNo2 = "TagNo3";
+        private const string StandardTagNo3 = "TagNo4";
         private readonly Guid _StandardTagGuid1 = new Guid("eb3821c2-bda3-8683-e053-2910000a2633");
         private const string PoTagNo = "TagNo2";
         private const string CommPkg1 = "CommPkg1";
         private const string McPkg1 = "McPkg1";
         private const string CommPkg2 = "CommPkg2";
         private const string McPkg2 = "McPkg2";
+        private readonly Action _StandardTagAction = new Action(TestPlant, "T", "D", null);
 
         private ProjectRepository _dut;
         private Tag _standardTag1With3Reqs;
         private Tag _standardTag2;
+        private Tag _standardTag3WithAction;
         private Mock<DbSet<Tag>> _tagsSetMock;
         private Mock<DbSet<TagRequirement>> _reqsSetMock;
 
@@ -92,6 +96,24 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             };
             _standardTag2.SetProtectedIdForTesting(StandardTagId2);
             project1.AddTag(_standardTag2);
+
+            var reqTag3 = new TagRequirement(TestPlant, 1, rdMock.Object);
+            _standardTag3WithAction = new Tag(
+                TestPlant,
+                TagType.Standard,
+                Guid.NewGuid(),
+                StandardTagNo3,
+                "Desc3",
+                step,
+                new List<TagRequirement> { reqTag3 })
+            {
+                CommPkgNo = CommPkg1,
+                McPkgNo = McPkg1,
+            };
+
+            _standardTag3WithAction.AddAction(_StandardTagAction);
+
+            project1.AddTag(_standardTag3WithAction);
 
             var req4 = new TagRequirement(TestPlant, 1, rdMock.Object);
             var req5 = new TagRequirement(TestPlant, 2, rdMock.Object);
@@ -309,6 +331,16 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
             // Assert
             Assert.IsNull(project);
+        }
+
+        [TestMethod]
+        public async Task GetTagByActionGuidAsync_ShouldReturnTag()
+        {
+            // Acct
+            var result = await _dut.GetTagByActionGuidAsync(_StandardTagAction.Guid);
+
+            // Assert
+            Assert.AreEqual(_standardTag3WithAction, result);
         }
     }
 }
