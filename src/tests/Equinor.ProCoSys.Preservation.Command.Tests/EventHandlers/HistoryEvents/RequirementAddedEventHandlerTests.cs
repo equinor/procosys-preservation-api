@@ -72,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             var tagRequirement = new Mock<TagRequirement>().Object;
             tagRequirement.RequirementDefinitionId = _requirementDefinitionId;
 
-            _dut.Handle(new TagRequirementAddedEvent(_plant, tagRequirement), default);
+            _dut.Handle(new TagRequirementAddedEvent(_plant, _tagGuid, tagRequirement), default);
 
             // Assert
             var expectedDescription = $"{EventType.RequirementAdded.GetDescription()} - '{_requirementDefinition.Title}'";
