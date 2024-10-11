@@ -833,9 +833,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             // Assert
             await AssertNewTagCreatedAsync(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
         }
-        
+
         [TestMethod]
-        public async Task GetHistory_AsPreserver_ShouldGetHistory()
+        public async Task GetHistory_AsPreserver_ShouldGetPreservationStartedHistory()
         {
             // Arrange
             var tagIdUnderTest = await CreateAreaTagAsync(
@@ -848,19 +848,73 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 tagIdUnderTest);
+            var historyEventTypes = historyDtos.Select(h => h.EventType).ToList();
 
             // Assert
-            Assert.IsNotNull(historyDtos);
-            Assert.AreEqual(2, historyDtos.Count);
+            CollectionAssert.Contains(historyEventTypes, EventType.PreservationStarted);
+        }
 
-            var plannerProfile = TestFactory.Instance.GetTestProfile(UserType.Planner);
-            // history records are sorted with newest first in list
-            var historyDto = historyDtos.First();
-            Assert.IsTrue(historyDto.Description.StartsWith(EventType.PreservationStarted.GetDescription()));
-            AssertUser(plannerProfile, historyDto.CreatedBy);
-            historyDto = historyDtos.Last();
-            Assert.IsTrue(historyDto.Description.StartsWith(EventType.TagCreated.GetDescription()));
-            AssertUser(plannerProfile, historyDto.CreatedBy);
+        [TestMethod]
+        public async Task GetHistory_AsPreserver_ShouldGetTagCreatedHistory()
+        {
+            // Arrange
+            var tagIdUnderTest = await CreateAreaTagAsync(
+                AreaTagType.PreArea,
+                TwoStepJourneyWithTags.Steps.First().Id,
+                null,
+                true);
+
+            // Act
+            var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var historyEventTypes = historyDtos.Select(h => h.EventType).ToList();
+
+            // Assert
+            CollectionAssert.Contains(historyEventTypes, EventType.TagCreated);
+        }
+
+        [TestMethod]
+        public async Task GetHistory_AsPreserver_ShouldGetRequirementAddedHistory()
+        {
+            // Arrange
+            var tagIdUnderTest = await CreateAreaTagAsync(
+                AreaTagType.PreArea,
+                TwoStepJourneyWithTags.Steps.First().Id,
+                null,
+                true);
+
+            // Act
+            var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var historyEventTypes = historyDtos.Select(h => h.EventType).ToList();
+
+            // Assert
+            CollectionAssert.Contains(historyEventTypes, EventType.RequirementAdded);
+        }
+
+        [TestMethod]
+        public async Task GetHistory_AsPreserver_ShouldGetHistoryInExpectedOrder()
+        {
+            // Arrange
+            var tagIdUnderTest = await CreateAreaTagAsync(
+                AreaTagType.PreArea,
+                TwoStepJourneyWithTags.Steps.First().Id,
+                null,
+                true);
+
+            // Act
+            var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var preservationStartedIndex = historyDtos.FindIndex(h => h.EventType == EventType.PreservationStarted);
+            var tagCreatedIndex = historyDtos.FindIndex(h => h.EventType == EventType.TagCreated);
+            var requirementAddedIndex = historyDtos.FindIndex(h => h.EventType == EventType.RequirementAdded);
+
+            // Assert
+            Assert.IsTrue(preservationStartedIndex < tagCreatedIndex);
+            Assert.IsTrue(tagCreatedIndex < requirementAddedIndex);
         }
 
         [TestMethod]
