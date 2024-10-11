@@ -6,6 +6,7 @@ using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
@@ -83,7 +84,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             CreatedById = createdBy.Id;
-            AddPostSaveDomainEvent(new StepAddedEvent(this));
+
+            AddPostSaveDomainEvent(new StepPostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -95,7 +97,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             ModifiedById = modifiedBy.Id;
-            AddDomainEvent(new StepUpdatedEvent(this));
+
+            AddPostSaveDomainEvent(new StepPostSaveEvent(this));
         }
 
         public void SetMode(Mode mode)
