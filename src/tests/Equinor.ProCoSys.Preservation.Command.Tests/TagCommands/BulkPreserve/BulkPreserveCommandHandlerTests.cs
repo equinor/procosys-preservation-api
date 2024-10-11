@@ -42,13 +42,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
             mode.SetProtectedIdForTesting(ModeId);
             var step = new Step(TestPlant, "SUP", mode, new Responsible(TestPlant, "C", "D"));
             step.SetProtectedIdForTesting(StepId);
-            var rdMock = new Mock<RequirementDefinition>();
-            rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            _req1OnTag1WithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdMock.Object);
-            _req2OnTag1WithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rdMock.Object);
-            _req1OnTag2WithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdMock.Object);
-            _req2OnTag2WithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rdMock.Object);
+            _req1OnTag1WithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, MockRequirementDefinition(1));
+            _req2OnTag1WithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, MockRequirementDefinition(2));
+            _req1OnTag2WithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, MockRequirementDefinition(3));
+            _req2OnTag2WithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, MockRequirementDefinition(4));
             _tag1 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", step, new List<TagRequirement>
             {
                 _req1OnTag1WithTwoWeekInterval, _req2OnTag1WithFourWeekInterval
@@ -158,6 +156,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
             );
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Never);
+        }
+
+        private RequirementDefinition MockRequirementDefinition(int sortKey)
+        {
+            var requirementDefinition = new Mock<RequirementDefinition>();
+            requirementDefinition.SetupGet(rd => rd.Plant).Returns(TestPlant);
+            requirementDefinition.SetupGet(rd => rd.Id).Returns(sortKey);
+
+            return requirementDefinition.Object;
         }
     }
 }
