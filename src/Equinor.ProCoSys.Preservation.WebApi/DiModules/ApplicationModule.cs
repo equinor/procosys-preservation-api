@@ -164,17 +164,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Tag>, PublishDeleteEntityEventHelper<Tag, TagDeleteEvent>>();
 
-            services.AddTransient<INotificationHandler<ActionPostSaveEvent>, IntegrationEventHandler2<ActionPostSaveEvent, Action>>();
-            services.AddTransient<INotificationHandler<FieldPostSaveEvent>, IntegrationEventHandler2<FieldPostSaveEvent, Field>>();
-            services.AddTransient<INotificationHandler<JourneyPostSaveEvent>, IntegrationEventHandler2<JourneyPostSaveEvent, Journey>>();
-            services.AddTransient<INotificationHandler<ModePostSaveEvent>, IntegrationEventHandler2<ModePostSaveEvent, Mode>>();
-            services.AddTransient<INotificationHandler<PreservationPeriodPostSaveEvent>, IntegrationEventHandler2<PreservationPeriodPostSaveEvent, PreservationPeriod>>();
-            services.AddTransient<INotificationHandler<RequirementDefinitionPostSaveEvent>, IntegrationEventHandler2<RequirementDefinitionPostSaveEvent, RequirementDefinition>>();
-            services.AddTransient<INotificationHandler<RequirementTypePostSaveEvent>, IntegrationEventHandler2<RequirementTypePostSaveEvent, RequirementType>>();
-            services.AddTransient<INotificationHandler<ResponsiblePostSaveEvent>, IntegrationEventHandler2<ResponsiblePostSaveEvent, Responsible>>();
-            services.AddTransient<INotificationHandler<StepPostSaveEvent>, IntegrationEventHandler2<StepPostSaveEvent, Step>>();
-            services.AddTransient<INotificationHandler<TagPostSaveEvent>, IntegrationEventHandler2<TagPostSaveEvent, Tag>>();
-            services.AddTransient<INotificationHandler<TagRequirementPostSaveEvent>, IntegrationEventHandler2<TagRequirementPostSaveEvent, TagRequirement>>();
+            services.AddTransient<INotificationHandler<ActionPostSaveEvent>, IntegrationEventHandler<ActionPostSaveEvent, Action>>();
+            services.AddTransient<INotificationHandler<FieldPostSaveEvent>, IntegrationEventHandler<FieldPostSaveEvent, Field>>();
+            services.AddTransient<INotificationHandler<JourneyPostSaveEvent>, IntegrationEventHandler<JourneyPostSaveEvent, Journey>>();
+            services.AddTransient<INotificationHandler<ModePostSaveEvent>, IntegrationEventHandler<ModePostSaveEvent, Mode>>();
+            services.AddTransient<INotificationHandler<PreservationPeriodPostSaveEvent>, IntegrationEventHandler<PreservationPeriodPostSaveEvent, PreservationPeriod>>();
+            services.AddTransient<INotificationHandler<RequirementDefinitionPostSaveEvent>, IntegrationEventHandler<RequirementDefinitionPostSaveEvent, RequirementDefinition>>();
+            services.AddTransient<INotificationHandler<RequirementTypePostSaveEvent>, IntegrationEventHandler<RequirementTypePostSaveEvent, RequirementType>>();
+            services.AddTransient<INotificationHandler<ResponsiblePostSaveEvent>, IntegrationEventHandler<ResponsiblePostSaveEvent, Responsible>>();
+            services.AddTransient<INotificationHandler<StepPostSaveEvent>, IntegrationEventHandler<StepPostSaveEvent, Step>>();
+            services.AddTransient<INotificationHandler<TagPostSaveEvent>, IntegrationEventHandler<TagPostSaveEvent, Tag>>();
+            services.AddTransient<INotificationHandler<TagRequirementPostSaveEvent>, IntegrationEventHandler<TagRequirementPostSaveEvent, TagRequirement>>();
 
             services.AddTransient<INotificationHandler<JourneyDeletedEvent>, IntegrationDeleteEventHandler<JourneyDeletedEvent, Journey>>();
             services.AddTransient<INotificationHandler<RequirementDeletedFieldEvent>, IntegrationDeleteEventHandler<RequirementDeletedFieldEvent, Field>>();
