@@ -60,13 +60,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var step = new Step(TestPlant, "S", modeMock.Object, responsibleMock.Object);
             step.SetProtectedIdForTesting(StepId);
 
-            var rdMock = new Mock<RequirementDefinition>();
-            rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
-
             _project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1", _projectProCoSysGuidWithTags);
-            _standardTag1Requirement1 = new TagRequirement(TestPlant, 1, rdMock.Object);
-            var req2 = new TagRequirement(TestPlant, 2, rdMock.Object);
-            var req3 = new TagRequirement(TestPlant, 4, rdMock.Object);
+            _standardTag1Requirement1 = new TagRequirement(TestPlant, 1, MockRequirementDefinition(1));
+            var req2 = new TagRequirement(TestPlant, 2, MockRequirementDefinition(2));
+            var req3 = new TagRequirement(TestPlant, 4, MockRequirementDefinition(3));
             _standardTag1With3Reqs = new Tag(
                 TestPlant, 
                 TagType.Standard,
@@ -83,7 +80,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             _standardTag1With3Reqs.SetProtectedIdForTesting(StandardTagId1);
             _project1.AddTag(_standardTag1With3Reqs);
 
-            var reqTag2 = new TagRequirement(TestPlant, 1, rdMock.Object);
+            var reqTag2 = new TagRequirement(TestPlant, 1, MockRequirementDefinition(4));
             _standardTag2 = new Tag(
                 TestPlant,
                 TagType.Standard,
@@ -99,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             _standardTag2.SetProtectedIdForTesting(StandardTagId2);
             _project1.AddTag(_standardTag2);
 
-            var reqTag3 = new TagRequirement(TestPlant, 1, rdMock.Object);
+            var reqTag3 = new TagRequirement(TestPlant, 1, MockRequirementDefinition(5));
             _standardTag3WithAction = new Tag(
                 TestPlant,
                 TagType.Standard,
@@ -117,9 +114,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
             _project1.AddTag(_standardTag3WithAction);
 
-            var req4 = new TagRequirement(TestPlant, 1, rdMock.Object);
-            var req5 = new TagRequirement(TestPlant, 2, rdMock.Object);
-            var req6 = new TagRequirement(TestPlant, 4, rdMock.Object);
+            var req4 = new TagRequirement(TestPlant, 1, MockRequirementDefinition(6));
+            var req5 = new TagRequirement(TestPlant, 2, MockRequirementDefinition(7));
+            var req6 = new TagRequirement(TestPlant, 4, MockRequirementDefinition(8));
             var poTag = new Tag(
                 TestPlant, 
                 TagType.PoArea, 
@@ -353,6 +350,15 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
             // Assert
             Assert.AreEqual(_standardTag1With3Reqs, result);
+        }
+
+        private RequirementDefinition MockRequirementDefinition(int sortKey)
+        {
+            var requirementDefinition = new Mock<RequirementDefinition>();
+            requirementDefinition.SetupGet(rd => rd.Plant).Returns(TestPlant);
+            requirementDefinition.SetupGet(rd => rd.Id).Returns(sortKey);
+
+            return requirementDefinition.Object;
         }
     }
 }
