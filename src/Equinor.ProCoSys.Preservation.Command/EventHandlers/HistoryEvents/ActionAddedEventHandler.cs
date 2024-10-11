@@ -19,14 +19,13 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
             _projectRepository = projectRepository;
         }
 
-        public async Task Handle(ActionAddedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(ActionAddedEvent notification, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByActionGuidAsync(notification.Entity.Guid);
-
             var eventType = EventType.ActionAdded;
             var description = $"{eventType.GetDescription()} - '{notification.Entity.Title}'";
-            var history = new History(notification.Plant, description, tag.Guid, ObjectType.Tag, eventType);
+            var history = new History(notification.Plant, description, notification.SourceGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
+            return Task.CompletedTask;
         }
     }
 }
