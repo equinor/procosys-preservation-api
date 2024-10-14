@@ -6,15 +6,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
     public class TagRequirementAddedEvent : IPlantEntityEvent<TagRequirement>, IDomainEvent
     {
-        public TagRequirementAddedEvent(string plant, Guid sourceGouid, TagRequirement tagRequirement)
+        public TagRequirementAddedEvent(string plant, Guid sourceGuid, TagRequirement tagRequirement)
         {
             Plant = plant;
-            SourceGouid = sourceGouid;
+            SourceGuid = sourceGuid;
             Entity = tagRequirement;
         }
 
         public string Plant { get; }
-        public Guid SourceGouid { get; }
+        public Guid SourceGuid { get; }
         public TagRequirement Entity { get; }
     }
 }
