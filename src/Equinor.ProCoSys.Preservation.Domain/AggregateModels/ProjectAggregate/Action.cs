@@ -6,6 +6,7 @@ using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -108,7 +109,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             ClosedAtUtc = closedAtUtc;
             ClosedById = closedBy.Id;
-            AddDomainEvent(new ActionClosedEvent(Plant, this));
+
+            AddPostSaveDomainEvent(new ActionPostSaveEvent(this));
         }
 
         public void SetCreated(Person createdBy)
@@ -120,8 +122,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             CreatedById = createdBy.Id;
 
-            // Added event is sent in SetCreated instead of constructor to make sure it has been added to database before events try to query it
-            AddDomainEvent(new ActionAddedEvent(Plant, this));
+            AddPostSaveDomainEvent(new ActionPostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -132,7 +133,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
-            AddDomainEvent(new ActionUpdatedEvent(Plant, this));
+
+            AddPostSaveDomainEvent(new ActionPostSaveEvent(this));
         }
     }
 }

@@ -22,17 +22,17 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
             _projectRepository = projectRepository;
         }
 
-        public async Task Handle(TagRequirementAddedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(TagRequirementAddedEvent notification, CancellationToken cancellationToken)
         {
             var requirementDefinition =
                 _requirementTypeRepository.GetRequirementDefinitionByIdAsync(notification.Entity.RequirementDefinitionId);
-            var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(notification.Entity.Guid);
 
             var eventType = EventType.RequirementAdded;
             var description = $"{eventType.GetDescription()} - '{requirementDefinition.Result.Title}'";
-            var history = new History(notification.Plant, description, tag.Guid, ObjectType.Tag, eventType);
+            var history = new History(notification.Plant, description, notification.SourceGuid, ObjectType.Tag, eventType);
 
             _historyRepository.Add(history);
+            return Task.CompletedTask;
         }
     }
 }

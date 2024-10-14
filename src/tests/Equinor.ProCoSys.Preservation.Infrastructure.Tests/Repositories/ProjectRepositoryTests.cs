@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MockQueryable.Moq;
 using Moq;
+using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 {
@@ -23,22 +24,27 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         private const string ProjectNameWithoutTags = "ProjectName2";
         private readonly Guid _projectProCoSysGuidWithTags = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
         private readonly Guid _projectProCoSysGuidWithoutTags = new Guid("6afabbbf-cf21-4533-93ff-73fe6fdfd27a");
+        private Project _project1;
         private const int StepId = 61;
         private const int StandardTagId1 = 71;
         private const int StandardTagId2 = 81;
         private const int PoTagId = 72;
         private const string StandardTagNo1 = "TagNo1";
         private const string StandardTagNo2 = "TagNo3";
+        private const string StandardTagNo3 = "TagNo4";
         private readonly Guid _StandardTagGuid1 = new Guid("eb3821c2-bda3-8683-e053-2910000a2633");
         private const string PoTagNo = "TagNo2";
         private const string CommPkg1 = "CommPkg1";
         private const string McPkg1 = "McPkg1";
         private const string CommPkg2 = "CommPkg2";
         private const string McPkg2 = "McPkg2";
+        private TagRequirement _standardTag1Requirement1;
+        private readonly Action _standardTag3Action = new Action(TestPlant, "T", "D", null);
 
         private ProjectRepository _dut;
         private Tag _standardTag1With3Reqs;
         private Tag _standardTag2;
+        private Tag _standardTag3WithAction;
         private Mock<DbSet<Tag>> _tagsSetMock;
         private Mock<DbSet<TagRequirement>> _reqsSetMock;
 
@@ -54,13 +60,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var step = new Step(TestPlant, "S", modeMock.Object, responsibleMock.Object);
             step.SetProtectedIdForTesting(StepId);
 
-            var rdMock = new Mock<RequirementDefinition>();
-            rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
-
-            var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1", _projectProCoSysGuidWithTags);
-            var req1 = new TagRequirement(TestPlant, 1, rdMock.Object);
-            var req2 = new TagRequirement(TestPlant, 2, rdMock.Object);
-            var req3 = new TagRequirement(TestPlant, 4, rdMock.Object);
+            _project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1", _projectProCoSysGuidWithTags);
+            _standardTag1Requirement1 = new TagRequirement(TestPlant, 1, MockRequirementDefinition(1));
+            var req2 = new TagRequirement(TestPlant, 2, MockRequirementDefinition(2));
+            var req3 = new TagRequirement(TestPlant, 4, MockRequirementDefinition(3));
             _standardTag1With3Reqs = new Tag(
                 TestPlant, 
                 TagType.Standard,
@@ -68,16 +71,16 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 StandardTagNo1, 
                 "Desc", 
                 step,
-                new List<TagRequirement> {req1, req2, req3}) 
+                new List<TagRequirement> { _standardTag1Requirement1, req2, req3}) 
             {
                 CommPkgNo = CommPkg1,
                 McPkgNo = McPkg1,
             };
 
             _standardTag1With3Reqs.SetProtectedIdForTesting(StandardTagId1);
-            project1.AddTag(_standardTag1With3Reqs);
+            _project1.AddTag(_standardTag1With3Reqs);
 
-            var reqTag2 = new TagRequirement(TestPlant, 1, rdMock.Object);
+            var reqTag2 = new TagRequirement(TestPlant, 1, MockRequirementDefinition(4));
             _standardTag2 = new Tag(
                 TestPlant,
                 TagType.Standard,
@@ -91,11 +94,29 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 McPkgNo = McPkg2
             };
             _standardTag2.SetProtectedIdForTesting(StandardTagId2);
-            project1.AddTag(_standardTag2);
+            _project1.AddTag(_standardTag2);
 
-            var req4 = new TagRequirement(TestPlant, 1, rdMock.Object);
-            var req5 = new TagRequirement(TestPlant, 2, rdMock.Object);
-            var req6 = new TagRequirement(TestPlant, 4, rdMock.Object);
+            var reqTag3 = new TagRequirement(TestPlant, 1, MockRequirementDefinition(5));
+            _standardTag3WithAction = new Tag(
+                TestPlant,
+                TagType.Standard,
+                Guid.NewGuid(),
+                StandardTagNo3,
+                "Desc3",
+                step,
+                new List<TagRequirement> { reqTag3 })
+            {
+                CommPkgNo = CommPkg1,
+                McPkgNo = McPkg1,
+            };
+
+            _standardTag3WithAction.AddAction(_standardTag3Action);
+
+            _project1.AddTag(_standardTag3WithAction);
+
+            var req4 = new TagRequirement(TestPlant, 1, MockRequirementDefinition(6));
+            var req5 = new TagRequirement(TestPlant, 2, MockRequirementDefinition(7));
+            var req6 = new TagRequirement(TestPlant, 4, MockRequirementDefinition(8));
             var poTag = new Tag(
                 TestPlant, 
                 TagType.PoArea, 
@@ -105,11 +126,11 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 step,
                 new List<TagRequirement> {req4, req5, req6});
             poTag.SetProtectedIdForTesting(PoTagId);
-            project1.AddTag(poTag);
+            _project1.AddTag(poTag);
 
             var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2", _projectProCoSysGuidWithoutTags);
 
-            var projects = new List<Project> {project1, project2};
+            var projects = new List<Project> {_project1, project2};
             var projectsSetMock = projects.AsQueryable().BuildMockDbSet();
 
             ContextHelper
@@ -127,7 +148,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
             var reqs = new List<TagRequirement>
             {
-                req1,
+                _standardTag1Requirement1,
                 req2,
                 req3,
                 req4,
@@ -268,7 +289,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         {
             var result = await _dut.GetStandardTagsInProjectOnlyAsync(ProjectNameWithTags);
 
-            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(3, result.Count);
             Assert.IsTrue(result.Contains(_standardTag1With3Reqs));
             // Not able to test that Tags don't have children. BuildMockDbSet seem to build Set as a graph with all children
         }
@@ -309,6 +330,35 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
             // Assert
             Assert.IsNull(project);
+        }
+
+        [TestMethod]
+        public async Task GetTagByActionGuidAsync_ShouldReturnTag()
+        {
+            // Acct
+            var result = await _dut.GetTagByActionGuidAsync(_standardTag3Action.Guid);
+
+            // Assert
+            Assert.AreEqual(_standardTag3WithAction, result);
+        }
+
+        [TestMethod]
+        public async Task GetTagByTagRequirementGuidAsync_ShouldReturnTag()
+        {
+            // Acct
+            var result = await _dut.GetTagByTagRequirementGuidAsync(_standardTag1Requirement1.Guid);
+
+            // Assert
+            Assert.AreEqual(_standardTag1With3Reqs, result);
+        }
+
+        private RequirementDefinition MockRequirementDefinition(int sortKey)
+        {
+            var requirementDefinition = new Mock<RequirementDefinition>();
+            requirementDefinition.SetupGet(rd => rd.Plant).Returns(TestPlant);
+            requirementDefinition.SetupGet(rd => rd.Id).Returns(sortKey);
+
+            return requirementDefinition.Object;
         }
     }
 }

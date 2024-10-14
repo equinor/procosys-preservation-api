@@ -17,6 +17,7 @@ using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -163,26 +164,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
             builder.ConfigureServices(services =>
             {
-                ReplaceRealDbContextWithTestDbContext(services);
-                
                 CreateSeededTestDatabase(services);
                 
                 EnsureTestDatabaseDeletedAtTeardown(services);
+
+                services.AddMassTransitTestHarness();
             });
-        }
-
-        private void ReplaceRealDbContextWithTestDbContext(IServiceCollection services)
-        {
-            var descriptor = services.SingleOrDefault
-                (d => d.ServiceType == typeof(DbContextOptions<PreservationContext>));
-
-            if (descriptor != null)
-            {
-                services.Remove(descriptor);
-            }
-
-            services.AddDbContext<PreservationContext>(options 
-                => options.UseSqlServer(_connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
         }
 
         private void CreateSeededTestDatabase(IServiceCollection services)
@@ -296,12 +283,27 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             var webHostBuilder = WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment(_integrationTestEnvironment);
-                builder.ConfigureAppConfiguration((_, conf) => conf.AddJsonFile(_configPath));
+                builder.ConfigureAppConfiguration(SetupTestConfig);
             });
 
             SetupProCoSysServiceMocks();
 
             CreateAuthenticatedHttpClients(webHostBuilder);
+        }
+
+        private void SetupTestConfig(WebHostBuilderContext context, IConfigurationBuilder config)
+        {
+            config.AddJsonFile(_configPath);
+
+            var projectDir = Directory.GetCurrentDirectory();
+
+            var connectionStrings = new Dictionary<string, string>
+            {
+                {"ConnectionStrings:PreservationContext", GetTestDbConnectionString(projectDir)},
+                {"ConnectionStrings:ServiceBus", "Endpoint=sb://mock.service.bus.test.connection.string/;SharedAccessKeyName=ListenSend;SharedAccessKey=abcdefghijklmnopqrstuvwxyz123456789abcdefgh="}
+            };
+
+            config.AddInMemoryCollection(connectionStrings);
         }
 
         private void CreateAuthenticatedHttpClients(WebApplicationFactory<Startup> webHostBuilder)
