@@ -5,10 +5,12 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class RequirementDefinition : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
+    public class RequirementDefinition : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
     {
         private readonly List<Field> _fields = new();
         
@@ -23,11 +25,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public RequirementDefinition(string plant, string title, int defaultIntervalWeeks, RequirementUsage usage, int sortKey)
             : base(plant)
         {
+            Guid = Guid.NewGuid();
+
             Title = title;
             DefaultIntervalWeeks = defaultIntervalWeeks;
             Usage = usage;
             SortKey = sortKey;
         }
+
+        public Guid Guid { get; private set; }
 
         public string Title { get; set; }
         public bool IsVoided { get; set; }
@@ -74,6 +80,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentException($"Can't remove item in {field.Plant} from item in {Plant}");
             }
 
+            AddDomainEvent(new RequirementDeletedFieldEvent(this, field));
             _fields.Remove(field);
         }
 
@@ -92,6 +99,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+
+            AddPostSaveDomainEvent(new RequirementDefinitionPostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -102,6 +111,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+
+            AddPostSaveDomainEvent(new RequirementDefinitionPostSaveEvent(this));
         }
     }
 }

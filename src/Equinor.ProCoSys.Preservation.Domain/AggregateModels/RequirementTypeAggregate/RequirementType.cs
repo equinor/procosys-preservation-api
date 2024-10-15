@@ -4,10 +4,12 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class RequirementType : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable
+    public class RequirementType : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
     {
         private readonly List<RequirementDefinition> _requirementDefinitions = new();
 
@@ -23,6 +25,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public RequirementType(string plant, string code, string title, RequirementTypeIcon icon, int sortKey)
             : base(plant)
         {
+            Guid = Guid.NewGuid();
+
             Code = code;
             Title = title;
             SortKey = sortKey;
@@ -40,6 +44,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+
+        public Guid Guid { get; private set; }
 
         public void AddRequirementDefinition(RequirementDefinition requirementDefinition)
         {
@@ -66,6 +72,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+
+            AddPostSaveDomainEvent(new RequirementTypePostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -76,6 +84,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+
+            AddPostSaveDomainEvent(new RequirementTypePostSaveEvent(this));
         }
 
         public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition)
@@ -96,6 +106,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
 
             _requirementDefinitions.Remove(requirementDefinition);
+            AddDomainEvent(new RequirementDefinitionDeletedEvent(requirementDefinition));
         }
     }
 }

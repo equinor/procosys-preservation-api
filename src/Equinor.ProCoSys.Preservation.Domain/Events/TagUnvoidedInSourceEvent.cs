@@ -1,16 +1,18 @@
 ﻿using System;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
-    public class TagUnvoidedInSourceEvent : IDomainEvent
+    public class TagUnvoidedInSourceEvent : IPlantEntityEvent<Tag>, IDomainEvent
     {
-        public TagUnvoidedInSourceEvent(string plant, Guid sourceGuid)
+        public TagUnvoidedInSourceEvent(string plant, Tag tag)
         {
             Plant = plant;
-            SourceGuid = sourceGuid;
+            Entity = tag;
         }
         public string Plant { get; }
-        public Guid SourceGuid { get; }
+        public Guid SourceGuid => Entity.Guid;
+        public Tag Entity { get; }
     }
 }

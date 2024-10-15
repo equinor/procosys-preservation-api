@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +18,10 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Microsoft.EntityFrameworkCore;
 using IDomainMarker = Equinor.ProCoSys.Preservation.Domain.IDomainMarker;
+using MassTransit;
+using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
+using ConcurrencyException = Equinor.ProCoSys.Common.Misc.ConcurrencyException;
+
 
 namespace Equinor.ProCoSys.Preservation.Infrastructure
 {
@@ -38,6 +43,10 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             _currentUserProvider = currentUserProvider;
         }
 
+        private static void ConfigureOutBoxPattern(ModelBuilder modelBuilder)
+            => modelBuilder.AddTransactionalOutboxEntities();
+
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (DebugOptions.DebugEntityFrameworkInDevelopment)
@@ -51,6 +60,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             SetGlobalPlantFilter(modelBuilder);
+            ConfigureOutBoxPattern(modelBuilder);
         }
 
         public static DateTimeKindConverter DateTimeKindConverter { get; } = new DateTimeKindConverter();
@@ -98,14 +108,19 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await DispatchDomainEventsAsync(cancellationToken);
-
+            //Some events are sent in SetCreated and SetModified which comes from SetAuditDataAsync, so queue those and then dispatches
+            //Then does SetAuditDataAsync again to update History objects that were created in the DomainEvents
             await SetAuditDataAsync();
+            await DispatchDomainEventsAsync(cancellationToken);
+            await SetAuditDataAsync();
+
             UpdateConcurrencyToken();
 
             try
             {
-                return await base.SaveChangesAsync(cancellationToken);
+                var result = await base.SaveChangesAsync(cancellationToken);
+                await DispatchPostSaveEventsEventsAsync(cancellationToken);
+                return result;
             }
             catch (DbUpdateConcurrencyException concurrencyException)
             {
@@ -137,6 +152,15 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
                 .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
                 .Select(x => x.Entity);
             await _eventDispatcher.DispatchDomainEventsAsync(entities, cancellationToken);
+        }
+
+        private async Task DispatchPostSaveEventsEventsAsync(CancellationToken cancellationToken = default)
+        {
+            var entities = ChangeTracker
+                .Entries<EntityBase>()
+                .Where(x => x.Entity.PostSaveDomainEvents != null && x.Entity.PostSaveDomainEvents.Any())
+                .Select(x => x.Entity);
+            await _eventDispatcher.DispatchPostSaveEventsAsync(entities, cancellationToken);
         }
 
         private async Task SetAuditDataAsync()

@@ -5,10 +5,12 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
-    public class Step : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
+    public class Step : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
     {
         public const int TitleLengthMin = 1;
         public const int TitleLengthMax = 64;
@@ -46,12 +48,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentException($"Can't relate item in {responsible.Plant} to item in {plant}");
             }
 
+            Guid = Guid.NewGuid();
             Title = title;
             SortKey = 0;
             ModeId = mode.Id;
             IsSupplierStep = mode.ForSupplier;
             ResponsibleId = responsible.Id;
         }
+
+        public Guid Guid { get; init; }
 
         public string Title { get; set; }
         public int ModeId { get; private set; }
@@ -79,6 +84,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             CreatedById = createdBy.Id;
+
+            AddPostSaveDomainEvent(new StepPostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -90,6 +97,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             ModifiedById = modifiedBy.Id;
+
+            AddPostSaveDomainEvent(new StepPostSaveEvent(this));
         }
 
         public void SetMode(Mode mode)
@@ -112,5 +121,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             ResponsibleId = responsible.Id;
         }
+
+        public void SetRemoved() => AddDomainEvent(new StepDeletedEvent(this));
     }
 }

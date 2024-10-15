@@ -67,6 +67,20 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .Where(tag => tagIds.Contains(tag.Id))
                 .ToListAsync();
 
+        public Task<Tag> GetTagByActionGuidAsync(Guid actionGuid)
+            => Set
+                .Include(p => p.Tags)
+                .SelectMany(project => project.Tags)
+                .Where(tag => tag.Actions.Any(action => action.Guid == actionGuid))
+                .SingleAsync();
+
+        public Task<Tag> GetTagByTagRequirementGuidAsync(Guid tagRequirementGuid)
+            => Set
+                .Include(p => p.Tags)
+                .SelectMany(project => project.Tags)
+                .Where(tag => tag.Requirements.Any(requirement => requirement.Guid == tagRequirementGuid))
+                .SingleAsync();
+
         public Task<List<Tag>> GetTagsWithPreservationHistoryByTagIdsAsync(IEnumerable<int> tagIds)
             => DefaultQuery
                 .SelectMany(project => project.Tags)
@@ -94,6 +108,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 _context.TagRequirements.Remove(tagRequirement);
             }
             _context.Tags.Remove(tag);
+            tag.SetRemoved();
         }
 
         public Task<List<Tag>> GetStandardTagsInProjectInStepsAsync(string projectName, IEnumerable<string> tagNos, IEnumerable<int> stepIds)
@@ -109,11 +124,13 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 
         public Task<Project> GetProjectOnlyByTagIdAsync(int tagId)
             => Set
+                .Include(p => p.Tags)
                 .Where(project => project.Tags.Any(tag => tag.Id == tagId))
                 .SingleOrDefaultAsync();
 
         public Task<Project> GetProjectOnlyByTagGuidAsync(Guid tagGuid)
             => Set
+                .Include(p => p.Tags)
                 .Where(project => project.Tags.Any(tag => tag.Guid == tagGuid))
                 .SingleOrDefaultAsync();
     }

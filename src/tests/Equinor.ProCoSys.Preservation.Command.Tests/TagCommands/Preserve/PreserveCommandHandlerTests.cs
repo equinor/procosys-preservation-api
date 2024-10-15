@@ -58,13 +58,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
             var otherStep = new Step(TestPlant, "HOOKUP", otherMode, responsible);
             otherStep.SetProtectedIdForTesting(OtherStepId);
 
-            var rdForAllTwoWeekInterval = new RequirementDefinition(TestPlant, "ForAll", TwoWeeksInterval, RequirementUsage.ForAll, 1);
-            var rdForSupplierTwoWeekInterval = new RequirementDefinition(TestPlant, "ForSup", TwoWeeksInterval, RequirementUsage.ForSuppliersOnly, 2);
-            var rdForOtherTwoWeekInterval = new RequirementDefinition(TestPlant, "ForOther", TwoWeeksInterval, RequirementUsage.ForOtherThanSuppliers, 3);
+            var tmp = new Mock<RequirementDefinition>(TestPlant, "ForAll", TwoWeeksInterval, RequirementUsage.ForAll, 1);
 
-            _req1ForAllWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdForAllTwoWeekInterval);
-            _req2ForAllWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdForAllTwoWeekInterval);
-            _req3ForAllWithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rdForAllTwoWeekInterval);
+            var rd1ForAllTwoWeekInterval = MockRequirementDefinition(TestPlant, "ForAll", TwoWeeksInterval, RequirementUsage.ForAll, 1);
+            var rd2ForAllTwoWeekInterval = MockRequirementDefinition(TestPlant, "ForAll", TwoWeeksInterval, RequirementUsage.ForAll, 2);
+            var rd3ForAllTwoWeekInterval = MockRequirementDefinition(TestPlant, "ForAll", TwoWeeksInterval, RequirementUsage.ForAll, 3);
+            var rdForSupplierTwoWeekInterval = MockRequirementDefinition(TestPlant, "ForSup", TwoWeeksInterval, RequirementUsage.ForSuppliersOnly, 4);
+            var rdForOtherTwoWeekInterval = MockRequirementDefinition(TestPlant, "ForOther", TwoWeeksInterval, RequirementUsage.ForOtherThanSuppliers, 5);
+
+            _req1ForAllWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rd1ForAllTwoWeekInterval);
+            _req2ForAllWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rd2ForAllTwoWeekInterval);
+            _req3ForAllWithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rd3ForAllTwoWeekInterval);
             
             _tagWithForAllRequirements = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", supplierStep, new List<TagRequirement>
             {
@@ -201,6 +205,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
             );
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Never);
+        }
+
+        private RequirementDefinition MockRequirementDefinition(string plant, string title, int defaultIntervalWeeks, RequirementUsage usage, int sortKey)
+        {
+            var requirementDefinition = new Mock<RequirementDefinition>(plant, title, defaultIntervalWeeks, usage, sortKey);
+            requirementDefinition.CallBase = true;
+            requirementDefinition.SetupGet(rd => rd.Id).Returns(sortKey);
+
+            return requirementDefinition.Object;
         }
     }
 }

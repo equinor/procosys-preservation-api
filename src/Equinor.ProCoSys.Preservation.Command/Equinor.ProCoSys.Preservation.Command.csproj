@@ -18,11 +18,14 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.10" />
     <PackageReference Include="ServiceResult" Version="1.0.1" />
     <PackageReference Include="System.Text.Json" Version="7.0.2" />
+    <PackageReference Include="MassTransit" Version="8.2.3" />
+    <PackageReference Include="MassTransit.Azure.ServiceBus.Core" Version="8.2.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Domain\Equinor.ProCoSys.Preservation.Domain.csproj" />
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.MainApi\Equinor.ProCoSys.Preservation.MainApi.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.MessageContracts\Equinor.ProCoSys.Preservation.MessageContracts.csproj" />
   </ItemGroup>
 
 </Project>

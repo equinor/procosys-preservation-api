@@ -5,10 +5,12 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Action : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class Action : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
     {
         public const int TitleLengthMax = 128;
         public const int DescriptionLengthMax = 4096;
@@ -21,10 +23,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public Action(string plant, string title, string description, DateTime? dueTimeUtc)
             : base(plant)
         {
+            Guid = Guid.NewGuid();
+
             Title = title;
             Description = description;
             SetDueTime(dueTimeUtc);
         }
+
+        public Guid Guid { get; private set; }
 
         public string Title { get; set; }
         public string Description { get; set; }
@@ -103,6 +109,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             ClosedAtUtc = closedAtUtc;
             ClosedById = closedBy.Id;
+
+            AddPostSaveDomainEvent(new ActionPostSaveEvent(this));
         }
 
         public void SetCreated(Person createdBy)
@@ -113,6 +121,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+
+            AddPostSaveDomainEvent(new ActionPostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -123,6 +133,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+
+            AddPostSaveDomainEvent(new ActionPostSaveEvent(this));
         }
     }
 }

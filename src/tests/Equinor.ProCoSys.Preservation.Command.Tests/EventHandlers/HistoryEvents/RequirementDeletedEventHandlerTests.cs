@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -52,7 +53,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             // Act
             var sourceGuid = Guid.NewGuid();
-            _dut.Handle(new TagRequirementDeletedEvent(_plant, sourceGuid, _requirementDefinitionId), default);
+
+            var tagRequirement = new Mock<TagRequirement>().Object;
+            tagRequirement.RequirementDefinitionId = _requirementDefinitionId;
+
+            _dut.Handle(new TagRequirementDeletedEvent(_plant, sourceGuid, tagRequirement), default);
 
             // Assert
             var expectedDescription = $"{EventType.RequirementDeleted.GetDescription()} - '{_requirementDefinition.Title}'";

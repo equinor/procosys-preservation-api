@@ -8,10 +8,11 @@ using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class PreservationPeriod : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class PreservationPeriod : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
     {
         private readonly List<FieldValue> _fieldValues = new();
 
@@ -25,6 +26,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public PreservationPeriod(string plant, int intervalWeeks, PreservationPeriodStatus status)
             : base(plant)
         {
+            Guid = Guid.NewGuid();
+
             if (status != PreservationPeriodStatus.NeedsUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
             {
                 throw new ArgumentException($"{status} is an illegal initial status for a {nameof(PreservationPeriod)}");
@@ -42,7 +45,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+
         public int TagRequirementId { get; set; }
+
+        public Guid Guid { get; private set; }
 
         public void Preserve(Person preservedBy, bool bulkPreserved)
         {
@@ -210,6 +216,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+
+            AddPostSaveDomainEvent(new PreservationPeriodPostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -220,6 +228,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+
+            AddPostSaveDomainEvent(new PreservationPeriodPostSaveEvent(this));
         }
 
         private void AddFieldValue(FieldValue fieldValue)

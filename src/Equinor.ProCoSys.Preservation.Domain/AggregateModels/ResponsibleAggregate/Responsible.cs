@@ -3,10 +3,12 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate
 {
-    public class Responsible : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable
+    public class Responsible : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
     {
         public const int CodeLengthMax = 255;
         public const int DescriptionLengthMax = 255;
@@ -19,9 +21,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
         public Responsible(string plant, string code, string description)
             : base(plant)
         {
+            Guid = Guid.NewGuid();
             Code = code;
             Description = description;
         }
+
+        public Guid Guid { get; private set; }
 
         public string Code { get; private set; }
         public string Description { get; set; }
@@ -40,6 +45,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
+
+            AddPostSaveDomainEvent(new ResponsiblePostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -50,6 +57,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+
+            AddPostSaveDomainEvent(new ResponsiblePostSaveEvent(this));
         }
 
         public void RenameResponsible(string newCode)
@@ -61,5 +70,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
 
             Code = newCode;
         }
+
+        public void SetRemoved() => AddDomainEvent(new ResponsibleDeletedEvent(this));
     }
 }
