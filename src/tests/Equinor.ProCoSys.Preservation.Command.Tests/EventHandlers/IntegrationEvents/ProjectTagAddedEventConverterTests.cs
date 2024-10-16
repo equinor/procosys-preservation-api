@@ -13,18 +13,20 @@ using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Common;
+using System.Threading.Tasks;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class TagCreatedEventConverterTests
+public class ProjectTagAddedEventConverterTests
 {
     protected const string TestPlant = "PCS$PlantA";
     protected readonly DateTime _testTime = DateTime.Parse("2012-12-12T11:22:33Z").ToUniversalTime();
+    private Project _project;
     private TagRequirement _tagRequirement;
     private Mock<Step> _stepMock;
     private Tag _tag;
-    private TagCreatedEventConverter _dut;
+    private ProjectTagAddedEventConverter _dut;
 
     [TestInitialize]
     public void Setup()
@@ -40,25 +42,31 @@ public class TagCreatedEventConverterTests
         _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
         _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "Tag1", "", _stepMock.Object, new List<TagRequirement> { _tagRequirement });
 
-        _dut = new TagCreatedEventConverter();
+        _project = new Project(TestPlant, "Test Project", "Test Project Description", Guid.NewGuid());
+        _project.AddTag(_tag);
+
+        var mockRequirementTypeRepository = new Mock<IRequirementTypeRepository>();
+        mockRequirementTypeRepository.Setup(r => r.GetRequirementDefinitionByIdAsync(It.IsAny<int>())).Returns(Task.FromResult(requirementDefinition));
+
+        _dut = new ProjectTagAddedEventConverter(mockRequirementTypeRepository.Object);
     }
 
     [DataTestMethod]
     [DataRow("Plant", TestPlant)]
-    [DataRow("ProjectName", TestPlant)]
+    [DataRow("ProjectName", "Test Project")]
     [DataRow("IntervalWeeks", 2)]
     [DataRow("Usage", nameof(RequirementUsage.ForSuppliersOnly))]
     [DataRow("NextDueTimeUtc", null)]
     [DataRow("IsVoided", false)]
     [DataRow("IsInUse", false)]
     [DataRow("ReadyToBePreserved", false)]
-    public void Convert_ShouldConvertToTagRequirementWithExpectedValues(string property, object expected)
+    public async Task Convert_ShouldConvertToTagRequirementWithExpectedValues(string property, object expected)
     {
         // Arrange
-        var domainEvent = new TagCreatedEvent(TestPlant, _tag);
+        var domainEvent = new ProjectTagAddedEvent(_project, _tag);
 
         // Act
-        var integrationEvents = _dut.Convert(domainEvent);
+        var integrationEvents = await _dut.Convert(domainEvent);
         var tagRequirementEvent = integrationEvents.First(e => e.GetType() == typeof(TagRequirementEvent));
         var result = tagRequirementEvent.GetType().GetProperties().Single(p => p.Name == property).GetValue(tagRequirementEvent);
 
@@ -71,13 +79,13 @@ public class TagCreatedEventConverterTests
     [DataRow("RequirementDefinitionGuid")]
     [DataRow("CreatedByGuid")]
     [DataRow("ModifiedByGuid")]
-    public void Convert_ShouldConvertToTagRequirementWithGuids(string property)
+    public async Task Convert_ShouldConvertToTagRequirementWithGuids(string property)
     {
         // Arrange
-        var domainEvent = new TagCreatedEvent(TestPlant, _tag);
+        var domainEvent = new ProjectTagAddedEvent(_project, _tag);
 
         // Act
-        var integrationEvents = _dut.Convert(domainEvent);
+        var integrationEvents = await _dut.Convert(domainEvent);
         var tagRequirementEvent = integrationEvents.First(e => e.GetType() == typeof(TagRequirementEvent));
         var result = tagRequirementEvent.GetType()
             .GetProperties()
@@ -91,16 +99,16 @@ public class TagCreatedEventConverterTests
     }
 
     [TestMethod]
-    public void Convert_ShouldConvertToTagRequirementWithExpectedCreatedAtUtcValue()
+    public async Task Convert_ShouldConvertToTagRequirementWithExpectedCreatedAtUtcValue()
     {
         // Arrange
         var mockPerson = new Mock<Person>();
         _tagRequirement.SetCreated(mockPerson.Object);
 
-        var domainEvent = new TagCreatedEvent(TestPlant, _tag);
+        var domainEvent = new ProjectTagAddedEvent(_project, _tag);
 
         // Act
-        var integrationEvents = _dut.Convert(domainEvent);
+        var integrationEvents = await _dut.Convert(domainEvent);
         var tagRequirementEvent = integrationEvents.First(e => e.GetType() == typeof(TagRequirementEvent)) as TagRequirementEvent;
 
         // Assert
@@ -108,16 +116,16 @@ public class TagCreatedEventConverterTests
     }
 
     [TestMethod]
-    public void Convert_ShouldConvertToTagRequirementWithExpectedModifiedAtUtcValue()
+    public async Task Convert_ShouldConvertToTagRequirementWithExpectedModifiedAtUtcValue()
     {
         // Arrange
         var mockPerson = new Mock<Person>();
         _tagRequirement.SetModified(mockPerson.Object);
 
-        var domainEvent = new TagCreatedEvent(TestPlant, _tag);
+        var domainEvent = new ProjectTagAddedEvent(_project, _tag);
 
         // Act
-        var integrationEvents = _dut.Convert(domainEvent);
+        var integrationEvents = await _dut.Convert(domainEvent);
         var tagRequirementEvent = integrationEvents.First(e => e.GetType() == typeof(TagRequirementEvent)) as TagRequirementEvent;
 
         // Assert
