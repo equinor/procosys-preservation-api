@@ -44,19 +44,14 @@ public class TagCreatedEventConverterTests
     }
 
     [DataTestMethod]
-    //[DataRow("ProCoSysGuid", TestPlant)] // TODO
     [DataRow("Plant", TestPlant)]
-    //[DataRow("ProjectName", TestPlant)] // TODO
+    [DataRow("ProjectName", TestPlant)]
     [DataRow("IntervalWeeks", 2)]
     [DataRow("Usage", nameof(RequirementUsage.ForSuppliersOnly))]
     [DataRow("NextDueTimeUtc", null)]
     [DataRow("IsVoided", false)]
     [DataRow("IsInUse", false)]
-    //[DataRow("RequirementDefinitionGuid", TestPlant)] // TODO
-    //[DataRow("CreatedByGuid", TestPlant)] // TODO
-    //[DataRow("ModifiedAtUtc", TestPlant)] // TODO
-    //[DataRow("ModifiedByGuid", TestPlant)] // TODO
-    //[DataRow("ReadyToBePreserved", TestPlant)] // TODO
+    [DataRow("ReadyToBePreserved", false)]
     public void Convert_ShouldConvertToTagRequirementWithExpectedValues(string property, object expected)
     {
         // Arrange
@@ -69,6 +64,30 @@ public class TagCreatedEventConverterTests
 
         // Assert
         Assert.AreEqual(expected, result);
+    }
+
+    [DataTestMethod]
+    [DataRow("ProCoSysGuid")]
+    [DataRow("RequirementDefinitionGuid")]
+    [DataRow("CreatedByGuid")]
+    [DataRow("ModifiedByGuid")]
+    public void Convert_ShouldConvertToTagRequirementWithGuids(string property)
+    {
+        // Arrange
+        var domainEvent = new TagCreatedEvent(TestPlant, _tag);
+
+        // Act
+        var integrationEvents = _dut.Convert(domainEvent);
+        var tagRequirementEvent = integrationEvents.First(e => e.GetType() == typeof(TagRequirementEvent));
+        var result = tagRequirementEvent.GetType()
+            .GetProperties()
+            .Single(p => p.Name == property)
+            .GetValue(tagRequirementEvent);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(result.GetType(), typeof(Guid));
+        Assert.AreNotEqual(result, Guid.Empty);
     }
 
     [TestMethod]
