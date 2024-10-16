@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -7,6 +8,7 @@ using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Azure.Amqp.Framing;
+using Newtonsoft.Json.Linq;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Converters
 {
@@ -21,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
                     ProCoSysGuid = tagRequirement.Guid,
                     Plant = tagRequirement.Plant,
                     IntervalWeeks = tagRequirement.IntervalWeeks,
-                    Usage = nameof(tagRequirement.Usage),
+                    Usage = tagRequirement.Usage.ToString(),
                     NextDueTimeUtc = tagRequirement.NextDueTimeUtc,
                     IsVoided = tagRequirement.IsVoided,
                     IsInUse = tagRequirement.IsInUse,

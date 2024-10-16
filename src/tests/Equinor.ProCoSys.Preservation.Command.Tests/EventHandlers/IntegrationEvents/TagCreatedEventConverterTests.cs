@@ -21,8 +21,8 @@ public class TagCreatedEventConverterTests
     //[DataRow("ProCoSysGuid", TestPlant)] // TODO
     [DataRow("Plant", TestPlant)]
     //[DataRow("ProjectName", TestPlant)] // TODO
-    //[DataRow("IntervalWeeks", TestPlant)] // TODO
-    //[DataRow("Usage", TestPlant)] // TODO
+    [DataRow("IntervalWeeks", 2)]
+    [DataRow("Usage", nameof(RequirementUsage.ForSuppliersOnly))]
     //[DataRow("NextDueTimeUtc", TestPlant)] // TODO
     //[DataRow("IsVoided", TestPlant)] // TODO
     //[DataRow("IsInUse", TestPlant)] // TODO
@@ -49,7 +49,7 @@ public class TagCreatedEventConverterTests
         // Act
         var integrationEvents = dut.Convert(domainEvent);
         var tagRequirementEvent = integrationEvents.First(e => e.GetType() == typeof(TagRequirementEvent));
-        var result = tagRequirementEvent.GetType().GetProperty(property).GetValue(tagRequirementEvent);
+        var result = tagRequirementEvent.GetType().GetProperties().Single(p => p.Name == property).GetValue(tagRequirementEvent);
 
         // Assert
         Assert.AreEqual(expected, result);
