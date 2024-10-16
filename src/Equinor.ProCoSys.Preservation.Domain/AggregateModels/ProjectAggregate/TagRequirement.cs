@@ -9,10 +9,11 @@ using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
+using Equinor.ProCoSys.Preservation.Domain.Integration;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class TagRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
+    public class TagRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid, IIntegrationModifiable
     {
         public const int InitialPreservationPeriodStatusMax = 64;
 
@@ -252,7 +253,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new TagRequirementPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<TagRequirement>(this));
         }
 
         private PreservationPeriod PeriodReadyToBePreserved
