@@ -23,9 +23,9 @@ public class TagCreatedEventConverterTests
     //[DataRow("ProjectName", TestPlant)] // TODO
     [DataRow("IntervalWeeks", 2)]
     [DataRow("Usage", nameof(RequirementUsage.ForSuppliersOnly))]
-    //[DataRow("NextDueTimeUtc", TestPlant)] // TODO
-    //[DataRow("IsVoided", TestPlant)] // TODO
-    //[DataRow("IsInUse", TestPlant)] // TODO
+    [DataRow("NextDueTimeUtc", null)] // TODO
+    [DataRow("IsVoided", false)] // TODO
+    [DataRow("IsInUse", false)] // TODO
     //[DataRow("RequirementDefinitionGuid", TestPlant)] // TODO
     //[DataRow("CreatedAtUtc", TestPlant)] // TODO
     //[DataRow("CreatedByGuid", TestPlant)] // TODO
