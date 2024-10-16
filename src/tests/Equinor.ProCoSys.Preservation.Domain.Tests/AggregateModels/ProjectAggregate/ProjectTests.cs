@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -164,6 +165,16 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Act
             _dut.AddTag(aNewTag);
+        }
+
+        [TestMethod]
+        public void AddTag_ShouldAddProjectTagAddedEvent()
+        {
+            // Arrange
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(ProjectTagAddedEvent));
         }
     }
 }

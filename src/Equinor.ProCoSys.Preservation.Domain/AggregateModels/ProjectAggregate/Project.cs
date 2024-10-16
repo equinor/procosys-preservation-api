@@ -5,6 +5,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -57,6 +58,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _tags.Add(tag);
+
+            AddDomainEvent(new ProjectTagAddedEvent(this, tag));
         }
 
         public void Close() => IsClosed = true;
