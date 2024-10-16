@@ -87,4 +87,21 @@ public class TagCreatedEventConverterTests
         // Assert
         Assert.AreEqual(_testTime, tagRequirementEvent.CreatedAtUtc);
     }
+
+    [TestMethod]
+    public void Convert_ShouldConvertToTagRequirementWithExpectedModifiedAtUtcValue()
+    {
+        // Arrange
+        var mockPerson = new Mock<Person>();
+        _tagRequirement.SetModified(mockPerson.Object);
+
+        var domainEvent = new TagCreatedEvent(TestPlant, _tag);
+
+        // Act
+        var integrationEvents = _dut.Convert(domainEvent);
+        var tagRequirementEvent = integrationEvents.First(e => e.GetType() == typeof(TagRequirementEvent)) as TagRequirementEvent;
+
+        // Assert
+        Assert.AreEqual(_testTime, tagRequirementEvent.ModifiedAtUtc);
+    }
 }
