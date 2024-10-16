@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.MessageContracts;
@@ -25,33 +27,56 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 
             foreach (var tagRequirement in domainEvent.Tag.Requirements)
             {
-                var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(tagRequirement.RequirementDefinitionId);
-                var createdBy = await _personRepository.GetReadOnlyByIdAsync(tagRequirement.CreatedById);
-
-                var modifiedBy = tagRequirement.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(tagRequirement.ModifiedById.Value) : null;
-
-                var tagRequirementEvent = new TagRequirementEvent
-                {
-                    ProCoSysGuid = tagRequirement.Guid,
-                    Plant = tagRequirement.Plant,
-                    ProjectName = domainEvent.Entity.Name,
-                    IntervalWeeks = tagRequirement.IntervalWeeks,
-                    Usage = tagRequirement.Usage.ToString(),
-                    NextDueTimeUtc = tagRequirement.NextDueTimeUtc,
-                    IsVoided = tagRequirement.IsVoided,
-                    IsInUse = tagRequirement.IsInUse,
-                    RequirementDefinitionGuid = requirementDefinition.Guid,
-                    CreatedAtUtc = tagRequirement.CreatedAtUtc,
-                    CreatedByGuid = createdBy.Guid,
-                    ModifiedAtUtc = tagRequirement.ModifiedAtUtc,
-                    ModifiedByGuid = modifiedBy?.Guid,
-                    ReadyToBePreserved = tagRequirement.ReadyToBePreserved
-                };
+                var projectName = domainEvent.Entity.Name;
+                var tagRequirementEvent = await GenerateTagRequirementEvent(tagRequirement, projectName);
 
                 events.Add(tagRequirementEvent);
             }
 
             return events;
+        }
+
+        private async Task<TagRequirementEvent> GenerateTagRequirementEvent(TagRequirement tagRequirement, string projectName)
+        {
+            var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(tagRequirement.RequirementDefinitionId);
+            var createdBy = await _personRepository.GetReadOnlyByIdAsync(tagRequirement.CreatedById);
+
+            var modifiedByGuid = await GetModifiedByGuid(tagRequirement);
+
+            var tagRequirementEvent = new TagRequirementEvent
+            {
+                ProCoSysGuid = tagRequirement.Guid,
+                Plant = tagRequirement.Plant,
+                ProjectName = projectName,
+                IntervalWeeks = tagRequirement.IntervalWeeks,
+                Usage = tagRequirement.Usage.ToString(),
+                NextDueTimeUtc = tagRequirement.NextDueTimeUtc,
+                IsVoided = tagRequirement.IsVoided,
+                IsInUse = tagRequirement.IsInUse,
+                RequirementDefinitionGuid = requirementDefinition.Guid,
+                CreatedAtUtc = tagRequirement.CreatedAtUtc,
+                CreatedByGuid = createdBy.Guid,
+                ModifiedAtUtc = tagRequirement.ModifiedAtUtc,
+                ModifiedByGuid = modifiedByGuid,
+                ReadyToBePreserved = tagRequirement.ReadyToBePreserved
+            };
+            return tagRequirementEvent;
+        }
+
+        private async Task<Guid?> GetModifiedByGuid(TagRequirement tagRequirement)
+        {
+            if (!tagRequirement.ModifiedById.HasValue)
+            {
+                return null;
+            }
+
+            var modifiedBy = await _personRepository.GetReadOnlyByIdAsync(tagRequirement.ModifiedById.Value);
+            if (modifiedBy is null)
+            {
+                return null;
+            }
+
+            return modifiedBy.Guid;
         }
     }
 }
