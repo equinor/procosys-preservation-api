@@ -60,6 +60,7 @@ using Equinor.ProCoSys.Preservation.Domain.Events;
 using MassTransit;
 using MediatR;
 using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Converters;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
@@ -119,6 +120,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddHttpClient();
 
             // Transient - Created each time it is requested from the service container
+            services.AddTransient<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>, ProjectTagAddedEventConverter>();
+
             services.AddTransient<ICreateEventHelper<Action, ActionEvent>, CreateActionEventHelper>();
             services.AddTransient<ICreateEventHelper<Field, FieldEvent>, CreateFieldEventHelper>();
             services.AddTransient<ICreateEventHelper<Field, RequirementFieldDeleteEvent>, CreateRequirementFieldDeleteEventHelper>();

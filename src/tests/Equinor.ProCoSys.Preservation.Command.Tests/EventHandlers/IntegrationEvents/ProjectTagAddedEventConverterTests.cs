@@ -12,7 +12,6 @@ using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.ProCoSys.Common;
 using System.Threading.Tasks;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
