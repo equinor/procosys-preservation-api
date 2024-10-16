@@ -28,6 +28,8 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
                 var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(tagRequirement.RequirementDefinitionId);
                 var createdBy = await _personRepository.GetReadOnlyByIdAsync(tagRequirement.CreatedById);
 
+                var modifiedBy = tagRequirement.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(tagRequirement.ModifiedById.Value) : null;
+
                 var tagRequirementEvent = new TagRequirementEvent
                 {
                     ProCoSysGuid = tagRequirement.Guid,
@@ -42,6 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
                     CreatedAtUtc = tagRequirement.CreatedAtUtc,
                     CreatedByGuid = createdBy.Guid,
                     ModifiedAtUtc = tagRequirement.ModifiedAtUtc,
+                    ModifiedByGuid = modifiedBy?.Guid,
                     ReadyToBePreserved = tagRequirement.ReadyToBePreserved
                 };
 

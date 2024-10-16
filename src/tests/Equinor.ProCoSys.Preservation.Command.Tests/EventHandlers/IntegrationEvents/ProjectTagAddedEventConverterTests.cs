@@ -88,6 +88,7 @@ public class ProjectTagAddedEventConverterTests
     public async Task Convert_ShouldConvertToTagRequirementWithGuids(string property)
     {
         // Arrange
+        _tagRequirement.SetModified(_person);
         var domainEvent = new ProjectTagAddedEvent(_project, _tag);
 
         // Act
