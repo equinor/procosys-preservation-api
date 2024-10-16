@@ -27,6 +27,7 @@ public class ProjectTagAddedEventConverterTests
     private Mock<Step> _stepMock;
     private Tag _tag;
     private ProjectTagAddedEventConverter _dut;
+    private Person _person;
 
     [TestInitialize]
     public void Setup()
@@ -48,7 +49,12 @@ public class ProjectTagAddedEventConverterTests
         var mockRequirementTypeRepository = new Mock<IRequirementTypeRepository>();
         mockRequirementTypeRepository.Setup(r => r.GetRequirementDefinitionByIdAsync(It.IsAny<int>())).Returns(Task.FromResult(requirementDefinition));
 
-        _dut = new ProjectTagAddedEventConverter(mockRequirementTypeRepository.Object);
+        _person = new Person(Guid.NewGuid(), "Test", "Person");
+
+        var mockPersonRepository = new Mock<IPersonRepository>();
+        mockPersonRepository.Setup(r => r.GetReadOnlyByIdAsync(It.IsAny<int>())).Returns(Task.FromResult(_person));
+
+        _dut = new ProjectTagAddedEventConverter(mockRequirementTypeRepository.Object, mockPersonRepository.Object);
     }
 
     [DataTestMethod]
@@ -102,8 +108,7 @@ public class ProjectTagAddedEventConverterTests
     public async Task Convert_ShouldConvertToTagRequirementWithExpectedCreatedAtUtcValue()
     {
         // Arrange
-        var mockPerson = new Mock<Person>();
-        _tagRequirement.SetCreated(mockPerson.Object);
+        _tagRequirement.SetCreated(_person);
 
         var domainEvent = new ProjectTagAddedEvent(_project, _tag);
 
@@ -119,8 +124,7 @@ public class ProjectTagAddedEventConverterTests
     public async Task Convert_ShouldConvertToTagRequirementWithExpectedModifiedAtUtcValue()
     {
         // Arrange
-        var mockPerson = new Mock<Person>();
-        _tagRequirement.SetModified(mockPerson.Object);
+        _tagRequirement.SetModified(_person);
 
         var domainEvent = new ProjectTagAddedEvent(_project, _tag);
 

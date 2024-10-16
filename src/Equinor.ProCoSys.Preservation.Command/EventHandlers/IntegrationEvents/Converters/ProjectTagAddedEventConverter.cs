@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Events;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.MessageContracts;
@@ -10,8 +11,13 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
     public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<ProjectTagAddedEvent>
     {
         private readonly IRequirementTypeRepository _requirementTypeRepository;
+        private readonly IPersonRepository _personRepository;
 
-        public ProjectTagAddedEventConverter(IRequirementTypeRepository requirementTypeRepository) => _requirementTypeRepository = requirementTypeRepository;
+        public ProjectTagAddedEventConverter(IRequirementTypeRepository requirementTypeRepository, IPersonRepository personRepository)
+        {
+            _requirementTypeRepository = requirementTypeRepository;
+            _personRepository = personRepository;
+        }
 
         public async Task<IEnumerable<IIntegrationEvent>> Convert(ProjectTagAddedEvent domainEvent)
         {
@@ -20,6 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
             foreach (var tagRequirement in domainEvent.Tag.Requirements)
             {
                 var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(tagRequirement.RequirementDefinitionId);
+                var createdBy = await _personRepository.GetReadOnlyByIdAsync(tagRequirement.CreatedById);
 
                 var tagRequirementEvent = new TagRequirementEvent
                 {
@@ -33,6 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
                     IsInUse = tagRequirement.IsInUse,
                     RequirementDefinitionGuid = requirementDefinition.Guid,
                     CreatedAtUtc = tagRequirement.CreatedAtUtc,
+                    CreatedByGuid = createdBy.Guid,
                     ModifiedAtUtc = tagRequirement.ModifiedAtUtc,
                     ReadyToBePreserved = tagRequirement.ReadyToBePreserved
                 };
