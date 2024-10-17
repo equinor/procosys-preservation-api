@@ -121,6 +121,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             // Transient - Created each time it is requested from the service container
             services.AddTransient<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>, ProjectTagAddedEventConverter>();
+            services.AddTransient<ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
+            //services.AddTransient<IPublishEntityEventHelper<TagRequirement>, PublishEntityEventHelper<TagRequirement, TagRequirementEvent>>(); TODO
 
             services.AddTransient<ICreateEventHelper<Action, ActionEvent>, CreateActionEventHelper>();
             services.AddTransient<ICreateEventHelper<Field, FieldEvent>, CreateFieldEventHelper>();
@@ -141,7 +143,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
             services.AddTransient<ICreateEventHelper<Tag, TagEvent>, CreateTagEventHelper>();
             services.AddTransient<ICreateEventHelper<Tag, TagDeleteEvent>, CreateTagDeleteEventHelper>();
-            services.AddTransient<ICreateEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventEventHelper>();
             
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
             
@@ -155,7 +156,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<IPublishEntityEventHelper<Responsible>, PublishEntityEventHelper<Responsible, ResponsibleEvent>>();
             services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
             services.AddTransient<IPublishEntityEventHelper<Tag>, PublishEntityEventHelper<Tag, TagEvent>>();
-            services.AddTransient<IPublishEntityEventHelper<TagRequirement>, PublishEntityEventHelper<TagRequirement, TagRequirementEvent>>();
             
             services.AddTransient<IPublishDeleteEntityEventHelper<Journey>, PublishDeleteEntityEventHelper<Journey, JourneyDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Mode>, PublishDeleteEntityEventHelper<Mode, ModeDeleteEvent>>();
