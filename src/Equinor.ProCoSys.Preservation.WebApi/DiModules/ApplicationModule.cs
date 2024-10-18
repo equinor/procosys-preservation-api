@@ -122,7 +122,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             // Transient - Created each time it is requested from the service container
             services.AddTransient<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>, ProjectTagAddedEventConverter>();
             services.AddTransient<ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
-            //services.AddTransient<IPublishEntityEventHelper<TagRequirement>, PublishEntityEventHelper<TagRequirement, TagRequirementEvent>>(); TODO
+            services.AddTransient<IPublishEntityEventHelper<TagRequirement>, PublishTagRequirementEventHelper>();
 
             services.AddTransient<ICreateEventHelper<Action, ActionEvent>, CreateActionEventHelper>();
             services.AddTransient<ICreateEventHelper<Field, FieldEvent>, CreateFieldEventHelper>();
