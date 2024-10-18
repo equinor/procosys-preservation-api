@@ -120,6 +120,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
             {
                 var result = await base.SaveChangesAsync(cancellationToken);
                 await DispatchPostSaveEventsEventsAsync(cancellationToken);
+                
+                result += await base.SaveChangesAsync(cancellationToken); // TODO #579: Remove. The post save logic adds new entities to the context. This is a workaround until we no longer have any post save logic.
                 return result;
             }
             catch (DbUpdateConcurrencyException concurrencyException)
