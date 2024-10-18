@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
 public class IntegrationEventHandler<TNotificationEvent, TEntity>
     : INotificationHandler<TNotificationEvent> 
-    where TNotificationEvent : class, IPlantEntityEvent<TEntity>, IPostSaveDomainEvent
+    where TNotificationEvent : class, IPlantEntityEvent<TEntity>, INotification
     where TEntity : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
 {
     private readonly IPublishEntityEventHelper<TEntity> _eventPublisher;

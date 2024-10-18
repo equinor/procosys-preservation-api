@@ -1468,6 +1468,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsNotNull(dut.ActivePeriod);
         }
 
+        [TestMethod]
+        public void SetModified_ShouldAddPlantEntityModifiedEvent()
+        {
+            var person = new Person(Guid.NewGuid(), "Test", "Person");
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+
+            dut.SetModified(person);
+
+            var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<TagRequirement>));
+        }
+
         #endregion
         #region privates
 
