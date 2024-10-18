@@ -120,9 +120,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddHttpClient();
 
             // Transient - Created each time it is requested from the service container
-            services.AddTransient<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>, ProjectTagAddedEventConverter>();
+            services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<TagRequirement>>, IntegrationEventHandler<PlantEntityModifiedEvent<TagRequirement>, TagRequirement>>();
             services.AddTransient<ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
+            services.AddTransient<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>, ProjectTagAddedEventConverter>();
             services.AddTransient<IPublishEntityEventHelper<TagRequirement>, PublishTagRequirementEventHelper>();
+            services.AddTransient<INotificationHandler<TagRequirementDeletedEvent>, DeleteTagRequirementEventHandler>();
 
             services.AddTransient<ICreateEventHelper<Action, ActionEvent>, CreateActionEventHelper>();
             services.AddTransient<ICreateEventHelper<Field, FieldEvent>, CreateFieldEventHelper>();
@@ -177,7 +179,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<ResponsiblePostSaveEvent>, IntegrationEventHandler<ResponsiblePostSaveEvent, Responsible>>();
             services.AddTransient<INotificationHandler<StepPostSaveEvent>, IntegrationEventHandler<StepPostSaveEvent, Step>>();
             services.AddTransient<INotificationHandler<TagPostSaveEvent>, IntegrationEventHandler<TagPostSaveEvent, Tag>>();
-            services.AddTransient<INotificationHandler<TagRequirementPostSaveEvent>, IntegrationEventHandler<TagRequirementPostSaveEvent, TagRequirement>>();
 
             services.AddTransient<INotificationHandler<JourneyDeletedEvent>, IntegrationDeleteEventHandler<JourneyDeletedEvent, Journey>>();
             services.AddTransient<INotificationHandler<RequirementDeletedFieldEvent>, IntegrationDeleteEventHandler<RequirementDeletedFieldEvent, Field>>();
@@ -187,7 +188,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<ResponsibleDeletedEvent>, IntegrationDeleteEventHandler<ResponsibleDeletedEvent, Responsible>>();
             services.AddTransient<INotificationHandler<StepDeletedEvent>, IntegrationDeleteEventHandler<StepDeletedEvent, Step>>();
             services.AddTransient<INotificationHandler<TagDeletedEvent>, IntegrationDeleteEventHandler<TagDeletedEvent, Tag>>();
-            services.AddTransient<INotificationHandler<TagRequirementDeletedEvent>, DeleteTagRequirementEventHandler>();
 
             // Scoped - Created once per client request (connection)
             services.AddScoped<IExcelConverter, ExcelConverter>();

@@ -20,10 +20,10 @@ public class ProjectTagAddedEventHandler : INotificationHandler<ProjectTagAddedE
 
     public async Task Handle(ProjectTagAddedEvent notification, CancellationToken cancellationToken)
     {
-        var events = await _converter.Convert(notification);
-        foreach (var @event in events)
+        var integrationEvents = await _converter.Convert(notification);
+        foreach (var integrationEvent in integrationEvents)
         {
-            await _integrationEventPublisher.PublishAsync(@event, cancellationToken);
+            await _integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);
         }
     }
 }
