@@ -50,6 +50,7 @@ public class CreateTagEventHelperTests
             new List<TagRequirement> {tagRequirement})
         {
             CommPkgProCoSysGuid = Guid.NewGuid(),
+            McPkgProCoSysGuid = Guid.NewGuid(),
             PurchaseOrderNo = "Test Purchase Order",
             Remark = "Test Remark",
             StorageArea = "Test Storage Area",
@@ -84,7 +85,6 @@ public class CreateTagEventHelperTests
     [DataRow("AreaDescription", "A desc")]
     [DataRow("DisciplineDescription", "D desc")]
     [DataRow("Status", "NotStarted")]
-    [DataRow("McPkgGuid", "TODO")]
     [DataRow("IsVoided", "TODO")]
     [DataRow("IsVoidedInSource", "TODO")]
     public async Task CreateEvent_ShouldCreateTagEventExpectedValues(string property, object expected)
@@ -103,6 +103,7 @@ public class CreateTagEventHelperTests
     [DataTestMethod]
     [DataRow("CommPkgGuid")]
     [DataRow("CreatedByGuid")]
+    [DataRow("McPkgGuid")]
     [DataRow("ProCoSysGuid")]
     [DataRow("StepGuid")]
     public async Task CreateEvent_ShouldCreateTagEventWithGuids(string property)
