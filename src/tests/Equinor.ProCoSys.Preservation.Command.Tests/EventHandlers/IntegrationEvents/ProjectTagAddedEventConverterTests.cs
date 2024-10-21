@@ -45,7 +45,7 @@ public class ProjectTagAddedEventConverterTests
     }
 
     [TestMethod]
-    public async Task Convert_ShouldConvertToTagRequirementWithExpectedCreatedAtUtcValue()
+    public async Task Convert_ShouldConvertToIntegrationEventsWithTagRequirementEvent()
     {
         // Arrange
         var domainEvent = new ProjectTagAddedEvent(_project, _tag);
