@@ -44,7 +44,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
             CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = entity.ModifiedAtUtc,
             ModifiedByGuid = modifiedBy?.Guid,
-            // Status = entity.Status.ToString(),
+            Status = entity.Status.ToString(),
             // CommPkgGuid = entity.CommPkgProCoSysGuid,
             // McPkgGuid = entity.McPkgProCoSysGuid,
             // IsVoided = entity.IsVoided,

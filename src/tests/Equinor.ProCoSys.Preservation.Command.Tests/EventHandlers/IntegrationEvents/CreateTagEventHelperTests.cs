@@ -82,7 +82,7 @@ public class CreateTagEventHelperTests
     [DataRow("StorageArea", "Test Storage Area")]
     [DataRow("AreaDescription", "A desc")]
     [DataRow("DisciplineDescription", "D desc")]
-    [DataRow("Status", "TODO")]
+    [DataRow("Status", "NotStarted")]
     [DataRow("CommPkgGuid", "TODO")]
     [DataRow("McPkgGuid", "TODO")]
     [DataRow("IsVoided", "TODO")]
