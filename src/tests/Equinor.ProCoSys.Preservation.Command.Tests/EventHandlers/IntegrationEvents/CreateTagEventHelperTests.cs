@@ -49,6 +49,7 @@ public class CreateTagEventHelperTests
         _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "Test Description", step,
             new List<TagRequirement> {tagRequirement})
         {
+            PurchaseOrderNo = "Test Purchase Order",
             Remark = "Test Remark",
             TagFunctionCode = "Test Function Code"
         };
@@ -72,7 +73,7 @@ public class CreateTagEventHelperTests
     [DataRow("DisciplineCode", "D")]
     [DataRow("AreaCode", "A")]
     [DataRow("TagFunctionCode", "Test Function Code")]
-    [DataRow("PurchaseOrderNo", "TODO")]
+    [DataRow("PurchaseOrderNo", "Test Purchase Order")]
     [DataRow("TagType", "TODO")]
     [DataRow("StorageArea", "TODO")]
     [DataRow("AreaDescription", "TODO")]
