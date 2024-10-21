@@ -42,7 +42,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
             DisciplineDescription = entity.DisciplineDescription,
             CreatedAtUtc = entity.CreatedAtUtc,
             CreatedByGuid = createdBy.Guid,
-            // ModifiedAtUtc = entity.ModifiedAtUtc,
+            ModifiedAtUtc = entity.ModifiedAtUtc,
             // ModifiedByGuid = modifiedBy?.Guid,
             // Status = entity.Status.ToString(),
             // CommPkgGuid = entity.CommPkgProCoSysGuid,
