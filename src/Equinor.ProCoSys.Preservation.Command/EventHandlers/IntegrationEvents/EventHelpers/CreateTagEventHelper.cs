@@ -47,7 +47,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
             Status = entity.Status.ToString(),
             CommPkgGuid = entity.CommPkgProCoSysGuid,
             McPkgGuid = entity.McPkgProCoSysGuid,
-            // IsVoided = entity.IsVoided,
+            IsVoided = entity.IsVoided,
             // IsVoidedInSource = entity.IsVoidedInSource
         };
     }
