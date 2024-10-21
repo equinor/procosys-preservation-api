@@ -104,7 +104,6 @@ public class CreateTagEventHelperTests
     [DataRow("ProCoSysGuid")]
     [DataRow("StepGuid")]
     [DataRow("CreatedByGuid")]
-    [DataRow("ModifiedByGuid")]
     public async Task CreateEvent_ShouldCreateTagEventWithGuids(string property)
     {
         // Act
@@ -131,6 +130,22 @@ public class CreateTagEventHelperTests
 
         // Assert
         Assert.AreEqual(TestTime, integrationEvent.CreatedAtUtc);
+    }
+    
+    [TestMethod]
+    public async Task CreateEvent_ShouldCreateTagEventWithModifiedByGuid()
+    {
+        // Arrange
+        _tag.SetModified(_person);
+        
+        // Act
+        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var result = integrationEvent.ModifiedByGuid;
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(result.GetType(), typeof(Guid));
+        Assert.AreNotEqual(result, Guid.Empty);
     }
 
     [TestMethod]

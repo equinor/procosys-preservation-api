@@ -20,7 +20,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
     public async Task<TagEvent> CreateEvent(Tag entity, string projectName)
     {
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
-        // var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
+        var modifiedBy = await GetModifiedBy(entity);
         var step = await _journeyRepository.GetStepByStepIdAsync(entity.StepId);
 
         return new TagEvent
@@ -43,12 +43,22 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
             CreatedAtUtc = entity.CreatedAtUtc,
             CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = entity.ModifiedAtUtc,
-            // ModifiedByGuid = modifiedBy?.Guid,
+            ModifiedByGuid = modifiedBy?.Guid,
             // Status = entity.Status.ToString(),
             // CommPkgGuid = entity.CommPkgProCoSysGuid,
             // McPkgGuid = entity.McPkgProCoSysGuid,
             // IsVoided = entity.IsVoided,
             // IsVoidedInSource = entity.IsVoidedInSource
         };
+    }
+
+    private async Task<Person> GetModifiedBy(Tag entity)
+    {
+        if (!entity.ModifiedById.HasValue)
+        {
+            return null;
+        }
+
+        return await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value);
     }
 }
