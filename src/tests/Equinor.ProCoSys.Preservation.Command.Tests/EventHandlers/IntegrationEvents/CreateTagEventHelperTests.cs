@@ -2,13 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -20,6 +24,7 @@ public class CreateTagEventHelperTests
     private const string TestPlant = "PCS$PlantA";
     private const string TestProjectName = "Test Project";
     private static DateTime TestTime => DateTime.Parse("2012-12-12T11:22:33Z").ToUniversalTime();
+    private const int Interval = 2;
     private Tag _tag;
     private Person _person;
     private CreateTagEventHelper _dut;
@@ -31,17 +36,22 @@ public class CreateTagEventHelperTests
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
 
-        var stepMock = new Mock<Step>();
-        stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
+        var supplierMode = new Mode(TestPlant, "SUP", true);
+        supplierMode.SetProtectedIdForTesting(1);
         
-        var requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
-        var tagRequirement = new TagRequirement(TestPlant, 2, requirementDefinition);
+        var responsible = new Responsible(TestPlant, "C", "D");
+        var step = new Step(TestPlant, "SUP", supplierMode, responsible);
+        step.SetProtectedIdForTesting(17);
         
-        _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "Test Description", stepMock.Object,
+        var requirementDefinition = new RequirementDefinition(TestPlant, "D2", Interval, RequirementUsage.ForSuppliersOnly, 1);
+        var tagRequirement = new TagRequirement(TestPlant, Interval, requirementDefinition);
+        
+        _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "Test Description", step,
             new List<TagRequirement> {tagRequirement})
         {
             Remark = "Test Remark"
         };
+        _tag.SetProtectedIdForTesting(7);
         
         _person = new Person(Guid.NewGuid(), "Test", "Person");
 
@@ -53,7 +63,6 @@ public class CreateTagEventHelperTests
     [DataRow("ProjectName", TestProjectName)]
     [DataRow("Description", "Test Description")]
     [DataRow("Remark", "Test Remark")]
-    [DataRow("NextDueTimeUtc", "TODO")]
     [DataRow("StepGuid", "TODO")]
     [DataRow("DisciplineCode", "TODO")]
     [DataRow("AreaCode", "TODO")]
@@ -90,11 +99,11 @@ public class CreateTagEventHelperTests
     public async Task CreateEvent_ShouldCreateTagEventWithGuids(string property)
     {
         // Act
-        var tagRequirementEvent = await _dut.CreateEvent(_tag, TestProjectName);
-        var result = tagRequirementEvent.GetType()
+        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var result = integrationEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
-            .GetValue(tagRequirementEvent);
+            .GetValue(integrationEvent);
 
         // Assert
         Assert.IsNotNull(result);
@@ -109,10 +118,10 @@ public class CreateTagEventHelperTests
         _tag.SetCreated(_person);
 
         // Act
-        var tagRequirementEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
 
         // Assert
-        Assert.AreEqual(TestTime, tagRequirementEvent.CreatedAtUtc);
+        Assert.AreEqual(TestTime, integrationEvent.CreatedAtUtc);
     }
 
     [TestMethod]
@@ -122,9 +131,23 @@ public class CreateTagEventHelperTests
         _tag.SetModified(_person);
 
         // Act
-        var tagRequirementEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
 
         // Assert
-        Assert.AreEqual(TestTime, tagRequirementEvent.ModifiedAtUtc);
+        Assert.AreEqual(TestTime, integrationEvent.ModifiedAtUtc);
+    }
+    
+    [TestMethod]
+    public async Task CreateEvent_ShouldCreateTagEventWithExpectedNextDueTimeUtcValue()
+    {
+        // Arrange
+        _tag.StartPreservation();
+        var expected = TestTime.AddWeeks(Interval);
+        
+        // Act
+        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+
+        // Assert
+        Assert.AreEqual(expected, integrationEvent.NextDueTimeUtc);
     }
 }
