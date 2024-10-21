@@ -8,22 +8,19 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 
 public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
 {
-    // private readonly IJourneyRepository _journeyRepository;
+    private readonly IJourneyRepository _journeyRepository;
     // private readonly IPersonRepository _personRepository;
-    //
-    // public CreateTagEventHelper(
-    //     IJourneyRepository journeyRepository,
-    //     IPersonRepository personRepository)
-    // {
-    //     _journeyRepository = journeyRepository;
-    //     _personRepository = personRepository;
-    // }
+
+    public CreateTagEventHelper(IJourneyRepository journeyRepository)
+    {
+        _journeyRepository = journeyRepository;
+    }
 
     public async Task<TagEvent> CreateEvent(Tag entity, string projectName)
     {
         // var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         // var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
-        // var step = await _journeyRepository.GetStepByStepIdAsync(entity.StepId);
+        var step = await _journeyRepository.GetStepByStepIdAsync(entity.StepId);
 
         return new TagEvent
         {
@@ -33,7 +30,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
             Description = entity.Description,
             Remark = entity.Remark,
             NextDueTimeUtc = entity.NextDueTimeUtc,
-            // StepGuid = step.Guid,
+            StepGuid = step.Guid,
             // DisciplineCode = entity.DisciplineCode,
             // AreaCode = entity.AreaCode,
             // TagFunctionCode = entity.TagFunctionCode,

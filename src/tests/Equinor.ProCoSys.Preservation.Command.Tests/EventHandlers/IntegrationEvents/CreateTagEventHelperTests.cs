@@ -55,7 +55,10 @@ public class CreateTagEventHelperTests
         
         _person = new Person(Guid.NewGuid(), "Test", "Person");
 
-        _dut = new CreateTagEventHelper();
+        var journeyRepositoryMock = new Mock<IJourneyRepository>();
+        journeyRepositoryMock.Setup(x => x.GetStepByStepIdAsync(It.IsAny<int>())).ReturnsAsync(step);
+        
+        _dut = new CreateTagEventHelper(journeyRepositoryMock.Object);
     }
 
     [DataTestMethod]
@@ -63,7 +66,6 @@ public class CreateTagEventHelperTests
     [DataRow("ProjectName", TestProjectName)]
     [DataRow("Description", "Test Description")]
     [DataRow("Remark", "Test Remark")]
-    [DataRow("StepGuid", "TODO")]
     [DataRow("DisciplineCode", "TODO")]
     [DataRow("AreaCode", "TODO")]
     [DataRow("TagFunctionCode", "TODO")]
@@ -94,6 +96,7 @@ public class CreateTagEventHelperTests
 
     [DataTestMethod]
     [DataRow("ProCoSysGuid")]
+    [DataRow("StepGuid")]
     [DataRow("CreatedByGuid")]
     [DataRow("ModifiedByGuid")]
     public async Task CreateEvent_ShouldCreateTagEventWithGuids(string property)

@@ -33,12 +33,12 @@ public class CreateTagRequirementEventHelperTests
         _tagRequirement = new TagRequirement(TestPlant, 2, requirementDefinition);
 
         var mockRequirementTypeRepository = new Mock<IRequirementTypeRepository>();
-        mockRequirementTypeRepository.Setup(r => r.GetRequirementDefinitionByIdAsync(It.IsAny<int>())).Returns(Task.FromResult(requirementDefinition));
+        mockRequirementTypeRepository.Setup(r => r.GetRequirementDefinitionByIdAsync(It.IsAny<int>())).ReturnsAsync(requirementDefinition);
 
         _person = new Person(Guid.NewGuid(), "Test", "Person");
 
         var mockPersonRepository = new Mock<IPersonRepository>();
-        mockPersonRepository.Setup(r => r.GetReadOnlyByIdAsync(It.IsAny<int>())).Returns(Task.FromResult(_person));
+        mockPersonRepository.Setup(r => r.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
 
         _dut = new CreateTagRequirementEventHelper(mockRequirementTypeRepository.Object, mockPersonRepository.Object);
     }
