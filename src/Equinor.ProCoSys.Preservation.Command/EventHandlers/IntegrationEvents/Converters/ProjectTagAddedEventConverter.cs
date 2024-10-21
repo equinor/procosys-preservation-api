@@ -10,9 +10,9 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 
 public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<ProjectTagAddedEvent>
 {
-    private readonly ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> _createTagReuirementEvent;
+    private readonly ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> _createTagRequirementEvent;
 
-    public ProjectTagAddedEventConverter(ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> createTagReuirementEvent) => _createTagReuirementEvent = createTagReuirementEvent;
+    public ProjectTagAddedEventConverter(ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> createTagRequirementEvent) => _createTagRequirementEvent = createTagRequirementEvent;
 
     public async Task<IEnumerable<IIntegrationEvent>> Convert(ProjectTagAddedEvent domainEvent)
     {
@@ -21,7 +21,7 @@ public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<
         foreach (var tagRequirement in domainEvent.Tag.Requirements)
         {
             var projectName = domainEvent.Entity.Name;
-            var tagRequirementEvent = await _createTagReuirementEvent.CreateEvent(tagRequirement, projectName);
+            var tagRequirementEvent = await _createTagRequirementEvent.CreateEvent(tagRequirement, projectName);
 
             events.Add(tagRequirementEvent);
         }
