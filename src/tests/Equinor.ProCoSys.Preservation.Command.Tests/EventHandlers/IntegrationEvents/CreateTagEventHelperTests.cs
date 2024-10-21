@@ -86,7 +86,7 @@ public class CreateTagEventHelperTests
     [DataRow("DisciplineDescription", "D desc")]
     [DataRow("Status", "NotStarted")]
     [DataRow("IsVoided", false)]
-    [DataRow("IsVoidedInSource", "TODO")]
+    [DataRow("IsVoidedInSource", false)]
     public async Task CreateEvent_ShouldCreateTagEventExpectedValues(string property, object expected)
     {
         // Act
