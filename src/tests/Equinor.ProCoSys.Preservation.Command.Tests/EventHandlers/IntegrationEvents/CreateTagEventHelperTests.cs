@@ -47,7 +47,7 @@ public class CreateTagEventHelperTests
 
     [DataTestMethod]
     [DataRow("Plant", TestPlant)]
-    [DataRow("ProjectName", "TODO")]
+    [DataRow("ProjectName", TestProjectName)]
     [DataRow("Description", "TODO")]
     [DataRow("Remark", "TODO")]
     [DataRow("NextDueTimeUtc", "TODO")]
