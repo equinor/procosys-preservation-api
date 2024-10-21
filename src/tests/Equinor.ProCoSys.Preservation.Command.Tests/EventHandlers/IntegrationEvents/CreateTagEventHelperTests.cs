@@ -38,7 +38,10 @@ public class CreateTagEventHelperTests
         var tagRequirement = new TagRequirement(TestPlant, 2, requirementDefinition);
         
         _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "Test Description", stepMock.Object,
-            new List<TagRequirement> {tagRequirement});
+            new List<TagRequirement> {tagRequirement})
+        {
+            Remark = "Test Remark"
+        };
         
         _person = new Person(Guid.NewGuid(), "Test", "Person");
 
@@ -49,7 +52,7 @@ public class CreateTagEventHelperTests
     [DataRow("Plant", TestPlant)]
     [DataRow("ProjectName", TestProjectName)]
     [DataRow("Description", "Test Description")]
-    [DataRow("Remark", "TODO")]
+    [DataRow("Remark", "Test Remark")]
     [DataRow("NextDueTimeUtc", "TODO")]
     [DataRow("StepGuid", "TODO")]
     [DataRow("DisciplineCode", "TODO")]
