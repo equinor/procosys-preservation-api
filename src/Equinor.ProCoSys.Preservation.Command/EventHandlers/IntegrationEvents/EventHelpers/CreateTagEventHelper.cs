@@ -8,16 +8,16 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 
 public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
 {
-    private readonly IJourneyRepository _journeyRepository;
-    private readonly IPersonRepository _personRepository;
-
-    public CreateTagEventHelper(
-        IJourneyRepository journeyRepository,
-        IPersonRepository personRepository)
-    {
-        _journeyRepository = journeyRepository;
-        _personRepository = personRepository;
-    }
+    // private readonly IJourneyRepository _journeyRepository;
+    // private readonly IPersonRepository _personRepository;
+    //
+    // public CreateTagEventHelper(
+    //     IJourneyRepository journeyRepository,
+    //     IPersonRepository personRepository)
+    // {
+    //     _journeyRepository = journeyRepository;
+    //     _personRepository = personRepository;
+    // }
 
     public async Task<TagEvent> CreateEvent(Tag entity, string projectName)
     {
@@ -28,7 +28,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
         return new TagEvent
         {
             // ProCoSysGuid = entity.Guid,
-            // Plant = entity.Plant,
+            Plant = entity.Plant,
             // ProjectName = projectName,
             // Description = entity.Description,
             // Remark = entity.Remark,
