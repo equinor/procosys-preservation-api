@@ -120,9 +120,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddHttpClient();
 
             // Transient - Created each time it is requested from the service container
-            services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<TagRequirement>>, IntegrationEventHandler<PlantEntityModifiedEvent<TagRequirement>, TagRequirement>>();
-            services.AddTransient<ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
             services.AddTransient<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>, ProjectTagAddedEventConverter>();
+            
+            services.AddTransient<ICreateProjectEventHelper<Tag, TagEvent>, CreateTagEventHelper>();
+            services.AddTransient<ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
+            
+            services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<TagRequirement>>, IntegrationEventHandler<PlantEntityModifiedEvent<TagRequirement>, TagRequirement>>();
             services.AddTransient<IPublishEntityEventHelper<TagRequirement>, PublishTagRequirementEventHelper>();
             services.AddTransient<INotificationHandler<TagRequirementDeletedEvent>, DeleteTagRequirementEventHandler>();
 
@@ -143,7 +146,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleDeleteEvent>, CreateResponsibleDeleteEventHelper>();
             services.AddTransient<ICreateEventHelper<Step, StepEvent>, CreateStepEventHelper>();
             services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
-            services.AddTransient<ICreateEventHelper<Tag, TagEvent>, CreateTagEventHelper>();
+            
             services.AddTransient<ICreateEventHelper<Tag, TagDeleteEvent>, CreateTagDeleteEventHelper>();
             
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
