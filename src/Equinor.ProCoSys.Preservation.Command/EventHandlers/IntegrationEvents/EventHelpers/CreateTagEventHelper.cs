@@ -30,7 +30,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
             // ProCoSysGuid = entity.Guid,
             Plant = entity.Plant,
             ProjectName = projectName,
-            // Description = entity.Description,
+            Description = entity.Description,
             // Remark = entity.Remark,
             // NextDueTimeUtc = entity.NextDueTimeUtc,
             // StepGuid = step.Guid,

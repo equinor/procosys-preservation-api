@@ -37,7 +37,7 @@ public class CreateTagEventHelperTests
         var requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
         var tagRequirement = new TagRequirement(TestPlant, 2, requirementDefinition);
         
-        _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object,
+        _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "Test Description", stepMock.Object,
             new List<TagRequirement> {tagRequirement});
         
         _person = new Person(Guid.NewGuid(), "Test", "Person");
@@ -48,7 +48,7 @@ public class CreateTagEventHelperTests
     [DataTestMethod]
     [DataRow("Plant", TestPlant)]
     [DataRow("ProjectName", TestProjectName)]
-    [DataRow("Description", "TODO")]
+    [DataRow("Description", "Test Description")]
     [DataRow("Remark", "TODO")]
     [DataRow("NextDueTimeUtc", "TODO")]
     [DataRow("StepGuid", "TODO")]
