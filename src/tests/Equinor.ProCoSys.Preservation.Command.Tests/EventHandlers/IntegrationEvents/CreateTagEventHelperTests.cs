@@ -52,6 +52,8 @@ public class CreateTagEventHelperTests
             Remark = "Test Remark"
         };
         _tag.SetProtectedIdForTesting(7);
+        _tag.SetArea("A", "A desc");
+        _tag.SetDiscipline("D", "D desc");
         
         _person = new Person(Guid.NewGuid(), "Test", "Person");
 
@@ -66,7 +68,7 @@ public class CreateTagEventHelperTests
     [DataRow("ProjectName", TestProjectName)]
     [DataRow("Description", "Test Description")]
     [DataRow("Remark", "Test Remark")]
-    [DataRow("DisciplineCode", "TODO")]
+    [DataRow("DisciplineCode", "D")]
     [DataRow("AreaCode", "TODO")]
     [DataRow("TagFunctionCode", "TODO")]
     [DataRow("PurchaseOrderNo", "TODO")]

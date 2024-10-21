@@ -31,7 +31,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
             Remark = entity.Remark,
             NextDueTimeUtc = entity.NextDueTimeUtc,
             StepGuid = step.Guid,
-            // DisciplineCode = entity.DisciplineCode,
+            DisciplineCode = entity.DisciplineCode,
             // AreaCode = entity.AreaCode,
             // TagFunctionCode = entity.TagFunctionCode,
             // PurchaseOrderNo = entity.PurchaseOrderNo,
