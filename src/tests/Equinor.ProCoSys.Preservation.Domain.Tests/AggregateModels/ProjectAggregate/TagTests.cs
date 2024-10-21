@@ -2800,6 +2800,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Act and Assert
             Assert.ThrowsException<Exception>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.IsDeletedInSource = false);
         }
+        
+        [TestMethod]
+        public void SetModified_ShouldAddPlantEntityModifiedEvent()
+        {
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.SetModified(_person);
+            var eventTypes = _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Tag>));
+        }
 
         #endregion
     }
