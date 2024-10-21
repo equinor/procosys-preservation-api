@@ -24,7 +24,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
 
         return new TagEvent
         {
-            // ProCoSysGuid = entity.Guid,
+            ProCoSysGuid = entity.Guid,
             Plant = entity.Plant,
             ProjectName = projectName,
             Description = entity.Description,
