@@ -69,7 +69,7 @@ public class CreateTagEventHelperTests
     [DataRow("Description", "Test Description")]
     [DataRow("Remark", "Test Remark")]
     [DataRow("DisciplineCode", "D")]
-    [DataRow("AreaCode", "TODO")]
+    [DataRow("AreaCode", "A")]
     [DataRow("TagFunctionCode", "TODO")]
     [DataRow("PurchaseOrderNo", "TODO")]
     [DataRow("TagType", "TODO")]
