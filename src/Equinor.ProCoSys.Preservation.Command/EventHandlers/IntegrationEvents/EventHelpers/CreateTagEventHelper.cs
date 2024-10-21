@@ -37,7 +37,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
             PurchaseOrderNo = entity.PurchaseOrderNo,
             TagType = entity.TagType.ToString(),
             StorageArea = entity.StorageArea,
-            // AreaDescription = entity.AreaDescription,
+            AreaDescription = entity.AreaDescription,
             // DisciplineDescription = entity.DisciplineDescription,
             // CreatedAtUtc = entity.CreatedAtUtc,
             // CreatedByGuid = createdBy.Guid,

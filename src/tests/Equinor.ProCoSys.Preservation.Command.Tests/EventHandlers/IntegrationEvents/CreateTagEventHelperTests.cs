@@ -77,7 +77,7 @@ public class CreateTagEventHelperTests
     [DataRow("PurchaseOrderNo", "Test Purchase Order")]
     [DataRow("TagType", "Standard")]
     [DataRow("StorageArea", "Test Storage Area")]
-    [DataRow("AreaDescription", "TODO")]
+    [DataRow("AreaDescription", "A desc")]
     [DataRow("DisciplineDescription", "TODO")]
     [DataRow("CreatedAtUtc", "TODO")]
     [DataRow("ModifiedAtUtc", "TODO")]
