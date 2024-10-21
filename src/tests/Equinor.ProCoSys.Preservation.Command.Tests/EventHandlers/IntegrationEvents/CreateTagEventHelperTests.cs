@@ -49,7 +49,8 @@ public class CreateTagEventHelperTests
         _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "Test Description", step,
             new List<TagRequirement> {tagRequirement})
         {
-            Remark = "Test Remark"
+            Remark = "Test Remark",
+            TagFunctionCode = "Test Function Code"
         };
         _tag.SetProtectedIdForTesting(7);
         _tag.SetArea("A", "A desc");
@@ -70,7 +71,7 @@ public class CreateTagEventHelperTests
     [DataRow("Remark", "Test Remark")]
     [DataRow("DisciplineCode", "D")]
     [DataRow("AreaCode", "A")]
-    [DataRow("TagFunctionCode", "TODO")]
+    [DataRow("TagFunctionCode", "Test Function Code")]
     [DataRow("PurchaseOrderNo", "TODO")]
     [DataRow("TagType", "TODO")]
     [DataRow("StorageArea", "TODO")]
