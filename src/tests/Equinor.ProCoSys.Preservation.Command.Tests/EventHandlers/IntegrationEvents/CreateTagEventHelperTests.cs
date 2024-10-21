@@ -62,8 +62,11 @@ public class CreateTagEventHelperTests
 
         var journeyRepositoryMock = new Mock<IJourneyRepository>();
         journeyRepositoryMock.Setup(x => x.GetStepByStepIdAsync(It.IsAny<int>())).ReturnsAsync(step);
+
+        var personRepositoryMock = new Mock<IPersonRepository>();
+        personRepositoryMock.Setup(x => x.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
         
-        _dut = new CreateTagEventHelper(journeyRepositoryMock.Object);
+        _dut = new CreateTagEventHelper(journeyRepositoryMock.Object, personRepositoryMock.Object);
     }
 
     [DataTestMethod]
