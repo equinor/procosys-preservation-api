@@ -51,7 +51,7 @@ public class CreateTagEventHelperTests
         {
             PurchaseOrderNo = "Test Purchase Order",
             Remark = "Test Remark",
-            TagFunctionCode = "Test Function Code"
+            TagFunctionCode = "Test Function Code",
         };
         _tag.SetProtectedIdForTesting(7);
         _tag.SetArea("A", "A desc");
@@ -74,7 +74,7 @@ public class CreateTagEventHelperTests
     [DataRow("AreaCode", "A")]
     [DataRow("TagFunctionCode", "Test Function Code")]
     [DataRow("PurchaseOrderNo", "Test Purchase Order")]
-    [DataRow("TagType", "TODO")]
+    [DataRow("TagType", "Standard")]
     [DataRow("StorageArea", "TODO")]
     [DataRow("AreaDescription", "TODO")]
     [DataRow("DisciplineDescription", "TODO")]
