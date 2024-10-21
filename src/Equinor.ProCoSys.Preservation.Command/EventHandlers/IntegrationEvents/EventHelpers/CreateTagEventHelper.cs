@@ -39,7 +39,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
             StorageArea = entity.StorageArea,
             AreaDescription = entity.AreaDescription,
             DisciplineDescription = entity.DisciplineDescription,
-            // CreatedAtUtc = entity.CreatedAtUtc,
+            CreatedAtUtc = entity.CreatedAtUtc,
             // CreatedByGuid = createdBy.Guid,
             // ModifiedAtUtc = entity.ModifiedAtUtc,
             // ModifiedByGuid = modifiedBy?.Guid,
