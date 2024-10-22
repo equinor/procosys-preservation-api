@@ -29,7 +29,7 @@ public class PublishTagEventHelper : IPublishEntityEventHelper<Tag>
     {
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(entity.Guid);
         
-         var actionEvent = await _createEventHelper.CreateEvent(entity, project.Name);
-         await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);
+         var integrationEvent = await _createEventHelper.CreateEvent(entity, project.Name);
+         await _integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);
     }
 }
