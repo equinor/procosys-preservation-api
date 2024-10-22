@@ -6,34 +6,28 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagEventHelper  : ICreateEventHelper<Tag, TagEvent>
+public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
 {
     private readonly IJourneyRepository _journeyRepository;
     private readonly IPersonRepository _personRepository;
-    private readonly IProjectRepository _projectRepository;
 
-    public CreateTagEventHelper(
-        IJourneyRepository journeyRepository,
-        IPersonRepository personRepository,
-        IProjectRepository projectRepository)
+    public CreateTagEventHelper(IJourneyRepository journeyRepository, IPersonRepository personRepository)
     {
         _journeyRepository = journeyRepository;
         _personRepository = personRepository;
-        _projectRepository = projectRepository;
     }
 
-    public async Task<TagEvent> CreateEvent(Tag entity)
+    public async Task<TagEvent> CreateEvent(Tag entity, string projectName)
     {
-        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(entity.Guid);
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
-        var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
+        var modifiedBy = await GetModifiedBy(entity);
         var step = await _journeyRepository.GetStepByStepIdAsync(entity.StepId);
 
         return new TagEvent
         {
             ProCoSysGuid = entity.Guid,
             Plant = entity.Plant,
-            ProjectName = project?.Name,
+            ProjectName = projectName,
             Description = entity.Description,
             Remark = entity.Remark,
             NextDueTimeUtc = entity.NextDueTimeUtc,
@@ -56,5 +50,15 @@ public class CreateTagEventHelper  : ICreateEventHelper<Tag, TagEvent>
             IsVoided = entity.IsVoided,
             IsVoidedInSource = entity.IsVoidedInSource
         };
+    }
+
+    private async Task<Person> GetModifiedBy(Tag entity)
+    {
+        if (!entity.ModifiedById.HasValue)
+        {
+            return null;
+        }
+
+        return await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value);
     }
 }

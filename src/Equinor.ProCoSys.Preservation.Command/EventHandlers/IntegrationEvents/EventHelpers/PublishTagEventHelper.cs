@@ -9,15 +9,15 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class PublishTagRequirementEventHelper : IPublishEntityEventHelper<TagRequirement>
+public class PublishTagEventHelper : IPublishEntityEventHelper<Tag>
 {
     private readonly IProjectRepository _projectRepository;
-    private readonly ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> _createEventHelper;
+    private readonly ICreateProjectEventHelper<Tag, TagEvent> _createEventHelper;
     private readonly IIntegrationEventPublisher _integrationEventPublisher;
 
-    public PublishTagRequirementEventHelper(
+    public PublishTagEventHelper(
         IProjectRepository projectRepository,
-        ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> createEventHelper,
+        ICreateProjectEventHelper<Tag, TagEvent> createEventHelper,
         IIntegrationEventPublisher integrationEventPublisher)
     {
         _projectRepository = projectRepository;
@@ -25,10 +25,9 @@ public class PublishTagRequirementEventHelper : IPublishEntityEventHelper<TagReq
         _integrationEventPublisher = integrationEventPublisher;
     }
 
-    public async Task PublishEvent(TagRequirement entity, CancellationToken cancellationToken)
+    public async Task PublishEvent(Tag entity, CancellationToken cancellationToken)
     {
-        var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(entity.Guid);
-        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(entity.Guid);
         
          var integrationEvent = await _createEventHelper.CreateEvent(entity, project.Name);
          await _integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);

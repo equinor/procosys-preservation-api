@@ -22,7 +22,7 @@ public class PublishEntityEventHelper<TEntity, TEvent> : IPublishEntityEventHelp
 
     public async Task PublishEvent(TEntity entity, CancellationToken cancellationToken)
     {
-         var actionEvent = await _createEventHelper.CreateEvent(entity);
-         await _integrationEventPublisher.PublishAsync(actionEvent, cancellationToken);
+         var integrationEvent = await _createEventHelper.CreateEvent(entity);
+         await _integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);
     }
 }

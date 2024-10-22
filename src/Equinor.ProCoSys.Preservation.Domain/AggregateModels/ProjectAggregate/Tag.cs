@@ -556,8 +556,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
-
-            AddPostSaveDomainEvent(new TagPostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -569,7 +567,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new TagPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<Tag>(this));
         }
 
         public void SetRemoved() => AddDomainEvent(new TagDeletedEvent(this));
