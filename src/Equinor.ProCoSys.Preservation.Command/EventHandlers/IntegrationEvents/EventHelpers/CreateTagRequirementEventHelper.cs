@@ -7,7 +7,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagRequirementEventHelper : ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>
+public class CreateTagRequirementEventHelper : ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>
 {
     private readonly IRequirementTypeRepository _requirementTypeRepository;
     private readonly IPersonRepository _personRepository;
@@ -20,7 +20,7 @@ public class CreateTagRequirementEventHelper : ICreateProjectEventHelper<TagRequ
         _personRepository = personRepository;
     }
 
-    public async Task<TagRequirementEvent> CreateEvent(TagRequirement entity, string projectName)
+    public async Task<TagRequirementEvent> CreateEvent(Project parentEntity, TagRequirement entity)
     {
         var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(entity.RequirementDefinitionId);
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
@@ -31,7 +31,7 @@ public class CreateTagRequirementEventHelper : ICreateProjectEventHelper<TagRequ
         {
             ProCoSysGuid = entity.Guid,
             Plant = entity.Plant,
-            ProjectName = projectName,
+            ProjectName = parentEntity.Name,
             IntervalWeeks = entity.IntervalWeeks,
             Usage = entity.Usage.ToString(),
             NextDueTimeUtc = entity.NextDueTimeUtc,

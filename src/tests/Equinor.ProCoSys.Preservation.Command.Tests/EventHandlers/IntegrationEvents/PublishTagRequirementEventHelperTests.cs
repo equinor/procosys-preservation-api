@@ -23,15 +23,15 @@ public class PublishTagRequirementEventHelperTests
     public void Setup()
     {
         // Arrange
-        var mockTagRequirementCreateEvent = new Mock<ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>>();
-        mockTagRequirementCreateEvent.Setup(c => c.CreateEvent(It.IsAny<TagRequirement>(), It.IsAny<string>())).Returns(Task.FromResult(new TagRequirementEvent()));
+        var mockTagRequirementCreateEvent = new Mock<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>>();
+        mockTagRequirementCreateEvent.Setup(c => c.CreateEvent(It.IsAny<Project>(), It.IsAny<TagRequirement>())).Returns(Task.FromResult(new TagRequirementEvent()));
 
         var mockProjectRepository = new Mock<IProjectRepository>();
         mockProjectRepository.Setup(x => x.GetTagByTagRequirementGuidAsync(It.IsAny<Guid>())).ReturnsAsync(new Mock<Tag>().Object);
         mockProjectRepository.Setup(x => x.GetProjectOnlyByTagGuidAsync(It.IsAny<Guid>())).ReturnsAsync(new Mock<Project>().Object);
         
-        var createEventHelper = new Mock<ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>>();
-        createEventHelper.Setup(c => c.CreateEvent(It.IsAny<TagRequirement>(), It.IsAny<string>())).Returns(Task.FromResult(new TagRequirementEvent()));
+        var createEventHelper = new Mock<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>>();
+        createEventHelper.Setup(c => c.CreateEvent(It.IsAny<Project>(), It.IsAny<TagRequirement>())).Returns(Task.FromResult(new TagRequirementEvent()));
         
         _publishedEvents = new List<IIntegrationEvent>();
         

@@ -175,16 +175,5 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             Assert.AreEqual(_dut.Fields.Count, _dut.OrderedFields(true).Count());
         }
-        
-        [TestMethod]
-        public void SetCreated_ShouldAddPlantEntityModifiedEvent()
-        {
-            var person = new Person(Guid.NewGuid(), "Test", "Person");
-            
-            _dut.SetCreated(person);
-
-            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<RequirementDefinition>));
-        }
     }
 }

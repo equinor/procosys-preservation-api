@@ -30,6 +30,7 @@ public class CreateTagEventHelperTests
     private const int Interval = 2;
     private Step _step;
     private Tag _tag;
+    private Project _project;
     private Person _person;
     private CreateTagEventHelper _dut;
 
@@ -64,6 +65,9 @@ public class CreateTagEventHelperTests
         _tag.SetArea("A", "A desc");
         _tag.SetDiscipline("D", "D desc");
         
+        _project = new Project(TestPlant, TestProjectName, "Test Project Description", TestGuid);
+        _project.AddTag(_tag);
+        
         _person = new Person(TestGuid, "Test", "Person");
 
         var journeyRepositoryMock = new Mock<IJourneyRepository>();
@@ -94,7 +98,7 @@ public class CreateTagEventHelperTests
     public async Task CreateEvent_ShouldCreateTagEventExpectedValues(string property, object expected)
     {
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tag);
         var result = integrationEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -112,7 +116,7 @@ public class CreateTagEventHelperTests
     public async Task CreateEvent_ShouldCreateTagEventWithGuids(string property)
     {
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tag);
         var result = integrationEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -129,7 +133,7 @@ public class CreateTagEventHelperTests
         var expected = _step.Guid;
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tag);
         var result = integrationEvent.StepGuid;
 
         // Assert
@@ -143,7 +147,7 @@ public class CreateTagEventHelperTests
         _tag.SetCreated(_person);
 
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tag);
 
         // Assert
         Assert.AreEqual(TestTime, integrationEvent.CreatedAtUtc);
@@ -156,7 +160,7 @@ public class CreateTagEventHelperTests
         _tag.SetModified(_person);
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tag);
         var result = integrationEvent.ModifiedByGuid;
 
         // Assert
@@ -170,7 +174,7 @@ public class CreateTagEventHelperTests
         _tag.SetModified(_person);
 
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tag);
 
         // Assert
         Assert.AreEqual(TestTime, integrationEvent.ModifiedAtUtc);
@@ -184,7 +188,7 @@ public class CreateTagEventHelperTests
         var expected = TestTime.AddWeeks(Interval);
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tag);
 
         // Assert
         Assert.AreEqual(expected, integrationEvent.NextDueTimeUtc);

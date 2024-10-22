@@ -12,12 +12,12 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 public class PublishTagRequirementEventHelper : IPublishEntityEventHelper<TagRequirement>
 {
     private readonly IProjectRepository _projectRepository;
-    private readonly ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> _createEventHelper;
+    private readonly ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent> _createEventHelper;
     private readonly IIntegrationEventPublisher _integrationEventPublisher;
 
     public PublishTagRequirementEventHelper(
         IProjectRepository projectRepository,
-        ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> createEventHelper,
+        ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent> createEventHelper,
         IIntegrationEventPublisher integrationEventPublisher)
     {
         _projectRepository = projectRepository;
@@ -30,7 +30,7 @@ public class PublishTagRequirementEventHelper : IPublishEntityEventHelper<TagReq
         var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(entity.Guid);
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
         
-         var integrationEvent = await _createEventHelper.CreateEvent(entity, project.Name);
+         var integrationEvent = await _createEventHelper.CreateEvent(project, entity);
          await _integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);
     }
 }

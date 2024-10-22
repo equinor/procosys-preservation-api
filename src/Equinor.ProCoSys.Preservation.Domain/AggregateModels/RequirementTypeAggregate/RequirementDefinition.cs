@@ -99,8 +99,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
-
-            AddDomainEvent(new PlantEntityCreatedEvent<RequirementDefinition>(this));
         }
 
         public void SetModified(Person modifiedBy)

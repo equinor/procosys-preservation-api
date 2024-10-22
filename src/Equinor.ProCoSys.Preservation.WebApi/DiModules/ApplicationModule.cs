@@ -121,9 +121,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             // Transient - Created each time it is requested from the service container
             services.AddTransient<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>, ProjectTagAddedEventConverter>();
+            services.AddTransient<IDomainToIntegrationEventConverter<RequirementTypeRequirementDefinitionAddedEvent>, RequirementTypeRequirementDefinitionAddedEventConverter>();
             
-            services.AddTransient<ICreateProjectEventHelper<Tag, TagEvent>, CreateTagEventHelper>();
-            services.AddTransient<ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
+            services.AddTransient<ICreateChildEventHelper<Project, Tag, TagEvent>, CreateTagEventHelper>();
+            services.AddTransient<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
             services.AddTransient<INotificationHandler<TagDeletedEvent>, IntegrationDeleteEventHandler<TagDeletedEvent, Tag>>();
             
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Tag>>, IntegrationEventHandler<PlantEntityModifiedEvent<Tag>, Tag>>();
@@ -136,9 +137,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<TagRequirementDeletedEvent>, DeleteTagRequirementEventHandler>();
             
             services.AddTransient<INotificationHandler<RequirementDefinitionPostSaveEvent>, IntegrationEventHandler<RequirementDefinitionPostSaveEvent, RequirementDefinition>>();
-            services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<RequirementDefinition>>, IntegrationEventHandler<PlantEntityCreatedEvent<RequirementDefinition>, RequirementDefinition>>();
             services.AddTransient<INotificationHandler<RequirementDefinitionDeletedEvent>, IntegrationDeleteEventHandler<RequirementDefinitionDeletedEvent, RequirementDefinition>>();
-            services.AddTransient<ICreateEventHelper<RequirementDefinition, RequirementDefinitionEvent>, CreateRequirementDefinitionEventHelper>();
+            services.AddTransient<ICreateChildEventHelper<RequirementType, RequirementDefinition, RequirementDefinitionEvent>, CreateRequirementDefinitionEventHelper>();
             services.AddTransient<ICreateEventHelper<RequirementDefinition, RequirementDefinitionDeleteEvent>, CreateRequirementDefinitionDeletedEventHelper>();
             services.AddTransient<IPublishEntityEventHelper<RequirementDefinition>, PublishEntityEventHelper<RequirementDefinition, RequirementDefinitionEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<RequirementDefinition>, PublishDeleteEntityEventHelper<RequirementDefinition, RequirementDefinitionDeleteEvent>>();

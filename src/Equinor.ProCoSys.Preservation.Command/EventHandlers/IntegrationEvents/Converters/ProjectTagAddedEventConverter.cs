@@ -11,12 +11,12 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 
 public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<ProjectTagAddedEvent>
 {
-    private readonly ICreateProjectEventHelper<Tag, TagEvent> _createTagEventHelper;
-    private readonly ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> _createTagRequirementEventHelper;
+    private readonly ICreateChildEventHelper<Project, Tag, TagEvent> _createTagEventHelper;
+    private readonly ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent> _createTagRequirementEventHelper;
 
     public ProjectTagAddedEventConverter(
-        ICreateProjectEventHelper<Tag, TagEvent> createTagEventHelper,
-        ICreateProjectEventHelper<TagRequirement, TagRequirementEvent> createTagRequirementEventHelper)
+        ICreateChildEventHelper<Project, Tag, TagEvent> createTagEventHelper,
+        ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent> createTagRequirementEventHelper)
     {
         _createTagEventHelper = createTagEventHelper;
         _createTagRequirementEventHelper = createTagRequirementEventHelper;
@@ -34,11 +34,10 @@ public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<
     private async Task<IEnumerable<IIntegrationEvent>> CreateTagRequirementEvents(ProjectTagAddedEvent domainAddedEvent)
     {
         var events = new List<IIntegrationEvent>();
-        
-        var projectName = domainAddedEvent.Entity.Name;
+
         foreach (var tagRequirement in domainAddedEvent.Tag.Requirements)
         {
-            var tagRequirementEvent = await _createTagRequirementEventHelper.CreateEvent(tagRequirement, projectName);
+            var tagRequirementEvent = await _createTagRequirementEventHelper.CreateEvent(domainAddedEvent.Entity, tagRequirement);
 
             events.Add(tagRequirementEvent);
         }
@@ -46,9 +45,5 @@ public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<
         return events;
     }
     
-    private async Task<TagEvent> CreateTagEvent(ProjectTagAddedEvent domainAddedEvent)
-    {
-        var projectName = domainAddedEvent.Entity.Name;
-        return await _createTagEventHelper.CreateEvent(domainAddedEvent.Tag, projectName);
-    }
+    private async Task<TagEvent> CreateTagEvent(ProjectTagAddedEvent domainAddedEvent) => await _createTagEventHelper.CreateEvent(domainAddedEvent.Entity, domainAddedEvent.Tag);
 }
