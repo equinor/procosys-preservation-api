@@ -19,6 +19,8 @@ public class CreateTagRequirementEventHelperTests
     private const string TestPlant = "PCS$PlantA";
     private const string TestProjectName = "Test Project";
     private static DateTime TestTime => DateTime.Parse("2012-12-12T11:22:33Z").ToUniversalTime();
+    private static Guid TestGuid => new("11111111-1111-1111-1111-111111111111");
+    private RequirementDefinition _requirementDefinition;
     private TagRequirement _tagRequirement;
     private Person _person;
     private CreateTagRequirementEventHelper _dut;
@@ -30,13 +32,13 @@ public class CreateTagRequirementEventHelperTests
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
 
-        var requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
-        _tagRequirement = new TagRequirement(TestPlant, 2, requirementDefinition);
+        _requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
+        _tagRequirement = new TagRequirement(TestPlant, 2, _requirementDefinition);
 
         var mockRequirementTypeRepository = new Mock<IRequirementTypeRepository>();
-        mockRequirementTypeRepository.Setup(r => r.GetRequirementDefinitionByIdAsync(It.IsAny<int>())).ReturnsAsync(requirementDefinition);
+        mockRequirementTypeRepository.Setup(r => r.GetRequirementDefinitionByIdAsync(It.IsAny<int>())).ReturnsAsync(_requirementDefinition);
 
-        _person = new Person(Guid.NewGuid(), "Test", "Person");
+        _person = new Person(TestGuid, "Test", "Person");
 
         var mockPersonRepository = new Mock<IPersonRepository>();
         mockPersonRepository.Setup(r => r.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
@@ -67,8 +69,6 @@ public class CreateTagRequirementEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow(nameof(TagRequirementEvent.ProCoSysGuid))]
-    [DataRow(nameof(TagRequirementEvent.RequirementDefinitionGuid))]
     [DataRow(nameof(TagRequirementEvent.CreatedByGuid))]
     [DataRow(nameof(TagRequirementEvent.ModifiedByGuid))]
     public async Task CreateEvent_ShouldCreateTagRequirementEventWithGuids(string property)
@@ -85,9 +85,35 @@ public class CreateTagRequirementEventHelperTests
             .GetValue(tagRequirementEvent);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(result.GetType(), typeof(Guid));
-        Assert.AreNotEqual(result, Guid.Empty);
+        Assert.AreEqual(result, TestGuid);
+    }
+    
+    [TestMethod]
+    public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedProCoSysGuid()
+    {
+        // Arrange
+        var expected = _tagRequirement.Guid;
+        
+        // Act
+        var integrationEvent = await _dut.CreateEvent(_tagRequirement, TestProjectName);
+        var result = integrationEvent.ProCoSysGuid;
+
+        // Assert
+        Assert.AreEqual(result, expected);
+    }
+    
+    [TestMethod]
+    public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedRequirementDefinitionGuid()
+    {
+        // Arrange
+        var expected = _requirementDefinition.Guid;
+        
+        // Act
+        var integrationEvent = await _dut.CreateEvent(_tagRequirement, TestProjectName);
+        var result = integrationEvent.RequirementDefinitionGuid;
+
+        // Assert
+        Assert.AreEqual(result, expected);
     }
 
     [TestMethod]

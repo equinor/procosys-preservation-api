@@ -25,7 +25,10 @@ public class CreateTagEventHelperTests
     private const string TestPlant = "PCS$PlantA";
     private const string TestProjectName = "Test Project";
     private static DateTime TestTime => DateTime.Parse("2012-12-12T11:22:33Z").ToUniversalTime();
+    private static Guid TestGuid => new("11111111-1111-1111-1111-111111111111");
+
     private const int Interval = 2;
+    private Step _step;
     private Tag _tag;
     private Person _person;
     private CreateTagEventHelper _dut;
@@ -41,17 +44,17 @@ public class CreateTagEventHelperTests
         supplierMode.SetProtectedIdForTesting(1);
         
         var responsible = new Responsible(TestPlant, "C", "D");
-        var step = new Step(TestPlant, "SUP", supplierMode, responsible);
-        step.SetProtectedIdForTesting(17);
+        _step = new Step(TestPlant, "SUP", supplierMode, responsible);
+        _step.SetProtectedIdForTesting(17);
         
         var requirementDefinition = new RequirementDefinition(TestPlant, "D2", Interval, RequirementUsage.ForSuppliersOnly, 1);
         var tagRequirement = new TagRequirement(TestPlant, Interval, requirementDefinition);
         
-        _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "Test Description", step,
+        _tag = new Tag(TestPlant, TagType.Standard, TestGuid, "", "Test Description", _step,
             new List<TagRequirement> {tagRequirement})
         {
-            CommPkgProCoSysGuid = Guid.NewGuid(),
-            McPkgProCoSysGuid = Guid.NewGuid(),
+            CommPkgProCoSysGuid = TestGuid,
+            McPkgProCoSysGuid = TestGuid,
             PurchaseOrderNo = "Test Purchase Order",
             Remark = "Test Remark",
             StorageArea = "Test Storage Area",
@@ -61,10 +64,10 @@ public class CreateTagEventHelperTests
         _tag.SetArea("A", "A desc");
         _tag.SetDiscipline("D", "D desc");
         
-        _person = new Person(Guid.NewGuid(), "Test", "Person");
+        _person = new Person(TestGuid, "Test", "Person");
 
         var journeyRepositoryMock = new Mock<IJourneyRepository>();
-        journeyRepositoryMock.Setup(x => x.GetStepByStepIdAsync(It.IsAny<int>())).ReturnsAsync(step);
+        journeyRepositoryMock.Setup(x => x.GetStepByStepIdAsync(It.IsAny<int>())).ReturnsAsync(_step);
 
         var personRepositoryMock = new Mock<IPersonRepository>();
         personRepositoryMock.Setup(x => x.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
@@ -106,7 +109,6 @@ public class CreateTagEventHelperTests
     [DataRow(nameof(TagEvent.CreatedByGuid))]
     [DataRow(nameof(TagEvent.McPkgGuid))]
     [DataRow(nameof(TagEvent.ProCoSysGuid))]
-    [DataRow(nameof(TagEvent.StepGuid))]
     public async Task CreateEvent_ShouldCreateTagEventWithGuids(string property)
     {
         // Act
@@ -117,9 +119,21 @@ public class CreateTagEventHelperTests
             .GetValue(integrationEvent);
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(result.GetType(), typeof(Guid));
-        Assert.AreNotEqual(result, Guid.Empty);
+        Assert.AreEqual(result, TestGuid);
+    }
+    
+    [TestMethod]
+    public async Task CreateEvent_ShouldCreateTagEventWithExpectedStepGuid()
+    {
+        // Arrange
+        var expected = _step.Guid;
+        
+        // Act
+        var integrationEvent = await _dut.CreateEvent(_tag, TestProjectName);
+        var result = integrationEvent.StepGuid;
+
+        // Assert
+        Assert.AreEqual(result, expected);
     }
 
     [TestMethod]
@@ -146,9 +160,7 @@ public class CreateTagEventHelperTests
         var result = integrationEvent.ModifiedByGuid;
 
         // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(result.GetType(), typeof(Guid));
-        Assert.AreNotEqual(result, Guid.Empty);
+        Assert.AreEqual(result, TestGuid);
     }
 
     [TestMethod]
