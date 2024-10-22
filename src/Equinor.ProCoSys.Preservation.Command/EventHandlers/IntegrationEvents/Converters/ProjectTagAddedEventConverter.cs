@@ -22,21 +22,21 @@ public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<
         _createTagRequirementEventHelper = createTagRequirementEventHelper;
     }
 
-    public async Task<IEnumerable<IIntegrationEvent>> Convert(ProjectTagAddedEvent domainEvent)
+    public async Task<IEnumerable<IIntegrationEvent>> Convert(ProjectTagAddedEvent domainAddedEvent)
     {
-        var tagRequirementsEvents = await CreateTagRequirementEvents(domainEvent);
+        var tagRequirementsEvents = await CreateTagRequirementEvents(domainAddedEvent);
         
-        var tagEvent = await CreateTagEvent(domainEvent);
+        var tagEvent = await CreateTagEvent(domainAddedEvent);
 
         return tagRequirementsEvents.Append(tagEvent);
     }
 
-    private async Task<IEnumerable<IIntegrationEvent>> CreateTagRequirementEvents(ProjectTagAddedEvent domainEvent)
+    private async Task<IEnumerable<IIntegrationEvent>> CreateTagRequirementEvents(ProjectTagAddedEvent domainAddedEvent)
     {
         var events = new List<IIntegrationEvent>();
         
-        var projectName = domainEvent.Entity.Name;
-        foreach (var tagRequirement in domainEvent.Tag.Requirements)
+        var projectName = domainAddedEvent.Entity.Name;
+        foreach (var tagRequirement in domainAddedEvent.Tag.Requirements)
         {
             var tagRequirementEvent = await _createTagRequirementEventHelper.CreateEvent(tagRequirement, projectName);
 
@@ -46,9 +46,9 @@ public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<
         return events;
     }
     
-    private async Task<TagEvent> CreateTagEvent(ProjectTagAddedEvent domainEvent)
+    private async Task<TagEvent> CreateTagEvent(ProjectTagAddedEvent domainAddedEvent)
     {
-        var projectName = domainEvent.Entity.Name;
-        return await _createTagEventHelper.CreateEvent(domainEvent.Tag, projectName);
+        var projectName = domainAddedEvent.Entity.Name;
+        return await _createTagEventHelper.CreateEvent(domainAddedEvent.Tag, projectName);
     }
 }
