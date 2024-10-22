@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
+using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -72,21 +73,21 @@ public class CreateTagEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow("Plant", TestPlant)]
-    [DataRow("ProjectName", TestProjectName)]
-    [DataRow("Description", "Test Description")]
-    [DataRow("Remark", "Test Remark")]
-    [DataRow("DisciplineCode", "D")]
-    [DataRow("AreaCode", "A")]
-    [DataRow("TagFunctionCode", "Test Function Code")]
-    [DataRow("PurchaseOrderNo", "Test Purchase Order")]
-    [DataRow("TagType", "Standard")]
-    [DataRow("StorageArea", "Test Storage Area")]
-    [DataRow("AreaDescription", "A desc")]
-    [DataRow("DisciplineDescription", "D desc")]
-    [DataRow("Status", "NotStarted")]
-    [DataRow("IsVoided", false)]
-    [DataRow("IsVoidedInSource", false)]
+    [DataRow(nameof(TagEvent.Plant), TestPlant)]
+    [DataRow(nameof(TagEvent.ProjectName), TestProjectName)]
+    [DataRow(nameof(TagEvent.Description), "Test Description")]
+    [DataRow(nameof(TagEvent.Remark), "Test Remark")]
+    [DataRow(nameof(TagEvent.DisciplineCode), "D")]
+    [DataRow(nameof(TagEvent.AreaCode), "A")]
+    [DataRow(nameof(TagEvent.TagFunctionCode), "Test Function Code")]
+    [DataRow(nameof(TagEvent.PurchaseOrderNo), "Test Purchase Order")]
+    [DataRow(nameof(TagEvent.TagType), "Standard")]
+    [DataRow(nameof(TagEvent.StorageArea), "Test Storage Area")]
+    [DataRow(nameof(TagEvent.AreaDescription), "A desc")]
+    [DataRow(nameof(TagEvent.DisciplineDescription), "D desc")]
+    [DataRow(nameof(TagEvent.Status), "NotStarted")]
+    [DataRow(nameof(TagEvent.IsVoided), false)]
+    [DataRow(nameof(TagEvent.IsVoidedInSource), false)]
     public async Task CreateEvent_ShouldCreateTagEventExpectedValues(string property, object expected)
     {
         // Act
@@ -101,11 +102,11 @@ public class CreateTagEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow("CommPkgGuid")]
-    [DataRow("CreatedByGuid")]
-    [DataRow("McPkgGuid")]
-    [DataRow("ProCoSysGuid")]
-    [DataRow("StepGuid")]
+    [DataRow(nameof(TagEvent.CommPkgGuid))]
+    [DataRow(nameof(TagEvent.CreatedByGuid))]
+    [DataRow(nameof(TagEvent.McPkgGuid))]
+    [DataRow(nameof(TagEvent.ProCoSysGuid))]
+    [DataRow(nameof(TagEvent.StepGuid))]
     public async Task CreateEvent_ShouldCreateTagEventWithGuids(string property)
     {
         // Act

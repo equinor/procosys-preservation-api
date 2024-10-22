@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
+using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -44,14 +45,14 @@ public class CreateTagRequirementEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow("Plant", TestPlant)]
-    [DataRow("ProjectName", TestProjectName)]
-    [DataRow("IntervalWeeks", 2)]
-    [DataRow("Usage", nameof(RequirementUsage.ForSuppliersOnly))]
-    [DataRow("NextDueTimeUtc", null)]
-    [DataRow("IsVoided", false)]
-    [DataRow("IsInUse", false)]
-    [DataRow("ReadyToBePreserved", false)]
+    [DataRow(nameof(TagRequirementEvent.Plant), TestPlant)]
+    [DataRow(nameof(TagRequirementEvent.ProjectName), TestProjectName)]
+    [DataRow(nameof(TagRequirementEvent.IntervalWeeks), 2)]
+    [DataRow(nameof(TagRequirementEvent.Usage), nameof(RequirementUsage.ForSuppliersOnly))]
+    [DataRow(nameof(TagRequirementEvent.NextDueTimeUtc), null)]
+    [DataRow(nameof(TagRequirementEvent.IsVoided), false)]
+    [DataRow(nameof(TagRequirementEvent.IsInUse), false)]
+    [DataRow(nameof(TagRequirementEvent.ReadyToBePreserved), false)]
     public async Task CreateEvent_ShouldCreateTagRequirementEventExpectedValues(string property, object expected)
     {
         // Act
@@ -66,10 +67,10 @@ public class CreateTagRequirementEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow("ProCoSysGuid")]
-    [DataRow("RequirementDefinitionGuid")]
-    [DataRow("CreatedByGuid")]
-    [DataRow("ModifiedByGuid")]
+    [DataRow(nameof(TagRequirementEvent.ProCoSysGuid))]
+    [DataRow(nameof(TagRequirementEvent.RequirementDefinitionGuid))]
+    [DataRow(nameof(TagRequirementEvent.CreatedByGuid))]
+    [DataRow(nameof(TagRequirementEvent.ModifiedByGuid))]
     public async Task CreateEvent_ShouldCreateTagRequirementEventWithGuids(string property)
     {
         // Arrange
