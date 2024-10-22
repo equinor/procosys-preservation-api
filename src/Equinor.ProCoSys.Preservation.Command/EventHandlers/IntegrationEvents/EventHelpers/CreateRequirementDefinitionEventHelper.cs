@@ -16,7 +16,6 @@ public class CreateRequirementDefinitionEventHelper : ICreateChildEventHelper<Re
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
 
-        // TODO test this
         return new RequirementDefinitionEvent
         {
             ProCoSysGuid = entity.Guid,
@@ -24,7 +23,7 @@ public class CreateRequirementDefinitionEventHelper : ICreateChildEventHelper<Re
             Title = entity.Title,
             IsVoided = entity.IsVoided,
             DefaultIntervalWeeks = entity.DefaultIntervalWeeks,
-            Usage = nameof(entity.Usage),
+            Usage = entity.Usage.ToString(),
             SortKey = entity.SortKey,
             NeedsUserInput = entity.NeedsUserInput,
             CreatedAtUtc = entity.CreatedAtUtc,
