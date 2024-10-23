@@ -6,59 +6,21 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagEventHelper  : ICreateChildEventHelper<Project, Tag, TagEvent>
+public class CreateTagEventHelper  : ICreateEventHelper<Tag, TagEvent>
 {
-    private readonly IJourneyRepository _journeyRepository;
-    private readonly IPersonRepository _personRepository;
+    private readonly IProjectRepository _projectRepository;
+    private readonly ICreateChildEventHelper<Project, Tag, TagEvent> _createEventHelper;
 
-    public CreateTagEventHelper(IJourneyRepository journeyRepository, IPersonRepository personRepository)
+    public CreateTagEventHelper(IProjectRepository projectRepository, ICreateChildEventHelper<Project, Tag, TagEvent> createEventHelper)
     {
-        _journeyRepository = journeyRepository;
-        _personRepository = personRepository;
+        _projectRepository = projectRepository;
+        _createEventHelper = createEventHelper;
     }
 
-    public async Task<TagEvent> CreateEvent(Project parentEntity, Tag entity)
+    public async Task<TagEvent> CreateEvent(Tag entity)
     {
-        var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
-        var modifiedBy = await GetModifiedBy(entity);
-        var step = await _journeyRepository.GetStepByStepIdAsync(entity.StepId);
-
-        return new TagEvent
-        {
-            ProCoSysGuid = entity.Guid,
-            Plant = entity.Plant,
-            ProjectName = parentEntity.Name,
-            Description = entity.Description,
-            Remark = entity.Remark,
-            NextDueTimeUtc = entity.NextDueTimeUtc,
-            StepGuid = step.Guid,
-            DisciplineCode = entity.DisciplineCode,
-            AreaCode = entity.AreaCode,
-            TagFunctionCode = entity.TagFunctionCode,
-            PurchaseOrderNo = entity.PurchaseOrderNo,
-            TagType = entity.TagType.ToString(),
-            StorageArea = entity.StorageArea,
-            AreaDescription = entity.AreaDescription,
-            DisciplineDescription = entity.DisciplineDescription,
-            CreatedAtUtc = entity.CreatedAtUtc,
-            CreatedByGuid = createdBy.Guid,
-            ModifiedAtUtc = entity.ModifiedAtUtc,
-            ModifiedByGuid = modifiedBy?.Guid,
-            Status = entity.Status.ToString(),
-            CommPkgGuid = entity.CommPkgProCoSysGuid,
-            McPkgGuid = entity.McPkgProCoSysGuid,
-            IsVoided = entity.IsVoided,
-            IsVoidedInSource = entity.IsVoidedInSource
-        };
-    }
-
-    private async Task<Person> GetModifiedBy(Tag entity)
-    {
-        if (!entity.ModifiedById.HasValue)
-        {
-            return null;
-        }
-
-        return await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value);
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(entity.Guid);
+        
+        return await _createEventHelper.CreateEvent(project, entity);
     }
 }

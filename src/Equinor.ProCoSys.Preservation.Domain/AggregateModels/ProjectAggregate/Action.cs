@@ -110,7 +110,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             ClosedAtUtc = closedAtUtc;
             ClosedById = closedBy.Id;
 
-            AddPostSaveDomainEvent(new ActionPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<Action>(this));
         }
 
         public void SetCreated(Person createdBy)
@@ -121,8 +121,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
-
-            AddPostSaveDomainEvent(new ActionPostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -134,7 +132,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new ActionPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<Action>(this));
         }
     }
 }
