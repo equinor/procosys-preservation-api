@@ -58,6 +58,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.AreEqual(1, _dut.Fields.Count);
             Assert.IsTrue(_dut.Fields.Contains(f));
         }
+        
+        [TestMethod]
+        public void AddField_ShouldAddEntityAddedChildEntityEvent()
+        {
+            var f = new Field(TestPlant, "", FieldType.Info, 1);
+            
+            _dut.AddField(f);
+
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(EntityAddedChildEntityEvent<RequirementDefinition, Field>));
+        }
 
         [TestMethod]
         public void RemoveField_ShouldRemoveFieldFromFieldsList()

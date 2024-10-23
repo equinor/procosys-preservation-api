@@ -60,6 +60,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
 
             _fields.Add(field);
+            
+            AddDomainEvent(new EntityAddedChildEntityEvent<RequirementDefinition, Field>(this, field));
         }
 
         public void RemoveField(Field field)

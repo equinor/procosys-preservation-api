@@ -1,40 +1,26 @@
 ﻿using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Events;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
 public class CreateFieldEventHelper : ICreateEventHelper<Field, FieldEvent>
 {
-    private readonly IPersonRepository _personRepository;
     private readonly IRequirementTypeRepository _requirementTypeRepository;
+    private readonly ICreateChildEventHelper<RequirementDefinition, Field, FieldEvent> _createEventHelper;
 
-    public CreateFieldEventHelper(IPersonRepository personRepository, IRequirementTypeRepository requirementTypeRepository)
+    public CreateFieldEventHelper(
+        IRequirementTypeRepository requirementTypeRepository,
+        ICreateChildEventHelper<RequirementDefinition, Field, FieldEvent> createEventHelper)
     {
-        _personRepository = personRepository;
         _requirementTypeRepository = requirementTypeRepository;
+        _createEventHelper = createEventHelper;
     }
 
     public async Task<FieldEvent> CreateEvent(Field entity)
     {
         var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByFieldGuidAsync(entity.Guid);
-        var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
-        var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
 
-        return new FieldEvent
-        {
-            RequirementDefinitionGuid = requirementDefinition.Guid,
-            Label = entity.Label,
-            Unit = entity.Unit,
-            SortKey = entity.SortKey,
-            FieldType = nameof(entity.FieldType),
-            CreatedAtUtc = entity.CreatedAtUtc,
-            CreatedByGuid = createdBy.Guid,
-            ModifiedAtUtc = entity.ModifiedAtUtc,
-            ModifiedByGuid = modifiedBy?.Guid,
-            ProCoSysGuid = entity.Guid,
-            Plant = entity.Plant
-        };
+        return await _createEventHelper.CreateEvent(requirementDefinition, entity);
     }
 }
