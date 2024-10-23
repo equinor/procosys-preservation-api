@@ -25,7 +25,6 @@ public class CreateTagActionEventHelper : ICreateChildEventHelper<Tag, Action, A
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
 
-        // TODO test this
         return new ActionEvent
         {
             ProCoSysGuid = entity.Guid,

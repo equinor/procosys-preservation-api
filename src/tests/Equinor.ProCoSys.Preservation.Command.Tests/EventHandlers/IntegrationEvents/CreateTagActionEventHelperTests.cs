@@ -83,7 +83,7 @@ public class CreateTagActionEventHelperTests
     [DataRow(nameof(ActionEvent.Title), "Test Action")]
     [DataRow(nameof(ActionEvent.Description), "Test Action Description")]
     [DataRow(nameof(ActionEvent.Overdue), false)]
-    public async Task CreateEvent_ShouldCreateTagEventExpectedValues(string property, object expected)
+    public async Task CreateEvent_ShouldCreateActionEventExpectedValues(string property, object expected)
     {
         // Act
         var integrationEvent = await _dut.CreateEvent(_tag, _action);
@@ -99,7 +99,7 @@ public class CreateTagActionEventHelperTests
     [DataTestMethod]
     [DataRow(nameof(ActionEvent.CreatedByGuid))]
     [DataRow(nameof(ActionEvent.TagGuid))]
-    public async Task CreateEvent_ShouldCreateTagEventWithGuids(string property)
+    public async Task CreateEvent_ShouldCreateActionEventWithGuids(string property)
     {
         // Act
         var integrationEvent = await _dut.CreateEvent(_tag, _action);
@@ -113,7 +113,7 @@ public class CreateTagActionEventHelperTests
     }
     
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagEventExpectedProCoSysGuidValue()
+    public async Task CreateEvent_ShouldCreateActionEventExpectedProCoSysGuidValue()
     {
         // Arrange
         var expected = _action.Guid;
@@ -127,7 +127,7 @@ public class CreateTagActionEventHelperTests
     }
     
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagEventExpectedDueDateValue()
+    public async Task CreateEvent_ShouldCreateActionEventExpectedDueDateValue()
     {
         // Arrange
         var expected = DateOnly.FromDateTime(TestTime);  
@@ -141,7 +141,7 @@ public class CreateTagActionEventHelperTests
     }
     
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagEventExpectedClosedValue()
+    public async Task CreateEvent_ShouldCreateActionEventExpectedClosedValue()
     {
         // Arrange
         var expected = DateOnly.FromDateTime(TestTime);
@@ -156,7 +156,7 @@ public class CreateTagActionEventHelperTests
     }
 
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagEventWithExpectedCreatedAtUtcValue()
+    public async Task CreateEvent_ShouldCreateActionEventWithExpectedCreatedAtUtcValue()
     {
         // Arrange
         _action.SetCreated(_person);
@@ -169,7 +169,7 @@ public class CreateTagActionEventHelperTests
     }
     
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagEventWithModifiedByGuid()
+    public async Task CreateEvent_ShouldCreateActionEventWithModifiedByGuid()
     {
         // Arrange
         _action.SetModified(_person);
@@ -183,7 +183,7 @@ public class CreateTagActionEventHelperTests
     }
 
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagEventWithExpectedModifiedAtUtcValue()
+    public async Task CreateEvent_ShouldCreateActionEventWithExpectedModifiedAtUtcValue()
     {
         // Arrange
         _action.SetModified(_person);
