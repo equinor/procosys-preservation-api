@@ -9,45 +9,46 @@ using Equinor.ProCoSys.Preservation.Command.Events;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class PublishTagEventHelperTests
+public class PublishRequirementDefinitionEventHelperTests
 {
-    private PublishTagEventHelper _dut;
+    private PublishRequirementDefinitionEventHelper _dut;
     private IList<IIntegrationEvent> _publishedEvents;
 
     [TestInitialize]
     public void Setup()
     {
         // Arrange
-        var mockProjectRepository = new Mock<IProjectRepository>();
-        mockProjectRepository.Setup(x => x.GetProjectOnlyByTagGuidAsync(It.IsAny<Guid>())).ReturnsAsync(new Mock<Project>().Object);
+        var mockRequirementTypeRepository = new Mock<IRequirementTypeRepository>();
+        mockRequirementTypeRepository.Setup(x => x.GetRequirementTypeByRequirementDefinitionGuidAsync(It.IsAny<Guid>())).ReturnsAsync(new Mock<RequirementType>().Object);
         
-        var createEventHelper = new Mock<ICreateChildEventHelper<Project, Tag, TagEvent>>();
-        createEventHelper.Setup(c => c.CreateEvent(It.IsAny<Project>(), It.IsAny<Tag>())).Returns(Task.FromResult(new TagEvent()));
+        var createEventHelper = new Mock<ICreateChildEventHelper<RequirementType, RequirementDefinition, RequirementDefinitionEvent>>();
+        createEventHelper.Setup(c => c.CreateEvent(It.IsAny<RequirementType>(), It.IsAny<RequirementDefinition>())).ReturnsAsync(new RequirementDefinitionEvent());
         
         _publishedEvents = new List<IIntegrationEvent>();
         
         var eventPublisher = new Mock<IIntegrationEventPublisher>();
         eventPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default)).Callback<IIntegrationEvent, CancellationToken>((e, _) => _publishedEvents.Add(e));
         
-        _dut = new PublishTagEventHelper(mockProjectRepository.Object, createEventHelper.Object, eventPublisher.Object);
+        _dut = new PublishRequirementDefinitionEventHelper(mockRequirementTypeRepository.Object, createEventHelper.Object, eventPublisher.Object);
     }
 
     [TestMethod]
     public async Task PublishEvent_ShouldPublishTagEvent()
     {
         // Arrange
-        var tagMock = new Mock<Tag>();
+        var requirementDefinitionMock = new Mock<RequirementDefinition>();
 
         // Act
-        await _dut.PublishEvent(tagMock.Object, default);
+        await _dut.PublishEvent(requirementDefinitionMock.Object, default);
         var eventTypes = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        CollectionAssert.Contains(eventTypes, typeof(TagEvent));
+        CollectionAssert.Contains(eventTypes, typeof(RequirementDefinitionEvent));
     }
 }
