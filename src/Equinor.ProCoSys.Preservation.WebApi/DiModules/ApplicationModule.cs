@@ -121,7 +121,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             // Transient - Created each time it is requested from the service container
             services.AddTransient<IDomainToIntegrationEventConverter<EntityAddedChildEntityEvent<Project, Tag>>, ProjectTagAddedEventConverter>();
-            services.AddTransient<IDomainToIntegrationEventConverter<RequirementTypeRequirementDefinitionAddedEvent>, RequirementTypeRequirementDefinitionAddedEventConverter>();
             
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Tag>>, IntegrationEventHandler<PlantEntityModifiedEvent<Tag>, Tag>>();
             services.AddTransient<INotificationHandler<TagDeletedEvent>, IntegrationDeleteEventHandler<TagDeletedEvent, Tag>>();
@@ -137,6 +136,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
             services.AddTransient<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>, CreateProjectTagRequirementEventHelper>();
             
+            services.AddTransient<INotificationHandler<EntityAddedChildEntityEvent<RequirementType, RequirementDefinition>>, EntityAddedChildEntityEventHandler<RequirementType, RequirementDefinition, RequirementDefinitionEvent>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<RequirementDefinition>>, IntegrationEventHandler<PlantEntityModifiedEvent<RequirementDefinition>, RequirementDefinition>>();
             services.AddTransient<INotificationHandler<RequirementDefinitionDeletedEvent>, IntegrationDeleteEventHandler<RequirementDefinitionDeletedEvent, RequirementDefinition>>();
             services.AddTransient<IPublishEntityEventHelper<RequirementDefinition>, PublishEntityEventHelper<RequirementDefinition, RequirementDefinitionEvent>>();
