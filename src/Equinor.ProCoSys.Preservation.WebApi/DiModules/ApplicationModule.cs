@@ -123,19 +123,19 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>, ProjectTagAddedEventConverter>();
             services.AddTransient<IDomainToIntegrationEventConverter<RequirementTypeRequirementDefinitionAddedEvent>, RequirementTypeRequirementDefinitionAddedEventConverter>();
             
-            services.AddTransient<ICreateChildEventHelper<Project, Tag, TagEvent>, CreateProjectTagEventHelper>();
-            services.AddTransient<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>, CreateProjectTagRequirementEventHelper>();
-            services.AddTransient<INotificationHandler<TagDeletedEvent>, IntegrationDeleteEventHandler<TagDeletedEvent, Tag>>();
-            
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Tag>>, IntegrationEventHandler<PlantEntityModifiedEvent<Tag>, Tag>>();
-            services.AddTransient<IPublishEntityEventHelper<Tag>, PublishTagEventHelper>();
-            services.AddTransient<ICreateEventHelper<Tag, TagDeleteEvent>, CreateTagDeleteEventHelper>();
+            services.AddTransient<INotificationHandler<TagDeletedEvent>, IntegrationDeleteEventHandler<TagDeletedEvent, Tag>>();
+            services.AddTransient<IPublishEntityEventHelper<Tag>, PublishEntityEventHelper<Tag, TagEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Tag>, PublishDeleteEntityEventHelper<Tag, TagDeleteEvent>>();
+            services.AddTransient<ICreateEventHelper<Tag, TagEvent>, CreateTagEventHelper>();
+            services.AddTransient<ICreateEventHelper<Tag, TagDeleteEvent>, CreateTagDeleteEventHelper>();
+            services.AddTransient<ICreateChildEventHelper<Project, Tag, TagEvent>, CreateProjectTagEventHelper>();
             
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<TagRequirement>>, IntegrationEventHandler<PlantEntityModifiedEvent<TagRequirement>, TagRequirement>>();
             services.AddTransient<INotificationHandler<TagRequirementDeletedEvent>, DeleteTagRequirementEventHandler>();
             services.AddTransient<IPublishEntityEventHelper<TagRequirement>, PublishEntityEventHelper<TagRequirement, TagRequirementEvent>>();
             services.AddTransient<ICreateEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
+            services.AddTransient<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>, CreateProjectTagRequirementEventHelper>();
             
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<RequirementDefinition>>, IntegrationEventHandler<PlantEntityModifiedEvent<RequirementDefinition>, RequirementDefinition>>();
             services.AddTransient<INotificationHandler<RequirementDefinitionDeletedEvent>, IntegrationDeleteEventHandler<RequirementDefinitionDeletedEvent, RequirementDefinition>>();
