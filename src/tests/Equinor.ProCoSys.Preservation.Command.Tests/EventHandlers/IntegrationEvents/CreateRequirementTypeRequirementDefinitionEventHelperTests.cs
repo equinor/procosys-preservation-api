@@ -49,7 +49,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
     [DataRow(nameof(RequirementDefinitionEvent.Usage), "ForSuppliersOnly")]
     [DataRow(nameof(RequirementDefinitionEvent.SortKey), 1)]
     [DataRow(nameof(RequirementDefinitionEvent.NeedsUserInput), false)]
-    public async Task CreateEvent_ShouldCreateTagRequirementEventExpectedValues(string property, object expected)
+    public async Task CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
     {
         // Act
         var integrationEvent = await _dut.CreateEvent(_requirementType, _requirementDefinition);
@@ -65,7 +65,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
     [DataTestMethod]
     [DataRow(nameof(RequirementDefinitionEvent.CreatedByGuid))]
     [DataRow(nameof(RequirementDefinitionEvent.ModifiedByGuid))]
-    public async Task CreateEvent_ShouldCreateTagRequirementEventWithGuids(string property)
+    public async Task CreateEvent_ShouldCreateRequirementDefinitionEventWithGuids(string property)
     {
         // Arrange
         _requirementDefinition.SetCreated(_person);
@@ -83,7 +83,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
     }
     
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedProCoSysGuid()
+    public async Task CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _requirementDefinition.Guid;
@@ -97,7 +97,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
     }
     
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedRequirementTypeGuid()
+    public async Task CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedRequirementTypeGuid()
     {
         // Arrange
         var expected = _requirementType.Guid;
@@ -111,7 +111,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
     }
 
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedCreatedAtUtcValue()
+    public async Task CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedCreatedAtUtcValue()
     {
         // Arrange
         _requirementDefinition.SetCreated(_person);
@@ -124,7 +124,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
     }
 
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedModifiedAtUtcValue()
+    public async Task CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedModifiedAtUtcValue()
     {
         // Arrange
         _requirementDefinition.SetModified(_person);
