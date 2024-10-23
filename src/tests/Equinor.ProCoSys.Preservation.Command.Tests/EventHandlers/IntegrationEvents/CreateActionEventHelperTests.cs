@@ -28,7 +28,7 @@ public class CreateActionEventHelperTests
     }
 
     [TestMethod]
-    public async Task PublishEvent_ShouldPublishTagEvent()
+    public async Task CreateEvent_ShouldCreateEvent()
     {
         // Arrange
         var action = new Action("PCS$PlantA", "Test Action", "Test Action Description", null);

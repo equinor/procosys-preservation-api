@@ -29,7 +29,7 @@ public class CreateTagRequirementEventHelperTests
     }
 
     [TestMethod]
-    public async Task PublishEvent_ShouldPublishTagEvent()
+    public async Task CreateEvent_ShouldCreateEvent()
     {
         // Arrange
         var requirementDefinition = new RequirementDefinition("PCS$PlantA", "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
