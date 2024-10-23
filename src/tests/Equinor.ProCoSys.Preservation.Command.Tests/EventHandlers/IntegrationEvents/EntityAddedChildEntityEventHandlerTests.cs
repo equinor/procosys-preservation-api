@@ -12,10 +12,10 @@ using Moq;
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class RequirementDefinitionFieldAddedEventHandlerTests
+public class EntityAddedChildEntityEventHandlerTests
 {
     private const string TestPlant = "PCS$PlantA";
-    private RequirementDefinitionFieldAddedEventHandler _dut;
+    private EntityAddedChildEntityEventHandler<RequirementDefinition, Field, FieldEvent> _dut;
     private bool _eventPublished;
     private RequirementDefinition _requirementDefinition;
     private Field _field;
@@ -33,7 +33,7 @@ public class RequirementDefinitionFieldAddedEventHandlerTests
 
         _eventPublished = false;
 
-        _dut = new RequirementDefinitionFieldAddedEventHandler(mockCreateEventHelper.Object, mockPublisher.Object);
+        _dut = new EntityAddedChildEntityEventHandler<RequirementDefinition, Field, FieldEvent>(mockCreateEventHelper.Object, mockPublisher.Object);
 
         _requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
         _field = new Field(TestPlant, "F1", FieldType.Number, 1, "UnitA", true);
