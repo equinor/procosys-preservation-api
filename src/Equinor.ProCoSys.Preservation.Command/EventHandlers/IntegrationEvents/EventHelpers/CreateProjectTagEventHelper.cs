@@ -6,12 +6,12 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagEventHelper  : ICreateChildEventHelper<Project, Tag, TagEvent>
+public class CreateProjectTagEventHelper  : ICreateChildEventHelper<Project, Tag, TagEvent>
 {
     private readonly IJourneyRepository _journeyRepository;
     private readonly IPersonRepository _personRepository;
 
-    public CreateTagEventHelper(IJourneyRepository journeyRepository, IPersonRepository personRepository)
+    public CreateProjectTagEventHelper(IJourneyRepository journeyRepository, IPersonRepository personRepository)
     {
         _journeyRepository = journeyRepository;
         _personRepository = personRepository;

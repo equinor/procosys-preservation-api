@@ -123,7 +123,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>, ProjectTagAddedEventConverter>();
             services.AddTransient<IDomainToIntegrationEventConverter<RequirementTypeRequirementDefinitionAddedEvent>, RequirementTypeRequirementDefinitionAddedEventConverter>();
             
-            services.AddTransient<ICreateChildEventHelper<Project, Tag, TagEvent>, CreateTagEventHelper>();
+            services.AddTransient<ICreateChildEventHelper<Project, Tag, TagEvent>, CreateProjectTagEventHelper>();
             services.AddTransient<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>, CreateProjectTagRequirementEventHelper>();
             services.AddTransient<INotificationHandler<TagDeletedEvent>, IntegrationDeleteEventHandler<TagDeletedEvent, Tag>>();
             

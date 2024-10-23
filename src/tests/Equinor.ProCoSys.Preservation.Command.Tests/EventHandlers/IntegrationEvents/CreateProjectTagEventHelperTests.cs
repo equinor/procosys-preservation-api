@@ -20,7 +20,7 @@ using Moq;
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class CreateTagEventHelperTests
+public class CreateProjectTagEventHelperTests
 {
     private const string TestPlant = "PCS$PlantA";
     private const string TestProjectName = "Test Project";
@@ -32,7 +32,7 @@ public class CreateTagEventHelperTests
     private Tag _tag;
     private Project _project;
     private Person _person;
-    private CreateTagEventHelper _dut;
+    private CreateProjectTagEventHelper _dut;
 
     [TestInitialize]
     public void Setup()
@@ -76,7 +76,7 @@ public class CreateTagEventHelperTests
         var personRepositoryMock = new Mock<IPersonRepository>();
         personRepositoryMock.Setup(x => x.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
         
-        _dut = new CreateTagEventHelper(journeyRepositoryMock.Object, personRepositoryMock.Object);
+        _dut = new CreateProjectTagEventHelper(journeyRepositoryMock.Object, personRepositoryMock.Object);
     }
 
     [DataTestMethod]
