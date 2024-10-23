@@ -55,7 +55,7 @@ public class TagActionAddedEventHandlerTests
     public async Task Handle_ShouldSendIntegrationEvent()
     {
         // Arrange
-        var domainEvent = new TagActionAddedEvent(_tag, _action);
+        var domainEvent = new EntityAddedChildEntityEvent<Tag, Action>(_tag, _action);
 
         // Act
         await _dut.Handle(domainEvent, default);

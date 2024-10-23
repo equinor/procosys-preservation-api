@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
-public class TagActionAddedEventHandler : INotificationHandler<TagActionAddedEvent>
+public class TagActionAddedEventHandler : INotificationHandler<EntityAddedChildEntityEvent<Tag, Action>>
 {
     private readonly ICreateChildEventHelper<Tag, Action, ActionEvent> _createTagEventHelper;
     private readonly IIntegrationEventPublisher _integrationEventPublisher;
@@ -22,9 +22,9 @@ public class TagActionAddedEventHandler : INotificationHandler<TagActionAddedEve
         _integrationEventPublisher = integrationEventPublisher;
     }
 
-    public async Task Handle(TagActionAddedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(EntityAddedChildEntityEvent<Tag, Action> notification, CancellationToken cancellationToken)
     {
-        var integrationEvent = await _createTagEventHelper.CreateEvent(notification.Entity, notification.Action);
+        var integrationEvent = await _createTagEventHelper.CreateEvent(notification.Entity, notification.ChildEntity);
         await _integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);
     }
 }
