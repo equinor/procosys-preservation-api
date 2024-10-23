@@ -20,6 +20,7 @@ public class CreateTagRequirementEventHelperTests
     private const string TestProjectName = "Test Project";
     private static DateTime TestTime => DateTime.Parse("2012-12-12T11:22:33Z").ToUniversalTime();
     private static Guid TestGuid => new("11111111-1111-1111-1111-111111111111");
+    private Project _project;
     private RequirementDefinition _requirementDefinition;
     private TagRequirement _tagRequirement;
     private Person _person;
@@ -31,6 +32,8 @@ public class CreateTagRequirementEventHelperTests
         // Arrange
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
+        
+        _project = new Project(TestPlant, TestProjectName, "Test Project Description", TestGuid);
 
         _requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
         _tagRequirement = new TagRequirement(TestPlant, 2, _requirementDefinition);
@@ -58,7 +61,7 @@ public class CreateTagRequirementEventHelperTests
     public async Task CreateEvent_ShouldCreateTagRequirementEventExpectedValues(string property, object expected)
     {
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tagRequirement, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tagRequirement);
         var result = integrationEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -78,7 +81,7 @@ public class CreateTagRequirementEventHelperTests
         _tagRequirement.SetModified(_person);
         
         // Act
-        var tagRequirementEvent = await _dut.CreateEvent(_tagRequirement, TestProjectName);
+        var tagRequirementEvent = await _dut.CreateEvent(_project, _tagRequirement);
         var result = tagRequirementEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -95,7 +98,7 @@ public class CreateTagRequirementEventHelperTests
         var expected = _tagRequirement.Guid;
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tagRequirement, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tagRequirement);
         var result = integrationEvent.ProCoSysGuid;
 
         // Assert
@@ -109,7 +112,7 @@ public class CreateTagRequirementEventHelperTests
         var expected = _requirementDefinition.Guid;
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_tagRequirement, TestProjectName);
+        var integrationEvent = await _dut.CreateEvent(_project, _tagRequirement);
         var result = integrationEvent.RequirementDefinitionGuid;
 
         // Assert
@@ -123,7 +126,7 @@ public class CreateTagRequirementEventHelperTests
         _tagRequirement.SetCreated(_person);
 
         // Act
-        var tagRequirementEvent = await _dut.CreateEvent(_tagRequirement, TestProjectName);
+        var tagRequirementEvent = await _dut.CreateEvent(_project, _tagRequirement);
 
         // Assert
         Assert.AreEqual(TestTime, tagRequirementEvent.CreatedAtUtc);
@@ -136,7 +139,7 @@ public class CreateTagRequirementEventHelperTests
         _tagRequirement.SetModified(_person);
 
         // Act
-        var tagRequirementEvent = await _dut.CreateEvent(_tagRequirement, TestProjectName);
+        var tagRequirementEvent = await _dut.CreateEvent(_project, _tagRequirement);
 
         // Assert
         Assert.AreEqual(TestTime, tagRequirementEvent.ModifiedAtUtc);

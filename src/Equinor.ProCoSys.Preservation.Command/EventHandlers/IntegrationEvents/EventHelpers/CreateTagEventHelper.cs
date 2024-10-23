@@ -6,7 +6,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
+public class CreateTagEventHelper  : ICreateChildEventHelper<Project, Tag, TagEvent>
 {
     private readonly IJourneyRepository _journeyRepository;
     private readonly IPersonRepository _personRepository;
@@ -17,7 +17,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
         _personRepository = personRepository;
     }
 
-    public async Task<TagEvent> CreateEvent(Tag entity, string projectName)
+    public async Task<TagEvent> CreateEvent(Project parentEntity, Tag entity)
     {
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         var modifiedBy = await GetModifiedBy(entity);
@@ -27,7 +27,7 @@ public class CreateTagEventHelper  : ICreateProjectEventHelper<Tag, TagEvent>
         {
             ProCoSysGuid = entity.Guid,
             Plant = entity.Plant,
-            ProjectName = projectName,
+            ProjectName = parentEntity.Name,
             Description = entity.Description,
             Remark = entity.Remark,
             NextDueTimeUtc = entity.NextDueTimeUtc,

@@ -38,11 +38,11 @@ public class ProjectTagAddedEventConverterTests
         _project = new Project(TestPlant, "Test Project", "Test Project Description", Guid.NewGuid());
         _project.AddTag(_tag);
 
-        var mockTagCreateEvent = new Mock<ICreateProjectEventHelper<Tag, TagEvent>>();
-        mockTagCreateEvent.Setup(c => c.CreateEvent(It.IsAny<Tag>(), It.IsAny<string>())).Returns(Task.FromResult(new TagEvent()));
+        var mockTagCreateEvent = new Mock<ICreateChildEventHelper<Project, Tag, TagEvent>>();
+        mockTagCreateEvent.Setup(c => c.CreateEvent(It.IsAny<Project>(),It.IsAny<Tag>())).Returns(Task.FromResult(new TagEvent()));
         
-        var mockTagRequirementCreateEvent = new Mock<ICreateProjectEventHelper<TagRequirement, TagRequirementEvent>>();
-        mockTagRequirementCreateEvent.Setup(c => c.CreateEvent(It.IsAny<TagRequirement>(), It.IsAny<string>())).Returns(Task.FromResult(new TagRequirementEvent()));
+        var mockTagRequirementCreateEvent = new Mock<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>>();
+        mockTagRequirementCreateEvent.Setup(c => c.CreateEvent(It.IsAny<Project>(), It.IsAny<TagRequirement>())).Returns(Task.FromResult(new TagRequirementEvent()));
 
         _dut = new ProjectTagAddedEventConverter(mockTagCreateEvent.Object, mockTagRequirementCreateEvent.Object);
     }

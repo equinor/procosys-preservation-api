@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationE
 [TestClass]
 public class ProjectTagAddedEventHandlerTests
 {
-    protected const string TestPlant = "PCS$PlantA";
+    private const string TestPlant = "PCS$PlantA";
     private ProjectTagAddedEventHandler _dut;
     private bool _eventPublished;
     private Tag _tag;
