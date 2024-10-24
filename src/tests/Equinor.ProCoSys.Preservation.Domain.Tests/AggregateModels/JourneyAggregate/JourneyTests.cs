@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Linq;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -27,6 +32,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         [TestInitialize]
         public void Setup()
         {
+            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            var timeProvider = new ManualTimeProvider(utcNow);
+            TimeService.SetProvider(timeProvider);
+            
             _dutWithNoSteps = new Journey(TestPlant, "TitleA");
             _dutWith3Steps = new Journey(TestPlant, "TitleB");
             _stepAId = 10033;
@@ -246,6 +255,20 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var step = _dutWith3Steps.UnvoidStep(stepToUnvoid.Id, "AAAAAAAAABA=");
 
             Assert.AreEqual(step, stepToUnvoid);
+        }
+        
+        [TestMethod]
+        public void SetCreated_ShouldAddPlantEntityModifiedEvent()
+        {
+            // Arrange
+            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            
+            // Act
+            _dutWithNoSteps.SetCreated(person);
+            var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<Journey>));
         }
     }
 }
