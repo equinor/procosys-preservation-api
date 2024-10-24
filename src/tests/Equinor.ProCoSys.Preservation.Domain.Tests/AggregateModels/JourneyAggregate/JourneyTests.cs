@@ -258,7 +258,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
         
         [TestMethod]
-        public void SetCreated_ShouldAddPlantEntityModifiedEvent()
+        public void SetCreated_ShouldAddPlantEntityCreatedEvent()
         {
             // Arrange
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
@@ -269,6 +269,20 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
 
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<Journey>));
+        }
+        
+        [TestMethod]
+        public void SetModified_ShouldAddPlantEntityModifiedEvent()
+        {
+            // Arrange
+            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            
+            // Act
+            _dutWithNoSteps.SetModified(person);
+            var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Journey>));
         }
     }
 }
