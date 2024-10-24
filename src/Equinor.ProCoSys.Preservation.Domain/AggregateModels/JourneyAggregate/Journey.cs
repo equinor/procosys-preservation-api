@@ -180,7 +180,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new JourneyPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<Journey>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -192,7 +192,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new JourneyPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<Journey>(this));
         }
 
         public void SetRemoved() => AddDomainEvent(new JourneyDeletedEvent(this));
