@@ -9,9 +9,9 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class CreateRequirementDefinitionEventHelperTests
+public class CreateFieldEventHelperTests
 {
-    private CreateRequirementDefinitionEventHelper _dut;
+    private CreateFieldEventHelper _dut;
 
     [TestInitialize]
     public void Setup()
@@ -20,20 +20,20 @@ public class CreateRequirementDefinitionEventHelperTests
         var mockRequirementTypeRepository = new Mock<IRequirementTypeRepository>();
         mockRequirementTypeRepository.Setup(x => x.GetRequirementTypeByRequirementDefinitionGuidAsync(It.IsAny<Guid>())).ReturnsAsync(new Mock<RequirementType>().Object);
         
-        var createEventHelper = new Mock<ICreateChildEventHelper<RequirementType, RequirementDefinition, RequirementDefinitionEvent>>();
-        createEventHelper.Setup(c => c.CreateEvent(It.IsAny<RequirementType>(), It.IsAny<RequirementDefinition>())).ReturnsAsync(new RequirementDefinitionEvent());
+        var createEventHelper = new Mock<ICreateChildEventHelper<RequirementDefinition, Field, FieldEvent>>();
+        createEventHelper.Setup(c => c.CreateEvent(It.IsAny<RequirementDefinition>(), It.IsAny<Field>())).ReturnsAsync(new FieldEvent());
         
-        _dut = new CreateRequirementDefinitionEventHelper(mockRequirementTypeRepository.Object, createEventHelper.Object);
+        _dut = new CreateFieldEventHelper(mockRequirementTypeRepository.Object, createEventHelper.Object);
     }
 
     [TestMethod]
     public async Task CreateEvent_ShouldCreateEvent()
     {
         // Arrange
-        var requirementDefinition = new RequirementDefinition("PCS$PlantA", "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
+        var action = new Field("PCS$PlantA", "F1", FieldType.Number, 1, "UnitA", true);
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(requirementDefinition);
+        var integrationEvent = await _dut.CreateEvent(action);
 
         // Assert
         Assert.IsNotNull(integrationEvent);

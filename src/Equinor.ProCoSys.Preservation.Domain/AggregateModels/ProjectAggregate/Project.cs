@@ -59,7 +59,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             _tags.Add(tag);
 
-            AddDomainEvent(new ProjectTagAddedEvent(this, tag));
+            AddDomainEvent(new EntityAddedChildEntityEvent<Project, Tag>(this, tag));
         }
 
         public void Close() => IsClosed = true;

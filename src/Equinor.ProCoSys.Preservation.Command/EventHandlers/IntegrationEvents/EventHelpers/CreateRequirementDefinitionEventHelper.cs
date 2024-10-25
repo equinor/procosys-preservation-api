@@ -5,32 +5,22 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateRequirementDefinitionEventHelper : ICreateChildEventHelper<RequirementType, RequirementDefinition, RequirementDefinitionEvent>
+public class CreateRequirementDefinitionEventHelper : ICreateEventHelper<RequirementDefinition, RequirementDefinitionEvent>
 {
-    private readonly IPersonRepository _personRepository;
+    private readonly IRequirementTypeRepository _requirementTypeRepository;
+    private readonly ICreateChildEventHelper<RequirementType, RequirementDefinition, RequirementDefinitionEvent> _createEventHelper;
 
-    public CreateRequirementDefinitionEventHelper(IPersonRepository personRepository) => _personRepository = personRepository;
-
-    public async Task<RequirementDefinitionEvent> CreateEvent(RequirementType parentEntity, RequirementDefinition entity)
+    public CreateRequirementDefinitionEventHelper(
+        IRequirementTypeRepository requirementTypeRepository,
+        ICreateChildEventHelper<RequirementType, RequirementDefinition, RequirementDefinitionEvent> createEventHelper)
     {
-        var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
-        var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
+        _requirementTypeRepository = requirementTypeRepository;
+        _createEventHelper = createEventHelper;
+    }
 
-        return new RequirementDefinitionEvent
-        {
-            ProCoSysGuid = entity.Guid,
-            Plant = entity.Plant,
-            Title = entity.Title,
-            IsVoided = entity.IsVoided,
-            DefaultIntervalWeeks = entity.DefaultIntervalWeeks,
-            Usage = entity.Usage.ToString(),
-            SortKey = entity.SortKey,
-            NeedsUserInput = entity.NeedsUserInput,
-            CreatedAtUtc = entity.CreatedAtUtc,
-            CreatedByGuid = createdBy.Guid,
-            ModifiedAtUtc = entity.ModifiedAtUtc,
-            ModifiedByGuid = modifiedBy?.Guid,
-            RequirementTypeGuid = parentEntity.Guid
-        };
+    public async Task<RequirementDefinitionEvent> CreateEvent(RequirementDefinition entity)
+    {
+        var requirementType = await _requirementTypeRepository.GetRequirementTypeByRequirementDefinitionGuidAsync(entity.Guid);
+        return await _createEventHelper.CreateEvent(requirementType, entity);
     }
 }

@@ -66,8 +66,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
-
-            AddPostSaveDomainEvent(new FieldPostSaveEvent(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -79,7 +77,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new FieldPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<Field>(this));
         }
     }
 }

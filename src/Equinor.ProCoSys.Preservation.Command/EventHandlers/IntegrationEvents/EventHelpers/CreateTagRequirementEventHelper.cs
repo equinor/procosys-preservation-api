@@ -7,58 +7,22 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagRequirementEventHelper : ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>
+public class CreateTagRequirementEventHelper : ICreateEventHelper<TagRequirement, TagRequirementEvent>
 {
-    private readonly IRequirementTypeRepository _requirementTypeRepository;
-    private readonly IPersonRepository _personRepository;
+    private readonly IProjectRepository _projectRepository;
+    private readonly ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent> _createEventHelper;
 
-    public CreateTagRequirementEventHelper(
-        IRequirementTypeRepository requirementTypeRepository,
-        IPersonRepository personRepository)
+    public CreateTagRequirementEventHelper(IProjectRepository projectRepository, ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent> createEventHelper)
     {
-        _requirementTypeRepository = requirementTypeRepository;
-        _personRepository = personRepository;
+        _projectRepository = projectRepository;
+        _createEventHelper = createEventHelper;
     }
-
-    public async Task<TagRequirementEvent> CreateEvent(Project parentEntity, TagRequirement entity)
+    
+    public async Task<TagRequirementEvent> CreateEvent(TagRequirement entity)
     {
-        var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(entity.RequirementDefinitionId);
-        var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
-
-        var modifiedByGuid = await GetModifiedByGuid(entity);
-
-        return new TagRequirementEvent
-        {
-            ProCoSysGuid = entity.Guid,
-            Plant = entity.Plant,
-            ProjectName = parentEntity.Name,
-            IntervalWeeks = entity.IntervalWeeks,
-            Usage = entity.Usage.ToString(),
-            NextDueTimeUtc = entity.NextDueTimeUtc,
-            IsVoided = entity.IsVoided,
-            IsInUse = entity.IsInUse,
-            RequirementDefinitionGuid = requirementDefinition.Guid,
-            CreatedAtUtc = entity.CreatedAtUtc,
-            CreatedByGuid = createdBy.Guid,
-            ModifiedAtUtc = entity.ModifiedAtUtc,
-            ModifiedByGuid = modifiedByGuid,
-            ReadyToBePreserved = entity.ReadyToBePreserved
-        };
-    }
-
-    private async Task<Guid?> GetModifiedByGuid(TagRequirement tagRequirement)
-    {
-        if (!tagRequirement.ModifiedById.HasValue)
-        {
-            return null;
-        }
-
-        var modifiedBy = await _personRepository.GetReadOnlyByIdAsync(tagRequirement.ModifiedById.Value);
-        if (modifiedBy is null)
-        {
-            return null;
-        }
-
-        return modifiedBy.Guid;
+        var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(entity.Guid);
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
+        
+        return await _createEventHelper.CreateEvent(project, entity);
     }
 }
