@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Linq;
+using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.RequirementTypeAggregate
@@ -12,7 +17,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
         private RequirementDefinition _dut;
 
         [TestInitialize]
-        public void Setup() => _dut = new RequirementDefinition(TestPlant, "TitleA", 4, RequirementUsage.ForAll, 10);
+        public void Setup()
+        {
+            _dut = new RequirementDefinition(TestPlant, "TitleA", 4, RequirementUsage.ForAll, 10);
+            
+            var timeProvider = new ManualTimeProvider(new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc));
+            TimeService.SetProvider(timeProvider);
+        }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
@@ -46,6 +57,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             Assert.AreEqual(1, _dut.Fields.Count);
             Assert.IsTrue(_dut.Fields.Contains(f));
+        }
+        
+        [TestMethod]
+        public void AddField_ShouldAddEntityAddedChildEntityEvent()
+        {
+            var f = new Field(TestPlant, "", FieldType.Info, 1);
+            
+            _dut.AddField(f);
+
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(EntityAddedChildEntityEvent<RequirementDefinition, Field>));
         }
 
         [TestMethod]
@@ -163,6 +185,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             f2.IsVoided = true;
 
             Assert.AreEqual(_dut.Fields.Count, _dut.OrderedFields(true).Count());
+        }
+        
+        [TestMethod]
+        public void SetModified_ShouldAddPlantEntityModifiedEvent()
+        {
+            var person = new Person(Guid.NewGuid(), "Test", "Person");
+            
+            _dut.SetModified(person);
+
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<RequirementDefinition>));
         }
     }
 }

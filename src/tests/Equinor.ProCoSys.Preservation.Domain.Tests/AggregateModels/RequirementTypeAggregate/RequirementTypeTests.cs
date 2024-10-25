@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.RequirementTypeAggregate
@@ -45,6 +46,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             Assert.AreEqual(2, _dut.RequirementDefinitions.Count);
             Assert.IsTrue(_dut.RequirementDefinitions.Contains(rd));
+        }
+        
+        [TestMethod]
+        public void AddRequirementDefinition_ShouldAddRequirementTypeRequirementDefinitionAddedEvent()
+        {
+            var rd = new RequirementDefinition(TestPlant, "RD2", 4, RequirementUsage.ForAll, 0);
+
+            _dut.AddRequirementDefinition(rd);
+
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(EntityAddedChildEntityEvent<RequirementType, RequirementDefinition>));
         }
 
         [TestMethod]

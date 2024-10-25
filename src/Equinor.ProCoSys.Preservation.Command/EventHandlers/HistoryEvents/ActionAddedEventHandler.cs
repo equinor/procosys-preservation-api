@@ -8,22 +8,17 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 {
-    public class ActionAddedEventHandler : INotificationHandler<ActionAddedEvent>
+    public class ActionAddedEventHandler : INotificationHandler<EntityAddedChildEntityEvent<Tag, Action>>
     {
         private readonly IHistoryRepository _historyRepository;
-        private readonly IProjectRepository _projectRepository;
 
-        public ActionAddedEventHandler(IHistoryRepository historyRepository, IProjectRepository projectRepository)
-        {
-            _historyRepository = historyRepository;
-            _projectRepository = projectRepository;
-        }
+        public ActionAddedEventHandler(IHistoryRepository historyRepository) => _historyRepository = historyRepository;
 
-        public Task Handle(ActionAddedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(EntityAddedChildEntityEvent<Tag, Action> notification, CancellationToken cancellationToken)
         {
             var eventType = EventType.ActionAdded;
-            var description = $"{eventType.GetDescription()} - '{notification.Entity.Title}'";
-            var history = new History(notification.Plant, description, notification.SourceGuid, ObjectType.Tag, eventType);
+            var description = $"{eventType.GetDescription()} - '{notification.ChildEntity.Title}'";
+            var history = new History(notification.ChildEntity.Plant, description, notification.Entity.Guid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
             return Task.CompletedTask;
         }

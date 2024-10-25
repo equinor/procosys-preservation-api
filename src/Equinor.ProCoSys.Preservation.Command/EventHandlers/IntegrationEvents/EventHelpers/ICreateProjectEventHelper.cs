@@ -5,9 +5,10 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public interface ICreateProjectEventHelper<in TEntity, TEvent> 
-    where TEntity : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
+public interface ICreateChildEventHelper<in TParent, in TChild, TEvent> 
+    where TParent : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
+    where TChild : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
     where TEvent : class, IIntegrationEvent
 {
-    Task<TEvent> CreateEvent(TEntity entity, string projectName);
+    Task<TEvent> CreateEvent(TParent parentEntity, TChild childEntity);
 }

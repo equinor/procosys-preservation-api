@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
@@ -18,16 +17,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
         private Mock<IProjectRepository> _projectRepository;
         private ActionAddedEventHandler _dut;
         private History _historyAdded;
-        private Guid _tagGuid;
+        private Tag _mockTag;
 
         [TestInitialize]
         public void Setup()
         {
             // Arrange
-            _tagGuid = Guid.NewGuid();
-
-            var mockTag = new Mock<Tag>().Object;
-            mockTag.Guid = _tagGuid;
+            _mockTag = new Mock<Tag>().Object;
+            _mockTag.Guid = Guid.NewGuid();
 
             _historyRepositoryMock = new Mock<IHistoryRepository>();
             _historyRepositoryMock
@@ -39,13 +36,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             _projectRepository = new Mock<IProjectRepository>();
             _projectRepository
                 .Setup(p => p.GetTagOnlyByTagIdAsync(It.IsAny<int>()))
-                .ReturnsAsync(mockTag);
+                .ReturnsAsync(_mockTag);
 
             _projectRepository
                 .Setup(p => p.GetTagByActionGuidAsync(It.IsAny<Guid>()))
-                .ReturnsAsync(mockTag);
+                .ReturnsAsync(_mockTag);
 
-            _dut = new ActionAddedEventHandler(_historyRepositoryMock.Object, _projectRepository.Object);
+            _dut = new ActionAddedEventHandler(_historyRepositoryMock.Object);
         }
 
         [TestMethod]
@@ -58,14 +55,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             var plant = "TestPlant";
             var title = "Action1";
 
-            _dut.Handle(new ActionAddedEvent(plant, _tagGuid, new Action(plant, title, "", null)), default);
+            _dut.Handle(new EntityAddedChildEntityEvent<Tag, Action>(_mockTag, new Action(plant, title, "", null)), default);
 
             // Assert
             var expectedDescription = $"{EventType.ActionAdded.GetDescription()} - '{title}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);
-            Assert.AreEqual(_tagGuid, _historyAdded.SourceGuid);
+            Assert.AreEqual(_mockTag.Guid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.ActionAdded, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);

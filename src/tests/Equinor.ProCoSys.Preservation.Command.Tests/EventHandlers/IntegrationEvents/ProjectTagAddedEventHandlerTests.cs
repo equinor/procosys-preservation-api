@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationE
 [TestClass]
 public class ProjectTagAddedEventHandlerTests
 {
-    protected const string TestPlant = "PCS$PlantA";
+    private const string TestPlant = "PCS$PlantA";
     private ProjectTagAddedEventHandler _dut;
     private bool _eventPublished;
     private Tag _tag;
@@ -30,8 +30,8 @@ public class ProjectTagAddedEventHandlerTests
     {
         // Arrange
         var mockIntegrationEvent = new Mock<IIntegrationEvent>();
-        var mockConverter = new Mock<IDomainToIntegrationEventConverter<ProjectTagAddedEvent>>();
-        mockConverter.Setup(x => x.Convert(It.IsAny<ProjectTagAddedEvent>())).ReturnsAsync(new List<IIntegrationEvent>() { mockIntegrationEvent.Object });
+        var mockConverter = new Mock<IDomainToIntegrationEventConverter<EntityAddedChildEntityEvent<Project, Tag>>>();
+        mockConverter.Setup(x => x.Convert(It.IsAny<EntityAddedChildEntityEvent<Project, Tag>>())).ReturnsAsync(new List<IIntegrationEvent> { mockIntegrationEvent.Object });
 
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))
@@ -56,7 +56,7 @@ public class ProjectTagAddedEventHandlerTests
     public async Task Handle_ShouldSendIntegrationEvent()
     {
         // Arrange
-        var domainEvent = new ProjectTagAddedEvent(_project, _tag);
+        var domainEvent = new EntityAddedChildEntityEvent<Project, Tag>(_project, _tag);
 
         // Act
         await _dut.Handle(domainEvent, default);
