@@ -1950,7 +1950,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
             var eventTypes = _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Select(e => e.GetType()).ToList();
 
-            CollectionAssert.Contains(eventTypes, typeof(TagActionAddedEvent));
+            CollectionAssert.Contains(eventTypes, typeof(EntityAddedChildEntityEvent<Tag, Action>));
         }
 
         #endregion

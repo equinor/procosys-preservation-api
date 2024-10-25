@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
             _requirementDefinitions.Add(requirementDefinition);
             
-            AddDomainEvent(new RequirementTypeRequirementDefinitionAddedEvent(this, requirementDefinition));
+            AddDomainEvent(new EntityAddedChildEntityEvent<RequirementType, RequirementDefinition>(this, requirementDefinition));
         }
         
         public override string ToString() => Title;
