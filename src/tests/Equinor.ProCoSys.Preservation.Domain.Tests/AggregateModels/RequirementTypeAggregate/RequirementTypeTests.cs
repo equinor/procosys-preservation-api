@@ -75,5 +75,16 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             Assert.AreEqual(0, _dut.RequirementDefinitions.Count);
         }
+        
+        [TestMethod]
+        public void RemoveRequirementDefinition_ShouldAddPlantEntityDeletedEvent()
+        {
+            _rd.IsVoided = true;
+            _dut.RemoveRequirementDefinition(_rd);
+            
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<RequirementDefinition>));
+        }
     }
 }

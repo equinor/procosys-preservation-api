@@ -108,7 +108,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
 
             _requirementDefinitions.Remove(requirementDefinition);
-            AddDomainEvent(new RequirementDefinitionDeletedEvent(requirementDefinition));
+            AddDomainEvent(new PlantEntityDeletedEvent<RequirementDefinition>(requirementDefinition));
         }
     }
 }
