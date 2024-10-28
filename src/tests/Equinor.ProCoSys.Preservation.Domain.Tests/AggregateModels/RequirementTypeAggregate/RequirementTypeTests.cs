@@ -105,5 +105,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<RequirementType>));
         }
+        
+        [TestMethod]
+        public void SetModified_ShouldAddPlantEntityModifiedEvent()
+        {
+            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            
+            _dut.SetModified(person);
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<RequirementType>));
+        }
     }
 }

@@ -87,7 +87,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new RequirementTypePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<RequirementType>(this));
         }
 
         public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition)
