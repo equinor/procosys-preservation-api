@@ -570,7 +570,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             AddDomainEvent(new PlantEntityModifiedEvent<Tag>(this));
         }
 
-        public void SetRemoved() => AddDomainEvent(new TagDeletedEvent(this));
+        public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Tag>(this));
 
         public bool IsReadyToBeStarted() => Status != PreservationStatus.Active && Requirements.Any(r => !r.IsVoided);
 
