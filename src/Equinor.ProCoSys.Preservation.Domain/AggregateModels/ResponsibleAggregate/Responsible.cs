@@ -46,7 +46,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             }
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new ResponsiblePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<Responsible>(this));
         }
 
         public void SetModified(Person modifiedBy)

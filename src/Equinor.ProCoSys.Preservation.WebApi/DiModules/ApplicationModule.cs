@@ -186,23 +186,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<IPublishEntityEventHelper<RequirementType>, PublishEntityEventHelper<RequirementType, RequirementTypeEvent>>();
             services.AddTransient<ICreateEventHelper<RequirementType, RequirementTypeEvent>, CreateRequirementTypeEventHelper>();
             
+            services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Responsible>>, IntegrationEventHandler<PlantEntityCreatedEvent<Responsible>, Responsible>>();
+            services.AddTransient<INotificationHandler<ResponsiblePostSaveEvent>, IntegrationEventHandler<ResponsiblePostSaveEvent, Responsible>>();
+            services.AddTransient<INotificationHandler<ResponsibleDeletedEvent>, IntegrationDeleteEventHandler<ResponsibleDeletedEvent, Responsible>>();
+            services.AddTransient<IPublishEntityEventHelper<Responsible>, PublishEntityEventHelper<Responsible, ResponsibleEvent>>();
+            services.AddTransient<IPublishDeleteEntityEventHelper<Responsible>, PublishDeleteEntityEventHelper<Responsible, ResponsibleDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleEvent>, CreateResponsibleEventHelper>();
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleDeleteEvent>, CreateResponsibleDeleteEventHelper>();
+            
             services.AddTransient<ICreateEventHelper<Step, StepEvent>, CreateStepEventHelper>();
             services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
             
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
             
-            services.AddTransient<IPublishEntityEventHelper<Responsible>, PublishEntityEventHelper<Responsible, ResponsibleEvent>>();
             services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
             
-            services.AddTransient<IPublishDeleteEntityEventHelper<Responsible>, PublishDeleteEntityEventHelper<Responsible, ResponsibleDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
 
-            services.AddTransient<INotificationHandler<ResponsiblePostSaveEvent>, IntegrationEventHandler<ResponsiblePostSaveEvent, Responsible>>();
             services.AddTransient<INotificationHandler<StepPostSaveEvent>, IntegrationEventHandler<StepPostSaveEvent, Step>>();
 
-            services.AddTransient<INotificationHandler<ResponsibleDeletedEvent>, IntegrationDeleteEventHandler<ResponsibleDeletedEvent, Responsible>>();
             services.AddTransient<INotificationHandler<StepDeletedEvent>, IntegrationDeleteEventHandler<StepDeletedEvent, Step>>();
 
             // Scoped - Created once per client request (connection)
