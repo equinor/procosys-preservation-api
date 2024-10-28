@@ -58,6 +58,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
             AddDomainEvent(new PlantEntityModifiedEvent<Mode>(this));
         }
 
-        public void SetRemoved() => AddDomainEvent(new ModeDeletedEvent(this));
+        public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Mode>(this));
     }
 }

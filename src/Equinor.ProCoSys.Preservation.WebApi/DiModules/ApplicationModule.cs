@@ -170,7 +170,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             
             services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Mode>>, IntegrationEventHandler<PlantEntityCreatedEvent<Mode>, Mode>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Mode>>, IntegrationEventHandler<PlantEntityModifiedEvent<Mode>, Mode>>();
-            services.AddTransient<INotificationHandler<ModeDeletedEvent>, IntegrationDeleteEventHandler<ModeDeletedEvent, Mode>>();
+            services.AddTransient<INotificationHandler<PlantEntityDeletedEvent<Mode>>, IntegrationDeleteEventHandler<PlantEntityDeletedEvent<Mode>, Mode>>();
             services.AddTransient<IPublishEntityEventHelper<Mode>, PublishEntityEventHelper<Mode, ModeEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Mode>, PublishDeleteEntityEventHelper<Mode, ModeDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Mode, ModeEvent>, CreateModeEventHelper>();
