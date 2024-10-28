@@ -4,7 +4,6 @@ using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
 {
@@ -43,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
             }
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new ModePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<Mode>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -55,9 +54,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new ModePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<Mode>(this));
         }
 
-        public void SetRemoved() => AddDomainEvent(new ModeDeletedEvent(this));
+        public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Mode>(this));
     }
 }

@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Linq;
+using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ResponsibleAggregate
@@ -7,6 +12,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Responsible
     [TestClass]
     public class ResponsibleTests
     {
+        [TestInitialize]
+        public void Setup()
+        {
+            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            var timeProvider = new ManualTimeProvider(utcNow);
+            TimeService.SetProvider(timeProvider);
+        }
+        
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
@@ -45,6 +58,44 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Responsible
             var dut = new Responsible("PlantA", "CodeA", "DescA");
 
             dut.RenameResponsible(" ");
+        }
+        
+        [TestMethod]
+        public void SetCreated_ShouldAddPlantEntityCreatedEvent()
+        {
+            var dut = new Responsible("PlantA", "CodeA", "DescA");
+            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            
+            dut.SetCreated(person);
+            var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<Responsible>));
+        }
+        
+        [TestMethod]
+        public void SetModified_ShouldAddPlantEntityModifiedEvent()
+        {
+            var dut = new Responsible("PlantA", "CodeA", "DescA");
+            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            
+            dut.SetModified(person);
+            var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Responsible>));
+        }
+        
+        [TestMethod]
+        public void SetRemoved_ShouldAddPlantEntityDeletedEvent()
+        {
+            var dut = new Responsible("PlantA", "CodeA", "DescA");
+            
+            dut.SetRemoved();
+            var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Responsible>));
         }
     }
 }

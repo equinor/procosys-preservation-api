@@ -284,5 +284,16 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Journey>));
         }
+        
+        [TestMethod]
+        public void SetRemoved_ShouldAddPlantEntityDeletedEvent()
+        {
+            // Act
+            _dutWithNoSteps.SetRemoved();
+            var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Journey>));
+        }
     }
 }

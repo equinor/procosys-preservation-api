@@ -2743,7 +2743,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             CollectionAssert.Contains(eventTypes, typeof(TagVoidedEvent));
             CollectionAssert.Contains(eventTypes, typeof(TagVoidedInSourceEvent));
             CollectionAssert.Contains(eventTypes, typeof(TagDeletedInSourceEvent));
-            CollectionAssert.Contains(eventTypes, typeof(TagDeletedEvent));
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Tag>));
         }
 
         [TestMethod]

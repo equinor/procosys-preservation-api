@@ -100,6 +100,19 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.ThrowsException<Exception>(() => _dut.RemoveField(f));
             Assert.AreEqual(1, _dut.Fields.Count);
         }
+        
+        [TestMethod]
+        public void RemoveField_ShouldAddPlantEntityDeletedEvent()
+        {
+            var f = new Field(TestPlant, "", FieldType.Info, 1);
+            _dut.AddField(f);
+            
+            f.IsVoided = true;
+            _dut.RemoveField(f);
+
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Field>));
+        }
 
         [TestMethod]
         public void AddInfoField_ShouldNotCauseRequirementDefinitionNeedingInput()
