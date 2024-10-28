@@ -217,7 +217,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new PreservationPeriodPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<PreservationPeriod>(this));
         }
 
         public void SetModified(Person modifiedBy)
