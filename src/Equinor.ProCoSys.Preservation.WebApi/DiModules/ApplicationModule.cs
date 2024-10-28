@@ -168,8 +168,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Journey, JourneyEvent>, CreateJourneyEventHelper>();
             services.AddTransient<ICreateEventHelper<Journey, JourneyDeleteEvent>, CreateJourneyDeletedEventHelper>();
             
+            services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Mode>>, IntegrationEventHandler<PlantEntityCreatedEvent<Mode>, Mode>>();
+            services.AddTransient<INotificationHandler<ModePostSaveEvent>, IntegrationEventHandler<ModePostSaveEvent, Mode>>();
+            services.AddTransient<INotificationHandler<ModeDeletedEvent>, IntegrationDeleteEventHandler<ModeDeletedEvent, Mode>>();
+            services.AddTransient<IPublishEntityEventHelper<Mode>, PublishEntityEventHelper<Mode, ModeEvent>>();
+            services.AddTransient<IPublishDeleteEntityEventHelper<Mode>, PublishDeleteEntityEventHelper<Mode, ModeDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Mode, ModeEvent>, CreateModeEventHelper>();
             services.AddTransient<ICreateEventHelper<Mode, ModeDeleteEvent>, CreateModeDeletedEventHelper>();
+            
             services.AddTransient<ICreateEventHelper<PreservationPeriod, PreservationPeriodsEvent>, CreatePreservationPeriodEventHelper>();
             services.AddTransient<ICreateEventHelper<PreservationPeriod, PreservationPeriodDeleteEvent>, CreatePreservationPeriodDeletedEventHelper>();
             services.AddTransient<ICreateEventHelper<RequirementType, RequirementTypeEvent>, CreateRequirementTypeEventHelper>();
@@ -181,25 +187,21 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
             
-            services.AddTransient<IPublishEntityEventHelper<Mode>, PublishEntityEventHelper<Mode, ModeEvent>>();
             services.AddTransient<IPublishEntityEventHelper<PreservationPeriod>, PublishEntityEventHelper<PreservationPeriod, PreservationPeriodsEvent>>();
             services.AddTransient<IPublishEntityEventHelper<RequirementType>, PublishEntityEventHelper<RequirementType, RequirementTypeEvent>>();
             services.AddTransient<IPublishEntityEventHelper<Responsible>, PublishEntityEventHelper<Responsible, ResponsibleEvent>>();
             services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
             
-            services.AddTransient<IPublishDeleteEntityEventHelper<Mode>, PublishDeleteEntityEventHelper<Mode, ModeDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<PreservationPeriod>, PublishDeleteEntityEventHelper<PreservationPeriod, PreservationPeriodDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<RequirementType>, PublishDeleteEntityEventHelper<RequirementType, RequirementTypeDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Responsible>, PublishDeleteEntityEventHelper<Responsible, ResponsibleDeleteEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
 
-            services.AddTransient<INotificationHandler<ModePostSaveEvent>, IntegrationEventHandler<ModePostSaveEvent, Mode>>();
             services.AddTransient<INotificationHandler<PreservationPeriodPostSaveEvent>, IntegrationEventHandler<PreservationPeriodPostSaveEvent, PreservationPeriod>>();
             services.AddTransient<INotificationHandler<RequirementTypePostSaveEvent>, IntegrationEventHandler<RequirementTypePostSaveEvent, RequirementType>>();
             services.AddTransient<INotificationHandler<ResponsiblePostSaveEvent>, IntegrationEventHandler<ResponsiblePostSaveEvent, Responsible>>();
             services.AddTransient<INotificationHandler<StepPostSaveEvent>, IntegrationEventHandler<StepPostSaveEvent, Step>>();
 
-            services.AddTransient<INotificationHandler<ModeDeletedEvent>, IntegrationDeleteEventHandler<ModeDeletedEvent, Mode>>();
             services.AddTransient<INotificationHandler<PreservationPeriodDeletedEvent>, IntegrationDeleteEventHandler<PreservationPeriodDeletedEvent, PreservationPeriod>>();
             services.AddTransient<INotificationHandler<ResponsibleDeletedEvent>, IntegrationDeleteEventHandler<ResponsibleDeletedEvent, Responsible>>();
             services.AddTransient<INotificationHandler<StepDeletedEvent>, IntegrationDeleteEventHandler<StepDeletedEvent, Step>>();

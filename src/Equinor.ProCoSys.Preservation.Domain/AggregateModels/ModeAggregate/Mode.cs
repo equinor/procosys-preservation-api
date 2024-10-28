@@ -43,7 +43,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
             }
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new ModePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<Mode>(this));
         }
 
         public void SetModified(Person modifiedBy)
