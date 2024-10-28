@@ -4,7 +4,6 @@ using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
 {
