@@ -97,6 +97,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                     b.Property<int>("CreatedById")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
 
@@ -236,6 +239,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 
                     b.Property<bool>("ForSupplier")
                         .HasColumnType("bit");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
@@ -1181,6 +1187,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("Guid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
