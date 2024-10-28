@@ -4,7 +4,6 @@ using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate
 {
@@ -46,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             }
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new ResponsiblePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<Responsible>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -58,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new ResponsiblePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<Responsible>(this));
         }
 
         public void RenameResponsible(string newCode)
@@ -71,6 +70,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             Code = newCode;
         }
 
-        public void SetRemoved() => AddDomainEvent(new ResponsibleDeletedEvent(this));
+        public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Responsible>(this));
     }
 }
