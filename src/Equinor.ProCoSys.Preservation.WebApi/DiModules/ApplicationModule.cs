@@ -153,7 +153,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             
             services.AddTransient<INotificationHandler<EntityAddedChildEntityEvent<RequirementDefinition, Field>>, EntityAddedChildEntityEventHandler<RequirementDefinition, Field, FieldEvent>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Field>>, IntegrationEventHandler<PlantEntityModifiedEvent<Field>, Field>>();
-            services.AddTransient<INotificationHandler<RequirementDeletedFieldEvent>, IntegrationDeleteEventHandler<RequirementDeletedFieldEvent, Field>>();
+            services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Field>>, IntegrationDeleteEventHandler<PlantEntityModifiedEvent<Field>, Field>>();
             services.AddTransient<IPublishEntityEventHelper<Field>, PublishEntityEventHelper<Field, FieldEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Field>, PublishDeleteEntityEventHelper<Field, RequirementFieldDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Field, FieldEvent>, CreateFieldEventHelper>();
@@ -162,7 +162,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             
             services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Journey>>, IntegrationEventHandler<PlantEntityCreatedEvent<Journey>, Journey>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Journey>>, IntegrationEventHandler<PlantEntityModifiedEvent<Journey>, Journey>>();
-            services.AddTransient<INotificationHandler<JourneyDeletedEvent>, IntegrationDeleteEventHandler<JourneyDeletedEvent, Journey>>();
+            services.AddTransient<INotificationHandler<PlantEntityDeletedEvent<Journey>>, IntegrationDeleteEventHandler<PlantEntityDeletedEvent<Journey>, Journey>>();
             services.AddTransient<IPublishEntityEventHelper<Journey>, PublishEntityEventHelper<Journey, JourneyEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Journey>, PublishDeleteEntityEventHelper<Journey, JourneyDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Journey, JourneyEvent>, CreateJourneyEventHelper>();

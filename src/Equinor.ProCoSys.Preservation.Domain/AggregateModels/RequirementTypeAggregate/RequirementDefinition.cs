@@ -81,8 +81,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentException($"Can't remove item in {field.Plant} from item in {Plant}");
             }
 
-            AddDomainEvent(new RequirementDeletedFieldEvent(this, field));
             _fields.Remove(field);
+            
+            AddDomainEvent(new PlantEntityDeletedEvent<Field>(field));
         }
 
         public IOrderedEnumerable<Field> OrderedFields(bool includeVoided)
