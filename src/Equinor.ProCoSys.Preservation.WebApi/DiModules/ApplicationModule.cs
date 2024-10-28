@@ -59,7 +59,6 @@ using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using MassTransit;
 using MediatR;
-using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Converters;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
@@ -195,7 +194,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleDeleteEvent>, CreateResponsibleDeleteEventHelper>();
             
             services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Step>>, IntegrationEventHandler<PlantEntityCreatedEvent<Step>, Step>>();
-            services.AddTransient<INotificationHandler<StepPostSaveEvent>, IntegrationEventHandler<StepPostSaveEvent, Step>>();
+            services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Step>>, IntegrationEventHandler<PlantEntityModifiedEvent<Step>, Step>>();
             services.AddTransient<INotificationHandler<StepDeletedEvent>, IntegrationDeleteEventHandler<StepDeletedEvent, Step>>();
             services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
