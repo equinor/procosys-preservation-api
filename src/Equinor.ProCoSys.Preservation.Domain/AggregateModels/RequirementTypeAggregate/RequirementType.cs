@@ -75,7 +75,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new RequirementTypePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<RequirementType>(this));
         }
 
         public void SetModified(Person modifiedBy)
