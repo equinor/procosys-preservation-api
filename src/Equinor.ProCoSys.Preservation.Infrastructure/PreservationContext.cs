@@ -118,11 +118,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
 
             try
             {
-                var result = await base.SaveChangesAsync(cancellationToken);
-                await DispatchPostSaveEventsEventsAsync(cancellationToken);
-                
-                result += await base.SaveChangesAsync(cancellationToken); // TODO #579: Remove. The post save logic adds new entities to the context. This is a workaround until we no longer have any post save logic.
-                return result;
+                return await base.SaveChangesAsync(cancellationToken);
             }
             catch (DbUpdateConcurrencyException concurrencyException)
             {
@@ -154,15 +150,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure
                 .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
                 .Select(x => x.Entity);
             await _eventDispatcher.DispatchDomainEventsAsync(entities, cancellationToken);
-        }
-
-        private async Task DispatchPostSaveEventsEventsAsync(CancellationToken cancellationToken = default)
-        {
-            var entities = ChangeTracker
-                .Entries<EntityBase>()
-                .Where(x => x.Entity.PostSaveDomainEvents != null && x.Entity.PostSaveDomainEvents.Any())
-                .Select(x => x.Entity);
-            await _eventDispatcher.DispatchPostSaveEventsAsync(entities, cancellationToken);
         }
 
         private async Task SetAuditDataAsync()
