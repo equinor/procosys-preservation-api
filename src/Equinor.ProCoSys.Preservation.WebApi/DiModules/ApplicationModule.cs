@@ -188,7 +188,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             
             services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Responsible>>, IntegrationEventHandler<PlantEntityCreatedEvent<Responsible>, Responsible>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Responsible>>, IntegrationEventHandler<PlantEntityModifiedEvent<Responsible>, Responsible>>();
-            services.AddTransient<INotificationHandler<ResponsibleDeletedEvent>, IntegrationDeleteEventHandler<ResponsibleDeletedEvent, Responsible>>();
+            services.AddTransient<INotificationHandler<PlantEntityDeletedEvent<Responsible>>, IntegrationDeleteEventHandler<PlantEntityDeletedEvent<Responsible>, Responsible>>();
             services.AddTransient<IPublishEntityEventHelper<Responsible>, PublishEntityEventHelper<Responsible, ResponsibleEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Responsible>, PublishDeleteEntityEventHelper<Responsible, ResponsibleDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleEvent>, CreateResponsibleEventHelper>();

@@ -85,5 +85,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Responsible
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Responsible>));
         }
+        
+        [TestMethod]
+        public void SetRemoved_ShouldAddPlantEntityDeletedEvent()
+        {
+            var dut = new Responsible("PlantA", "CodeA", "DescA");
+            
+            dut.SetRemoved();
+            var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Responsible>));
+        }
     }
 }

@@ -71,6 +71,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             Code = newCode;
         }
 
-        public void SetRemoved() => AddDomainEvent(new ResponsibleDeletedEvent(this));
+        public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Responsible>(this));
     }
 }
