@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Linq;
+using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.RequirementTypeAggregate
@@ -16,6 +19,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestInitialize]
         public void Setup()
         {
+            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            var timeProvider = new ManualTimeProvider(utcNow);
+            TimeService.SetProvider(timeProvider);
+            
             _dut = new RequirementType(TestPlant, "CodeA", "TitleA", RequirementTypeIcon.Other, 10);
             _rd = new RequirementDefinition(TestPlant, "RD1", 4, RequirementUsage.ForAll, 0);
             _dut.AddRequirementDefinition(_rd);
@@ -85,6 +92,30 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
 
             CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<RequirementDefinition>));
+        }
+        
+        [TestMethod]
+        public void SetCreated_ShouldAddPlantEntityCreatedEvent()
+        {
+            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            
+            _dut.SetCreated(person);
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<RequirementType>));
+        }
+        
+        [TestMethod]
+        public void SetModified_ShouldAddPlantEntityModifiedEvent()
+        {
+            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            
+            _dut.SetModified(person);
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<RequirementType>));
         }
     }
 }

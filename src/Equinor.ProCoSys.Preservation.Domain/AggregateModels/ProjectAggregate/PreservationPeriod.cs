@@ -8,7 +8,6 @@ using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -217,7 +216,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new PreservationPeriodPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<PreservationPeriod>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -229,7 +228,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new PreservationPeriodPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<PreservationPeriod>(this));
         }
 
         private void AddFieldValue(FieldValue fieldValue)

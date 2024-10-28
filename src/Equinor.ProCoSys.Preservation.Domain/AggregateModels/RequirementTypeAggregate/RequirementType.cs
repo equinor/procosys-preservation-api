@@ -5,7 +5,6 @@ using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.Domain.Events.PostSave;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
@@ -75,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new RequirementTypePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<RequirementType>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -87,7 +86,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             ModifiedById = modifiedBy.Id;
 
-            AddPostSaveDomainEvent(new RequirementTypePostSaveEvent(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<RequirementType>(this));
         }
 
         public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition)
