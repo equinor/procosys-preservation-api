@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Linq;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -18,6 +23,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         [TestInitialize]
         public void Setup()
         {
+            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            var timeProvider = new ManualTimeProvider(utcNow);
+            TimeService.SetProvider(timeProvider);
+            
             _mode = new Mode(TestPlant, "SUP", true);
             _mode.SetProtectedIdForTesting(3);
 
@@ -76,6 +85,37 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _dut.SetResponsible(responsible);
 
             Assert.AreEqual(responsibleId, _dut.ResponsibleId);
+        }
+        
+        [TestMethod]
+        public void SetCreated_ShouldAddPlantEntityCreatedEvent()
+        {
+            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            
+            _dut.SetCreated(person);
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<Step>));
+        }
+        
+        [TestMethod]
+        public void SetModified_ShouldAddPlantEntityModifiedEvent()
+        {
+            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            
+            _dut.SetModified(person);
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Step>));
+        }
+        
+        [TestMethod]
+        public void SetRemoved_ShouldAddPlantEntityDeletedEvent()
+        {
+            _dut.SetRemoved();
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Step>));
         }
     }
 }
