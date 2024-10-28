@@ -85,7 +85,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             CreatedById = createdBy.Id;
 
-            AddPostSaveDomainEvent(new StepPostSaveEvent(this));
+            AddDomainEvent(new PlantEntityCreatedEvent<Step>(this));
         }
 
         public void SetModified(Person modifiedBy)

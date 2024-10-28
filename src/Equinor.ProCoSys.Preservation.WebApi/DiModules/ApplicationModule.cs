@@ -194,18 +194,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleEvent>, CreateResponsibleEventHelper>();
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleDeleteEvent>, CreateResponsibleDeleteEventHelper>();
             
+            services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Step>>, IntegrationEventHandler<PlantEntityCreatedEvent<Step>, Step>>();
+            services.AddTransient<INotificationHandler<StepPostSaveEvent>, IntegrationEventHandler<StepPostSaveEvent, Step>>();
+            services.AddTransient<INotificationHandler<StepDeletedEvent>, IntegrationDeleteEventHandler<StepDeletedEvent, Step>>();
+            services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
+            services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Step, StepEvent>, CreateStepEventHelper>();
             services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
             
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
-            
-            services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
-            
-            services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
-
-            services.AddTransient<INotificationHandler<StepPostSaveEvent>, IntegrationEventHandler<StepPostSaveEvent, Step>>();
-
-            services.AddTransient<INotificationHandler<StepDeletedEvent>, IntegrationDeleteEventHandler<StepDeletedEvent, Step>>();
 
             // Scoped - Created once per client request (connection)
             services.AddScoped<IExcelConverter, ExcelConverter>();
