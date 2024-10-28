@@ -177,7 +177,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Mode, ModeDeleteEvent>, CreateModeDeletedEventHelper>();
             
             services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<PreservationPeriod>>, IntegrationEventHandler<PlantEntityCreatedEvent<PreservationPeriod>, PreservationPeriod>>();
-            services.AddTransient<INotificationHandler<PreservationPeriodPostSaveEvent>, IntegrationEventHandler<PreservationPeriodPostSaveEvent, PreservationPeriod>>();
+            services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<PreservationPeriod>>, IntegrationEventHandler<PlantEntityModifiedEvent<PreservationPeriod>, PreservationPeriod>>();
             services.AddTransient<INotificationHandler<PreservationPeriodDeletedEvent>, IntegrationDeleteEventHandler<PreservationPeriodDeletedEvent, PreservationPeriod>>();
             services.AddTransient<IPublishEntityEventHelper<PreservationPeriod>, PublishEntityEventHelper<PreservationPeriod, PreservationPeriodsEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<PreservationPeriod>, PublishDeleteEntityEventHelper<PreservationPeriod, PreservationPeriodDeleteEvent>>();
