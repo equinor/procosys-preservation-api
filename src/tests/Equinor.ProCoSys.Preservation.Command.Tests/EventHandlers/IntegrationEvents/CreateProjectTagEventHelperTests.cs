@@ -82,19 +82,11 @@ public class CreateProjectTagEventHelperTests
     [DataTestMethod]
     [DataRow(nameof(TagEvent.Plant), TestPlant)]
     [DataRow(nameof(TagEvent.ProjectName), TestProjectName)]
-    [DataRow(nameof(TagEvent.Description), "Test Description")]
     [DataRow(nameof(TagEvent.Remark), "Test Remark")]
-    [DataRow(nameof(TagEvent.DisciplineCode), "D")]
-    [DataRow(nameof(TagEvent.AreaCode), "A")]
-    [DataRow(nameof(TagEvent.TagFunctionCode), "Test Function Code")]
-    [DataRow(nameof(TagEvent.PurchaseOrderNo), "Test Purchase Order")]
     [DataRow(nameof(TagEvent.TagType), "Standard")]
     [DataRow(nameof(TagEvent.StorageArea), "Test Storage Area")]
-    [DataRow(nameof(TagEvent.AreaDescription), "A desc")]
-    [DataRow(nameof(TagEvent.DisciplineDescription), "D desc")]
     [DataRow(nameof(TagEvent.Status), "NotStarted")]
     [DataRow(nameof(TagEvent.IsVoided), false)]
-    [DataRow(nameof(TagEvent.IsVoidedInSource), false)]
     public async Task CreateEvent_ShouldCreateTagEventExpectedValues(string property, object expected)
     {
         // Act

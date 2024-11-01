@@ -15,7 +15,6 @@ public class ResponsibleEvent : IResponsibleEventV1
     public string ProjectName { get; init; } = null;
     
     public string Code { get; init; }
-    public string Description { get; init; }
     public bool IsVoided { get; init; }
     
     public DateTime CreatedAtUtc { get; init; }

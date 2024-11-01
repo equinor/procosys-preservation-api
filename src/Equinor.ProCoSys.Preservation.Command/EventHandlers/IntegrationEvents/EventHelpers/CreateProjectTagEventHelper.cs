@@ -28,18 +28,11 @@ public class CreateProjectTagEventHelper  : ICreateChildEventHelper<Project, Tag
             ProCoSysGuid = entity.Guid,
             Plant = entity.Plant,
             ProjectName = parentEntity.Name,
-            Description = entity.Description,
             Remark = entity.Remark,
             NextDueTimeUtc = entity.NextDueTimeUtc,
             StepGuid = step.Guid,
-            DisciplineCode = entity.DisciplineCode,
-            AreaCode = entity.AreaCode,
-            TagFunctionCode = entity.TagFunctionCode,
-            PurchaseOrderNo = entity.PurchaseOrderNo,
             TagType = entity.TagType.ToString(),
             StorageArea = entity.StorageArea,
-            AreaDescription = entity.AreaDescription,
-            DisciplineDescription = entity.DisciplineDescription,
             CreatedAtUtc = entity.CreatedAtUtc,
             CreatedByGuid = createdBy.Guid,
             ModifiedAtUtc = entity.ModifiedAtUtc,
@@ -48,7 +41,6 @@ public class CreateProjectTagEventHelper  : ICreateChildEventHelper<Project, Tag
             CommPkgGuid = entity.CommPkgProCoSysGuid,
             McPkgGuid = entity.McPkgProCoSysGuid,
             IsVoided = entity.IsVoided,
-            IsVoidedInSource = entity.IsVoidedInSource
         };
     }
 

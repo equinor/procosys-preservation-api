@@ -2,20 +2,13 @@
 
 public interface ITagEventV1 : IIntegrationEvent
 {
-    string Description { get; }
     string Remark { get; }
     DateTime? NextDueTimeUtc { get; }
 
     Guid StepGuid { get; }
 
-    string DisciplineCode { get; }
-    string AreaCode { get; }
-    string TagFunctionCode { get; }
-    string PurchaseOrderNo { get; }
     string TagType { get; }
     string StorageArea { get; }
-    string AreaDescription { get; }
-    string DisciplineDescription { get; }
 
     DateTime CreatedAtUtc { get; }
     Guid CreatedByGuid { get; }
@@ -29,6 +22,4 @@ public interface ITagEventV1 : IIntegrationEvent
     Guid? McPkgGuid { get; }
 
     bool IsVoided { get; }
-    bool IsVoidedInSource { get; }
-    bool IsDeletedInSource { get; }
 }
