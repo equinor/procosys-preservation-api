@@ -2,6 +2,7 @@
 
 public interface IResponsibleEventV1 : IIntegrationEvent
 {
+    string Code { get; init; }
     bool IsVoided { get; }
 
     DateTime CreatedAtUtc { get; }

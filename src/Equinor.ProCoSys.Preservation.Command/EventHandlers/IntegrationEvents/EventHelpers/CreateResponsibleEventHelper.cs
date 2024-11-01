@@ -20,6 +20,7 @@ public class CreateResponsibleEventHelper : ICreateEventHelper<Responsible, Resp
         {
             ProCoSysGuid = entity.Guid,
             Plant = entity.Plant,
+            Code = entity.Code,
             IsVoided = entity.IsVoided,
             CreatedAtUtc = entity.CreatedAtUtc,
             CreatedByGuid = createdBy.Guid,
