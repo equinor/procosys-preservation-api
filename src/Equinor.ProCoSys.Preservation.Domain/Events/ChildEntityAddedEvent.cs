@@ -2,11 +2,11 @@
 
 namespace Equinor.ProCoSys.Preservation.Domain.Events;
 
-public class EntityAddedChildEntityEvent<TEntity, TChild> : IPlantEntityEvent<TEntity>, IDomainEvent 
+public class ChildEntityAddedEvent<TEntity, TChild> : IPlantEntityEvent<TEntity>, IDomainEvent 
     where TEntity : PlantEntityBase, IHaveGuid 
     where TChild : PlantEntityBase, IHaveGuid
 {
-    public EntityAddedChildEntityEvent(TEntity entity, TChild childEntity)
+    public ChildEntityAddedEvent(TEntity entity, TChild childEntity)
     {
         Entity = entity;
         ChildEntity = childEntity;

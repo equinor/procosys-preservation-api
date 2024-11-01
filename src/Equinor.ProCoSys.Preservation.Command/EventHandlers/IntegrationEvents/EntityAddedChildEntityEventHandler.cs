@@ -12,7 +12,7 @@ using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
-public class EntityAddedChildEntityEventHandler<TParent, TChild, TEvent>  : INotificationHandler<EntityAddedChildEntityEvent<TParent, TChild>>
+public class EntityAddedChildEntityEventHandler<TParent, TChild, TEvent>  : INotificationHandler<ChildEntityAddedEvent<TParent, TChild>>
     where TParent : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
     where TChild : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
     where TEvent : class, IIntegrationEvent
@@ -28,7 +28,7 @@ public class EntityAddedChildEntityEventHandler<TParent, TChild, TEvent>  : INot
         _integrationEventPublisher = integrationEventPublisher;
     }
 
-    public async Task Handle(EntityAddedChildEntityEvent<TParent, TChild> notification, CancellationToken cancellationToken)
+    public async Task Handle(ChildEntityAddedEvent<TParent, TChild> notification, CancellationToken cancellationToken)
     {
         var integrationEvent = await _createTagEventHelper.CreateEvent(notification.Entity, notification.ChildEntity);
         await _integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);

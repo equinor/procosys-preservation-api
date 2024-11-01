@@ -43,7 +43,7 @@ public class EntityAddedChildEntityEventHandlerTests
     public async Task Handle_ShouldSendIntegrationEvent()
     {
         // Arrange
-        var domainEvent = new EntityAddedChildEntityEvent<RequirementDefinition, Field>(_requirementDefinition, _field);
+        var domainEvent = new ChildEntityAddedEvent<RequirementDefinition, Field>(_requirementDefinition, _field);
 
         // Act
         await _dut.Handle(domainEvent, default);

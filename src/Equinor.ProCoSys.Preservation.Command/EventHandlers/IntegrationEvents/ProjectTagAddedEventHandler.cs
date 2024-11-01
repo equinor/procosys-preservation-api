@@ -8,18 +8,18 @@ using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
-public class ProjectTagAddedEventHandler : INotificationHandler<EntityAddedChildEntityEvent<Project, Tag>>
+public class ProjectTagAddedEventHandler : INotificationHandler<ChildEntityAddedEvent<Project, Tag>>
 {
-    private readonly IDomainToIntegrationEventConverter<EntityAddedChildEntityEvent<Project, Tag>> _converter;
+    private readonly IDomainToIntegrationEventConverter<ChildEntityAddedEvent<Project, Tag>> _converter;
     private readonly IIntegrationEventPublisher _integrationEventPublisher;
 
-    public ProjectTagAddedEventHandler(IDomainToIntegrationEventConverter<EntityAddedChildEntityEvent<Project, Tag>> converter, IIntegrationEventPublisher integrationEventPublisher)
+    public ProjectTagAddedEventHandler(IDomainToIntegrationEventConverter<ChildEntityAddedEvent<Project, Tag>> converter, IIntegrationEventPublisher integrationEventPublisher)
     {
         _converter = converter;
         _integrationEventPublisher = integrationEventPublisher;
     }
 
-    public async Task Handle(EntityAddedChildEntityEvent<Project, Tag> notification, CancellationToken cancellationToken)
+    public async Task Handle(ChildEntityAddedEvent<Project, Tag> notification, CancellationToken cancellationToken)
     {
         var integrationEvents = await _converter.Convert(notification);
         foreach (var integrationEvent in integrationEvents)
