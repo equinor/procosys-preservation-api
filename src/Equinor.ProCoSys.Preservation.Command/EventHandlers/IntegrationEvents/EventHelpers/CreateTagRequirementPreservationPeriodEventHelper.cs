@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -20,7 +19,6 @@ public class CreateTagRequirementPreservationPeriodEventHelper : ICreateChildEve
         var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
         var preservedBy = entity.PreservationRecord != null ? await _personRepository.GetReadOnlyByIdAsync(entity.PreservationRecord.PreservedById) : null;
 
-        // TODO test
         return new PreservationPeriodsEvent
         {
             Status = entity.Status.ToString(),
