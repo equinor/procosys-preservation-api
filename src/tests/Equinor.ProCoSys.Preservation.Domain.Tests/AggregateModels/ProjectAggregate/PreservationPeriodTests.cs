@@ -263,21 +263,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void SetCreated_ShouldAddPlantEntityCreatedEvent()
-        {
-            // Arrange
-            var dut = new PreservationPeriod(TestPlant, 1, PreservationPeriodStatus.ReadyToBePreserved);
-            var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
-            // Act
-            dut.SetCreated(person);
-            var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
-
-            // Assert
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<PreservationPeriod>));
-        }
-        
-        [TestMethod]
         public void SetModified_ShouldAddPlantEntityModifiedEvent()
         {
             // Arrange
