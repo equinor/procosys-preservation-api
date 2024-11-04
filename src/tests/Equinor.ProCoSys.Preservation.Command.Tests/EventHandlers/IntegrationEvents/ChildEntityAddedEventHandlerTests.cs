@@ -12,10 +12,10 @@ using Moq;
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class EntityAddedChildEntityEventHandlerTests
+public class ChildEntityAddedEventHandlerTests
 {
     private const string TestPlant = "PCS$PlantA";
-    private EntityAddedChildEntityEventHandler<RequirementDefinition, Field, FieldEvent> _dut;
+    private ChildEntityAddedEventHandler<RequirementDefinition, Field, FieldEvent> _dut;
     private bool _eventPublished;
     private RequirementDefinition _requirementDefinition;
     private Field _field;
@@ -33,7 +33,7 @@ public class EntityAddedChildEntityEventHandlerTests
 
         _eventPublished = false;
 
-        _dut = new EntityAddedChildEntityEventHandler<RequirementDefinition, Field, FieldEvent>(mockCreateEventHelper.Object, mockPublisher.Object);
+        _dut = new ChildEntityAddedEventHandler<RequirementDefinition, Field, FieldEvent>(mockCreateEventHelper.Object, mockPublisher.Object);
 
         _requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
         _field = new Field(TestPlant, "F1", FieldType.Number, 1, "UnitA", true);
@@ -43,7 +43,7 @@ public class EntityAddedChildEntityEventHandlerTests
     public async Task Handle_ShouldSendIntegrationEvent()
     {
         // Arrange
-        var domainEvent = new EntityAddedChildEntityEvent<RequirementDefinition, Field>(_requirementDefinition, _field);
+        var domainEvent = new ChildEntityAddedEvent<RequirementDefinition, Field>(_requirementDefinition, _field);
 
         // Act
         await _dut.Handle(domainEvent, default);

@@ -290,6 +290,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(expectedUpdatedNextDueTimeUtc, dut.PreservationPeriods.Single().DueTimeUtc);
             Assert.AreNotEqual(expectedUpdatedNextDueTimeUtc, expectedNextDueTimeUtc);
         }
+        
+        [TestMethod]
+        public void StartPreservation_InactiveTag_ShouldAddChildEntityAddedEvent()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+
+            dut.StartPreservation();
+
+            var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(ChildEntityAddedEvent<TagRequirement, PreservationPeriod>));
+        }
 
         #endregion
 

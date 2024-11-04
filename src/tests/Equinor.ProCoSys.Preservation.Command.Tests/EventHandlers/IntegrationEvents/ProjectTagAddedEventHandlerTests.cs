@@ -30,8 +30,8 @@ public class ProjectTagAddedEventHandlerTests
     {
         // Arrange
         var mockIntegrationEvent = new Mock<IIntegrationEvent>();
-        var mockConverter = new Mock<IDomainToIntegrationEventConverter<EntityAddedChildEntityEvent<Project, Tag>>>();
-        mockConverter.Setup(x => x.Convert(It.IsAny<EntityAddedChildEntityEvent<Project, Tag>>())).ReturnsAsync(new List<IIntegrationEvent> { mockIntegrationEvent.Object });
+        var mockConverter = new Mock<IDomainToIntegrationEventConverter<ChildEntityAddedEvent<Project, Tag>>>();
+        mockConverter.Setup(x => x.Convert(It.IsAny<ChildEntityAddedEvent<Project, Tag>>())).ReturnsAsync(new List<IIntegrationEvent> { mockIntegrationEvent.Object });
 
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))
@@ -56,7 +56,7 @@ public class ProjectTagAddedEventHandlerTests
     public async Task Handle_ShouldSendIntegrationEvent()
     {
         // Arrange
-        var domainEvent = new EntityAddedChildEntityEvent<Project, Tag>(_project, _tag);
+        var domainEvent = new ChildEntityAddedEvent<Project, Tag>(_project, _tag);
 
         // Act
         await _dut.Handle(domainEvent, default);
