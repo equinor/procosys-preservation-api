@@ -1,4 +1,4 @@
-# pcs-preservation-api
+# pcs-preservation-api - Debug
 REST API for the preservation module in Project Completion System (ProCoSys (PCS)) using ASP.NET and Entity Framework.
 
 ## Notes
