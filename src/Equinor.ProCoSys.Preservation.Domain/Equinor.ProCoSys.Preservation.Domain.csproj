@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Reference Include="Equinor.ProCoSys.Common">
-      <HintPath>..\..\..\procosys-common\src\Equinor.ProCoSys.Common\bin\Debug\net7.0\Equinor.ProCoSys.Common.dll</HintPath>
+      <HintPath>..\..\..\procosys-common\src\Equinor.ProCoSys.Common\bin\Debug\net8.0\Equinor.ProCoSys.Common.dll</HintPath>
     </Reference>
   </ItemGroup>
 
