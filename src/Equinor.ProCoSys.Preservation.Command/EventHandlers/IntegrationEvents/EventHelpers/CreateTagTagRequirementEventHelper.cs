@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -7,21 +8,26 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateProjectTagRequirementEventHelper : ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>
+public class CreateTagTagRequirementEventHelper : ICreateChildEventHelper<Tag, TagRequirement, TagRequirementEvent>
 {
     private readonly IRequirementTypeRepository _requirementTypeRepository;
     private readonly IPersonRepository _personRepository;
+    private readonly IProjectRepository _projectRepository;
 
-    public CreateProjectTagRequirementEventHelper(
+    public CreateTagTagRequirementEventHelper(
         IRequirementTypeRepository requirementTypeRepository,
-        IPersonRepository personRepository)
+        IPersonRepository personRepository,
+        IProjectRepository projectRepository)
     {
         _requirementTypeRepository = requirementTypeRepository;
         _personRepository = personRepository;
+        _projectRepository = projectRepository;
     }
 
-    public async Task<TagRequirementEvent> CreateEvent(Project parentEntity, TagRequirement entity)
+    public async Task<TagRequirementEvent> CreateEvent(Tag parentEntity, TagRequirement entity)
     {
+        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(parentEntity.Guid);
+        
         var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(entity.RequirementDefinitionId);
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
 
@@ -31,7 +37,8 @@ public class CreateProjectTagRequirementEventHelper : ICreateChildEventHelper<Pr
         {
             ProCoSysGuid = entity.Guid,
             Plant = entity.Plant,
-            ProjectName = parentEntity.Name,
+            ProjectName = project.Name,
+            TagGuid = parentEntity.Guid,
             IntervalWeeks = entity.IntervalWeeks,
             Usage = entity.Usage.ToString(),
             NextDueTimeUtc = entity.NextDueTimeUtc,
