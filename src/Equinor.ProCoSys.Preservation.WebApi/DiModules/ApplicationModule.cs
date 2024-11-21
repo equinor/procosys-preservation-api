@@ -154,10 +154,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Field>>, IntegrationEventHandler<PlantEntityModifiedEvent<Field>, Field>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Field>>, IntegrationDeleteEventHandler<PlantEntityModifiedEvent<Field>, Field>>();
             services.AddTransient<IPublishEntityEventHelper<Field>, PublishEntityEventHelper<Field, FieldEvent>>();
-            services.AddTransient<IPublishDeleteEntityEventHelper<Field>, PublishDeleteEntityEventHelper<Field, RequirementFieldDeleteEvent>>();
+            services.AddTransient<IPublishDeleteEntityEventHelper<Field>, PublishDeleteEntityEventHelper<Field, FieldDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Field, FieldEvent>, CreateFieldEventHelper>();
             services.AddTransient<ICreateChildEventHelper<RequirementDefinition, Field, FieldEvent>, CreateRequirementDefinitionFieldEventHelper>();
-            services.AddTransient<ICreateEventHelper<Field, RequirementFieldDeleteEvent>, CreateRequirementFieldDeleteEventHelper>();
+            services.AddTransient<ICreateEventHelper<Field, FieldDeleteEvent>, CreateRequirementFieldDeleteEventHelper>();
             
             services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Journey>>, IntegrationEventHandler<PlantEntityCreatedEvent<Journey>, Journey>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Journey>>, IntegrationEventHandler<PlantEntityModifiedEvent<Journey>, Journey>>();
