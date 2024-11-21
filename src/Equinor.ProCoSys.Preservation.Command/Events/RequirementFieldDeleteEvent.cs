@@ -4,7 +4,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[EntityNameRequirementField]
+[EntityNameField]
 public class RequirementFieldDeleteEvent : DeleteEvent<Field>
 {
     public RequirementFieldDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
