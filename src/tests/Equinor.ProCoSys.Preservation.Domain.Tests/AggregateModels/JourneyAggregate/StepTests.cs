@@ -100,6 +100,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
         
         [TestMethod]
+        public void SetResponsible_ShouldAddModifiedEvent()
+        {
+            var responsibleId = 1;
+            var responsible = new Responsible(_dut.Plant, "C", "Desc");
+            responsible.SetProtectedIdForTesting(responsibleId);
+            _dut.SetResponsible(responsible);
+            
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Step>));
+        }
+        
+        [TestMethod]
         public void SetRemoved_ShouldAddPlantEntityDeletedEvent()
         {
             _dut.SetRemoved();

@@ -117,6 +117,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             ResponsibleId = responsible.Id;
+            
+            AddDomainEvent(new PlantEntityModifiedEvent<Step>(this));
         }
 
         public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Step>(this));
