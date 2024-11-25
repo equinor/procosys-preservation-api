@@ -29,7 +29,6 @@ using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirements;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Query.GetActionAttachment;
 using Equinor.ProCoSys.Preservation.Query.GetActionAttachments;
