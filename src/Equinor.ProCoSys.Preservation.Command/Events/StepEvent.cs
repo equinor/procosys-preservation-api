@@ -9,6 +9,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 public class StepEvent : IStepEventV1
 {
     public Guid ProCoSysGuid { get; init; }
+    public Guid JourneyGuid { get; init; }
     public Guid ModeGuid { get; init; }
     public Guid ResponsibleGuid { get; init; }
 

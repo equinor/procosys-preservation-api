@@ -2,6 +2,7 @@
 
 public interface IStepEventV1 : IIntegrationEvent
 {
+    Guid JourneyGuid { get; }
     Guid ModeGuid { get; }
     Guid ResponsibleGuid { get; }
 
