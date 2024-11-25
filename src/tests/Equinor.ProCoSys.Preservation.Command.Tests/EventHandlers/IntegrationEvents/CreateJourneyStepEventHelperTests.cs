@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Time;
@@ -8,8 +7,6 @@ using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,7 +15,7 @@ using Moq;
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class CreateStepEventHelperTests
+public class CreateJourneyStepEventHelperTests
 {
     private const string TestPlant = "PCS$PlantA";
     private static DateTime TestTime => DateTime.Parse("2012-12-12T11:22:33Z").ToUniversalTime();
@@ -27,7 +24,7 @@ public class CreateStepEventHelperTests
     private Person _person;
     private Responsible _responsible;
     private Step _step;
-    private CreateStepEventHelper _dut;
+    private CreateJourneyStepEventHelper _dut;
     private Journey _journey;
 
     [TestInitialize]
@@ -54,7 +51,7 @@ public class CreateStepEventHelperTests
         
         _step = new Step(TestPlant, "Test Title", _mode, _responsible);
         
-        _dut = new CreateStepEventHelper(mockModeRepository.Object, mockPersonRepository.Object, responsibleRepositoryMock.Object);
+        _dut = new CreateJourneyStepEventHelper(mockModeRepository.Object, mockPersonRepository.Object, responsibleRepositoryMock.Object);
         
         _journey = new Journey(TestPlant, "Test Title");
         _journey.AddStep(_step);
@@ -70,7 +67,7 @@ public class CreateStepEventHelperTests
     public async Task CreateEvent_ShouldCreateStepEventExpectedValues(string property, object expected)
     {
         // Act
-        var integrationEvent = await _dut.CreateEvent(_step);
+        var integrationEvent = await _dut.CreateEvent(_journey, _step);
         var result = integrationEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -81,7 +78,6 @@ public class CreateStepEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow(nameof(StepEvent.JourneyGuid))]
     [DataRow(nameof(StepEvent.CreatedByGuid))]
     [DataRow(nameof(StepEvent.ModifiedByGuid))]
     public async Task CreateEvent_ShouldCreateStepEventWithGuids(string property)
@@ -91,7 +87,7 @@ public class CreateStepEventHelperTests
         _step.SetModified(_person);
         
         // Act
-        var tagRequirementEvent = await _dut.CreateEvent(_step);
+        var tagRequirementEvent = await _dut.CreateEvent(_journey, _step);
         var result = tagRequirementEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -108,7 +104,7 @@ public class CreateStepEventHelperTests
         var expected = _step.Guid;
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_step);
+        var integrationEvent = await _dut.CreateEvent(_journey, _step);
         var result = integrationEvent.ProCoSysGuid;
 
         // Assert
@@ -122,7 +118,7 @@ public class CreateStepEventHelperTests
         var expected = _journey.Guid;
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_step);
+        var integrationEvent = await _dut.CreateEvent(_journey, _step);
         var result = integrationEvent.JourneyGuid;
 
         // Assert
@@ -136,7 +132,7 @@ public class CreateStepEventHelperTests
         var expected = _mode.Guid;
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_step);
+        var integrationEvent = await _dut.CreateEvent(_journey, _step);
         var result = integrationEvent.ModeGuid;
 
         // Assert
@@ -150,7 +146,7 @@ public class CreateStepEventHelperTests
         var expected = _responsible.Guid;
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_step);
+        var integrationEvent = await _dut.CreateEvent(_journey, _step);
         var result = integrationEvent.ResponsibleGuid;
 
         // Assert
@@ -164,7 +160,7 @@ public class CreateStepEventHelperTests
         _step.SetCreated(_person);
 
         // Act
-        var tagRequirementEvent = await _dut.CreateEvent(_step);
+        var tagRequirementEvent = await _dut.CreateEvent(_journey, _step);
 
         // Assert
         Assert.AreEqual(TestTime, tagRequirementEvent.CreatedAtUtc);
@@ -177,7 +173,7 @@ public class CreateStepEventHelperTests
         _step.SetModified(_person);
 
         // Act
-        var tagRequirementEvent = await _dut.CreateEvent(_step);
+        var tagRequirementEvent = await _dut.CreateEvent(_journey, _step);
 
         // Assert
         Assert.AreEqual(TestTime, tagRequirementEvent.ModifiedAtUtc);

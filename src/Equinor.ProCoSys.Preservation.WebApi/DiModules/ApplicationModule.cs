@@ -194,13 +194,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleEvent>, CreateResponsibleEventHelper>();
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleDeleteEvent>, CreateResponsibleDeleteEventHelper>();
             
-            services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Step>>, IntegrationEventHandler<PlantEntityCreatedEvent<Step>, Step>>();
+            // services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Step>>, IntegrationEventHandler<PlantEntityCreatedEvent<Step>, Step>>(); // TODO
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Step>>, IntegrationEventHandler<PlantEntityModifiedEvent<Step>, Step>>();
             services.AddTransient<INotificationHandler<PlantEntityDeletedEvent<Step>>, IntegrationDeleteEventHandler<PlantEntityDeletedEvent<Step>, Step>>();
             services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
-            services.AddTransient<ICreateEventHelper<Step, StepEvent>, CreateStepEventHelper>();
             services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
+            
+            services.AddTransient<INotificationHandler<ChildEntityAddedEvent<Journey, Step>>, ChildEntityAddedEventHandler<Journey, Step, StepEvent>>();
+            services.AddTransient<ICreateChildEventHelper<Journey, Step, StepEvent>, CreateJourneyStepEventHelper>();
+
             
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
 

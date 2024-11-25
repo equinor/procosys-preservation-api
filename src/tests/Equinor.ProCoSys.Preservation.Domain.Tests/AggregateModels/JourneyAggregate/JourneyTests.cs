@@ -148,6 +148,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             // Arrange
             Assert.AreEqual(4, stepD.SortKey);
         }
+        
+        [TestMethod]
+        public void AddStep_ShouldAddChildEntityAddedEvent()
+        {
+            _dutWithNoSteps.AddStep(_stepA);
+            
+            var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(ChildEntityAddedEvent<Journey, Step>));
+        }
 
         [TestMethod]
         public void GetNextStep_ShouldReturnedWithNextSortKey()

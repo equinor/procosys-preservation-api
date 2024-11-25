@@ -60,6 +60,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             _steps.Add(step);
             step.SortKey = _steps.Select(s => s.SortKey).Max() + 1;
+            
+            AddDomainEvent(new ChildEntityAddedEvent<Journey, Step>(this, step));
         }
 
         public void RemoveStep(Step step)

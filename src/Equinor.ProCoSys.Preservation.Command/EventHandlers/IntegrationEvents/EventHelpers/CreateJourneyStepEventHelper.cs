@@ -7,20 +7,20 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateStepEventHelper : ICreateEventHelper<Step, StepEvent>
+public class CreateJourneyStepEventHelper : ICreateChildEventHelper<Journey, Step, StepEvent>
 {
     private readonly IModeRepository _modeRepository;
     private readonly IPersonRepository _personRepository;
     private readonly IResponsibleRepository _responsibleRepository;
 
-    public CreateStepEventHelper(IModeRepository modeRepository, IPersonRepository personRepository, IResponsibleRepository responsibleRepository)
+    public CreateJourneyStepEventHelper(IModeRepository modeRepository, IPersonRepository personRepository, IResponsibleRepository responsibleRepository)
     {
         _modeRepository = modeRepository;
         _personRepository = personRepository;
         _responsibleRepository = responsibleRepository;
     }
 
-    public async Task<StepEvent> CreateEvent(Step entity)
+    public async Task<StepEvent> CreateEvent(Journey parentEntity, Step entity)
     {
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
         var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
@@ -31,6 +31,7 @@ public class CreateStepEventHelper : ICreateEventHelper<Step, StepEvent>
         return new StepEvent
         {
             ProCoSysGuid = entity.Guid,
+            JourneyGuid = parentEntity.Guid,
             ModeGuid = mode.Guid,
             ResponsibleGuid = responsible.Guid,
             Plant = entity.Plant,
