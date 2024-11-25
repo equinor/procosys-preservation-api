@@ -24,8 +24,8 @@ public class CreateTagTagRequirementEventHelperTests
     private const string TestProjectName = "Test Project";
     private static DateTime TestTime => DateTime.Parse("2012-12-12T11:22:33Z").ToUniversalTime();
     private static Guid TestGuid => new("11111111-1111-1111-1111-111111111111");
-    private RequirementDefinition _requirementDefinition;
     private Project _project;
+    private RequirementDefinition _requirementDefinition;
     private TagRequirement _tagRequirement;
     private Person _person;
     private CreateTagTagRequirementEventHelper _dut;
@@ -62,7 +62,7 @@ public class CreateTagTagRequirementEventHelperTests
 
         var mockPersonRepository = new Mock<IPersonRepository>();
         mockPersonRepository.Setup(r => r.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
-        
+
         _dut = new CreateTagTagRequirementEventHelper(mockRequirementTypeRepository.Object, mockPersonRepository.Object);
     }
 
