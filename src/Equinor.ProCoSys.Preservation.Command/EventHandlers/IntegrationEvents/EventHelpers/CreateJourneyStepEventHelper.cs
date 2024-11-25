@@ -7,26 +7,19 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateJourneyStepEventHelper : ICreateChildEventHelper<Journey, Step, StepEvent>
+public class CreateJourneyStepEventHelper(
+    IModeRepository modeRepository,
+    IPersonRepository personRepository,
+    IResponsibleRepository responsibleRepository)
+    : ICreateChildEventHelper<Journey, Step, StepEvent>
 {
-    private readonly IModeRepository _modeRepository;
-    private readonly IPersonRepository _personRepository;
-    private readonly IResponsibleRepository _responsibleRepository;
-
-    public CreateJourneyStepEventHelper(IModeRepository modeRepository, IPersonRepository personRepository, IResponsibleRepository responsibleRepository)
-    {
-        _modeRepository = modeRepository;
-        _personRepository = personRepository;
-        _responsibleRepository = responsibleRepository;
-    }
-
     public async Task<StepEvent> CreateEvent(Journey parentEntity, Step entity)
     {
-        var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
-        var modifiedBy = entity.ModifiedById.HasValue ? await _personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
+        var createdBy = await personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
+        var modifiedBy = entity.ModifiedById.HasValue ? await personRepository.GetReadOnlyByIdAsync(entity.ModifiedById.Value) : null;
 
-        var mode = await _modeRepository.GetByIdAsync(entity.ModeId);
-        var responsible = await _responsibleRepository.GetByIdAsync(entity.ResponsibleId);
+        var mode = await modeRepository.GetByIdAsync(entity.ModeId);
+        var responsible = await responsibleRepository.GetByIdAsync(entity.ResponsibleId);
 
         return new StepEvent
         {

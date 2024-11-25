@@ -306,7 +306,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             _actions.Add(action);
 
-            AddDomainEvent(new ChildEntityAddedEvent<Tag, Action>(this, action));
+            AddDomainEvent(new ChildAddedEvent<Tag, Action>(this, action));
         }
 
         public Action CloseAction(int actionId, Person closedBy, DateTime closedAtUtc, string rowVersion)

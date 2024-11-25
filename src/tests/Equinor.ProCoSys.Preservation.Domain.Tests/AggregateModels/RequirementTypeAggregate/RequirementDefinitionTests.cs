@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             _dut.AddField(f);
 
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(ChildEntityAddedEvent<RequirementDefinition, Field>));
+            CollectionAssert.Contains(eventTypes, typeof(ChildAddedEvent<RequirementDefinition, Field>));
         }
 
         [TestMethod]

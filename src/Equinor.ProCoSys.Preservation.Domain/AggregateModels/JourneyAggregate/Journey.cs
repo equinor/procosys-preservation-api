@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             _steps.Add(step);
             step.SortKey = _steps.Select(s => s.SortKey).Max() + 1;
             
-            AddDomainEvent(new ChildEntityAddedEvent<Journey, Step>(this, step));
+            AddDomainEvent(new ChildAddedEvent<Journey, Step>(this, step));
         }
 
         public void RemoveStep(Step step)
@@ -94,9 +94,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             var step1 = _steps.Single(s => s.Id == stepId1);
             var step2 = _steps.Single(s => s.Id == stepId2);
-            var tmp = step1.SortKey;
-            step1.SortKey = step2.SortKey;
-            step2.SortKey = tmp;
+            (step1.SortKey, step2.SortKey) = (step2.SortKey, step1.SortKey);
+            
+            AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step1));
+            AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step2));
         }
 
         public Step VoidStep(int stepId, string stepRowVersion)

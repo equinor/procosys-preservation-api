@@ -150,12 +150,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
         
         [TestMethod]
-        public void AddStep_ShouldAddChildEntityAddedEvent()
+        public void AddStep_ShouldAddChildAddedEvent()
         {
             _dutWithNoSteps.AddStep(_stepA);
             
             var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(ChildEntityAddedEvent<Journey, Step>));
+            CollectionAssert.Contains(eventTypes, typeof(ChildAddedEvent<Journey, Step>));
         }
 
         [TestMethod]
@@ -219,6 +219,16 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(_stepB, steps.ElementAt(0));
             Assert.AreEqual(_stepC, steps.ElementAt(1));
             Assert.AreEqual(_stepA, steps.ElementAt(2));
+        }
+        
+        [TestMethod]
+        public void SwapSteps_ShouldAddChildModifiedEvents()
+        {
+            _dutWith3Steps.SwapSteps(_stepAId, _stepBId);
+            
+            var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
+            var childModifiedEvent = eventTypes.FindAll(e => e == typeof(ChildModifiedEvent<Journey, Step>));
+            Assert.AreEqual(2, childModifiedEvent.Count);
         }
 
         [TestMethod]

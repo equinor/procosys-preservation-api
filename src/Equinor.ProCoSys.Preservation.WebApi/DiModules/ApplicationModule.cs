@@ -119,7 +119,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddHttpClient();
 
             // Transient - Created each time it is requested from the service container
-            services.AddTransient<IDomainToIntegrationEventConverter<ChildEntityAddedEvent<Project, Tag>>, ProjectTagAddedEventConverter>();
+            services.AddTransient<IDomainToIntegrationEventConverter<ChildAddedEvent<Project, Tag>>, ProjectTagAddedEventConverter>();
             
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Tag>>, IntegrationEventHandler<PlantEntityModifiedEvent<Tag>, Tag>>();
             services.AddTransient<INotificationHandler<PlantEntityDeletedEvent<Tag>>, IntegrationDeleteEventHandler<PlantEntityDeletedEvent<Tag>, Tag>>();
@@ -135,7 +135,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<TagRequirement, TagRequirementEvent>, CreateTagRequirementEventHelper>();
             services.AddTransient<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>, CreateTagTagRequirementEventHelper>();
             
-            services.AddTransient<INotificationHandler<ChildEntityAddedEvent<RequirementType, RequirementDefinition>>, ChildEntityAddedEventHandler<RequirementType, RequirementDefinition, RequirementDefinitionEvent>>();
+            services.AddTransient<INotificationHandler<ChildAddedEvent<RequirementType, RequirementDefinition>>, ChildEventHandler<RequirementType, RequirementDefinition, RequirementDefinitionEvent>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<RequirementDefinition>>, IntegrationEventHandler<PlantEntityModifiedEvent<RequirementDefinition>, RequirementDefinition>>();
             services.AddTransient<INotificationHandler<PlantEntityDeletedEvent<RequirementDefinition>>, IntegrationDeleteEventHandler<PlantEntityDeletedEvent<RequirementDefinition>, RequirementDefinition>>();
             services.AddTransient<IPublishEntityEventHelper<RequirementDefinition>, PublishEntityEventHelper<RequirementDefinition, RequirementDefinitionEvent>>();
@@ -144,13 +144,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<RequirementDefinition, RequirementDefinitionDeleteEvent>, CreateRequirementDefinitionDeletedEventHelper>();
             services.AddTransient<IPublishDeleteEntityEventHelper<RequirementDefinition>, PublishDeleteEntityEventHelper<RequirementDefinition, RequirementDefinitionDeleteEvent>>();
 
-            services.AddTransient<INotificationHandler<ChildEntityAddedEvent<Tag, Action>>, ChildEntityAddedEventHandler<Tag, Action, ActionEvent>>();
+            services.AddTransient<INotificationHandler<ChildAddedEvent<Tag, Action>>, ChildEventHandler<Tag, Action, ActionEvent>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Action>>, IntegrationEventHandler<PlantEntityModifiedEvent<Action>, Action>>();
             services.AddTransient<IPublishEntityEventHelper<Action>, PublishEntityEventHelper<Action, ActionEvent>>();
             services.AddTransient<ICreateEventHelper<Action, ActionEvent>, CreateActionEventHelper>();
             services.AddTransient<ICreateChildEventHelper<Tag, Action, ActionEvent>, CreateTagActionEventHelper>();
             
-            services.AddTransient<INotificationHandler<ChildEntityAddedEvent<RequirementDefinition, Field>>, ChildEntityAddedEventHandler<RequirementDefinition, Field, FieldEvent>>();
+            services.AddTransient<INotificationHandler<ChildAddedEvent<RequirementDefinition, Field>>, ChildEventHandler<RequirementDefinition, Field, FieldEvent>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Field>>, IntegrationEventHandler<PlantEntityModifiedEvent<Field>, Field>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Field>>, IntegrationDeleteEventHandler<PlantEntityModifiedEvent<Field>, Field>>();
             services.AddTransient<IPublishEntityEventHelper<Field>, PublishEntityEventHelper<Field, FieldEvent>>();
@@ -175,7 +175,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Mode, ModeEvent>, CreateModeEventHelper>();
             services.AddTransient<ICreateEventHelper<Mode, ModeDeleteEvent>, CreateModeDeletedEventHelper>();
             
-            services.AddTransient<INotificationHandler<ChildEntityAddedEvent<TagRequirement, PreservationPeriod>>, ChildEntityAddedEventHandler<TagRequirement, PreservationPeriod, PreservationPeriodsEvent>>();
+            services.AddTransient<INotificationHandler<ChildAddedEvent<TagRequirement, PreservationPeriod>>, ChildEventHandler<TagRequirement, PreservationPeriod, PreservationPeriodsEvent>>();
             services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<PreservationPeriod>>, IntegrationEventHandler<PlantEntityModifiedEvent<PreservationPeriod>, PreservationPeriod>>();
             services.AddTransient<IPublishEntityEventHelper<PreservationPeriod>, PublishEntityEventHelper<PreservationPeriod, PreservationPeriodsEvent>>();
             services.AddTransient<ICreateChildEventHelper<TagRequirement, PreservationPeriod, PreservationPeriodsEvent>, CreateTagRequirementPreservationPeriodEventHelper>();
@@ -195,13 +195,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleDeleteEvent>, CreateResponsibleDeleteEventHelper>();
             
             // services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Step>>, IntegrationEventHandler<PlantEntityCreatedEvent<Step>, Step>>(); // TODO
-            services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Step>>, IntegrationEventHandler<PlantEntityModifiedEvent<Step>, Step>>();
+            // services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Step>>, IntegrationEventHandler<PlantEntityModifiedEvent<Step>, Step>>();// TODO
             services.AddTransient<INotificationHandler<PlantEntityDeletedEvent<Step>>, IntegrationDeleteEventHandler<PlantEntityDeletedEvent<Step>, Step>>();
             services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
             
-            services.AddTransient<INotificationHandler<ChildEntityAddedEvent<Journey, Step>>, ChildEntityAddedEventHandler<Journey, Step, StepEvent>>();
+            services.AddTransient<INotificationHandler<ChildAddedEvent<Journey, Step>>, ChildEventHandler<Journey, Step, StepEvent>>();
+            services.AddTransient<INotificationHandler<ChildModifiedEvent<Journey, Step>>, ChildEventHandler<Journey, Step, StepEvent>>();
             services.AddTransient<ICreateChildEventHelper<Journey, Step, StepEvent>, CreateJourneyStepEventHelper>();
 
             
