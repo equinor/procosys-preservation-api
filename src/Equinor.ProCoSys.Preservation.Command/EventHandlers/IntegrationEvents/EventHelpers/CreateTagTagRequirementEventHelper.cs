@@ -8,25 +8,22 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagTagRequirementEventHelper : ICreateChildEventHelper<Tag, TagRequirement, TagRequirementEvent>
+public class CreateTagTagRequirementEventHelper : ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>
 {
     private readonly IRequirementTypeRepository _requirementTypeRepository;
     private readonly IPersonRepository _personRepository;
-    private readonly IProjectRepository _projectRepository;
 
     public CreateTagTagRequirementEventHelper(
         IRequirementTypeRepository requirementTypeRepository,
-        IPersonRepository personRepository,
-        IProjectRepository projectRepository)
+        IPersonRepository personRepository)
     {
         _requirementTypeRepository = requirementTypeRepository;
         _personRepository = personRepository;
-        _projectRepository = projectRepository;
     }
 
-    public async Task<TagRequirementEvent> CreateEvent(Tag parentEntity, TagRequirement entity)
+    public async Task<TagRequirementEvent> CreateEvent(Project parentEntity, TagRequirement entity)
     {
-        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(parentEntity.Guid);
+        var parentTag = GetProjectParentTag(parentEntity, entity);
         
         var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(entity.RequirementDefinitionId);
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
@@ -37,8 +34,8 @@ public class CreateTagTagRequirementEventHelper : ICreateChildEventHelper<Tag, T
         {
             ProCoSysGuid = entity.Guid,
             Plant = entity.Plant,
-            ProjectName = project.Name,
-            TagGuid = parentEntity.Guid,
+            ProjectName = parentEntity.Name,
+            TagGuid = parentTag.Guid,
             IntervalWeeks = entity.IntervalWeeks,
             Usage = entity.Usage.ToString(),
             NextDueTimeUtc = entity.NextDueTimeUtc,
@@ -68,4 +65,6 @@ public class CreateTagTagRequirementEventHelper : ICreateChildEventHelper<Tag, T
 
         return modifiedBy.Guid;
     }
+    
+    private Tag GetProjectParentTag(Project parentEntity, TagRequirement entity) => parentEntity.Tags.First(t => t.Requirements.Any(r => r.Id == entity.Id));
 }
