@@ -75,6 +75,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(modeId, _dut.ModeId);
             Assert.AreEqual(mode.ForSupplier, _dut.IsSupplierStep);
         }
+        
+        [TestMethod]
+        public void SetMode_ShouldAddModifiedEvent()
+        {
+            var modeId = 1;
+            var mode = new Mode(_dut.Plant, "ModeTitle", false);
+            mode.SetProtectedIdForTesting(modeId);
+            _dut.SetMode(mode);
+            
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Step>));
+        }
 
         [TestMethod]
         public void SetResponsible_ShouldSetResponsible()
@@ -85,17 +97,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _dut.SetResponsible(responsible);
 
             Assert.AreEqual(responsibleId, _dut.ResponsibleId);
-        }
-        
-        [TestMethod]
-        public void SetModified_ShouldAddPlantEntityModifiedEvent()
-        {
-            var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
-            _dut.SetModified(person);
-            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Step>));
         }
         
         [TestMethod]

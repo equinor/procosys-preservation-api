@@ -194,17 +194,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleEvent>, CreateResponsibleEventHelper>();
             services.AddTransient<ICreateEventHelper<Responsible, ResponsibleDeleteEvent>, CreateResponsibleDeleteEventHelper>();
             
-            // services.AddTransient<INotificationHandler<PlantEntityCreatedEvent<Step>>, IntegrationEventHandler<PlantEntityCreatedEvent<Step>, Step>>(); // TODO
-            // services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Step>>, IntegrationEventHandler<PlantEntityModifiedEvent<Step>, Step>>();// TODO
+            services.AddTransient<INotificationHandler<ChildAddedEvent<Journey, Step>>, ChildEventHandler<Journey, Step, StepEvent>>();
+            services.AddTransient<INotificationHandler<ChildModifiedEvent<Journey, Step>>, ChildEventHandler<Journey, Step, StepEvent>>();
+            services.AddTransient<INotificationHandler<PlantEntityModifiedEvent<Step>>, IntegrationEventHandler<PlantEntityModifiedEvent<Step>, Step>>();
             services.AddTransient<INotificationHandler<PlantEntityDeletedEvent<Step>>, IntegrationDeleteEventHandler<PlantEntityDeletedEvent<Step>, Step>>();
             services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
-            services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
-            
-            services.AddTransient<INotificationHandler<ChildAddedEvent<Journey, Step>>, ChildEventHandler<Journey, Step, StepEvent>>();
-            services.AddTransient<INotificationHandler<ChildModifiedEvent<Journey, Step>>, ChildEventHandler<Journey, Step, StepEvent>>();
             services.AddTransient<ICreateChildEventHelper<Journey, Step, StepEvent>, CreateJourneyStepEventHelper>();
-
+            services.AddTransient<ICreateEventHelper<Step, StepEvent>, CreateStepEventHelper>();
+            services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
             
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
 
