@@ -85,7 +85,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _dut.SetMode(mode);
             
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Step>));
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Step>));
         }
 
         [TestMethod]
@@ -108,7 +108,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _dut.SetResponsible(responsible);
             
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Step>));
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Step>));
         }
         
         [TestMethod]
@@ -117,7 +117,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _dut.SetRemoved();
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
 
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Step>));
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Step>));
         }
     }
 }

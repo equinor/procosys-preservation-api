@@ -74,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             CreatedById = createdBy.Id;
 
-            AddDomainEvent(new PlantEntityCreatedEvent<RequirementType>(this));
+            AddDomainEvent(new CreatedEvent<RequirementType>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -86,7 +86,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             ModifiedById = modifiedBy.Id;
 
-            AddDomainEvent(new PlantEntityModifiedEvent<RequirementType>(this));
+            AddDomainEvent(new ModifiedEvent<RequirementType>(this));
         }
 
         public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition)
@@ -107,7 +107,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
 
             _requirementDefinitions.Remove(requirementDefinition);
-            AddDomainEvent(new PlantEntityDeletedEvent<RequirementDefinition>(requirementDefinition));
+            AddDomainEvent(new DeletedEvent<RequirementDefinition>(requirementDefinition));
         }
     }
 }

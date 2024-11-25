@@ -226,7 +226,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddDomainEvent(new PlantEntityModifiedEvent<PreservationPeriod>(this));
+            AddDomainEvent(new ModifiedEvent<PreservationPeriod>(this));
         }
 
         private void AddFieldValue(FieldValue fieldValue)
