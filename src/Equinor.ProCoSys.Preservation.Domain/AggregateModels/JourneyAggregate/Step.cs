@@ -95,7 +95,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             ModifiedById = modifiedBy.Id;
 
-            AddDomainEvent(new PlantEntityModifiedEvent<Step>(this));
+            AddDomainEvent(new PlantEntityModifiedEvent<Step>(this)); // TODO remove
         }
 
         public void SetMode(Mode mode)

@@ -138,6 +138,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             step.IsVoided = false;
             step.SetRowVersion(stepRowVersion);
+            
+            AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step));
+            
             return step;
         }
 

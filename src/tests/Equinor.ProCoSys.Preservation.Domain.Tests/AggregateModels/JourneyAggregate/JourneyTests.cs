@@ -256,7 +256,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         public void VoidStep_ShouldAddChildModifiedEvent()
         {
             var stepToVoid = _dutWith3Steps.Steps.First();
-            Assert.IsFalse(stepToVoid.IsVoided);
 
             _dutWith3Steps.VoidStep(stepToVoid.Id, "AAAAAAAAABA=");
             
@@ -286,6 +285,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var step = _dutWith3Steps.UnvoidStep(stepToUnvoid.Id, "AAAAAAAAABA=");
 
             Assert.AreEqual(step, stepToUnvoid);
+        }
+        
+        [TestMethod]
+        public void UnvoidStep_ShouldAddChildModifiedEvent()
+        {
+            var stepToUnvoid = _dutWith3Steps.Steps.First();
+
+            _dutWith3Steps.UnvoidStep(stepToUnvoid.Id, "AAAAAAAAABA=");
+            
+            var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(ChildModifiedEvent<Journey, Step>));
         }
         
         [TestMethod]
