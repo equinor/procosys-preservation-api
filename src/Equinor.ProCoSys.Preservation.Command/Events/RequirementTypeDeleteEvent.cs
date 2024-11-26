@@ -1,6 +1,5 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Command.Events.EntityNames;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
