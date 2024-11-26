@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             _dut.AddField(f);
 
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(ChildEntityAddedEvent<RequirementDefinition, Field>));
+            CollectionAssert.Contains(eventTypes, typeof(ChildAddedEvent<RequirementDefinition, Field>));
         }
 
         [TestMethod]
@@ -111,7 +111,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             _dut.RemoveField(f);
 
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Field>));
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Field>));
         }
 
         [TestMethod]
@@ -208,7 +208,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             _dut.SetModified(person);
 
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<RequirementDefinition>));
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<RequirementDefinition>));
         }
     }
 }

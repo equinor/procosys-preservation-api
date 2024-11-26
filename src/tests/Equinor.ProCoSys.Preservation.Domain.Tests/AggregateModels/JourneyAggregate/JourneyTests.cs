@@ -148,6 +148,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             // Arrange
             Assert.AreEqual(4, stepD.SortKey);
         }
+        
+        [TestMethod]
+        public void AddStep_ShouldAddChildAddedEvent()
+        {
+            _dutWithNoSteps.AddStep(_stepA);
+            
+            var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(ChildAddedEvent<Journey, Step>));
+        }
 
         [TestMethod]
         public void GetNextStep_ShouldReturnedWithNextSortKey()
@@ -211,6 +220,16 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(_stepC, steps.ElementAt(1));
             Assert.AreEqual(_stepA, steps.ElementAt(2));
         }
+        
+        [TestMethod]
+        public void SwapSteps_ShouldAddChildModifiedEvents()
+        {
+            _dutWith3Steps.SwapSteps(_stepAId, _stepBId);
+            
+            var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
+            var childModifiedEvent = eventTypes.FindAll(e => e == typeof(ChildModifiedEvent<Journey, Step>));
+            Assert.AreEqual(2, childModifiedEvent.Count);
+        }
 
         [TestMethod]
         public void VoidStep_ShouldVoidStep()
@@ -231,6 +250,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var step = _dutWith3Steps.VoidStep(stepToVoid.Id, "AAAAAAAAABA=");
 
             Assert.AreEqual(step, stepToVoid);
+        }
+        
+        [TestMethod]
+        public void VoidStep_ShouldAddChildModifiedEvent()
+        {
+            var stepToVoid = _dutWith3Steps.Steps.First();
+
+            _dutWith3Steps.VoidStep(stepToVoid.Id, "AAAAAAAAABA=");
+            
+            var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(ChildModifiedEvent<Journey, Step>));
         }
 
         [TestMethod]
@@ -258,6 +288,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
         
         [TestMethod]
+        public void UnvoidStep_ShouldAddChildModifiedEvent()
+        {
+            var stepToUnvoid = _dutWith3Steps.Steps.First();
+
+            _dutWith3Steps.UnvoidStep(stepToUnvoid.Id, "AAAAAAAAABA=");
+            
+            var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(ChildModifiedEvent<Journey, Step>));
+        }
+        
+        [TestMethod]
         public void SetCreated_ShouldAddPlantEntityCreatedEvent()
         {
             // Arrange
@@ -268,7 +309,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<Journey>));
+            CollectionAssert.Contains(eventTypes, typeof(CreatedEvent<Journey>));
         }
         
         [TestMethod]
@@ -282,7 +323,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Journey>));
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Journey>));
         }
         
         [TestMethod]
@@ -293,7 +334,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Journey>));
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Journey>));
         }
     }
 }

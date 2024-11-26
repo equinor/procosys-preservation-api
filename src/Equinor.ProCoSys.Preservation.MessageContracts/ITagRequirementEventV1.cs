@@ -2,6 +2,7 @@
 
 public interface ITagRequirementEventV1 : IIntegrationEvent
 {
+    Guid TagGuid { get; }
     int IntervalWeeks { get; }
     string Usage { get; }
     DateTime? NextDueTimeUtc { get; }

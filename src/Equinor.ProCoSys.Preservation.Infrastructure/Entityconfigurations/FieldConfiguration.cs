@@ -35,7 +35,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
                 .OnDelete(DeleteBehavior.NoAction)
                 .IsRequired(false);
 
-            builder.HasCheckConstraint("constraint_field_check_valid_fieldtype", $"{nameof(Field.FieldType)} in ({GetValidFieldTypes()})");
+            builder.ToTable(t => t.HasCheckConstraint(
+                "constraint_field_check_valid_fieldtype", $"{nameof(Field.FieldType)} in ({GetValidFieldTypes()})"));
         }
 
         private string GetValidFieldTypes()

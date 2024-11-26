@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
             }
             CreatedById = createdBy.Id;
 
-            AddDomainEvent(new PlantEntityCreatedEvent<Mode>(this));
+            AddDomainEvent(new CreatedEvent<Mode>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -54,9 +54,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddDomainEvent(new PlantEntityModifiedEvent<Mode>(this));
+            AddDomainEvent(new ModifiedEvent<Mode>(this));
         }
 
-        public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Mode>(this));
+        public void SetRemoved() => AddDomainEvent(new DeletedEvent<Mode>(this));
     }
 }

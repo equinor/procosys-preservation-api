@@ -13,6 +13,7 @@ public class TagRequirementEvent : ITagRequirementEventV1
 
     public Guid RequirementDefinitionGuid { get; init; }
 
+    public Guid TagGuid { get; init; }
     public int IntervalWeeks { get; init; }
     public string Usage { get; init; }
     public DateTime? NextDueTimeUtc { get; init; }

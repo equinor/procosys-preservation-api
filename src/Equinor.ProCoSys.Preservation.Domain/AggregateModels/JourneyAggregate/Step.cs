@@ -83,8 +83,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             CreatedById = createdBy.Id;
-
-            AddDomainEvent(new PlantEntityCreatedEvent<Step>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -96,8 +94,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             ModifiedById = modifiedBy.Id;
-
-            AddDomainEvent(new PlantEntityModifiedEvent<Step>(this));
         }
 
         public void SetMode(Mode mode)
@@ -109,6 +105,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             IsSupplierStep = mode.ForSupplier;
             ModeId = mode.Id;
+            
+            AddDomainEvent(new ModifiedEvent<Step>(this));
         }
 
         public void SetResponsible(Responsible responsible)
@@ -119,8 +117,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             ResponsibleId = responsible.Id;
+            
+            AddDomainEvent(new ModifiedEvent<Step>(this));
         }
 
-        public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Step>(this));
+        public void SetRemoved() => AddDomainEvent(new DeletedEvent<Step>(this));
     }
 }

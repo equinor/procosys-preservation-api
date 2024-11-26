@@ -299,7 +299,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
 
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(ChildEntityAddedEvent<TagRequirement, PreservationPeriod>));
+            CollectionAssert.Contains(eventTypes, typeof(ChildAddedEvent<TagRequirement, PreservationPeriod>));
         }
 
         #endregion
@@ -1488,7 +1488,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.SetModified(person);
 
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<TagRequirement>));
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<TagRequirement>));
         }
 
         #endregion

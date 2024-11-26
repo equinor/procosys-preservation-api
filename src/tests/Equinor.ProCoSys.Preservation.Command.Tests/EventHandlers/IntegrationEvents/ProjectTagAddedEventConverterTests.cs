@@ -51,7 +51,7 @@ public class ProjectTagAddedEventConverterTests
     public async Task Convert_ShouldConvertToIntegrationEventsWithTagEvent()
     {
         // Arrange
-        var domainEvent = new ChildEntityAddedEvent<Project, Tag>(_project, _tag);
+        var domainEvent = new ChildAddedEvent<Project, Tag>(_project, _tag);
 
         // Act
         var integrationEvents = await _dut.Convert(domainEvent);
@@ -65,7 +65,7 @@ public class ProjectTagAddedEventConverterTests
     public async Task Convert_ShouldConvertToIntegrationEventsWithTagRequirementEvent()
     {
         // Arrange
-        var domainEvent = new ChildEntityAddedEvent<Project, Tag>(_project, _tag);
+        var domainEvent = new ChildAddedEvent<Project, Tag>(_project, _tag);
 
         // Act
         var integrationEvents = await _dut.Convert(domainEvent);
