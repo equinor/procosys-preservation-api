@@ -76,7 +76,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             ModifiedById = modifiedBy.Id;
 
-            AddDomainEvent(new PlantEntityModifiedEvent<Field>(this));
+            AddDomainEvent(new ModifiedEvent<Field>(this));
         }
     }
 }

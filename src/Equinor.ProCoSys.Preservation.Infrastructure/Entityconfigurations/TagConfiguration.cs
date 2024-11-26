@@ -90,9 +90,11 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.NextDueTimeUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);
 
-            builder.HasCheckConstraint("constraint_tag_check_valid_statusenum", $"{nameof(Tag.Status)} in ({GetValidStatusEnums()})");
+            builder.ToTable(t => t.HasCheckConstraint(
+                "constraint_tag_check_valid_statusenum", $"{nameof(Tag.Status)} in ({GetValidStatusEnums()})"));
 
-            builder.HasCheckConstraint("constraint_tag_check_valid_tag_type", $"{nameof(Tag.TagType)} in ({GetValidTagTypes()})");
+            builder.ToTable(t => t.HasCheckConstraint(
+                "constraint_tag_check_valid_tag_type", $"{nameof(Tag.TagType)} in ({GetValidTagTypes()})"));
             
             builder
                 .HasIndex(nameof(Tag.Plant), nameof(Tag.TagNo), "ProjectId") // ProjectId is a shadow property

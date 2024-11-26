@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Unit>> Handle(FillPCSGuidsCommand request, CancellationToken cancellationToken)
+        public Task<Result<Unit>> Handle(FillPCSGuidsCommand request, CancellationToken cancellationToken)
         {
             // THIS CODE WAS WRITTEN TO RUN A ONETIME TRANSFORMATION WHEN WE INTRODUCED ProCoSysGuid
             // WE KEEP THE CODE ... MAYBE WE WANT TO DO SIMILAR STUFF LATER
@@ -72,7 +72,8 @@ namespace Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids
             //    await _unitOfWork.SaveChangesAsync(cancellationToken);
             //    _logger.LogInformation($"FillPCSGuids: {count} project updated");
             //}
-            return new SuccessResult<Unit>(Unit.Value);
+            
+            return Task.FromResult<Result<Unit>>(new SuccessResult<Unit>(Unit.Value));
         }
     }
 }

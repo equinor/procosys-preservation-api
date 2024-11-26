@@ -249,7 +249,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddDomainEvent(new PlantEntityModifiedEvent<TagRequirement>(this));
+            AddDomainEvent(new ModifiedEvent<TagRequirement>(this));
         }
 
         private PreservationPeriod PeriodReadyToBePreserved

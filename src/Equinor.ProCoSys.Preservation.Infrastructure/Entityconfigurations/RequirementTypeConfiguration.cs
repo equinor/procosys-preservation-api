@@ -29,7 +29,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
                 .HasMaxLength(RequirementType.IconLengthMax)
                 .IsRequired();
 
-            builder.HasCheckConstraint("constraint_requirement_type_check_icon", $"{nameof(RequirementType.Icon)} in ({GetValidIcons()})");
+            builder.ToTable(t => t.HasCheckConstraint(
+                "constraint_requirement_type_check_icon", $"{nameof(RequirementType.Icon)} in ({GetValidIcons()})"));
 
             builder
                 .HasMany(x => x.RequirementDefinitions)

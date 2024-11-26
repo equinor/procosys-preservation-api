@@ -40,7 +40,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
                 .HasDefaultValue(AutoTransferMethod.None)
                 .IsRequired();
 
-            builder.HasCheckConstraint("constraint_step_check_valid_auto_transfer", $"{nameof(Step.AutoTransferMethod)} in ({GetValidAutoTransferMethods()})");
+            builder.ToTable(t => t.HasCheckConstraint(
+                "constraint_step_check_valid_auto_transfer", $"{nameof(Step.AutoTransferMethod)} in ({GetValidAutoTransferMethods()})"));
         }
 
         private string GetValidAutoTransferMethods()

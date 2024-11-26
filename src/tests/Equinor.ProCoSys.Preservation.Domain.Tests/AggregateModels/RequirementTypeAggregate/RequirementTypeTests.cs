@@ -91,7 +91,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
 
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<RequirementDefinition>));
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<RequirementDefinition>));
         }
         
         [TestMethod]
@@ -103,7 +103,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<RequirementType>));
+            CollectionAssert.Contains(eventTypes, typeof(CreatedEvent<RequirementType>));
         }
         
         [TestMethod]
@@ -115,7 +115,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<RequirementType>));
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<RequirementType>));
         }
     }
 }

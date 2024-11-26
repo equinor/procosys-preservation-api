@@ -274,7 +274,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<PreservationPeriod>));
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<PreservationPeriod>));
         }
     }
 }
