@@ -60,6 +60,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             _steps.Add(step);
             step.SortKey = _steps.Select(s => s.SortKey).Max() + 1;
+            
+            AddDomainEvent(new ChildAddedEvent<Journey, Step>(this, step));
         }
 
         public void RemoveStep(Step step)
@@ -92,9 +94,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             var step1 = _steps.Single(s => s.Id == stepId1);
             var step2 = _steps.Single(s => s.Id == stepId2);
-            var tmp = step1.SortKey;
-            step1.SortKey = step2.SortKey;
-            step2.SortKey = tmp;
+            (step1.SortKey, step2.SortKey) = (step2.SortKey, step1.SortKey);
+            
+            AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step1));
+            AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step2));
         }
 
         public Step VoidStep(int stepId, string stepRowVersion)
@@ -113,6 +116,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             step.IsVoided = true;
             step.SetRowVersion(stepRowVersion);
+            
+            AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step));
+            
             return step;
         }
 
@@ -132,6 +138,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             step.IsVoided = false;
             step.SetRowVersion(stepRowVersion);
+            
+            AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step));
+            
             return step;
         }
 
@@ -179,7 +188,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
             CreatedById = createdBy.Id;
 
-            AddDomainEvent(new PlantEntityCreatedEvent<Journey>(this));
+            AddDomainEvent(new CreatedEvent<Journey>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -191,9 +200,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
             ModifiedById = modifiedBy.Id;
 
-            AddDomainEvent(new PlantEntityModifiedEvent<Journey>(this));
+            AddDomainEvent(new ModifiedEvent<Journey>(this));
         }
 
-        public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Journey>(this));
+        public void SetRemoved() => AddDomainEvent(new DeletedEvent<Journey>(this));
     }
 }

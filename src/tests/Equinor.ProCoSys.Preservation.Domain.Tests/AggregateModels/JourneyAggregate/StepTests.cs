@@ -75,6 +75,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(modeId, _dut.ModeId);
             Assert.AreEqual(mode.ForSupplier, _dut.IsSupplierStep);
         }
+        
+        [TestMethod]
+        public void SetMode_ShouldAddModifiedEvent()
+        {
+            var modeId = 1;
+            var mode = new Mode(_dut.Plant, "ModeTitle", false);
+            mode.SetProtectedIdForTesting(modeId);
+            _dut.SetMode(mode);
+            
+            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Step>));
+        }
 
         [TestMethod]
         public void SetResponsible_ShouldSetResponsible()
@@ -88,25 +100,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
         
         [TestMethod]
-        public void SetCreated_ShouldAddPlantEntityCreatedEvent()
+        public void SetResponsible_ShouldAddModifiedEvent()
         {
-            var person = new Person(Guid.Empty, "Espen", "Askeladd");
+            var responsibleId = 1;
+            var responsible = new Responsible(_dut.Plant, "C", "Desc");
+            responsible.SetProtectedIdForTesting(responsibleId);
+            _dut.SetResponsible(responsible);
             
-            _dut.SetCreated(person);
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityCreatedEvent<Step>));
-        }
-        
-        [TestMethod]
-        public void SetModified_ShouldAddPlantEntityModifiedEvent()
-        {
-            var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
-            _dut.SetModified(person);
-            var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
-
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Step>));
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Step>));
         }
         
         [TestMethod]
@@ -115,7 +117,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _dut.SetRemoved();
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
 
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Step>));
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Step>));
         }
     }
 }

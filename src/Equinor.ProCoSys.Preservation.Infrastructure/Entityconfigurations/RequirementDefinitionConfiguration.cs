@@ -36,7 +36,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
                 .HasMaxLength(RequirementDefinition.UsageMax)
                 .IsRequired();
 
-            builder.HasCheckConstraint("constraint_reqdef_check_valid_usage", $"{nameof(RequirementDefinition.Usage)} in ({GetValidUsages()})");
+            builder.ToTable(t => t.HasCheckConstraint(
+                "constraint_reqdef_check_valid_usage", $"{nameof(RequirementDefinition.Usage)} in ({GetValidUsages()})"));
         }
 
         private string GetValidUsages()

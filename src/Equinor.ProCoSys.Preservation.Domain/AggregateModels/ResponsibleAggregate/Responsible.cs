@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             }
             CreatedById = createdBy.Id;
 
-            AddDomainEvent(new PlantEntityCreatedEvent<Responsible>(this));
+            AddDomainEvent(new CreatedEvent<Responsible>(this));
         }
 
         public void SetModified(Person modifiedBy)
@@ -57,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             }
             ModifiedById = modifiedBy.Id;
 
-            AddDomainEvent(new PlantEntityModifiedEvent<Responsible>(this));
+            AddDomainEvent(new ModifiedEvent<Responsible>(this));
         }
 
         public void RenameResponsible(string newCode)
@@ -70,6 +70,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             Code = newCode;
         }
 
-        public void SetRemoved() => AddDomainEvent(new PlantEntityDeletedEvent<Responsible>(this));
+        public void SetRemoved() => AddDomainEvent(new DeletedEvent<Responsible>(this));
     }
 }

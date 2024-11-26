@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
             _fields.Add(field);
             
-            AddDomainEvent(new ChildEntityAddedEvent<RequirementDefinition, Field>(this, field));
+            AddDomainEvent(new ChildAddedEvent<RequirementDefinition, Field>(this, field));
         }
 
         public void RemoveField(Field field)
@@ -83,7 +83,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
             _fields.Remove(field);
             
-            AddDomainEvent(new PlantEntityDeletedEvent<Field>(field));
+            AddDomainEvent(new DeletedEvent<Field>(field));
         }
 
         public IOrderedEnumerable<Field> OrderedFields(bool includeVoided)
@@ -112,7 +112,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             }
             ModifiedById = modifiedBy.Id;
 
-            AddDomainEvent(new PlantEntityModifiedEvent<RequirementDefinition>(this));
+            AddDomainEvent(new ModifiedEvent<RequirementDefinition>(this));
         }
     }
 }

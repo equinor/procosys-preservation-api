@@ -1950,7 +1950,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
             var eventTypes = _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Select(e => e.GetType()).ToList();
 
-            CollectionAssert.Contains(eventTypes, typeof(ChildEntityAddedEvent<Tag, Action>));
+            CollectionAssert.Contains(eventTypes, typeof(ChildAddedEvent<Tag, Action>));
         }
 
         #endregion
@@ -2743,7 +2743,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             CollectionAssert.Contains(eventTypes, typeof(TagVoidedEvent));
             CollectionAssert.Contains(eventTypes, typeof(TagVoidedInSourceEvent));
             CollectionAssert.Contains(eventTypes, typeof(TagDeletedInSourceEvent));
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityDeletedEvent<Tag>));
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Tag>));
         }
 
         [TestMethod]
@@ -2809,7 +2809,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var eventTypes = _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
-            CollectionAssert.Contains(eventTypes, typeof(PlantEntityModifiedEvent<Tag>));
+            CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Tag>));
         }
 
         #endregion
