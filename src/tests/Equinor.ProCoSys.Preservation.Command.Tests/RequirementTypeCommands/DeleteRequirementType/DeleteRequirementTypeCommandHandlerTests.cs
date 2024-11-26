@@ -1,6 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -51,6 +54,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
             
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+        
+        [TestMethod]
+        public async Task HandlingDeleteRequirementTypeCommand_ShouldAddDeletionEvent()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+            var eventTypes = _requirementType.DomainEvents.Select(e => e.GetType()).ToList();
+            
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<RequirementType>));
         }
     }
 }
