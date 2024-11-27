@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 using ServiceResult;
 
@@ -22,6 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.DeleteRe
         {
             var requirementType = await _requirementTypeRepository.GetByIdAsync(request.RequirementTypeId);
             requirementType.SetRowVersion(request.RowVersion);
+            requirementType.AddDomainEvent(new DeletedEvent<RequirementType>(requirementType));
 
             _requirementTypeRepository.Remove(requirementType);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
