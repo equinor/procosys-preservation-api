@@ -184,7 +184,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<CreatedEvent<RequirementType>>, IntegrationEventHandler<CreatedEvent<RequirementType>, RequirementType>>();
             services.AddTransient<INotificationHandler<ModifiedEvent<RequirementType>>, IntegrationEventHandler<ModifiedEvent<RequirementType>, RequirementType>>();
             services.AddTransient<IPublishEntityEventHelper<RequirementType>, PublishEntityEventHelper<RequirementType, RequirementTypeEvent>>();
-            services.AddTransient<IPublishDeleteEntityEventHelper<RequirementType>, PublishDeleteEntityEventHelper<RequirementType, RequirementTypeDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<RequirementType, RequirementTypeEvent>, CreateRequirementTypeEventHelper>();
             services.AddTransient<ICreateEventHelper<RequirementType, RequirementTypeDeleteEvent>, CreateRequirementTypeDeletedEventHelper>();
             
