@@ -12,15 +12,12 @@ public class CreateRequirementTypeDeletedEventHelperTests
 {
     private const string TestPlant = "PCS$PlantA";
     private RequirementType _requirementType;
-    private CreateRequirementTypeDeletedEventHelper _dut;
 
     [TestInitialize]
     public void Setup()
     {
         // Arrange
         _requirementType = new RequirementType(TestPlant, "Test Code", "Test Type Title", RequirementTypeIcon.Other, 10);
-
-        _dut = new CreateRequirementTypeDeletedEventHelper();
     }
 
     [DataTestMethod]
@@ -30,7 +27,7 @@ public class CreateRequirementTypeDeletedEventHelperTests
     public async Task CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
     {
         // Act
-        var integrationEvent = await _dut.CreateEvent(_requirementType);
+        var integrationEvent = CreateRequirementTypeDeletedEventHelper.CreateEvent(_requirementType);
         var result = integrationEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -47,7 +44,7 @@ public class CreateRequirementTypeDeletedEventHelperTests
         var expected = _requirementType.Guid;
         
         // Act
-        var integrationEvent = await _dut.CreateEvent(_requirementType);
+        var integrationEvent = CreateRequirementTypeDeletedEventHelper.CreateEvent(_requirementType);
         var result = integrationEvent.ProCoSysGuid;
 
         // Assert

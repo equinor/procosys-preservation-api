@@ -29,17 +29,13 @@ public class RequirementTypeDeletedEventHandlerTests
     public void Setup()
     {
         // Arrange
-        var requirementTypeDeleteEvent = new RequirementTypeDeleteEvent(Guid.NewGuid(), TestPlant);
-        var mockConverter = new Mock<ICreateEventHelper<RequirementType, RequirementTypeDeleteEvent>>();
-        mockConverter.Setup(x => x.CreateEvent(It.IsAny<RequirementType>())).ReturnsAsync(requirementTypeDeleteEvent);
-
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))
             .Callback(() => _eventPublished = true);
 
         _eventPublished = false;
 
-        _dut = new RequirementTypeDeletedEventHandler(mockConverter.Object, mockPublisher.Object);
+        _dut = new RequirementTypeDeletedEventHandler(mockPublisher.Object);
     }
 
     [TestMethod]
