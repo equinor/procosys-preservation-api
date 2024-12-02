@@ -149,7 +149,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             
             services.AddTransient<INotificationHandler<ChildAddedEvent<RequirementDefinition, Field>>, ChildEventHandler<RequirementDefinition, Field, FieldEvent>>();
             services.AddTransient<INotificationHandler<ModifiedEvent<Field>>, IntegrationEventHandler<ModifiedEvent<Field>, Field>>();
-            services.AddTransient<INotificationHandler<ModifiedEvent<Field>>, IntegrationDeleteEventHandler<ModifiedEvent<Field>, Field>>();
+            services.AddTransient<INotificationHandler<DeletedEvent<Field>>, IntegrationDeleteEventHandler<DeletedEvent<Field>, Field>>();
             services.AddTransient<IPublishEntityEventHelper<Field>, PublishEntityEventHelper<Field, FieldEvent>>();
             services.AddTransient<IPublishDeleteEntityEventHelper<Field>, PublishDeleteEntityEventHelper<Field, FieldDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<Field, FieldEvent>, CreateFieldEventHelper>();
