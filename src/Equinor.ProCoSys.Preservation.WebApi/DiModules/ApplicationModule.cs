@@ -137,12 +137,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             
             services.AddTransient<INotificationHandler<ChildAddedEvent<RequirementType, RequirementDefinition>>, ChildEventHandler<RequirementType, RequirementDefinition, RequirementDefinitionEvent>>();
             services.AddTransient<INotificationHandler<ModifiedEvent<RequirementDefinition>>, IntegrationEventHandler<ModifiedEvent<RequirementDefinition>, RequirementDefinition>>();
-            services.AddTransient<INotificationHandler<DeletedEvent<RequirementDefinition>>, IntegrationDeleteEventHandler<DeletedEvent<RequirementDefinition>, RequirementDefinition>>();
             services.AddTransient<IPublishEntityEventHelper<RequirementDefinition>, PublishEntityEventHelper<RequirementDefinition, RequirementDefinitionEvent>>();
             services.AddTransient<ICreateEventHelper<RequirementDefinition, RequirementDefinitionEvent>, CreateRequirementDefinitionEventHelper>();
             services.AddTransient<ICreateChildEventHelper<RequirementType, RequirementDefinition, RequirementDefinitionEvent>, CreateRequirementTypeRequirementDefinitionEventHelper>();
-            services.AddTransient<ICreateEventHelper<RequirementDefinition, RequirementDefinitionDeleteEvent>, CreateRequirementDefinitionDeletedEventHelper>();
-            services.AddTransient<IPublishDeleteEntityEventHelper<RequirementDefinition>, PublishDeleteEntityEventHelper<RequirementDefinition, RequirementDefinitionDeleteEvent>>();
 
             services.AddTransient<INotificationHandler<ChildAddedEvent<Tag, Action>>, ChildEventHandler<Tag, Action, ActionEvent>>();
             services.AddTransient<INotificationHandler<ModifiedEvent<Action>>, IntegrationEventHandler<ModifiedEvent<Action>, Action>>();
@@ -183,11 +180,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             
             services.AddTransient<INotificationHandler<CreatedEvent<RequirementType>>, IntegrationEventHandler<CreatedEvent<RequirementType>, RequirementType>>();
             services.AddTransient<INotificationHandler<ModifiedEvent<RequirementType>>, IntegrationEventHandler<ModifiedEvent<RequirementType>, RequirementType>>();
-            services.AddTransient<INotificationHandler<DeletedEvent<RequirementType>>, IntegrationDeleteEventHandler<DeletedEvent<RequirementType>, RequirementType>>();
             services.AddTransient<IPublishEntityEventHelper<RequirementType>, PublishEntityEventHelper<RequirementType, RequirementTypeEvent>>();
-            services.AddTransient<IPublishDeleteEntityEventHelper<RequirementType>, PublishDeleteEntityEventHelper<RequirementType, RequirementTypeDeleteEvent>>();
             services.AddTransient<ICreateEventHelper<RequirementType, RequirementTypeEvent>, CreateRequirementTypeEventHelper>();
-            services.AddTransient<ICreateEventHelper<RequirementType, RequirementTypeDeleteEvent>, CreateRequirementTypeDeletedEventHelper>();
             
             services.AddTransient<INotificationHandler<CreatedEvent<Responsible>>, IntegrationEventHandler<CreatedEvent<Responsible>, Responsible>>();
             services.AddTransient<INotificationHandler<ModifiedEvent<Responsible>>, IntegrationEventHandler<ModifiedEvent<Responsible>, Responsible>>();

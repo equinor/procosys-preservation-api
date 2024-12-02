@@ -8,16 +8,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class CreateRequirementTypeDeletedEventHelperTests
+public class CreateRequirementDefinitionDeletedEventHelperTests
 {
     private const string TestPlant = "PCS$PlantA";
-    private RequirementType _requirementType;
+    private RequirementDefinition _requirementType;
 
     [TestInitialize]
     public void Setup()
     {
         // Arrange
-        _requirementType = new RequirementType(TestPlant, "Test Code", "Test Type Title", RequirementTypeIcon.Other, 10);
+        _requirementType = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
     }
 
     [DataTestMethod]
@@ -27,7 +27,7 @@ public class CreateRequirementTypeDeletedEventHelperTests
     public async Task CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
     {
         // Act
-        var integrationEvent = CreateRequirementTypeDeletedEventHelper.CreateEvent(_requirementType);
+        var integrationEvent = CreateRequirementDefinitionDeletedEventHelper.CreateEvent(_requirementType);
         var result = integrationEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -44,7 +44,7 @@ public class CreateRequirementTypeDeletedEventHelperTests
         var expected = _requirementType.Guid;
         
         // Act
-        var integrationEvent = CreateRequirementTypeDeletedEventHelper.CreateEvent(_requirementType);
+        var integrationEvent = CreateRequirementDefinitionDeletedEventHelper.CreateEvent(_requirementType);
         var result = integrationEvent.ProCoSysGuid;
 
         // Assert
