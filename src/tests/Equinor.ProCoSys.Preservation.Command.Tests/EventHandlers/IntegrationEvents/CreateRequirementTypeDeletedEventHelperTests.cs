@@ -18,6 +18,12 @@ public class CreateRequirementTypeDeletedEventHelperTests
     {
         // Arrange
         _requirementType = new RequirementType(TestPlant, "Test Code", "Test Type Title", RequirementTypeIcon.Other, 10);
+        
+        var requirementDefinition1 = new RequirementDefinition(TestPlant, "Test Definition Title 1", 2, RequirementUsage.ForSuppliersOnly, 1);
+        _requirementType.AddRequirementDefinition(requirementDefinition1);
+        
+        var requirementDefinition2 = new RequirementDefinition(TestPlant, "Test Definition Title 2", 2, RequirementUsage.ForSuppliersOnly, 2);
+        _requirementType.AddRequirementDefinition(requirementDefinition2);
     }
 
     [DataTestMethod]
@@ -27,11 +33,12 @@ public class CreateRequirementTypeDeletedEventHelperTests
     public async Task CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
     {
         // Act
-        var integrationEvent = CreateRequirementTypeDeletedEventHelper.CreateEvent(_requirementType);
-        var result = integrationEvent.GetType()
+        var integrationEvents = CreateRequirementTypeDeletedEventHelper.CreateEvents(_requirementType);
+        var deletionEvent = integrationEvents.Single(e => e.GetType() == typeof(RequirementTypeDeleteEvent));
+        var result = deletionEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
-            .GetValue(integrationEvent);
+            .GetValue(deletionEvent);
 
         // Assert
         Assert.AreEqual(expected, result);
@@ -44,10 +51,22 @@ public class CreateRequirementTypeDeletedEventHelperTests
         var expected = _requirementType.Guid;
         
         // Act
-        var integrationEvent = CreateRequirementTypeDeletedEventHelper.CreateEvent(_requirementType);
-        var result = integrationEvent.ProCoSysGuid;
+        var integrationEvents = CreateRequirementTypeDeletedEventHelper.CreateEvents(_requirementType);
+        var deletionEvent = integrationEvents.Single(e => e.GetType() == typeof(RequirementTypeDeleteEvent));
+        var result = deletionEvent.ProCoSysGuid;
 
         // Assert
         Assert.AreEqual(result, expected);
+    }
+    
+    [TestMethod]
+    public async Task CreateEvent_ShouldCreateIntegrationEventsForChildRequirementDefinitions()
+    {
+        // Act
+        var integrationEvents = CreateRequirementTypeDeletedEventHelper.CreateEvents(_requirementType);
+        var requirementDefinitionDeleteEventTypes = integrationEvents.Select(e => e.GetType()).Where(e => e == typeof(RequirementDefinitionDeleteEvent)).ToList();
+
+        // Assert
+        Assert.AreEqual(2, requirementDefinitionDeleteEventTypes.Count);
     }
 }
