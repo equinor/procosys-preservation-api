@@ -13,7 +13,13 @@ public class RequirementTypeDeletedEventHandler(IIntegrationEventPublisher integ
 {
     public async Task Handle(DeletedEvent<RequirementType> notification, CancellationToken cancellationToken)
     {
-        var integrationEvent = CreateRequirementTypeDeletedEventHelper.CreateEvent(notification.Entity);
-        await integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);
+        var requirementTypeDeleteEvent = CreateRequirementTypeDeletedEventHelper.CreateEvent(notification.Entity);
+        await integrationEventPublisher.PublishAsync(requirementTypeDeleteEvent, cancellationToken);
+
+        foreach (var requirementDefinition in notification.Entity.RequirementDefinitions)
+        {
+            var requirementDefinitionDeleteEvent = CreateRequirementDefinitionDeletedEventHelper.CreateEvent(requirementDefinition);
+            await integrationEventPublisher.PublishAsync(requirementDefinitionDeleteEvent, cancellationToken);
+        }
     }
 }
