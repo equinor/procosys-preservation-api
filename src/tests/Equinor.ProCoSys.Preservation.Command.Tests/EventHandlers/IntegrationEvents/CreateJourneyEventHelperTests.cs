@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common;
-using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 

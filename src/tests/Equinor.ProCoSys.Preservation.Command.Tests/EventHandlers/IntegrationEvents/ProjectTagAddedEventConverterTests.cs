@@ -9,8 +9,6 @@ using Moq;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using System.Linq;
 using Equinor.ProCoSys.Preservation.Command.Events;
-using Equinor.ProCoSys.Common.Time;
-using Equinor.ProCoSys.Preservation.Test.Common;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
