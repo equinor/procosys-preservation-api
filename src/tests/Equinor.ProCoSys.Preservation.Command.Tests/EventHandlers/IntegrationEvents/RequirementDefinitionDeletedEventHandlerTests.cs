@@ -12,10 +12,10 @@ using Moq;
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class RequirementTypeDeletedEventHandlerTests
+public class RequirementDefinitionDeletedEventHandlerTests
 {
     private const string TestPlant = "PCS$PlantA";
-    private RequirementTypeDeletedEventHandler _dut;
+    private RequirementDefinitionDeletedEventHandler _dut;
     private IIntegrationEvent _publishedEvent;
 
     [TestInitialize]
@@ -28,20 +28,20 @@ public class RequirementTypeDeletedEventHandlerTests
 
         _publishedEvent = null;
 
-        _dut = new RequirementTypeDeletedEventHandler(mockPublisher.Object);
+        _dut = new RequirementDefinitionDeletedEventHandler(mockPublisher.Object);
     }
 
     [TestMethod]
     public async Task Handle_ShouldSendIntegrationEvent()
     {
         // Arrange
-        var requirementType = new RequirementType(TestPlant, "Code", "Title", RequirementTypeIcon.Other, 10);
-        var domainEvent = new DeletedEvent<RequirementType>(requirementType);
+        var requirementType = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
+        var domainEvent = new DeletedEvent<RequirementDefinition>(requirementType);
 
         // Act
         await _dut.Handle(domainEvent, default);
 
         // Assert
-        Assert.IsInstanceOfType<RequirementTypeDeleteEvent>(_publishedEvent);
+        Assert.IsInstanceOfType<RequirementDefinitionDeleteEvent>(_publishedEvent);
     }
 }

@@ -4,7 +4,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateRequirementDefinitionDeletedEventHelper : ICreateEventHelper<RequirementDefinition, RequirementDefinitionDeleteEvent>
+public static class CreateRequirementDefinitionDeletedEventHelper
 {
-    public Task<RequirementDefinitionDeleteEvent> CreateEvent(RequirementDefinition entity) => Task.FromResult(new RequirementDefinitionDeleteEvent(entity.Guid, entity.Plant));
+    public static RequirementDefinitionDeleteEvent CreateEvent(RequirementDefinition entity) => new(entity.Guid, entity.Plant);
 }
