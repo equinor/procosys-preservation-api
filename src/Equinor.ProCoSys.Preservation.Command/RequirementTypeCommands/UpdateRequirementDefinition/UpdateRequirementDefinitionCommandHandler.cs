@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 using ServiceResult;
 
@@ -60,6 +61,8 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 fieldToUpdate.ShowPrevious = f.ShowPrevious;
                 fieldToUpdate.SortKey = f.SortKey;
                 fieldToUpdate.SetRowVersion(f.RowVersion);
+                
+                requirementDefinition.AddDomainEvent(new ChildModifiedEvent<RequirementDefinition, Field>(requirementDefinition, fieldToUpdate));
             }
 
             foreach (var f in request.NewFields)
