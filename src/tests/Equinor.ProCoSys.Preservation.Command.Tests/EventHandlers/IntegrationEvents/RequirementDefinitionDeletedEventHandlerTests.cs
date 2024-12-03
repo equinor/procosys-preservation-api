@@ -32,11 +32,29 @@ public class RequirementDefinitionDeletedEventHandlerTests
     }
 
     [TestMethod]
-    public async Task Handle_ShouldSendIntegrationEvent()
+    public async Task Handle_ShouldSendRequirementDefinitionDelete()
     {
         // Arrange
         var requirementType = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
         var domainEvent = new DeletedEvent<RequirementDefinition>(requirementType);
+
+        // Act
+        await _dut.Handle(domainEvent, default);
+
+        // Assert
+        Assert.IsInstanceOfType<RequirementDefinitionDeleteEvent>(_publishedEvent);
+    }
+    
+    [TestMethod]
+    public async Task Handle_ShouldSendFieldDeleteEvent()
+    {
+        // Arrange
+        var requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
+        
+        var field = new Field(TestPlant, "Test Label", FieldType.Info, 0);
+        requirementDefinition.AddField(field);
+        
+        var domainEvent = new DeletedEvent<RequirementDefinition>(requirementDefinition);
 
         // Act
         await _dut.Handle(domainEvent, default);

@@ -42,4 +42,43 @@ public class RequirementTypeDeletedEventHandlerTests
         // Assert
         Assert.IsTrue(_eventPublished);
     }
+    
+    [TestMethod]
+    public async Task Handle_ShouldSendRequirementDefinitionDeleteEvent()
+    {
+        // Arrange
+        var requirementType = new RequirementType(TestPlant, "Code", "Title", RequirementTypeIcon.Other, 10);
+        
+        var requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
+        requirementType.AddRequirementDefinition(requirementDefinition);
+        
+        var domainEvent = new DeletedEvent<RequirementType>(requirementType);
+
+        // Act
+        await _dut.Handle(domainEvent, default);
+
+        // Assert
+        Assert.IsTrue(_eventPublished);
+    }
+    
+    [TestMethod]
+    public async Task Handle_ShouldSendFieldDeleteEvent()
+    {
+        // Arrange
+        var requirementType = new RequirementType(TestPlant, "Code", "Title", RequirementTypeIcon.Other, 10);
+        
+        var requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
+        requirementType.AddRequirementDefinition(requirementDefinition);
+        
+        var field = new Field(TestPlant, "Test Label", FieldType.Info, 0);
+        requirementDefinition.AddField(field);
+        
+        var domainEvent = new DeletedEvent<RequirementType>(requirementType);
+
+        // Act
+        await _dut.Handle(domainEvent, default);
+
+        // Assert
+        Assert.IsTrue(_eventPublished);
+    }
 }

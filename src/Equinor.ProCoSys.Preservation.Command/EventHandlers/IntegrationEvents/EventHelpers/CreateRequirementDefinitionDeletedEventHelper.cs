@@ -8,15 +8,11 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 
 public static class CreateRequirementDefinitionDeletedEventHelper
 {
-    public static IEnumerable<IDeleteEventV1> CreateEvents(RequirementDefinition entity)
+    public static RequirementDefinitionDeletedEvents CreateEvents(RequirementDefinition entity)
     {
         var definitionDeletionEvent = new RequirementDefinitionDeleteEvent(entity.Guid, entity.Plant);
-        
-        var deletionEvents = GetFieldEvents(entity.Fields);
-        
-        return deletionEvents.Append(definitionDeletionEvent);
+        var fieldsDeletedEvents = entity.Fields.Select(CreateFieldDeleteEventHelper.CreateEvent);
+
+        return new RequirementDefinitionDeletedEvents(definitionDeletionEvent, fieldsDeletedEvents);
     }
-    
-    private static IEnumerable<IDeleteEventV1> GetFieldEvents(IEnumerable<Field> fields)
-        => fields.Select(CreateFieldDeleteEventHelper.CreateEvent);
 }

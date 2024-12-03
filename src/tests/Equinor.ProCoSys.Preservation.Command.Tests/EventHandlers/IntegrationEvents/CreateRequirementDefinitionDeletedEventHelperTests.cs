@@ -32,7 +32,7 @@ public class CreateRequirementDefinitionDeletedEventHelperTests
     public void CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
     {
         var integrationEvents = CreateRequirementDefinitionDeletedEventHelper.CreateEvents(_requirementDefinition);
-        var deletionEvent = integrationEvents.Single(e => e.GetType() == typeof(RequirementDefinitionDeleteEvent));
+        var deletionEvent = integrationEvents.DefinitionDeleteEvent;
         var result = deletionEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -50,8 +50,7 @@ public class CreateRequirementDefinitionDeletedEventHelperTests
         
         // Act
         var integrationEvents = CreateRequirementDefinitionDeletedEventHelper.CreateEvents(_requirementDefinition);
-        var deletionEvent = integrationEvents.Single(e => e.GetType() == typeof(RequirementDefinitionDeleteEvent));
-        var result = deletionEvent.ProCoSysGuid;
+        var result = integrationEvents.DefinitionDeleteEvent.ProCoSysGuid;
 
         // Assert
         Assert.AreEqual(expected, result);
@@ -62,9 +61,8 @@ public class CreateRequirementDefinitionDeletedEventHelperTests
     {
         // Act
         var integrationEvents = CreateRequirementDefinitionDeletedEventHelper.CreateEvents(_requirementDefinition);
-        var requirementDefinitionDeleteEventTypes = integrationEvents.Select(e => e.GetType()).Where(e => e == typeof(FieldDeleteEvent)).ToList();
 
         // Assert
-        Assert.AreEqual(2, requirementDefinitionDeleteEventTypes.Count);
+        Assert.AreEqual(2, integrationEvents.FieldDeleteEvents.Count());
     }
 }
