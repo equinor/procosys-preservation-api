@@ -5,7 +5,6 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Authorization;
-using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

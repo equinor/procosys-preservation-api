@@ -2,7 +2,6 @@
 using System.Linq;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.Test.Common;

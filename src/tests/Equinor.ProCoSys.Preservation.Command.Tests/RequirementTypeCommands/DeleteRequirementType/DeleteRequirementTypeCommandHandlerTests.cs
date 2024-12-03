@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

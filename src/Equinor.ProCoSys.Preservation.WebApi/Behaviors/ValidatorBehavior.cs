@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;

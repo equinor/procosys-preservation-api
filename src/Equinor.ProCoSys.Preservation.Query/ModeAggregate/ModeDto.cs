@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Equinor.ProCoSys.Preservation.Query.ModeAggregate
+﻿namespace Equinor.ProCoSys.Preservation.Query.ModeAggregate
 {
     public class ModeDto
     {
