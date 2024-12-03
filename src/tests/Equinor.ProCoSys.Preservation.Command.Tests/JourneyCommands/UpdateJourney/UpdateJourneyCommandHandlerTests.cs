@@ -2,8 +2,6 @@
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
-using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

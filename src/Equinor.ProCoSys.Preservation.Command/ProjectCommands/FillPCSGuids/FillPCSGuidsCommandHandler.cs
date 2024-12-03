@@ -1,13 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
-using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ServiceResult;
