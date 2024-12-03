@@ -93,7 +93,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
         var result = integrationEvent.ProCoSysGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
     
     [TestMethod]
@@ -107,7 +107,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
         var result = integrationEvent.RequirementTypeGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
 
     [TestMethod]

@@ -1,10 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 
@@ -15,7 +13,10 @@ public class RequirementDefinitionDeletedEventHandler(IIntegrationEventPublisher
 {
     public async Task Handle(DeletedEvent<RequirementDefinition> notification, CancellationToken cancellationToken)
     {
-        var integrationEvent = CreateRequirementDefinitionDeletedEventHelper.CreateEvent(notification.Entity);
-        await integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);
+        var integrationEvents = CreateRequirementDefinitionDeletedEventHelper.CreateEvents(notification.Entity);
+        foreach (var integrationEvent in integrationEvents)
+        {
+            await integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);
+        }
     }
 }

@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
+using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.MessageContracts;
@@ -10,11 +12,11 @@ using Moq;
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class RequirementTypeDeletedEventHandlerTests
+public class FieldDeletedEventHandlerTests
 {
     private const string TestPlant = "PCS$PlantA";
-    private RequirementTypeDeletedEventHandler _dut;
-    private bool _eventPublished;
+    private FieldDeletedEventHandler _dut;
+    private IIntegrationEvent _publishedEvent;
 
     [TestInitialize]
     public void Setup()
@@ -22,24 +24,24 @@ public class RequirementTypeDeletedEventHandlerTests
         // Arrange
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))
-            .Callback(() => _eventPublished = true);
-        
-        _eventPublished = false;
+            .Callback<IIntegrationEvent, CancellationToken>((e, _) => _publishedEvent = e);
 
-        _dut = new RequirementTypeDeletedEventHandler(mockPublisher.Object);
+        _publishedEvent = null;
+
+        _dut = new FieldDeletedEventHandler(mockPublisher.Object);
     }
 
     [TestMethod]
-    public async Task Handle_ShouldSendRequirementTypeDeleteEvent()
+    public async Task Handle_ShouldSendIntegrationEvent()
     {
         // Arrange
-        var requirementType = new RequirementType(TestPlant, "Code", "Title", RequirementTypeIcon.Other, 10);
-        var domainEvent = new DeletedEvent<RequirementType>(requirementType);
+        var field = new Field(TestPlant, "Test Label", FieldType.Info, 0);
+        var domainEvent = new DeletedEvent<Field>(field);
 
         // Act
         await _dut.Handle(domainEvent, default);
 
         // Assert
-        Assert.IsTrue(_eventPublished);
+        Assert.IsInstanceOfType<FieldDeleteEvent>(_publishedEvent);
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.Events;
@@ -93,7 +92,7 @@ public class CreateTagActionEventHelperTests
             .GetValue(integrationEvent);
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
 
     [DataTestMethod]
