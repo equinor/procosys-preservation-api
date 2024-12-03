@@ -1,6 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
+using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.MessageContracts;
@@ -14,7 +18,7 @@ public class RequirementTypeDeletedEventHandlerTests
 {
     private const string TestPlant = "PCS$PlantA";
     private RequirementTypeDeletedEventHandler _dut;
-    private bool _eventPublished;
+    private List<IIntegrationEvent> _publishedEvents;
 
     [TestInitialize]
     public void Setup()
@@ -22,9 +26,9 @@ public class RequirementTypeDeletedEventHandlerTests
         // Arrange
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))
-            .Callback(() => _eventPublished = true);
+            .Callback<IIntegrationEvent, CancellationToken>((e, _) => _publishedEvents.Add(e));
         
-        _eventPublished = false;
+        _publishedEvents = new List<IIntegrationEvent>();
 
         _dut = new RequirementTypeDeletedEventHandler(mockPublisher.Object);
     }
@@ -38,8 +42,50 @@ public class RequirementTypeDeletedEventHandlerTests
 
         // Act
         await _dut.Handle(domainEvent, default);
+        var types = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        Assert.IsTrue(_eventPublished);
+        CollectionAssert.Contains(types, typeof(RequirementTypeDeleteEvent));
+    }
+    
+    [TestMethod]
+    public async Task Handle_ShouldSendRequirementDefinitionDeleteEvent()
+    {
+        // Arrange
+        var requirementType = new RequirementType(TestPlant, "Code", "Title", RequirementTypeIcon.Other, 10);
+        
+        var requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
+        requirementType.AddRequirementDefinition(requirementDefinition);
+        
+        var domainEvent = new DeletedEvent<RequirementType>(requirementType);
+
+        // Act
+        await _dut.Handle(domainEvent, default);
+        var types = _publishedEvents.Select(e => e.GetType()).ToList();
+
+        // Assert
+        CollectionAssert.Contains(types, typeof(RequirementDefinitionDeleteEvent));
+    }
+    
+    [TestMethod]
+    public async Task Handle_ShouldSendFieldDeleteEvent()
+    {
+        // Arrange
+        var requirementType = new RequirementType(TestPlant, "Code", "Title", RequirementTypeIcon.Other, 10);
+        
+        var requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
+        requirementType.AddRequirementDefinition(requirementDefinition);
+        
+        var field = new Field(TestPlant, "Test Label", FieldType.Info, 0);
+        requirementDefinition.AddField(field);
+        
+        var domainEvent = new DeletedEvent<RequirementType>(requirementType);
+
+        // Act
+        await _dut.Handle(domainEvent, default);
+        var types = _publishedEvents.Select(e => e.GetType()).ToList();
+
+        // Assert
+        CollectionAssert.Contains(types, typeof(FieldDeleteEvent));
     }
 }

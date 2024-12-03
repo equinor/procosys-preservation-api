@@ -75,8 +75,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
-
-            AddDomainEvent(new ModifiedEvent<Field>(this));
         }
     }
 }
