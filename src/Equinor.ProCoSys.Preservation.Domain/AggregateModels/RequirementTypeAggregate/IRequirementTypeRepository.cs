@@ -7,12 +7,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
 {
     public interface IRequirementTypeRepository : IRepository<RequirementType>
     {
-        Task<RequirementDefinition> GetRequirementDefinitionByFieldGuidAsync(Guid fieldGuid);
         Task<RequirementDefinition> GetRequirementDefinitionByIdAsync (int requirementDefinitionId);
         Task<List<RequirementDefinition>> GetRequirementDefinitionsByIdsAsync(IList<int> requirementDefinitionIds);
 
         Task<RequirementType> GetRequirementTypeByRequirementDefinitionGuidAsync(Guid requirementDefinitionGuid);
-        Task<RequirementType> GetRequirementTypeByIdAsync(int requirementTypeId);
 
 
         void RemoveRequirementDefinition(RequirementDefinition requirementDefinition);
