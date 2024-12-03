@@ -108,7 +108,7 @@ public class CreateJourneyStepEventHelperTests
         var result = integrationEvent.ProCoSysGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
     
     [TestMethod]
@@ -122,7 +122,7 @@ public class CreateJourneyStepEventHelperTests
         var result = integrationEvent.JourneyGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
     
     [TestMethod]
@@ -136,7 +136,7 @@ public class CreateJourneyStepEventHelperTests
         var result = integrationEvent.ModeGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
     
     [TestMethod]
@@ -150,7 +150,7 @@ public class CreateJourneyStepEventHelperTests
         var result = integrationEvent.ResponsibleGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
 
     [TestMethod]

@@ -92,7 +92,7 @@ public class CreateTagActionEventHelperTests
             .GetValue(integrationEvent);
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
 
     [DataTestMethod]

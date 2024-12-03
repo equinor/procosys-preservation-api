@@ -54,7 +54,7 @@ public class CreateJourneyEventHelperTests
             .GetValue(integrationEvent);
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
     
     [TestMethod]

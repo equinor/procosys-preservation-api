@@ -129,7 +129,7 @@ public class CreateProjectTagEventHelperTests
         var result = integrationEvent.StepGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
 
     [TestMethod]

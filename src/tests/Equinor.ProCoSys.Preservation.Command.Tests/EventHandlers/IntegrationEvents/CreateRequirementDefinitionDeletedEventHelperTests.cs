@@ -54,7 +54,7 @@ public class CreateRequirementDefinitionDeletedEventHelperTests
         var result = deletionEvent.ProCoSysGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
     
     [TestMethod]

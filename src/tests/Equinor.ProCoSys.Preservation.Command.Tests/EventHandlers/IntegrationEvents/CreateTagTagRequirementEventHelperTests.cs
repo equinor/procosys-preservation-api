@@ -120,7 +120,7 @@ public class CreateTagTagRequirementEventHelperTests
         var result = integrationEvent.ProCoSysGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
     
     [TestMethod]
@@ -134,7 +134,7 @@ public class CreateTagTagRequirementEventHelperTests
         var result = integrationEvent.RequirementDefinitionGuid;
 
         // Assert
-        Assert.AreEqual(result, expected);
+        Assert.AreEqual(expected, result);
     }
 
     [TestMethod]
