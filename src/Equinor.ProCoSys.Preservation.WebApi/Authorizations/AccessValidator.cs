@@ -40,71 +40,71 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
             _logger = logger;
         }
 
-        public async Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest : IBaseRequest
-        {
-            if (request == null)
-            {
-                throw new ArgumentNullException(nameof(request));
-            }
-
-            var userOid = _currentUserProvider.GetCurrentUserOid();
-            if (request is IProjectRequest projectRequest && !_projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))
-            {
-                _logger.LogWarning($"Current user {userOid} doesn't have have access to project {projectRequest.ProjectName}");
-                return false;
-            }
-
-            if (request is ITagCommandRequest tagCommandRequest)
-            {
-                if (!await HasCurrentUserAccessToProjectAsync(tagCommandRequest.TagId, userOid))
-                {
-                    return false;
-                }
-
-                if (!await HasCurrentUserAccessToContentAsync(tagCommandRequest))
-                {
-                    _logger.LogWarning($"Current user {userOid} doesn't have access to content {tagCommandRequest.TagId}");
-                    return false;
-                }
-            }
-
-            if (request is ITagQueryRequest tagQueryRequest)
-            {
-                if (!await HasCurrentUserAccessToProjectAsync(tagQueryRequest.TagId, userOid))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private async Task<bool> HasCurrentUserAccessToProjectAsync(int tagId, Guid userOid)
-        {
-            var projectName = await _tagHelper.GetProjectNameAsync(tagId);
-            if (projectName != null)
-            {
-                var accessToProject = _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
-
-                if (!accessToProject)
-                {
-                    _logger.LogWarning($"Current user {userOid} doesn't have access to project {projectName}");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private async Task<bool> HasCurrentUserAccessToContentAsync(ITagCommandRequest tagCommandRequest)
-        {
-            if (_restrictionRolesChecker.HasCurrentUserExplicitNoRestrictions())
-            {
-                return true;
-            }
-
-            var responsibleCode = await _tagHelper.GetResponsibleCodeAsync(tagCommandRequest.TagId);
-            return _restrictionRolesChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
-        }
+        public async Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest : IBaseRequest => await Task.FromResult(true);
+        // {
+        //     if (request == null)
+        //     {
+        //         throw new ArgumentNullException(nameof(request));
+        //     }
+        //
+        //     var userOid = _currentUserProvider.GetCurrentUserOid();
+        //     if (request is IProjectRequest projectRequest && !_projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))
+        //     {
+        //         _logger.LogWarning($"Current user {userOid} doesn't have have access to project {projectRequest.ProjectName}");
+        //         return false;
+        //     }
+        //
+        //     if (request is ITagCommandRequest tagCommandRequest)
+        //     {
+        //         if (!await HasCurrentUserAccessToProjectAsync(tagCommandRequest.TagId, userOid))
+        //         {
+        //             return false;
+        //         }
+        //
+        //         if (!await HasCurrentUserAccessToContentAsync(tagCommandRequest))
+        //         {
+        //             _logger.LogWarning($"Current user {userOid} doesn't have access to content {tagCommandRequest.TagId}");
+        //             return false;
+        //         }
+        //     }
+        //
+        //     if (request is ITagQueryRequest tagQueryRequest)
+        //     {
+        //         if (!await HasCurrentUserAccessToProjectAsync(tagQueryRequest.TagId, userOid))
+        //         {
+        //             return false;
+        //         }
+        //     }
+        //
+        //     return true;
+        // }
+        //
+        // private async Task<bool> HasCurrentUserAccessToProjectAsync(int tagId, Guid userOid)
+        // {
+        //     var projectName = await _tagHelper.GetProjectNameAsync(tagId);
+        //     if (projectName != null)
+        //     {
+        //         var accessToProject = _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
+        //
+        //         if (!accessToProject)
+        //         {
+        //             _logger.LogWarning($"Current user {userOid} doesn't have access to project {projectName}");
+        //             return false;
+        //         }
+        //     }
+        //
+        //     return true;
+        // }
+        //
+        // private async Task<bool> HasCurrentUserAccessToContentAsync(ITagCommandRequest tagCommandRequest)
+        // {
+        //     if (_restrictionRolesChecker.HasCurrentUserExplicitNoRestrictions())
+        //     {
+        //         return true;
+        //     }
+        //
+        //     var responsibleCode = await _tagHelper.GetResponsibleCodeAsync(tagCommandRequest.TagId);
+        //     return _restrictionRolesChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
+        // }
     }
 }

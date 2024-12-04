@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 using ServiceResult;
 
@@ -27,6 +28,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DeleteTag
             tag.SetRowVersion(request.RowVersion);
             project.RemoveTag(tag);
             _projectRepository.RemoveTag(tag);
+            
+            tag.AddDomainEvent(new DeletedEvent<Tag>(tag));
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<Unit>(Unit.Value);
