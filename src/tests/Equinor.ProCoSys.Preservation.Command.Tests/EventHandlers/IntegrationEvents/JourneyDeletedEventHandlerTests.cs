@@ -1,9 +1,13 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.MessageContracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +20,7 @@ public class JourneyDeletedEventHandlerTests
 {
     private const string TestPlant = "PCS$PlantA";
     private JourneyDeletedEventHandler _dut;
-    private IIntegrationEvent _publishedEvent;
+    private List<IIntegrationEvent> _publishedEvents;
 
     [TestInitialize]
     public void Setup()
@@ -24,9 +28,9 @@ public class JourneyDeletedEventHandlerTests
         // Arrange
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))
-            .Callback<IIntegrationEvent, CancellationToken>((e, _) => _publishedEvent = e);
+            .Callback<IIntegrationEvent, CancellationToken>((e, _) => _publishedEvents.Add(e));
 
-        _publishedEvent = null;
+        _publishedEvents = new List<IIntegrationEvent>();
 
         _dut = new JourneyDeletedEventHandler(mockPublisher.Object);
     }
@@ -40,8 +44,30 @@ public class JourneyDeletedEventHandlerTests
 
         // Act
         await _dut.Handle(domainEvent, default);
+        var types = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        Assert.IsInstanceOfType<JourneyDeleteEvent>(_publishedEvent);
+        CollectionAssert.Contains(types, typeof(JourneyDeleteEvent));
+    }
+    
+    [TestMethod]
+    public async Task Handle_ShouldSendStepDeleteEvent()
+    {
+        // Arrange
+        var journey = new Journey(TestPlant, "Test Title");
+        
+        var mode = new Mode(TestPlant, "Test Title", true);
+        var responsible = new Responsible(TestPlant, "C", "Test Description");
+        var step = new Step(TestPlant, "Test Title 1", mode, responsible);
+        journey.AddStep(step);
+        
+        var domainEvent = new DeletedEvent<Journey>(journey);
+
+        // Act
+        await _dut.Handle(domainEvent, default);
+        var types = _publishedEvents.Select(e => e.GetType()).ToList();
+
+        // Assert
+        CollectionAssert.Contains(types, typeof(StepDeleteEvent));
     }
 }

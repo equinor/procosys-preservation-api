@@ -2,6 +2,8 @@
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
@@ -17,15 +19,25 @@ public class CreateJourneyDeletedEventHelperTests
     {
         // Arrange
         _journey = new Journey(TestPlant, "Test Title");
+        
+        var mode = new Mode(TestPlant, "Test Title", true);
+        var responsible = new Responsible(TestPlant, "C", "Test Description");
+        
+        var step1 = new Step(TestPlant, "Test Title 1", mode, responsible);
+        _journey.AddStep(step1);
+        
+        var step2 = new Step(TestPlant, "Test Title 2", mode, responsible);
+        _journey.AddStep(step2);
     }
 
     [DataTestMethod]
     [DataRow(nameof(RequirementTypeDeleteEvent.Plant), TestPlant)]
     [DataRow(nameof(RequirementTypeDeleteEvent.ProjectName), null)]
     [DataRow(nameof(RequirementTypeDeleteEvent.Behavior), "delete")]
-    public void CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
+    public void CreateEvent_ShouldCreateIntegrationEventExpectedValues(string property, object expected)
     {
-        var deletionEvent = CreateJourneyDeletedEventHelper.CreateEvent(_journey);
+        var deletionEvents = CreateJourneyDeletedEventHelper.CreateEvent(_journey);
+        var deletionEvent = deletionEvents.JourneyDeleteEvent;
         var result = deletionEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -36,16 +48,26 @@ public class CreateJourneyDeletedEventHelperTests
     }
     
     [TestMethod]
-    public void CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedProCoSysGuid()
+    public void CreateEvent_ShouldCreateJourneyDeletedEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _journey.Guid;
         
         // Act
-        var deletionEvent = CreateJourneyDeletedEventHelper.CreateEvent(_journey);
-        var result = deletionEvent.ProCoSysGuid;
+        var deletedEvents = CreateJourneyDeletedEventHelper.CreateEvent(_journey);
+        var result = deletedEvents.JourneyDeleteEvent.ProCoSysGuid;
 
         // Assert
         Assert.AreEqual(expected, result);
+    }
+    
+    [TestMethod]
+    public void CreateEvent_ShouldCreateIntegrationEventsForChildRequirementDefinitions()
+    {
+        // Act
+        var integrationEvents = CreateJourneyDeletedEventHelper.CreateEvent(_journey);
+
+        // Assert
+        Assert.AreEqual(2, integrationEvents.StepDeleteEvents.Count());
     }
 }

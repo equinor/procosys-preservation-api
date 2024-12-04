@@ -14,6 +14,11 @@ public class JourneyDeletedEventHandler(IIntegrationEventPublisher integrationEv
     public async Task Handle(DeletedEvent<Journey> notification, CancellationToken cancellationToken)
     {
         var journeyDeleteEvents = CreateJourneyDeletedEventHelper.CreateEvent(notification.Entity);
-        await integrationEventPublisher.PublishAsync(journeyDeleteEvents, cancellationToken);
+        await integrationEventPublisher.PublishAsync(journeyDeleteEvents.JourneyDeleteEvent, cancellationToken);
+
+        foreach (var stepDeleteEvent in journeyDeleteEvents.StepDeleteEvents)
+        {
+            await integrationEventPublisher.PublishAsync(stepDeleteEvent, cancellationToken);
+        }
     }
 }
