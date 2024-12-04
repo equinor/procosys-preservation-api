@@ -29,11 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .Where(journey => journey.Steps.Any(s => s.AutoTransferMethod == autoTransferMethod))
                 .ToListAsync();
 
-        public void RemoveStep(Step step)
-        {
-            _context.Steps.Remove(step);
-            step.SetRemoved();
-        }
+        public void RemoveStep(Step step) => _context.Steps.Remove(step);
 
         public override void Remove(Journey journey)
         {
