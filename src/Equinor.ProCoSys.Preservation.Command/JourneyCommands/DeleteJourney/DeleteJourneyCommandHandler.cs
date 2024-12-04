@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 using ServiceResult;
 
@@ -24,6 +25,8 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteJourney
             
             journey.SetRowVersion(request.RowVersion);
             _journeyRepository.Remove(journey);
+            
+            journey.AddDomainEvent(new DeletedEvent<Journey>(journey));
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<Unit>(Unit.Value);

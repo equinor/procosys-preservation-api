@@ -202,7 +202,5 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             AddDomainEvent(new ModifiedEvent<Journey>(this));
         }
-
-        public void SetRemoved() => AddDomainEvent(new DeletedEvent<Journey>(this));
     }
 }
