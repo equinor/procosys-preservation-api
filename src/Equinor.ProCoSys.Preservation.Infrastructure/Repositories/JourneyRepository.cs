@@ -36,7 +36,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
             foreach (var step in journey.Steps)
             {
                 _context.Steps.Remove(step);
-                step.SetRemoved();
             }
             base.Remove(journey);
         }
