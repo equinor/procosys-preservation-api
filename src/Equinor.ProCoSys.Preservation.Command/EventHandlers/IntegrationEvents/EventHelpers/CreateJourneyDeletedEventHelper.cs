@@ -4,7 +4,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateJourneyDeletedEventHelper : ICreateEventHelper<Journey, JourneyDeleteEvent>
+public static class CreateJourneyDeletedEventHelper
 {
-    public Task<JourneyDeleteEvent> CreateEvent(Journey entity) => Task.FromResult(new JourneyDeleteEvent(entity.Guid, entity.Plant));
+    public static JourneyDeleteEvent CreateEvent(Journey entity) => new(entity.Guid, entity.Plant);
 }
