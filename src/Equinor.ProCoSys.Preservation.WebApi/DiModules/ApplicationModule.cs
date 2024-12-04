@@ -186,12 +186,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddTransient<INotificationHandler<ChildAddedEvent<Journey, Step>>, ChildEventHandler<Journey, Step, StepEvent>>();
             services.AddTransient<INotificationHandler<ChildModifiedEvent<Journey, Step>>, ChildEventHandler<Journey, Step, StepEvent>>();
             services.AddTransient<INotificationHandler<ModifiedEvent<Step>>, IntegrationEventHandler<ModifiedEvent<Step>, Step>>();
-            services.AddTransient<INotificationHandler<DeletedEvent<Step>>, IntegrationDeleteEventHandler<DeletedEvent<Step>, Step>>();
             services.AddTransient<IPublishEntityEventHelper<Step>, PublishEntityEventHelper<Step, StepEvent>>();
-            services.AddTransient<IPublishDeleteEntityEventHelper<Step>, PublishDeleteEntityEventHelper<Step, StepDeleteEvent>>();
             services.AddTransient<ICreateChildEventHelper<Journey, Step, StepEvent>, CreateJourneyStepEventHelper>();
             services.AddTransient<ICreateEventHelper<Step, StepEvent>, CreateStepEventHelper>();
-            services.AddTransient<ICreateEventHelper<Step, StepDeleteEvent>, CreateStepDeleteEventHelper>();
             
             services.AddTransient<IIntegrationEventPublisher, IntegrationEventPublisher>();
 

@@ -3,7 +3,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public static class CreateJourneyDeletedEventHelper
+public static class CreateStepDeletedEventHelper
 {
-    public static JourneyDeleteEvent CreateEvent(Journey entity) => new(entity.Guid, entity.Plant);
+    public static StepDeleteEvent CreateEvent(Step entity) => new(entity.Guid, entity.Plant);
 }

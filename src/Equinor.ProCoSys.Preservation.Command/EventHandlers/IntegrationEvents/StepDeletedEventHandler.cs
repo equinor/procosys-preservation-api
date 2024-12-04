@@ -8,12 +8,12 @@ using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
-public class JourneyDeletedEventHandler(IIntegrationEventPublisher integrationEventPublisher)
-    : INotificationHandler<DeletedEvent<Journey>>
+public class StepDeletedEventHandler(IIntegrationEventPublisher integrationEventPublisher)
+    : INotificationHandler<DeletedEvent<Step>>
 {
-    public async Task Handle(DeletedEvent<Journey> notification, CancellationToken cancellationToken)
+    public async Task Handle(DeletedEvent<Step> notification, CancellationToken cancellationToken)
     {
-        var journeyDeleteEvents = CreateJourneyDeletedEventHelper.CreateEvent(notification.Entity);
-        await integrationEventPublisher.PublishAsync(journeyDeleteEvents, cancellationToken);
+        var deleteEvent = CreateStepDeletedEventHelper.CreateEvent(notification.Entity);
+        await integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }

@@ -2,22 +2,25 @@
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
 [TestClass]
-public class CreateJourneyDeletedEventHelperTests
+public class CreateStepDeletedEventHelperTests
 {
     private const string TestPlant = "PCS$PlantA";
-    private Journey _journey;
+    private Step _step;
 
     [TestInitialize]
     public void Setup()
     {
         // Arrange
-        _journey = new Journey(TestPlant, "Test Title");
+        var mode = new Mode(TestPlant, "Test Title", true);
+        var responsible = new Responsible(TestPlant, "C", "Test Description");
+        _step = new Step(TestPlant, "Test Title", mode, responsible);
     }
 
     [DataTestMethod]
@@ -26,7 +29,7 @@ public class CreateJourneyDeletedEventHelperTests
     [DataRow(nameof(RequirementTypeDeleteEvent.Behavior), "delete")]
     public void CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
     {
-        var deletionEvent = CreateJourneyDeletedEventHelper.CreateEvent(_journey);
+        var deletionEvent = CreateStepDeletedEventHelper.CreateEvent(_step);
         var result = deletionEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
@@ -40,10 +43,10 @@ public class CreateJourneyDeletedEventHelperTests
     public void CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedProCoSysGuid()
     {
         // Arrange
-        var expected = _journey.Guid;
+        var expected = _step.Guid;
         
         // Act
-        var deletionEvent = CreateJourneyDeletedEventHelper.CreateEvent(_journey);
+        var deletionEvent = CreateStepDeletedEventHelper.CreateEvent(_step);
         var result = deletionEvent.ProCoSysGuid;
 
         // Assert
