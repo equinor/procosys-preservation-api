@@ -42,6 +42,6 @@ public class JourneyDeletedEventHandlerTests
         await _dut.Handle(domainEvent, default);
 
         // Assert
-        Assert.IsInstanceOfType<FieldDeleteEvent>(_publishedEvent);
+        Assert.IsInstanceOfType<JourneyDeleteEvent>(_publishedEvent);
     }
 }
