@@ -82,7 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             _steps.Remove(step);
-            step.SetRemoved();
+            AddDomainEvent(new DeletedEvent<Step>(step));
         }
 
         public void SwapSteps(int stepId1, int stepId2)
@@ -202,7 +202,5 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             AddDomainEvent(new ModifiedEvent<Journey>(this));
         }
-
-        public void SetRemoved() => AddDomainEvent(new DeletedEvent<Journey>(this));
     }
 }
