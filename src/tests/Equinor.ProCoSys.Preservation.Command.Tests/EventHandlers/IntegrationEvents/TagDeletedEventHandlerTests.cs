@@ -26,10 +26,11 @@ public class TagDeletedEventHandlerTests
     public void Setup()
     {
         // Arrange
-        
-        var mockCreateEventHelper = new Mock<ICreateEventHelper<Tag, TagDeleteEvent>>();
         var emptyDeleteEvent = new TagDeleteEvent(Guid.Empty, string.Empty, string.Empty);
-        mockCreateEventHelper.Setup(x => x.CreateEvent(It.IsAny<Tag>())).ReturnsAsync(emptyDeleteEvent);
+        var deleteEvents = new TagDeleteEvents(emptyDeleteEvent, []);
+        
+        var mockCreateEventHelper = new Mock<ICreateTagDeleteEventHelper>();
+        mockCreateEventHelper.Setup(x => x.CreateEvents(It.IsAny<Tag>())).ReturnsAsync(deleteEvents);
         
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))

@@ -10,13 +10,13 @@ using MediatR;
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
 public class TagDeletedEventHandler(
-    ICreateEventHelper<Tag, TagDeleteEvent> createEventHelper,
+    ICreateTagDeleteEventHelper createEventHelper,
     IIntegrationEventPublisher integrationEventPublisher)
     : INotificationHandler<DeletedEvent<Tag>>
 {
     public async Task Handle(DeletedEvent<Tag> notification, CancellationToken cancellationToken)
     {
-        var integrationEvent = await createEventHelper.CreateEvent(notification.Entity);
-        await integrationEventPublisher.PublishAsync(integrationEvent, cancellationToken);
+        var integrationEvent = await createEventHelper.CreateEvents(notification.Entity);
+        await integrationEventPublisher.PublishAsync(integrationEvent.TagDeleteEvent, cancellationToken);
     }
 }

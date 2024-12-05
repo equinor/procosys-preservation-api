@@ -46,11 +46,12 @@ public class CreateTagDeletedEventHelperTests
     [DataRow(nameof(TagDeleteEvent.Behavior), "delete")]
     public async Task CreateEvent_ShouldTagDeleteEventExpectedValues(string property, object expected)
     {
-        var deletionEvent = await _dut.CreateEvent(_tag);
-        var result = deletionEvent.GetType()
+        var deletionEvents = await _dut.CreateEvents(_tag);
+        var tagDeleteEvent = deletionEvents.TagDeleteEvent;
+        var result = tagDeleteEvent.GetType()
             .GetProperties()
             .Single(p => p.Name == property)
-            .GetValue(deletionEvent);
+            .GetValue(tagDeleteEvent);
 
         // Assert
         Assert.AreEqual(expected, result);
@@ -63,8 +64,8 @@ public class CreateTagDeletedEventHelperTests
         var expected = _tag.Guid;
         
         // Act
-        var deletionEvent = await _dut.CreateEvent(_tag);
-        var result = deletionEvent.ProCoSysGuid;
+        var deletionEvent = await _dut.CreateEvents(_tag);
+        var result = deletionEvent.TagDeleteEvent.ProCoSysGuid;
 
         // Assert
         Assert.AreEqual(expected, result);
