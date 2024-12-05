@@ -209,7 +209,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 IsVoidedInSource = value;
 
                 AddDomainEvent(new TagDeletedInSourceEvent(Plant, Guid));
-                SetRemoved();
+                AddDomainEvent(new DeletedEvent<Tag>(this));
             }
         }
 
@@ -568,8 +568,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             AddDomainEvent(new ModifiedEvent<Tag>(this));
         }
-
-        public void SetRemoved() => AddDomainEvent(new DeletedEvent<Tag>(this));
 
         public bool IsReadyToBeStarted() => Status != PreservationStatus.Active && Requirements.Any(r => !r.IsVoided);
 

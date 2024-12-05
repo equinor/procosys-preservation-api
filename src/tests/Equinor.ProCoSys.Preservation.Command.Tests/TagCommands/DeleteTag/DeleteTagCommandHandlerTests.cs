@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.DeleteTag;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -64,13 +66,24 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
         }
 
         [TestMethod]
-        public async Task HandlingDeleteStepCommand_ShouldSave()
+        public async Task HandlingDeleteTagCommand_ShouldSave()
         {
             // Act
             await _dut.Handle(_command, default);
 
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+        
+        [TestMethod]
+        public async Task HandlingDeleteTagCommand_ShouldAddDeletionEvent()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+            var eventTypes = _tag.DomainEvents.Select(e => e.GetType()).ToList();
+            
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Tag>));
         }
     }
 }

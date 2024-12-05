@@ -108,7 +108,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 _context.TagRequirements.Remove(tagRequirement);
             }
             _context.Tags.Remove(tag);
-            tag.SetRemoved();
         }
 
         public Task<List<Tag>> GetStandardTagsInProjectInStepsAsync(string projectName, IEnumerable<string> tagNos, IEnumerable<int> stepIds)
