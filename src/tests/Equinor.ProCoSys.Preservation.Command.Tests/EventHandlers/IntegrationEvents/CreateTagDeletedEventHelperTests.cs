@@ -8,6 +8,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
@@ -31,6 +32,12 @@ public class CreateTagDeletedEventHelperTests
         _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "Tag1", "", stepMock.Object,
             new List<TagRequirement> { tagRequirementMock.Object });
         
+        var action1 = new Action(TestPlant, "Test Action 1", "Test Action Description", null);
+        _tag.AddAction(action1);
+        
+        var action2 = new Action(TestPlant, "Test Action 2", "Test Action Description", null);
+        _tag.AddAction(action2);
+        
         var project = new Project(TestPlant, TestProjectName, "Test Project Description", Guid.NewGuid());
         project.AddTag(_tag);
 
@@ -46,6 +53,7 @@ public class CreateTagDeletedEventHelperTests
     [DataRow(nameof(TagDeleteEvent.Behavior), "delete")]
     public async Task CreateEvent_ShouldTagDeleteEventExpectedValues(string property, object expected)
     {
+        // Act
         var deletionEvents = await _dut.CreateEvents(_tag);
         var tagDeleteEvent = deletionEvents.TagDeleteEvent;
         var result = tagDeleteEvent.GetType()
@@ -69,5 +77,15 @@ public class CreateTagDeletedEventHelperTests
 
         // Assert
         Assert.AreEqual(expected, result);
+    }
+    
+    [TestMethod]
+    public async Task CreateEvent_ShouldCreateIntegrationEventsForChildActions()
+    {
+        // Act
+        var integrationEvents = await _dut.CreateEvents(_tag);
+
+        // Assert
+        Assert.AreEqual(2, integrationEvents.ActionDeleteEvents.Count());
     }
 }
