@@ -101,6 +101,20 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(2, _dutWith3Steps.Steps.Count);
             Assert.IsFalse(_dutWith3Steps.Steps.Contains(_stepA));
         }
+        
+        [TestMethod]
+        public void RemoveStep_ShouldAddStepDeletedEvent()
+        {
+            // Arrange
+            _stepA.IsVoided = true;
+            
+            // Act
+            _dutWith3Steps.RemoveStep(_stepA);
+            
+            // Assert
+            var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Step>));
+        }
 
         [TestMethod]
         public void RemoveStep_ShouldThrowException_WhenStepNotGiven()
@@ -323,17 +337,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
 
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Journey>));
-        }
-        
-        [TestMethod]
-        public void SetRemoved_ShouldAddPlantEntityDeletedEvent()
-        {
-            // Act
-            _dutWithNoSteps.SetRemoved();
-            var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
-
-            // Assert
-            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Journey>));
         }
     }
 }

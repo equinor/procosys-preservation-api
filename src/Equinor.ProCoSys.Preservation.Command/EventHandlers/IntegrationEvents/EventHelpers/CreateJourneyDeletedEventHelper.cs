@@ -1,10 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateJourneyDeletedEventHelper : ICreateEventHelper<Journey, JourneyDeleteEvent>
+public static class CreateJourneyDeletedEventHelper
 {
-    public Task<JourneyDeleteEvent> CreateEvent(Journey entity) => Task.FromResult(new JourneyDeleteEvent(entity.Guid, entity.Plant));
+    public static JourneyDeletedEvents CreateEvent(Journey entity)
+    {
+        var journeyDeletedEvent = new JourneyDeleteEvent(entity.Guid, entity.Plant);
+        var stepDeletedEvents = entity.Steps.Select(CreateStepDeletedEventHelper.CreateEvent).ToList();
+        
+        return new JourneyDeletedEvents(journeyDeletedEvent, stepDeletedEvents);
+    }
 }

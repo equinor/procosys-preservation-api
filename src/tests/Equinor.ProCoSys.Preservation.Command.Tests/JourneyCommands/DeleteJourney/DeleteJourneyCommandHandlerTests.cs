@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteJourney;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -41,6 +43,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
             
             // Assert
             _journeyRepositoryMock.Verify(r => r.Remove(_journey), Times.Once);
+        }
+        
+        [TestMethod]
+        public async Task HandlingDeleteJourneyCommand_ShouldAddDeletedJourneyEvent()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+            var eventTypes = _journey.DomainEvents.Select(e => e.GetType()).ToList();
+
+            // Assert
+            CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Journey>));
         }
 
         [TestMethod]
