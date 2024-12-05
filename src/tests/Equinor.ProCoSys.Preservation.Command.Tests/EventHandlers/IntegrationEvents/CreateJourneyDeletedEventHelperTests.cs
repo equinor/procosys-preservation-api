@@ -31,9 +31,9 @@ public class CreateJourneyDeletedEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow(nameof(RequirementTypeDeleteEvent.Plant), TestPlant)]
-    [DataRow(nameof(RequirementTypeDeleteEvent.ProjectName), null)]
-    [DataRow(nameof(RequirementTypeDeleteEvent.Behavior), "delete")]
+    [DataRow(nameof(JourneyDeleteEvent.Plant), TestPlant)]
+    [DataRow(nameof(JourneyDeleteEvent.ProjectName), null)]
+    [DataRow(nameof(JourneyDeleteEvent.Behavior), "delete")]
     public void CreateEvent_ShouldCreateIntegrationEventExpectedValues(string property, object expected)
     {
         var deletionEvents = CreateJourneyDeletedEventHelper.CreateEvent(_journey);
@@ -62,7 +62,7 @@ public class CreateJourneyDeletedEventHelperTests
     }
     
     [TestMethod]
-    public void CreateEvent_ShouldCreateIntegrationEventsForChildRequirementDefinitions()
+    public void CreateEvent_ShouldCreateIntegrationEventsForChildSteps()
     {
         // Act
         var integrationEvents = CreateJourneyDeletedEventHelper.CreateEvent(_journey);

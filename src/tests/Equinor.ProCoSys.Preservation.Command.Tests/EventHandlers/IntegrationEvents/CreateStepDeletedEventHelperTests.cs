@@ -24,10 +24,10 @@ public class CreateStepDeletedEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow(nameof(RequirementTypeDeleteEvent.Plant), TestPlant)]
-    [DataRow(nameof(RequirementTypeDeleteEvent.ProjectName), null)]
-    [DataRow(nameof(RequirementTypeDeleteEvent.Behavior), "delete")]
-    public void CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
+    [DataRow(nameof(StepDeleteEvent.Plant), TestPlant)]
+    [DataRow(nameof(StepDeleteEvent.ProjectName), null)]
+    [DataRow(nameof(StepDeleteEvent.Behavior), "delete")]
+    public void CreateEvent_ShouldCreateStepDeleteEventExpectedValues(string property, object expected)
     {
         var deletionEvent = CreateStepDeletedEventHelper.CreateEvent(_step);
         var result = deletionEvent.GetType()
@@ -40,7 +40,7 @@ public class CreateStepDeletedEventHelperTests
     }
     
     [TestMethod]
-    public void CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedProCoSysGuid()
+    public void CreateEvent_ShouldCreateStepDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _step.Guid;
