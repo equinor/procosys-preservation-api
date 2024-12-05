@@ -26,10 +26,10 @@ public class CreateRequirementDefinitionDeletedEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow(nameof(RequirementTypeDeleteEvent.Plant), TestPlant)]
-    [DataRow(nameof(RequirementTypeDeleteEvent.ProjectName), null)]
-    [DataRow(nameof(RequirementTypeDeleteEvent.Behavior), "delete")]
-    public void CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
+    [DataRow(nameof(RequirementDefinitionDeleteEvent.Plant), TestPlant)]
+    [DataRow(nameof(RequirementDefinitionDeleteEvent.ProjectName), null)]
+    [DataRow(nameof(RequirementDefinitionDeleteEvent.Behavior), "delete")]
+    public void CreateEvent_ShouldCreateRequirementDefinitionDeleteEventExpectedValues(string property, object expected)
     {
         var integrationEvents = CreateRequirementDefinitionDeletedEventHelper.CreateEvents(_requirementDefinition);
         var deletionEvent = integrationEvents.DefinitionDeleteEvent;
@@ -43,7 +43,7 @@ public class CreateRequirementDefinitionDeletedEventHelperTests
     }
     
     [TestMethod]
-    public void CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedProCoSysGuid()
+    public void CreateEvent_ShouldCreateRequirementDefinitionDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _requirementDefinition.Guid;

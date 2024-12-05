@@ -41,10 +41,10 @@ public class CreateTagDeletedEventHelperTests
     }
 
     [DataTestMethod]
-    [DataRow(nameof(RequirementTypeDeleteEvent.Plant), TestPlant)]
-    [DataRow(nameof(RequirementTypeDeleteEvent.ProjectName), TestProjectName)]
-    [DataRow(nameof(RequirementTypeDeleteEvent.Behavior), "delete")]
-    public async Task CreateEvent_ShouldCreateRequirementDefinitionEventExpectedValues(string property, object expected)
+    [DataRow(nameof(TagDeleteEvent.Plant), TestPlant)]
+    [DataRow(nameof(TagDeleteEvent.ProjectName), TestProjectName)]
+    [DataRow(nameof(TagDeleteEvent.Behavior), "delete")]
+    public async Task CreateEvent_ShouldTagDeleteEventExpectedValues(string property, object expected)
     {
         var deletionEvent = await _dut.CreateEvent(_tag);
         var result = deletionEvent.GetType()
@@ -57,7 +57,7 @@ public class CreateTagDeletedEventHelperTests
     }
     
     [TestMethod]
-    public async Task CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedProCoSysGuid()
+    public async Task CreateEvent_ShouldTagDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _tag.Guid;
