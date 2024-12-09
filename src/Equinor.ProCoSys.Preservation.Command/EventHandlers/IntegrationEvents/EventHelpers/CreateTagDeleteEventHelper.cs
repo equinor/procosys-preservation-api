@@ -1,18 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateTagDeleteEventHelper : ICreateEventHelper<Tag, TagDeleteEvent>
+public class CreateTagDeleteEventHelper(IProjectRepository projectRepository) : ICreateTagDeleteEventHelper
 {
-    private readonly IProjectRepository _projectRepository;
-
-    public CreateTagDeleteEventHelper(IProjectRepository projectRepository) => _projectRepository = projectRepository;
-
-    public async Task<TagDeleteEvent> CreateEvent(Tag entity)
+    public async Task<TagDeleteEvents> CreateEvents(Tag entity)
     {
-        var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(entity.Guid);
-        return new TagDeleteEvent(entity.Guid, entity.Plant, project.Name);
+        var project = await projectRepository.GetProjectOnlyByTagGuidAsync(entity.Guid);
+        
+        var tagDeleteEvent = new TagDeleteEvent(entity.Guid, entity.Plant, project.Name);
+        var actionDeleteEvents = entity.Actions.Select(a => CreateActionDeletedEventHelper.CreateEvent(a, project));
+
+        return new TagDeleteEvents(tagDeleteEvent, actionDeleteEvents);
     }
 }
