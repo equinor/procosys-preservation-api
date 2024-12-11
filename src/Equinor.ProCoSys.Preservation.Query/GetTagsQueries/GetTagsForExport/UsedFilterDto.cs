@@ -5,7 +5,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
     public class UsedFilterDto
     {
         public UsedFilterDto(
-            string actionStatus,
+            IEnumerable<string> actionStatus,
             IEnumerable<string> areaCodes,
             string callOffStartsWith,
             string commPkgNoStartsWith,
@@ -48,7 +48,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             VoidedFilter = voidedFilter;
         }
 
-        public string ActionStatus { get; }
+        public IEnumerable<string> ActionStatus { get; }
         public IEnumerable<string> AreaCodes { get; }
         public string CallOffStartsWith { get; }
         public string CommPkgNoStartsWith { get; }

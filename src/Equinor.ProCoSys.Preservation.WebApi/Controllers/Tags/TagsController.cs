@@ -976,9 +976,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
                 target.VoidedFilter = source.VoidedFilter.Value;
             }
 
-            if (source.ActionStatus.HasValue)
+            if (source.ActionStatus != null)
             {
-                target.ActionStatus = source.ActionStatus;
+                target.ActionStatus = source.ActionStatus.ToList();
             }
 
             if (source.DueFilters != null)
