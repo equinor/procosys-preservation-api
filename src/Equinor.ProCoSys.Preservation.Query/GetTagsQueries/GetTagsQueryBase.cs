@@ -66,8 +66,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries
                            (filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
                            (filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
                            (filter.ActionStatus == ActionStatus.HasOverdue && anyOverdueActions)) &&
-                      (!filter.PreservationStatus.HasValue || 
-                            tag.Status == filter.PreservationStatus.Value) &&
+                      (!filter.PreservationStatus.Any() || 
+                            filter.PreservationStatus.Contains(tag.Status)) &&
                       (string.IsNullOrEmpty(filter.TagNoStartsWith) ||
                             tag.TagNo.StartsWith(filter.TagNoStartsWith)) &&
                       (string.IsNullOrEmpty(filter.CommPkgNoStartsWith) ||

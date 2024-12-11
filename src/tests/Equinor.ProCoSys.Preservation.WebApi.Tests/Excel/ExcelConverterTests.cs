@@ -40,12 +40,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
                 new List<string> { "j1", "j2" },
                 "mcPkgNoStartsWith",
                 new List<string> { "m1", "m2" },
-                "preservationStatus",
-                "projectDescription",
-                "plant",
-                "projectName",
-                "purchaseOrderNoStartsWith",
-                new List<string> { "rt1", "rt2" },
+                new List<string> { "preservationStatus" },
+        "projectDescription",
+        "plant",
+        "projectName",
+        "purchaseOrderNoStartsWith",
+
+        new List<string> { "rt1", "rt2" },
                 new List<string> { "r1", "r2" },
                 "storageAreaStartsWith",
                 new List<string> { "tf" },
@@ -389,7 +390,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             AssertRow(worksheet, ExcelConverter.FrontSheetRows.CommPkg, 2, "CommPkg number starts with", expextedFilterDto.CommPkgNoStartsWith);
             AssertRow(worksheet, ExcelConverter.FrontSheetRows.McPkg, 2, "McPkg number starts with", expextedFilterDto.McPkgNoStartsWith);
             AssertRow(worksheet, ExcelConverter.FrontSheetRows.StorageArea, 2, "Storage area starts with", expextedFilterDto.StorageAreaStartsWith);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Status, 2, "Preservation status", expextedFilterDto.PreservationStatus);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Status, 2, "Preservation status", string.Join(",", expextedFilterDto.PreservationStatus));
             AssertRow(worksheet, ExcelConverter.FrontSheetRows.Actions, 2, "Preservation actions", expextedFilterDto.ActionStatus);
             AssertRow(worksheet, ExcelConverter.FrontSheetRows.Voided, 2, "Voided/unvoided tags", expextedFilterDto.VoidedFilter);
             AssertRow(worksheet, ExcelConverter.FrontSheetRows.Due, 2, "Preservation due date", string.Join(",", expextedFilterDto.DueFilters));

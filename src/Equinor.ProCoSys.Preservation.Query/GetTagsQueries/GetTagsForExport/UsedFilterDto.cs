@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             IEnumerable<string> journeyTitles,
             string mcPkgNoStartsWith,
             IEnumerable<string> modeTitles,
-            string preservationStatus,
+            IEnumerable<string> preservationStatus,
             string projectDescription,
             string plant,
             string projectName,
@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         public string McPkgNoStartsWith { get; }
         public IEnumerable<string> ModeTitles { get; }
         public string Plant { get; }
-        public string PreservationStatus { get; }
+        public IEnumerable<string> PreservationStatus { get; }
         public string ProjectDescription { get; }
         public string ProjectName { get; }
         public string PurchaseOrderNoStartsWith { get; }

@@ -419,7 +419,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnPreservationStatus()
         {
-            var filter = new Filter {PreservationStatus = PreservationStatus.Active};
+            var filter = new Filter {PreservationStatus = new List<PreservationStatus>(){PreservationStatus.Active}};
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
@@ -448,7 +448,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnPreservationStatusEqualInService()
         {
-            var filter = new Filter { PreservationStatus = PreservationStatus.InService };
+            var filter = new Filter {PreservationStatus = new List<PreservationStatus>(){PreservationStatus.InService}};
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
@@ -940,7 +940,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         {
             var filter = new Filter
             {
-                PreservationStatus = PreservationStatus.NotStarted,
+                PreservationStatus = new List<PreservationStatus>(){PreservationStatus.NotStarted},
                 RequirementTypeIds = new List<int> {_testDataSet.ReqType1.Id},
                 AreaCodes = new List<string> {$"{_testDataSet.AreaPrefix}-0"},
                 DisciplineCodes = new List<string> {$"{_testDataSet.DisciplinePrefix}-0"},

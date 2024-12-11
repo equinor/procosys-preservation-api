@@ -8,7 +8,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries
         public VoidedFilterType VoidedFilter { get; set; } = VoidedFilterType.NotVoided;
         public ActionStatus? ActionStatus { get; set; }
         public IList<DueFilterType> DueFilters { get; set; } = new List<DueFilterType>();
-        public PreservationStatus? PreservationStatus { get; set; }
+        public IList<PreservationStatus> PreservationStatus { get; set; } = new List<PreservationStatus>();
         public IList<int> RequirementTypeIds { get; set; } = new List<int>();
         public IList<string> AreaCodes { get; set; } = new List<string>();
         public IList<string> DisciplineCodes { get; set; } = new List<string>();

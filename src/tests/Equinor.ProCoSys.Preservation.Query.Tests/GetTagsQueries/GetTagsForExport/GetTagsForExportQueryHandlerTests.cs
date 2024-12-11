@@ -404,7 +404,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldFilterOnPreservationStatus()
         {
-            var filter = new Filter {PreservationStatus = PreservationStatus.Active};
+            var filter = new Filter {PreservationStatus = new List<PreservationStatus>(){PreservationStatus.Active}};
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
@@ -428,7 +428,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 {
                     Assert.AreEqual(PreservationStatus.Active.GetDisplayValue(), tag.Status);
                 }
-                Assert.AreEqual(filter.PreservationStatus.GetDisplayValue(), result.Data.UsedFilter.PreservationStatus);
+                Assert.AreEqual(filter.PreservationStatus.Single().GetDisplayValue(), result.Data.UsedFilter.PreservationStatus.Single());
             }
         }
 
@@ -825,7 +825,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         {
             var filter = new Filter
             {
-                PreservationStatus = PreservationStatus.NotStarted,
+                PreservationStatus = new List<PreservationStatus>(){PreservationStatus.NotStarted},
                 RequirementTypeIds = new List<int> {_testDataSet.ReqType1.Id},
                 AreaCodes = new List<string> {$"{_testDataSet.AreaPrefix}-0"},
                 DisciplineCodes = new List<string> {$"{_testDataSet.DisciplinePrefix}-0"},
@@ -847,7 +847,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 1);
                 Assert.AreEqual(filter.VoidedFilter.GetDisplayValue(), result.Data.UsedFilter.VoidedFilter);
-                Assert.AreEqual(filter.PreservationStatus.GetDisplayValue(), result.Data.UsedFilter.PreservationStatus);
+                Assert.AreEqual(filter.PreservationStatus.Single().GetDisplayValue(), result.Data.UsedFilter.PreservationStatus.Single());
                 Assert.AreEqual(_testDataSet.ReqType1.Title, result.Data.UsedFilter.RequirementTypeTitles.ElementAt(0));
                 Assert.AreEqual(filter.AreaCodes.ElementAt(0), result.Data.UsedFilter.AreaCodes.ElementAt(0));
                 Assert.AreEqual(filter.DisciplineCodes.ElementAt(0), result.Data.UsedFilter.DisciplineCodes.ElementAt(0));
@@ -975,7 +975,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             Assert.AreEqual(0, usedFilterDto.JourneyTitles.Count());
             Assert.IsNull(usedFilterDto.McPkgNoStartsWith);
             Assert.AreEqual(0, usedFilterDto.ModeTitles.Count());
-            Assert.AreEqual(_query.Filter.PreservationStatus.GetDisplayValue(), usedFilterDto.PreservationStatus);
+            if (_query.Filter.PreservationStatus.Any())
+            {
+                Assert.AreEqual(_query.Filter.PreservationStatus.Select(s => s.GetDisplayValue()), usedFilterDto.PreservationStatus);
+            }
+            else
+            {
+                Assert.AreEqual(0, usedFilterDto.PreservationStatus.Count());
+            }
             Assert.IsNull(usedFilterDto.PurchaseOrderNoStartsWith);
             Assert.AreEqual(0, usedFilterDto.RequirementTypeTitles.Count());
             Assert.AreEqual(0, usedFilterDto.ResponsibleCodes.Count());

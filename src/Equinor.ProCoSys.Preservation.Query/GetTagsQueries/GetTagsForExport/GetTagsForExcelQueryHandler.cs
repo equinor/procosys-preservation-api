@@ -316,7 +316,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 journeyTitles,
                 filter.McPkgNoStartsWith,
                 modeTitles,
-                filter.PreservationStatus.GetDisplayValue(),
+                filter.PreservationStatus.Select(v => v.GetDisplayValue() ),
                 projectDescription,
                 _plantProvider.Plant,
                 projectName,

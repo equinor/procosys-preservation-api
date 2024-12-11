@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         public VoidedFilterType? VoidedFilter { get; set; }
         public IEnumerable<DueFilterType> DueFilters { get; set; }
         public ActionStatus? ActionStatus { get; set; }
-        public PreservationStatus? PreservationStatus { get; set; }
+        public IEnumerable<PreservationStatus> PreservationStatus { get; set; }
         public IEnumerable<int> RequirementTypeIds { get; set; }
         public IEnumerable<string> AreaCodes { get; set; }
         public IEnumerable<string> DisciplineCodes { get; set; }

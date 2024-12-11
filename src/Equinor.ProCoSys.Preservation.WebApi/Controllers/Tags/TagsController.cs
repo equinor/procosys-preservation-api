@@ -986,9 +986,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
                 target.DueFilters = source.DueFilters.ToList();
             }
 
-            if (source.PreservationStatus.HasValue)
+            if (source.PreservationStatus != null)
             {
-                target.PreservationStatus = source.PreservationStatus;
+                target.PreservationStatus = source.PreservationStatus.ToList();
             }
 
             if (source.RequirementTypeIds != null)
