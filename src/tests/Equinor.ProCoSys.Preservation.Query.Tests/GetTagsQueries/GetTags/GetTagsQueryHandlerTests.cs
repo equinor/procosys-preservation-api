@@ -488,14 +488,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasOpen);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
                 AssertCount(result.Data, 0);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
                 AssertCount(result.Data, 0);
             }
         }
@@ -516,14 +516,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
                 AssertCount(result.Data, 0);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasClosed);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
                 AssertCount(result.Data, 0);
             }
         }
@@ -544,15 +544,15 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 // when filtering on tag which has Open actions, tags with overdue actions is included
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasOverdue);
                 var tagIdWithOpenAndOverdueAction = result.Data.Tags.Single().Id;
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
                 AssertCount(result.Data, 0);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasOverdue);
                 Assert.AreEqual(tagIdWithOpenAndOverdueAction, result.Data.Tags.Single().Id);

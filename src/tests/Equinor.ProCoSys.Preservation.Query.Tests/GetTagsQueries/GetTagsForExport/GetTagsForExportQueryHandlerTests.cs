@@ -446,18 +446,18 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 1);
                 AssertActionStatus(result.Data.Tags, ActionStatus.HasOpen);
-                Assert.AreEqual(ActionStatus.HasOpen.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasOpen.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
-                Assert.AreEqual(ActionStatus.HasClosed.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasClosed.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
                 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
-                Assert.AreEqual(ActionStatus.HasOverdue.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasOverdue.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
             }
         }
 
@@ -477,19 +477,19 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
-                Assert.AreEqual(ActionStatus.HasOpen.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasOpen.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
                 var tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 1);
                 AssertActionStatus(tags, ActionStatus.HasClosed);
-                Assert.AreEqual(ActionStatus.HasClosed.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasClosed.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
-                Assert.AreEqual(ActionStatus.HasOverdue.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasOverdue.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
             }
         }
 
@@ -509,24 +509,24 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
                 // when filtering on tag which has Open actions, tags with overdue actions is included
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
                 var tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 1);
                 AssertActionStatus(tags, ActionStatus.HasOverdue);
-                Assert.AreEqual(ActionStatus.HasOpen.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasOpen.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
                 var tagWithOpenAndOverdueAction = tags.Single().TagNo;
                 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
                 tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 0);
-                Assert.AreEqual(ActionStatus.HasClosed.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasClosed.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
                 tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 1);
                 AssertActionStatus(tags, ActionStatus.HasOverdue);
                 Assert.AreEqual(tagWithOpenAndOverdueAction, tags.Single().TagNo);
-                Assert.AreEqual(ActionStatus.HasOverdue.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasOverdue.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
             }
         }
 
@@ -966,7 +966,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         {
             Assert.AreEqual(TestPlant, usedFilterDto.Plant);
             Assert.AreEqual(_query.ProjectName, usedFilterDto.ProjectName);
-            Assert.AreEqual(_query.Filter.ActionStatus.GetDisplayValue(), usedFilterDto.ActionStatus);
+            if (_query.Filter.ActionStatus.Any())
+            {
+                Assert.AreEqual(_query.Filter.ActionStatus.Select(s => s.GetDisplayValue()), usedFilterDto.ActionStatus);
+            }
+            else
+            {
+                Assert.AreEqual(0, usedFilterDto.ActionStatus.Count());
+            }
             Assert.AreEqual(0, usedFilterDto.AreaCodes.Count());
             Assert.IsNull(usedFilterDto.CallOffStartsWith);
             Assert.IsNull(usedFilterDto.CommPkgNoStartsWith);
