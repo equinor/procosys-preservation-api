@@ -2,8 +2,14 @@
 {
     public class TagFunctionCodeDto
     {
-        public TagFunctionCodeDto(string code) => Code = code;
+        
+        public TagFunctionCodeDto(string code, string description)
+        {
+            Code = code;
+            Description = description;
+        }
 
         public string Code { get; }
+        public string Description { get; set; }
     }
 }
