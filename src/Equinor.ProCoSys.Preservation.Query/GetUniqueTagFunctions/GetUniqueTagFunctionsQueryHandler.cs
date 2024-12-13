@@ -21,14 +21,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagFunctions
             CancellationToken cancellationToken)
         {
             var tagFunctions = await
-                (from tag in _context.QuerySet<Tag>()
-                    join project in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals project.Id
-                    join tagFunction in _context.QuerySet<TagFunction>() on new {TagFunctionCode = tag.TagFunctionCode, tag.Plant} equals new {TagFunctionCode = tagFunction.Code, tagFunction.Plant} into tagFunctions_jointable
-                    from tagFunction in tagFunctions_jointable.DefaultIfEmpty()
+                (from tagFunction in _context.QuerySet<TagFunction>()
+                    join project in _context.QuerySet<Project>() on tagFunction.Plant equals project.Plant
                     where project.Name == request.ProjectName
-                          && !string.IsNullOrEmpty(tag.TagFunctionCode)
+                          && !string.IsNullOrEmpty(tagFunction.Code) && _context.QuerySet<TagFunctionRequirement>().Any(tfr => EF.Property<int>(tfr, "TagFunctionId") == tagFunction.Id)
                     select new TagFunctionCodeDto(
-                        tag.TagFunctionCode,
+                        tagFunction.Code,
                         tagFunction.Description)
                     )
                 .Distinct()
