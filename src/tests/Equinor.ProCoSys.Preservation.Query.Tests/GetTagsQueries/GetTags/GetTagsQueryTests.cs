@@ -34,8 +34,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             Assert.AreEqual(GetTagsQuery.DefaultSortingProperty, dut.Sorting.Property);
 
             Assert.IsNotNull(dut.Filter);
-            Assert.IsFalse(dut.Filter.PreservationStatus.HasValue);
-            Assert.IsFalse(dut.Filter.ActionStatus.HasValue);
+            Assert.AreEqual(0, dut.Filter.PreservationStatus.Count);
+            Assert.AreEqual(0, dut.Filter.ActionStatus.Count);
             Assert.IsNull(dut.Filter.CallOffStartsWith);
             Assert.IsNull(dut.Filter.CommPkgNoStartsWith);
             Assert.IsNull(dut.Filter.McPkgNoStartsWith);

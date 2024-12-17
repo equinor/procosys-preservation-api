@@ -307,7 +307,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             var journeyTitles = await GetJourneyTitlesAsync(filter.JourneyIds);
 
             return new UsedFilterDto(
-                filter.ActionStatus.GetDisplayValue(),
+                filter.ActionStatus.Select(v => v.GetDisplayValue()),
                 filter.AreaCodes,
                 filter.CallOffStartsWith,
                 filter.CommPkgNoStartsWith,
@@ -316,7 +316,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 journeyTitles,
                 filter.McPkgNoStartsWith,
                 modeTitles,
-                filter.PreservationStatus.GetDisplayValue(),
+                filter.PreservationStatus.Select(v => v.GetDisplayValue() ),
                 projectDescription,
                 _plantProvider.Plant,
                 projectName,

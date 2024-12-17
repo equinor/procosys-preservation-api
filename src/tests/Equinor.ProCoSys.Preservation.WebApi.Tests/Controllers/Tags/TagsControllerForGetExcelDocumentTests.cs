@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
                 });
 
             _filterDto.ProjectName = "ProjectName";
-            _filterDto.ActionStatus = ActionStatus.HasClosed;
+            _filterDto.ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed};
             _filterDto.AreaCodes = new List<string>{"A"};
             _filterDto.CallOffStartsWith = "B";
             _filterDto.CommPkgNoStartsWith = "C";
@@ -65,7 +65,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             _filterDto.JourneyIds = new List<int>{1};
             _filterDto.McPkgNoStartsWith = "E";
             _filterDto.ModeIds = new List<int>{2};
-            _filterDto.PreservationStatus = PreservationStatus.Active;
+            _filterDto.PreservationStatus = new List<PreservationStatus>{PreservationStatus.Active};
             _filterDto.PurchaseOrderNoStartsWith = "F";
             _filterDto.RequirementTypeIds = new List<int>{3};
             _filterDto.ResponsibleIds = new List<int>{4};
@@ -83,7 +83,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             Assert.AreEqual(_filterDto.ProjectName, _createdQuery.ProjectName);
             Assert.IsNotNull(_createdQuery.Filter);
             Assert.IsNotNull(_createdQuery.Sorting);
-            Assert.AreEqual(_filterDto.ActionStatus, _createdQuery.Filter.ActionStatus);
+            Assert.AreEqual(_filterDto.ActionStatus.ElementAt(0), _createdQuery.Filter.ActionStatus.ElementAt(0));
             Assert.AreEqual(1, _createdQuery.Filter.AreaCodes.Count);
             Assert.AreEqual(_filterDto.AreaCodes.ElementAt(0), _createdQuery.Filter.AreaCodes.ElementAt(0));
             Assert.AreEqual(_filterDto.CallOffStartsWith, _createdQuery.Filter.CallOffStartsWith);
@@ -97,7 +97,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             Assert.AreEqual(_filterDto.McPkgNoStartsWith, _createdQuery.Filter.McPkgNoStartsWith);
             Assert.AreEqual(1, _createdQuery.Filter.ModeIds.Count);
             Assert.AreEqual(_filterDto.ModeIds.ElementAt(0), _createdQuery.Filter.ModeIds.ElementAt(0));
-            Assert.AreEqual(_filterDto.PreservationStatus, _createdQuery.Filter.PreservationStatus);
+            Assert.AreEqual(_filterDto.PreservationStatus.ElementAt(0), _createdQuery.Filter.PreservationStatus.ElementAt(0));
             Assert.AreEqual(_filterDto.PurchaseOrderNoStartsWith, _createdQuery.Filter.PurchaseOrderNoStartsWith);
             Assert.AreEqual(1, _createdQuery.Filter.RequirementTypeIds.Count);
             Assert.AreEqual(_filterDto.RequirementTypeIds.ElementAt(0), _createdQuery.Filter.RequirementTypeIds.ElementAt(0));

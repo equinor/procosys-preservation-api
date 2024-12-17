@@ -1,5 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetUniqueTagFunctions;
 using Equinor.ProCoSys.Preservation.Test.Common;
@@ -21,6 +23,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagFunctions
                 _currentUserProvider))
             {
                 _testDataSet = AddTestDataSet(context);
+                
+                for (int i = 0; i < 10; i++)
+                {
+                    var tf = AddTagFunction(context, $"{_testDataSet.TagFunctionPrefix}-{i}", "R");
+                    var rt = AddRequirementTypeWith1DefWithoutField(context, _testDataSet.ReqType1.Code, "R", RequirementTypeIcon.Other);
+                    tf.AddRequirement(new TagFunctionRequirement(TestPlant, _testDataSet.IntervalWeeks, rt.RequirementDefinitions.First()));
+                    context.SaveChangesAsync().Wait();
+                }
 
                 _queryForProject1 = new GetUniqueTagFunctionsQuery(_testDataSet.Project1.Name);
             }

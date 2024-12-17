@@ -419,7 +419,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnPreservationStatus()
         {
-            var filter = new Filter {PreservationStatus = PreservationStatus.Active};
+            var filter = new Filter {PreservationStatus = new List<PreservationStatus>(){PreservationStatus.Active}};
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
@@ -448,7 +448,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnPreservationStatusEqualInService()
         {
-            var filter = new Filter { PreservationStatus = PreservationStatus.InService };
+            var filter = new Filter {PreservationStatus = new List<PreservationStatus>(){PreservationStatus.InService}};
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
@@ -488,14 +488,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasOpen);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
                 AssertCount(result.Data, 0);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
                 AssertCount(result.Data, 0);
             }
         }
@@ -516,14 +516,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
                 AssertCount(result.Data, 0);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasClosed);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
                 AssertCount(result.Data, 0);
             }
         }
@@ -544,15 +544,15 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 // when filtering on tag which has Open actions, tags with overdue actions is included
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasOverdue);
                 var tagIdWithOpenAndOverdueAction = result.Data.Tags.Single().Id;
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
                 AssertCount(result.Data, 0);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasOverdue);
                 Assert.AreEqual(tagIdWithOpenAndOverdueAction, result.Data.Tags.Single().Id);
@@ -940,7 +940,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         {
             var filter = new Filter
             {
-                PreservationStatus = PreservationStatus.NotStarted,
+                PreservationStatus = new List<PreservationStatus>(){PreservationStatus.NotStarted},
                 RequirementTypeIds = new List<int> {_testDataSet.ReqType1.Id},
                 AreaCodes = new List<string> {$"{_testDataSet.AreaPrefix}-0"},
                 DisciplineCodes = new List<string> {$"{_testDataSet.DisciplinePrefix}-0"},

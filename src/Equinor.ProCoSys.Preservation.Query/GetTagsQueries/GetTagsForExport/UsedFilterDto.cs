@@ -5,7 +5,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
     public class UsedFilterDto
     {
         public UsedFilterDto(
-            string actionStatus,
+            IEnumerable<string> actionStatus,
             IEnumerable<string> areaCodes,
             string callOffStartsWith,
             string commPkgNoStartsWith,
@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             IEnumerable<string> journeyTitles,
             string mcPkgNoStartsWith,
             IEnumerable<string> modeTitles,
-            string preservationStatus,
+            IEnumerable<string> preservationStatus,
             string projectDescription,
             string plant,
             string projectName,
@@ -48,7 +48,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
             VoidedFilter = voidedFilter;
         }
 
-        public string ActionStatus { get; }
+        public IEnumerable<string> ActionStatus { get; }
         public IEnumerable<string> AreaCodes { get; }
         public string CallOffStartsWith { get; }
         public string CommPkgNoStartsWith { get; }
@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         public string McPkgNoStartsWith { get; }
         public IEnumerable<string> ModeTitles { get; }
         public string Plant { get; }
-        public string PreservationStatus { get; }
+        public IEnumerable<string> PreservationStatus { get; }
         public string ProjectDescription { get; }
         public string ProjectName { get; }
         public string PurchaseOrderNoStartsWith { get; }

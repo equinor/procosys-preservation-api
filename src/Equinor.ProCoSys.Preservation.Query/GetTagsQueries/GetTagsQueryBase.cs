@@ -62,12 +62,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries
                            (filter.DueFilters.Contains(DueFilterType.NextWeek) && tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc) ||
                            (filter.DueFilters.Contains(DueFilterType.WeekPlusTwo) && tag.NextDueTimeUtc >= startOfTwoWeeksUtc && tag.NextDueTimeUtc < startOfThreeWeeksUtc) ||
                            (filter.DueFilters.Contains(DueFilterType.WeekPlusThree) && tag.NextDueTimeUtc >= startOfThreeWeeksUtc && tag.NextDueTimeUtc < startOfFourWeeksUtc)) &&
-                      (!filter.ActionStatus.HasValue || 
-                           (filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
-                           (filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
-                           (filter.ActionStatus == ActionStatus.HasOverdue && anyOverdueActions)) &&
-                      (!filter.PreservationStatus.HasValue || 
-                            tag.Status == filter.PreservationStatus.Value) &&
+                      (!filter.ActionStatus.Any() || 
+                           (filter.ActionStatus.Contains(ActionStatus.HasOpen) && anyOpenActions) ||
+                           (filter.ActionStatus.Contains(ActionStatus.HasClosed) && anyClosedActions) ||
+                           (filter.ActionStatus.Contains(ActionStatus.HasOverdue) && anyOverdueActions)) &&
+                      (!filter.PreservationStatus.Any() || 
+                            filter.PreservationStatus.Contains(tag.Status)) &&
                       (string.IsNullOrEmpty(filter.TagNoStartsWith) ||
                             tag.TagNo.StartsWith(filter.TagNoStartsWith)) &&
                       (string.IsNullOrEmpty(filter.CommPkgNoStartsWith) ||

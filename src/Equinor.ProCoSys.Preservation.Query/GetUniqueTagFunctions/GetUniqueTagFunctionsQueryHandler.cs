@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
@@ -21,12 +22,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagFunctions
         {
             var tagFunctions = await
                 (from tag in _context.QuerySet<Tag>()
-                    join project in _context.QuerySet<Project>()
-                        on EF.Property<int>(tag, "ProjectId") equals project.Id
+                    join project in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals project.Id
+                    join tagFunction in _context.QuerySet<TagFunction>() on tag.TagFunctionCode equals tagFunction.Code
                     where project.Name == request.ProjectName
-                          && !string.IsNullOrEmpty(tag.TagFunctionCode)
+                          && _context.QuerySet<TagFunctionRequirement>().Any(tfr => EF.Property<int>(tfr, "TagFunctionId") == tagFunction.Id)
                     select new TagFunctionCodeDto(
-                        tag.TagFunctionCode))
+                        tagFunction.Code,
+                        tagFunction.Description)
+                    )
                 .Distinct()
                 .ToListAsync(cancellationToken);
 
