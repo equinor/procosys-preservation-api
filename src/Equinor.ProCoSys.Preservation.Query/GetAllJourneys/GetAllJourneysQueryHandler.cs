@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
         public async Task<Result<IEnumerable<JourneyDto>>> Handle(GetAllJourneysQuery request,
             CancellationToken cancellationToken)
         {
-            var journeys = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
+            var journeys = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps).Include(j => j.Project)
                 select j).ToListAsync(cancellationToken);
 
             var modeIds = journeys.SelectMany(j => j.Steps).Select(x => x.ModeId).Distinct();
@@ -65,6 +65,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
                                     s.AutoTransferMethod,
                                     s.RowVersion.ConvertToString());
                             }),
+                        j.Project != null ? new JourneyDto.JourneyProjectDetailsDto(j.Project.Id, j.Project.Name, j.Project.Description) : null, 
                         j.RowVersion.ConvertToString()));
 
             return new SuccessResult<IEnumerable<JourneyDto>>(journeyDtos);
