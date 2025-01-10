@@ -24,14 +24,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetJourneyById
         public JourneyProjectDetailsDto Project { get; set; }
         public class JourneyProjectDetailsDto
         {
-            public JourneyProjectDetailsDto(int id, string title, string description)
+            public JourneyProjectDetailsDto(int id, string name, string description)
             {
                 Id = id;
-                Title = title;
+                Name = name;
                 Description = description;
             }
             public int Id {get ; set;}
-            public string Title {get ; set;}
+            public string Name {get ; set;}
             public string Description {get ; set;}
         }
     }

@@ -39,7 +39,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
                 select r).ToListAsync(cancellationToken);
 
             var journeyDtos =
-                journeys.Where(j => !j.IsVoided || request.IncludeVoided)
+                journeys.Where(j => (!j.IsVoided || request.IncludeVoided))
+                    .Where(j => request.ProjectName == null || j.Project?.Name == null || j.Project.Name == request.ProjectName)
                     .Select(j => new JourneyDto(
                         j.Id,
                         j.Title,

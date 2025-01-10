@@ -38,9 +38,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Journeys
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
-            [FromQuery] bool includeVoided = false)
+            [FromQuery] bool includeVoided = false,
+            [FromQuery] string projectName = null)
         {
-            var result = await _mediator.Send(new GetAllJourneysQuery(includeVoided));
+            var result = await _mediator.Send(new GetAllJourneysQuery(includeVoided, projectName));
             return this.FromResult(result);
         }
 
