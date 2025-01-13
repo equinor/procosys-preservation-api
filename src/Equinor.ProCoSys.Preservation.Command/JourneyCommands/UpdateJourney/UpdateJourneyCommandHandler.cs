@@ -45,7 +45,11 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
                     }
                 }
                 journey.Project = project;
-            }
+            } 
+            else if (request.ProjectName == null && journey.Project != null)
+            {
+                journey.Project = null;
+            }   
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<string>(journey.RowVersion.ConvertToString());
