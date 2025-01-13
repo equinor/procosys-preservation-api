@@ -66,7 +66,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
                                     s.AutoTransferMethod,
                                     s.RowVersion.ConvertToString());
                             }),
-                        j.Project != null ? new JourneyDto.JourneyProjectDetailsDto(j.Project.Id, j.Project.Name, j.Project.Description) : null, 
+                        j.Project != null ? new JourneyDto.JourneyProjectDto(j.Project.Id, j.Project.Name, j.Project.Description) : null, 
                         j.RowVersion.ConvertToString()));
 
             return new SuccessResult<IEnumerable<JourneyDto>>(journeyDtos);
