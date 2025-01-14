@@ -60,29 +60,3 @@ stages:
        buildContext: '$(Build.SourcesDirectory)/src'
        repository: '${{ variables.repositoryName }}'
        dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
-
-# Dev deploy stage
-- stage: DeployDev
-  displayName: 'Deploy to dev'
-  dependsOn: 'Build' 
-  condition: succeeded()
-  variables:
-    envName: 'dev'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    
-  jobs:
-    - deployment: Deploy
-      displayName: Migrate DB & deploy
-      environment: '${{ variables.envGroupName }}'
-      pool:
-        vmImage: 'windows-latest'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-              # Deploy to Radix
-              - template: templates/radix-deploy.yml
-                parameters:
-                  imageTagNameBackend: '${{ variables.versionNumber }}$(Build.BuildId)'
-                  imageTagNameLeaderElector: ${{ variables.leaderElectorDockerImageTagName }}
