@@ -5,7 +5,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
 {
     public class UpdateJourneyCommand : IRequest<Result<string>>
     {
-        public UpdateJourneyCommand(int journeyId, string title, string rowVersion, string projectName)
+        public UpdateJourneyCommand(int journeyId, string title, string rowVersion, string projectName = null)
         {
             JourneyId = journeyId;
             Title = title;

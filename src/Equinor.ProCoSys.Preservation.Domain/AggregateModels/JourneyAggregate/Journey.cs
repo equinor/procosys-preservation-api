@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
         {
         }
 
-        public Journey(string schema, string title)
+        public Journey(string schema, string title, Project project = null)
             : base(schema)
         {
             if (string.IsNullOrEmpty(title))
@@ -33,6 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             Title = title;
             Guid = Guid.NewGuid();
+            Project = project;
         }
 
         public Guid Guid { get; private set; }

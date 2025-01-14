@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
                 var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
                 if (project == null)
                 {
-                    project = await CreateProjectAsync(request.ProjectName);
+                    project = await ImportProjectAsync(request.ProjectName);
                     if (project == null)
                     {
                         return new NotFoundResult<string>($"Project with name {request.ProjectName} not found");
@@ -55,7 +55,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             return new SuccessResult<string>(journey.RowVersion.ConvertToString());
         }
         
-        private async Task<Project> CreateProjectAsync(string projectName)
+        private async Task<Project> ImportProjectAsync(string projectName)
         {
             var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName);
             if (mainProject == null)
