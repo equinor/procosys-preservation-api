@@ -28,13 +28,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                             var configAddressString = settings["AppConfiguration:BaseAddress"];
                             var configAddress = new Uri(configAddressString!);
                             
-                            var clientId = settings["AppConfiguration:ClientId"];
-                            var credential = new DefaultAzureCredential(new DefaultAzureCredentialOptions
-                            {
-                                ManagedIdentityClientId = clientId
-                            });
-                            
-                            options.Connect(configAddress, credential)
+                            options.Connect(configAddress, new DefaultAzureCredential())
                                 .ConfigureKeyVault(kv =>
                                 {
                                     kv.SetCredential(new DefaultAzureCredential());
