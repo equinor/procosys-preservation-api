@@ -28,6 +28,7 @@ spec:
         UseAzureAppConfiguration: 'true'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         AppConfiguration__BaseAddress: https://tmp-pres-poc-config.azconfig.io
+        AppConfiguration__ClientId: f0349935-828a-45da-87a7-944e81d64711
       monitoring: false
       resources:
         requests:
