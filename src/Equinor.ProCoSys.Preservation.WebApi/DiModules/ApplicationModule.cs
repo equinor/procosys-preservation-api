@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Azure.Identity;
 using Equinor.ProCoSys.PcsServiceBus.Receiver;
 using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
 using Equinor.ProCoSys.BlobStorage;
@@ -60,6 +61,7 @@ using Equinor.ProCoSys.Preservation.Domain.Events;
 using MassTransit;
 using MediatR;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Converters;
+using Microsoft.Data.SqlClient;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
@@ -77,8 +79,23 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             services.AddDbContext<PreservationContext>(options =>
             {
-                var connectionString = configuration.GetConnectionString("PreservationContext");
-                options.UseSqlServer(connectionString, o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+                var preservationContextConfig = configuration.GetSection("PreservationContext");
+                var serverName = preservationContextConfig["ServerName"];
+                var databaseName = preservationContextConfig["DatabaseName"];
+                
+                var connectionString = new SqlConnectionStringBuilder
+                {
+                    DataSource = $"{serverName}.database.windows.net",
+                    InitialCatalog = databaseName,
+                }.ConnectionString;
+                
+                var credential = new DefaultAzureCredential();		
+				var connection = new SqlConnection(connectionString);
+        		connection.AccessToken = credential.GetToken(
+            		new Azure.Core.TokenRequestContext(new[] { "https://database.windows.net/.default" })
+        		).Token;
+                
+                options.UseSqlServer(connection);
             });
 
             services.AddMassTransit(x =>
