@@ -66,3 +66,5 @@ spec:
   #--------------------------------
   privateImageHubs:
     procosys.azurecr.io:
+      username: 9d3898e4-730f-4fb5-8ddf-a5de51537896
+      email: arbje@equinor.com
