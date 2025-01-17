@@ -19,6 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllJourneys
         private readonly string _mode2Title = "M2";
         private readonly string _responsible1Code = "R1";
         private readonly string _responsible2Code = "R2";
+        private readonly string _projectName = "Test-Project";
         private int _supplierModeId;
         private int _otherModeId;
         private int _responsible1Id;
@@ -30,7 +31,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllJourneys
             {
                 var supplierMode = AddMode(context, _mode1Title, true);
                 var responsible1 = AddResponsible(context, _responsible1Code);
-                var journey = AddJourneyWithStep(context, _journeyTitle, _step1Title, supplierMode, responsible1);
+                var project = AddProject(context, _projectName, "Test description");
+                var journey = AddJourneyWithStep(context, _journeyTitle, _step1Title, supplierMode, responsible1, project);
 
                 var otherMode = AddMode(context, _mode2Title, false);
                 var responsible2 = AddResponsible(context, _responsible2Code);
@@ -66,6 +68,26 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllJourneys
 
                 AssertStep(steps.ElementAt(0), _step1Title, _supplierModeId, _responsible1Id, _mode1Title, _responsible1Code, false, true);
                 AssertStep(steps.ElementAt(1), _step2Title, _otherModeId, _responsible2Id, _mode2Title, _responsible2Code, false, false);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HandleGetAllJourneysQuery_ShouldReturnJourneyWithProject_WhenWithProjectName()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetAllJourneysQueryHandler(context);
+
+                var result = await dut.Handle(new GetAllJourneysQuery(false, _projectName), default);
+
+                var journeys = result.Data.ToList();
+
+                Assert.AreEqual(1, journeys.Count);
+                var journey = journeys.First();
+            
+                Assert.IsNotNull(journey.Project);
+                Assert.AreEqual(journey.Project.Name, _projectName);
+                Assert.AreEqual(_journeyTitle, journey.Title);
             }
         }
 
