@@ -32,29 +32,47 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
 
             journey.Title = request.Title;
-            journey.SetRowVersion(request.RowVersion);
-            if((journey.Project == null || journey.Project.Name != request.ProjectName) && request.ProjectName != null)
+            journey.SetRowVersion(request.RowVersion); 
+            var updateResult = await UpdateProject(request, journey);
+            if (updateResult != null)
             {
-                var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-                if (project == null)
-                {
-                    project = await ImportProjectAsync(request.ProjectName);
-                    if (project == null)
-                    {
-                        return new NotFoundResult<string>($"Project with name {request.ProjectName} not found");
-                    }
-                }
-                journey.Project = project;
-            } 
-            else if (request.ProjectName == null && journey.Project != null)
-            {
-                journey.Project = null;
-            }   
+                return updateResult;
+            }
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<string>(journey.RowVersion.ConvertToString());
         }
-        
+
+        private async Task<Result<string>> UpdateProject(UpdateJourneyCommand request, Journey journey)
+        {
+            if(HasProjectChanged(request, journey))
+            {
+                var project = await GetProject(request);
+                if (project == null)
+                {
+                    return new NotFoundResult<string>($"Project with name {request.ProjectName} not found");
+                }
+                journey.Project = project;
+                return null;
+            }
+            
+            journey.Project = null;
+            return null;
+        }
+
+        private async Task<Project> GetProject(UpdateJourneyCommand request)
+        {
+            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
+            if (project == null)
+            {
+                project = await ImportProjectAsync(request.ProjectName);
+            }
+            return project;
+        }
+
+        private static bool HasProjectChanged(UpdateJourneyCommand request, Journey journey) => (journey.Project == null || journey.Project.Name != request.ProjectName) && request.ProjectName != null;
+
         private async Task<Project> ImportProjectAsync(string projectName)
         {
             var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName);
