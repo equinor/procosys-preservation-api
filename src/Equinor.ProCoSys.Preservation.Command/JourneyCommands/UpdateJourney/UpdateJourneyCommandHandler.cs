@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
         {
             if (HasProjectChanged(request, journey))
             {
-                var project = await GetProject(request);
+                var project = await GetOrCreateProjectAsync(request);
                 if (project == null)
                 {
                     return false;
@@ -63,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             return true;
         }
 
-        private async Task<Project> GetProject(UpdateJourneyCommand request)
+        private async Task<Project> GetOrCreateProjectAsync(UpdateJourneyCommand request)
         {
             var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
             if (project == null)
