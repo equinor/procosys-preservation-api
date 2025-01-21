@@ -4,11 +4,9 @@ using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
 {
-    public class GetAllJourneysQuery : IRequest<Result<IEnumerable<JourneyDto>>>
+    public class GetAllJourneysQuery(bool includeVoided, string projectName) : IRequest<Result<IEnumerable<JourneyDto>>>
     {
-        public GetAllJourneysQuery(bool includeVoided, string projectName) => (IncludeVoided, ProjectName) = (includeVoided, projectName);
-
-        public bool IncludeVoided { get; }
-        public string ProjectName { get; }
+        public bool IncludeVoided { get; } = includeVoided;
+        public string ProjectName { get; } = projectName;
     }
 }

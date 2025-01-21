@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetJourneyById
                             step.RowVersion.ConvertToString()
                         )
                     ),
-                journey.Project != null ? new JourneyDetailsDto.JourneyProjectDetailsDto(journey.Project.Id, journey.Project.Name, journey.Project.Description): null,
+                journey.Project != null ? new ProjectDetailsDto(journey.Project.Id, journey.Project.Name, journey.Project.Description): null,
                 journey.RowVersion.ConvertToString());
             return new SuccessResult<JourneyDetailsDto>(journeyDto);
         }

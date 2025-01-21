@@ -6,6 +6,7 @@ using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Even
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -16,11 +17,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationE
 public class CreateJourneyEventHelperTests
 {
     private const string TestPlant = "PCS$PlantA";
+    private const string TestProject = "Project";
     private static DateTime TestTime => DateTime.Parse("2012-12-12T11:22:33Z").ToUniversalTime();
     private static Guid TestGuid => new("11111111-1111-1111-1111-111111111111");
 
     private Journey _journey;
     private Person _person;
+    private Project _project;
     private CreateJourneyEventHelper _dut;
 
     [TestInitialize]
@@ -30,7 +33,9 @@ public class CreateJourneyEventHelperTests
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
         
-        _journey = new Journey(TestPlant, "Test Title");
+        _project = new Project(TestPlant, TestProject, "Test Description", Guid.NewGuid());
+        
+        _journey = new Journey(TestPlant, "Test Title", _project);
         
         _person = new Person(TestGuid, "Test", "Person");
 
@@ -55,6 +60,17 @@ public class CreateJourneyEventHelperTests
 
         // Assert
         Assert.AreEqual(expected, result);
+    }
+    
+    [TestMethod]
+    public async Task CreateEvent_ShouldCreateActionEventExpectedProjectValue()
+    {
+        // Act
+        var integrationEvent = await _dut.CreateEvent(_journey);
+        var result = integrationEvent.Project;
+
+        // Assert
+        Assert.AreEqual(_project, result);
     }
     
     [TestMethod]

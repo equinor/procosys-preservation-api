@@ -12,9 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             RowVersion = rowVersion;
             ProjectName = projectName;
         }
-
         public string ProjectName { get; }
-
         public int JourneyId { get; }
         public string Title { get; }
         public string RowVersion { get; }

@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-        public Project? Project { get; set; }
+        public Project Project { get; set; }
         public override string ToString() => Title;
 
         public void AddStep(Step step)
