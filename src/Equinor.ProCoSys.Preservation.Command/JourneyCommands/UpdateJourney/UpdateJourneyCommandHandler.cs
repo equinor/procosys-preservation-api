@@ -18,7 +18,8 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
         private readonly IProjectApiService _projectApiService;
         private readonly IPlantProvider _plantProvider;
 
-        public UpdateJourneyCommandHandler(IJourneyRepository journeyRepository, IUnitOfWork unitOfWork, IProjectRepository projectRepository, IProjectApiService projectApiService, IPlantProvider plantProvider)
+        public UpdateJourneyCommandHandler(IJourneyRepository journeyRepository, IUnitOfWork unitOfWork,
+            IProjectRepository projectRepository, IProjectApiService projectApiService, IPlantProvider plantProvider)
         {
             _journeyRepository = journeyRepository;
             _unitOfWork = unitOfWork;
@@ -32,33 +33,34 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
 
             journey.Title = request.Title;
-            journey.SetRowVersion(request.RowVersion); 
-            var updateResult = await UpdateProject(request, journey);
-            if (updateResult != null)
+            journey.SetRowVersion(request.RowVersion);
+            var updateSuccess = await UpdateProject(request, journey);
+            if (!updateSuccess)
             {
-                return updateResult;
+                return new NotFoundResult<string>("Project not found");
             }
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<string>(journey.RowVersion.ConvertToString());
         }
 
-        private async Task<Result<string>> UpdateProject(UpdateJourneyCommand request, Journey journey)
+        private async Task<bool> UpdateProject(UpdateJourneyCommand request, Journey journey)
         {
-            if(HasProjectChanged(request, journey))
+            if (HasProjectChanged(request, journey))
             {
                 var project = await GetProject(request);
                 if (project == null)
                 {
-                    return new NotFoundResult<string>($"Project with name {request.ProjectName} not found");
+                    return false;
                 }
+
                 journey.Project = project;
-                return null;
+                return true;
             }
-            
+
             journey.Project = null;
-            return null;
+            return true;
         }
 
         private async Task<Project> GetProject(UpdateJourneyCommand request)
@@ -68,10 +70,12 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             {
                 project = await ImportProjectAsync(request.ProjectName);
             }
+
             return project;
         }
 
-        private static bool HasProjectChanged(UpdateJourneyCommand request, Journey journey) => (journey.Project == null || journey.Project.Name != request.ProjectName) && request.ProjectName != null;
+        private static bool HasProjectChanged(UpdateJourneyCommand request, Journey journey) =>
+            request.ProjectName != null && journey.Project?.Name != request.ProjectName;
 
         private async Task<Project> ImportProjectAsync(string projectName)
         {
@@ -81,7 +85,8 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
                 return null;
             }
 
-            var project = new Project(_plantProvider.Plant, projectName, mainProject.Description, mainProject.ProCoSysGuid);
+            var project = new Project(_plantProvider.Plant, projectName, mainProject.Description,
+                mainProject.ProCoSysGuid);
             _projectRepository.Add(project);
             return project;
         }

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Time;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Preservation.Domain.Events;
@@ -41,8 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
         public Guid Guid { get; private set; }
-        [JsonIgnore]
-        public List<Journey> Journeys { get; set; } = [];
+
         public void AddTag(Tag tag)
         {
             if (tag == null)
@@ -74,6 +71,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(createdBy));
             }
+
             CreatedById = createdBy.Id;
         }
 
@@ -84,6 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
+
             ModifiedById = modifiedBy.Id;
         }
 
@@ -109,7 +108,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void MoveMcPkg(string mcPkgNo, string fromCommPkg, string toCommPkg)
         {
-            if (string.IsNullOrWhiteSpace(mcPkgNo) || string.IsNullOrWhiteSpace(fromCommPkg) || string.IsNullOrWhiteSpace(toCommPkg))
+            if (string.IsNullOrWhiteSpace(mcPkgNo) || string.IsNullOrWhiteSpace(fromCommPkg) ||
+                string.IsNullOrWhiteSpace(toCommPkg))
             {
                 throw new ArgumentNullException($"Unable to move pkg {mcPkgNo} from {fromCommPkg} to {toCommPkg}.");
             }
@@ -121,9 +121,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void RenameMcPkg(string commPkgNo, string fromMcPkgNo, string toMcPkgNo)
         {
-            if (string.IsNullOrWhiteSpace(fromMcPkgNo) || string.IsNullOrWhiteSpace(toMcPkgNo) || string.IsNullOrWhiteSpace(commPkgNo))
+            if (string.IsNullOrWhiteSpace(fromMcPkgNo) || string.IsNullOrWhiteSpace(toMcPkgNo) ||
+                string.IsNullOrWhiteSpace(commPkgNo))
             {
-                throw new ArgumentNullException($"Unable to rename mc pkg from {fromMcPkgNo} to {toMcPkgNo} on comm pkg {commPkgNo}.");
+                throw new ArgumentNullException(
+                    $"Unable to rename mc pkg from {fromMcPkgNo} to {toMcPkgNo} on comm pkg {commPkgNo}.");
             }
 
             var affectedTags = _tags.Where(t => t.CommPkgNo == commPkgNo && t.McPkgNo == fromMcPkgNo).ToList();

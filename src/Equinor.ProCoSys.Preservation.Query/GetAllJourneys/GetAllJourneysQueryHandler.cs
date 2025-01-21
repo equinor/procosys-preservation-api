@@ -40,7 +40,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
 
             var journeyDtos =
                 journeys.Where(j => (!j.IsVoided || request.IncludeVoided))
-                    .Where(j => request.ProjectName == null || j.Project?.Name == null || j.Project.Name == request.ProjectName)
+                    .Where(j => request.ProjectName == null || j.Project?.Name == null ||
+                                j.Project.Name == request.ProjectName)
                     .Select(j => new JourneyDto(
                         j.Id,
                         j.Title,
@@ -50,7 +51,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
                             {
                                 var modeDto = modes
                                     .Where(m => m.Id == s.ModeId)
-                                    .Select(m => new ModeDto(m.Id, m.Title, m.IsVoided, m.ForSupplier, true, m.RowVersion.ConvertToString()))
+                                    .Select(m => new ModeDto(m.Id, m.Title, m.IsVoided, m.ForSupplier, true,
+                                        m.RowVersion.ConvertToString()))
                                     .Single();
                                 var responsibleDto = responsibles
                                     .Where(r => r.Id == s.ResponsibleId)
@@ -61,12 +63,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
                                     s.Id,
                                     s.Title,
                                     s.IsVoided,
-                                    modeDto, 
+                                    modeDto,
                                     responsibleDto,
                                     s.AutoTransferMethod,
                                     s.RowVersion.ConvertToString());
                             }),
-                        j.Project != null ? new JourneyDto.JourneyProjectDto(j.Project.Id, j.Project.Name, j.Project.Description) : null, 
+                        j.Project != null
+                            ? new ProjectDetailsDto(j.Project.Id, j.Project.Name, j.Project.Description)
+                            : null,
                         j.RowVersion.ConvertToString()));
 
             return new SuccessResult<IEnumerable<JourneyDto>>(journeyDtos);
