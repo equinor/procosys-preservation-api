@@ -91,8 +91,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllJourneys
                 Assert.AreEqual(1, journeys.Count);
                 var journey = journeys.First();
 
-                Assert.IsNotNull(journey.ProjectDetails);
-                Assert.AreEqual(journey.ProjectDetails.Name, _projectName);
+                Assert.IsNotNull(journey.Project);
+                Assert.AreEqual(journey.Project.Name, _projectName);
                 Assert.AreEqual(_journeyTitle, journey.Title);
             }
         }

@@ -16,13 +16,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         private readonly string _oldTitle = "JourneyTitleOld";
         private readonly string _newTitle = "JourneyTitleNew";
         private readonly string _rowVersion = "AAAAAAAAABA=";
+        private readonly string _replacementProjectName = "ProjectName 2";
+
 
         private UpdateJourneyCommand _command;
         private UpdateJourneyCommand _addProjectCommand;
         private UpdateJourneyCommand _removeProjectCommand;
+        private UpdateJourneyCommand _replaceProjectCommand;
         private UpdateJourneyCommandHandler _dut;
         private Journey _journey;
         private Journey _journeyWithProject;
+
         [TestInitialize]
         public void Setup()
         {
@@ -32,29 +36,38 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             var testProjectName = "ProjectName";
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
             var projectRepositoryMock = new Mock<IProjectRepository>();
-            var mainApiProjectServiceMock  = new Mock<IProjectApiService>();
-            
+            var mainApiProjectServiceMock = new Mock<IProjectApiService>();
+
             var project = new Project(TestPlant, testProjectName, "ProjectDescription", Guid.NewGuid());
-            
+            var replacementProject =
+                new Project(TestPlant, _replacementProjectName, "ProjectDescription", Guid.NewGuid());
+
             _journey = new Journey(TestPlant, _oldTitle);
             _journeyWithProject = new Journey(TestPlant, _oldTitle, project);
-            
+
             journeyRepositoryMock.Setup(j => j.GetByIdAsync(testJourneyId))
                 .Returns(Task.FromResult(_journey));
             journeyRepositoryMock.Setup(j => j.GetByIdAsync(testJourneyWithProjectId))
                 .Returns(Task.FromResult(_journeyWithProject));
-            
+
             projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(testProjectName))
                 .Returns(Task.FromResult(project));
-            
+            projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(_replacementProjectName))
+                .Returns(Task.FromResult(replacementProject));
+
             _command = new UpdateJourneyCommand(testJourneyId, _newTitle, _rowVersion);
             _addProjectCommand = new UpdateJourneyCommand(testJourneyId, _newTitle, _rowVersion, project.Name);
             _removeProjectCommand = new UpdateJourneyCommand(testJourneyWithProjectId, _newTitle, _rowVersion);
+            _replaceProjectCommand = new UpdateJourneyCommand(testJourneyWithProjectId, testProjectName, _rowVersion,
+                _replacementProjectName
+            );
 
             _dut = new UpdateJourneyCommandHandler(
                 journeyRepositoryMock.Object,
-                UnitOfWorkMock.Object, projectRepositoryMock.Object, mainApiProjectServiceMock.Object, PlantProviderMock.Object);
+                UnitOfWorkMock.Object, projectRepositoryMock.Object, mainApiProjectServiceMock.Object,
+                PlantProviderMock.Object);
         }
+
 
         [TestMethod]
         public async Task HandlingUpdateJourneyCommand_ShouldUpdateJourney()
@@ -92,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
-        
+
         [TestMethod]
         public async Task HandlingUpdateJourneyCommand_ShouldAddProject()
         {
@@ -103,13 +116,23 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             Assert.IsNotNull(_journey.Project);
             Assert.AreEqual(_addProjectCommand.ProjectName, _journey.Project.Name);
         }
-        
+
+        [TestMethod]
+        public async Task HandlingUpdateJourneyCommand_ShouldReplaceProject()
+        {
+            // Act
+            await _dut.Handle(_replaceProjectCommand, default);
+
+            // Assert
+            Assert.AreEqual(_journeyWithProject.Project?.Name, _replacementProjectName);
+        }
+
         [TestMethod]
         public async Task HandlingUpdateJourneyCommand_ShouldRemoveProject()
         {
             // Act
             await _dut.Handle(_removeProjectCommand, default);
-            
+
             // Assert
             Assert.IsNull(_journey.Project);
         }

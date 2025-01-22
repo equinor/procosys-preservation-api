@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
             IsVoided = isVoided;
             Steps = steps;
             RowVersion = rowVersion;
-            ProjectDetails = projectDetails;
+            Project = projectDetails;
         }
 
         public int Id { get; }
@@ -20,6 +20,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
         public bool IsVoided { get; }
         public IEnumerable<StepDto> Steps { get; }
         public string RowVersion { get; }
-        public ProjectDetailsDto ProjectDetails { get; set; }
+        public ProjectDetailsDto Project { get; set; }
     }
 }
