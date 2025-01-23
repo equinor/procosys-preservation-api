@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
@@ -63,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             TestFactory.Instance
                 .DisciplineApiServiceMock
-                .Setup(service => service.TryGetDisciplineAsync(TestFactory.PlantWithAccess, KnownDisciplineCode))
+                .Setup(service => service.TryGetDisciplineAsync(TestFactory.PlantWithAccess, KnownDisciplineCode, CancellationToken.None))
                 .Returns(Task.FromResult(new PCSDiscipline
                 {
                     Code = KnownDisciplineCode, Description = $"{KnownDisciplineCode} - Description"
@@ -71,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             TestFactory.Instance
                 .AreaApiServiceMock
-                .Setup(service => service.TryGetAreaAsync(TestFactory.PlantWithAccess, KnownAreaCode))
+                .Setup(service => service.TryGetAreaAsync(TestFactory.PlantWithAccess, KnownAreaCode, CancellationToken.None))
                 .Returns(Task.FromResult(new PCSArea
                 {
                     Code = KnownAreaCode, Description = $"{KnownAreaCode} - Description"
