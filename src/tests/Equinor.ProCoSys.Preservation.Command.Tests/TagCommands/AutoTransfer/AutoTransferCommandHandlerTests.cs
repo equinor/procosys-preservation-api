@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -94,11 +95,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
                 }
             };
             _certificateApiServiceMock = new Mock<ICertificateApiService>();
-            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfccGuid))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfccGuid, CancellationToken.None))
                 .Returns(Task.FromResult(_procosysCertificateTagsModel));
-            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfocGuid))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfocGuid, CancellationToken.None))
                 .Returns(Task.FromResult(_procosysCertificateTagsModel));
-            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _tacGuid))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _tacGuid, CancellationToken.None))
                 .Returns(Task.FromResult(_procosysCertificateTagsModel));
 
             _projectRepoMock = new Mock<IProjectRepository>();
@@ -189,7 +190,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
         public async Task HandlingAutoTransferCommand_ForUnknownCertificate_ShouldDoNothing_AndReturnNotFound()
         {
             // Arrange
-            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _commandForRfcc.ProCoSysGuid))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _commandForRfcc.ProCoSysGuid, CancellationToken.None))
                 .Returns(Task.FromResult<PCSCertificateTagsModel>(null));
 
             // Act

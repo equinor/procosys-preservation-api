@@ -68,7 +68,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer
                 return new SuccessResult<Unit>(Unit.Value);
             }
 
-            var certificateTagModel = await _certificateApiService.TryGetCertificateTagsAsync(_plantProvider.Plant, request.ProCoSysGuid);
+            var certificateTagModel = await _certificateApiService.TryGetCertificateTagsAsync(
+                _plantProvider.Plant,
+                request.ProCoSysGuid,
+                cancellationToken);
 
             if (certificateTagModel == null)
             {

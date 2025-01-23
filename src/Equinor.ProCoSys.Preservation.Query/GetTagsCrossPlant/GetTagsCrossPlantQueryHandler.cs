@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
                 .ToListAsync(cancellationToken);
             _plantSetter.ClearCrossPlantQuery();
 
-            var tags = await CreateTagDtosAsync(allProjects, allRequirementTypes);
+            var tags = await CreateTagDtosAsync(allProjects, allRequirementTypes, cancellationToken);
 
             FillJourneySpecificData(tags,
                 allJourneys,
@@ -88,12 +88,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
             return new SuccessResult<List<TagDto>>(orderedTags.ToList());
         }
 
-        private async Task<List<TagDto>> CreateTagDtosAsync(List<Project> projects, List<RequirementType> requirementTypes)
+        private async Task<List<TagDto>> CreateTagDtosAsync(List<Project> projects, List<RequirementType> requirementTypes, CancellationToken cancellationToken)
         {
             var tagDtos = new List<TagDto>();
             foreach (var project in projects)
             {
-                var plantTitle = await _permissionCache.GetPlantTitleForCurrentUserAsync(project.Plant);
+                var plantTitle = await _permissionCache.GetPlantTitleForCurrentUserAsync(project.Plant, cancellationToken);
                 foreach (var tag in project.Tags.Where(t => !t.IsVoided))
                 {
                     var requirementDtos = tag.OrderedRequirements().Select(

@@ -37,7 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
         {
             var stopWatch = Stopwatch.StartNew();
             var apiTags = await _tagApiService
-                .SearchTagsByTagNoAsync(_plantProvider.Plant, request.ProjectName, request.StartsWithTagNo)
+                .SearchTagsByTagNoAsync(_plantProvider.Plant, request.ProjectName, request.StartsWithTagNo, cancellationToken)
                 ?? new List<PCSTagOverview>();
             var msg = $"SearchTagsByTagNoQueryHandler: {stopWatch.Elapsed.TotalMilliseconds}ms elapsed getting {apiTags.Count} tags from Main.";
 

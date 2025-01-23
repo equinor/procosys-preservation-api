@@ -49,12 +49,12 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
 
             var duplicatedTag = await DuplicateTagAsync(request, sourceTag);
 
-            if (!await SetAreaDataSuccessfullyAsync(duplicatedTag, request.AreaCode))
+            if (!await SetAreaDataSuccessfullyAsync(duplicatedTag, request.AreaCode, cancellationToken))
             {
                 return new NotFoundResult<int>($"Area with code {request.AreaCode} not found");
             }
 
-            if (!await SetDisciplineDataSuccessfullyAsync(duplicatedTag, request.DisciplineCode))
+            if (!await SetDisciplineDataSuccessfullyAsync(duplicatedTag, request.DisciplineCode, cancellationToken))
             {
                 return new NotFoundResult<int>($"Discipline with code {request.DisciplineCode} not found");
             }
@@ -100,9 +100,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
             return duplicatedTag;
         }
 
-        private async Task<bool> SetDisciplineDataSuccessfullyAsync(Tag tag, string disciplineCode)
+        private async Task<bool> SetDisciplineDataSuccessfullyAsync(Tag tag, string disciplineCode, CancellationToken cancellationToken)
         {
-            var discipline = await _disciplineApiService.TryGetDisciplineAsync(_plantProvider.Plant, disciplineCode);
+            var discipline = await _disciplineApiService.TryGetDisciplineAsync(_plantProvider.Plant, disciplineCode, cancellationToken);
             if (discipline == null)
             {
                 return false;
@@ -111,13 +111,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
             return true;
         }
 
-        private async Task<bool> SetAreaDataSuccessfullyAsync(Tag tag, string areaCode)
+        private async Task<bool> SetAreaDataSuccessfullyAsync(Tag tag, string areaCode, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(areaCode))
             {
                 return true;
             }
-            var area = await _areaApiService.TryGetAreaAsync(_plantProvider.Plant, areaCode);
+            var area = await _areaApiService.TryGetAreaAsync(_plantProvider.Plant, areaCode, cancellationToken);
             if (area == null)
             {
                 return false;

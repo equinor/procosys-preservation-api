@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -86,7 +87,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             
             var disciplineCode = "D";
             var disciplineApiServiceMock = new Mock<IDisciplineApiService>();
-            disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode))
+            disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode, CancellationToken.None))
                 .Returns(Task.FromResult(new PCSDiscipline
                 {
                     Code = disciplineCode,
@@ -95,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
 
             var areaCode = "A";
             var areaApiServiceMock = new Mock<IAreaApiService>();
-            areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode))
+            areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode, CancellationToken.None))
                 .Returns(Task.FromResult(new PCSArea
                 {
                     Code = areaCode,

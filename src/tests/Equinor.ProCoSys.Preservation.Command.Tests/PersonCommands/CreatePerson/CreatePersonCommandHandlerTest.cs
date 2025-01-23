@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Auth.Person;
@@ -34,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
                     _personAdded = x;
                 });
             _personCacheMock = new Mock<IPersonCache>();
-            _personCacheMock.Setup(p => p.GetAsync(_oid))
+            _personCacheMock.Setup(p => p.GetAsync(_oid, CancellationToken.None, false))
                 .Returns(Task.FromResult(new ProCoSysPerson
                 {
                     AzureOid = _oid.ToString("D"),
@@ -67,21 +68,21 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
         public async Task HandlingCreatePersonCommand_ShouldSave()
         {
             // Act
-            await _dut.Handle(_command, default);
+            await _dut.Handle(_command, CancellationToken.None);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(CancellationToken.None), Times.Once);
         }
 
         [TestMethod]
         public async Task HandlingCreatePersonCommand_ShouldThrowException_WhenPersonNotFoundInProCoSys()
         {
             // Arrange
-            _personCacheMock.Setup(p => p.GetAsync(_oid))
+            _personCacheMock.Setup(p => p.GetAsync(_oid, CancellationToken.None, false))
                 .Returns(Task.FromResult<ProCoSysPerson>(null));
 
             // Act
-            await Assert.ThrowsExceptionAsync<Exception>(() => _dut.Handle(_command, default));
+            await Assert.ThrowsExceptionAsync<Exception>(() => _dut.Handle(_command, CancellationToken.None));
         }
     }
 }

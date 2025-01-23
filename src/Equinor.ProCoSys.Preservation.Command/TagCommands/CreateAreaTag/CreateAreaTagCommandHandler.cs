@@ -53,7 +53,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             
             if (project == null)
             {
-                project = await CreateProjectAsync(request.ProjectName);
+                project = await CreateProjectAsync(request.ProjectName, cancellationToken);
                 if (project == null)
                 {
                     return new NotFoundResult<int>($"Project with name {request.ProjectName} not found");
@@ -62,12 +62,12 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
 
             var areaTagToAdd = await CreateAreaTagAsync(request);
 
-            if (!await SetAreaDataSuccessfullyAsync(areaTagToAdd, request.AreaCode))
+            if (!await SetAreaDataSuccessfullyAsync(areaTagToAdd, request.AreaCode, cancellationToken))
             {
                 return new NotFoundResult<int>($"Area with code {request.AreaCode} not found");
             }
 
-            if (!await SetDisciplineDataSuccessfullyAsync(areaTagToAdd, request.DisciplineCode))
+            if (!await SetDisciplineDataSuccessfullyAsync(areaTagToAdd, request.DisciplineCode, cancellationToken))
             {
                 return new NotFoundResult<int>($"Discipline with code {request.DisciplineCode} not found");
             }
@@ -78,9 +78,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             return new SuccessResult<int>(areaTagToAdd.Id);
         }
 
-        private async Task<bool> SetDisciplineDataSuccessfullyAsync(Tag tag, string disciplineCode)
+        private async Task<bool> SetDisciplineDataSuccessfullyAsync(Tag tag, string disciplineCode, CancellationToken cancellationToken)
         {
-            var discipline = await _disciplineApiService.TryGetDisciplineAsync(_plantProvider.Plant, disciplineCode);
+            var discipline = await _disciplineApiService.TryGetDisciplineAsync(_plantProvider.Plant, disciplineCode, cancellationToken);
             if (discipline == null)
             {
                 return false;
@@ -89,13 +89,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             return true;
         }
 
-        private async Task<bool> SetAreaDataSuccessfullyAsync(Tag tag, string areaCode)
+        private async Task<bool> SetAreaDataSuccessfullyAsync(Tag tag, string areaCode, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(areaCode))
             {
                 return true;
             }
-            var area = await _areaApiService.TryGetAreaAsync(_plantProvider.Plant, areaCode);
+            var area = await _areaApiService.TryGetAreaAsync(_plantProvider.Plant, areaCode, cancellationToken);
             if (area == null)
             {
                 return false;
@@ -150,9 +150,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             };
         }
 
-        private async Task<Project> CreateProjectAsync(string projectName)
+        private async Task<Project> CreateProjectAsync(string projectName, CancellationToken cancellationToken)
         {
-            var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName);
+            var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName, cancellationToken);
             if (mainProject == null)
             {
                 return null;

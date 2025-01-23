@@ -41,7 +41,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequir
 
             if (tagFunction == null)
             {
-                tagFunction = await CreateNewTagFunctionAsync(request.TagFunctionCode, request.RegisterCode);
+                tagFunction = await CreateNewTagFunctionAsync(request.TagFunctionCode, request.RegisterCode, cancellationToken);
                 if (tagFunction == null)
                 {
                     return new NotFoundResult<string>($"TagFunction {request.TagFunctionCode} not found in register {request.RegisterCode}");
@@ -59,9 +59,17 @@ namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequir
             return new SuccessResult<string>(tagFunction.RowVersion.ConvertToString());
         }
 
-        private async Task<TagFunction> CreateNewTagFunctionAsync(string tagFunctionCode, string registerCode)
+        private async Task<TagFunction> CreateNewTagFunctionAsync(
+            string tagFunctionCode,
+            string registerCode,
+            CancellationToken cancellationToken)
         {
-            var pcsTagFunction = await _tagFunctionApiService.TryGetTagFunctionAsync(_plantProvider.Plant, tagFunctionCode, registerCode);
+            var pcsTagFunction = await _tagFunctionApiService.TryGetTagFunctionAsync(
+                _plantProvider.Plant,
+                tagFunctionCode,
+                registerCode,
+                cancellationToken);
+            
             if (pcsTagFunction == null)
             {
                 return null;

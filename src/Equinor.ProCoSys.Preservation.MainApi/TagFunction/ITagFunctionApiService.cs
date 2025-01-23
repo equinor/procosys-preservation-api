@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Equinor.ProCoSys.Preservation.MainApi.TagFunction
 {
     public interface ITagFunctionApiService
     {
-        Task<PCSTagFunction> TryGetTagFunctionAsync(string plant, string tagFunctionCode, string registerCode);
+        Task<PCSTagFunction> TryGetTagFunctionAsync(string plant, string tagFunctionCode, string registerCode, CancellationToken cancellationToken);
     }
 }

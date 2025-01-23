@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Auth.Client;
 using Microsoft.Extensions.Options;
@@ -12,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
     {
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
-        private Mock<IMainApiClient> _mainApiClient;
+        private Mock<IMainApiClientForApplication> _mainApiClient;
         private ProCoSysProject _result;
         private string _name = "NameA";
         private string _description = "Description1";
@@ -25,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
             _mainApiOptions
                 .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
-            _mainApiClient = new Mock<IMainApiClient>();
+            _mainApiClient = new Mock<IMainApiClientForApplication>();
 
             _result = new ProCoSysProject {Id = 1, Name = _name, Description = _description};
             _dut = new MainApiProjectService(_mainApiClient.Object, _mainApiOptions.Object);
@@ -36,11 +37,11 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProCoSysProject>(It.IsAny<string>(), null))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProCoSysProject>(It.IsAny<string>(), CancellationToken.None, null))
                 .Returns(Task.FromResult(_result));
 
             // Act
-            var result = await _dut.TryGetProjectAsync(_plant, _name);
+            var result = await _dut.TryGetProjectAsync(_plant, _name, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(_name, result.Name);

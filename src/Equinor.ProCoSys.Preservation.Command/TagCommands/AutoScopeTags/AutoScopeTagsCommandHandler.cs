@@ -49,7 +49,12 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
         public async Task<Result<List<int>>> Handle(AutoScopeTagsCommand request, CancellationToken cancellationToken)
         {
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
-            var tagDetailList = await _tagApiService.GetTagDetailsAsync(_plantProvider.Plant, request.ProjectName, request.TagNos);
+            var tagDetailList = await _tagApiService.GetTagDetailsAsync(
+                _plantProvider.Plant,
+                request.ProjectName,
+                request.TagNos,
+                cancellationToken);
+            
             var mode = await _modeRepository.GetByIdAsync(step.ModeId);
 
             var tagFunctionsWithRequirements = await GetNeededTagFunctionsWithRequirementsAsync(tagDetailList);
@@ -101,7 +106,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
             }
             
             // Todo Remove Migration handling when migration period from old to new preservation in ProCoSys is over
-            await _tagApiService.MarkTagsAsMigratedAsync(_plantProvider.Plant, tagDetailList.Select(t => t.Id));
+            await _tagApiService.MarkTagsAsMigratedAsync(_plantProvider.Plant, tagDetailList.Select(t => t.Id), cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

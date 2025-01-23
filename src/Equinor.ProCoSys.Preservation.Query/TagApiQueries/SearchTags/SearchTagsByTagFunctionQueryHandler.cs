@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
             }
 
             var apiTags = await _tagApiService
-                .SearchTagsByTagFunctionsAsync(_plantProvider.Plant, request.ProjectName, tagFunctionCodeRegisterCodePairs)
+                .SearchTagsByTagFunctionsAsync(_plantProvider.Plant, request.ProjectName, tagFunctionCodeRegisterCodePairs, cancellationToken)
                 ?? new List<PCSTagOverview>();
 
             var presTagNos = await (from tag in _context.QuerySet<Tag>()

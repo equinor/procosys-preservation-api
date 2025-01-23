@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Client;
 using Microsoft.Extensions.Options;
@@ -9,9 +10,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IMainApiClient _mainApiClient;
+        private readonly IMainApiClientForApplication _mainApiClient;
 
-        public MainApiCertificateService(IMainApiClient mainApiClient,
+        public MainApiCertificateService(IMainApiClientForApplication mainApiClient,
             IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
@@ -19,14 +20,14 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
             _baseAddress = new Uri(options.Value.BaseAddress);
         }
 
-        public async Task<PCSCertificateTagsModel> TryGetCertificateTagsAsync(string plant, Guid proCoSysGuid)
+        public async Task<PCSCertificateTagsModel> TryGetCertificateTagsAsync(string plant, Guid proCoSysGuid, CancellationToken cancellationToken)
         {
             var url = $"{_baseAddress}Certificate/TagsByCertificateGuid" +
                       $"?plantId={plant}" +
                       $"&proCoSysGuid={proCoSysGuid.ToString("N")}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSCertificateTagsModel>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSCertificateTagsModel>(url, cancellationToken);
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             // TagFunctions must be cloned after RequirementTypes and RequirementDefinitions
-            await CloneTagFunctions(request.SourcePlant, targetPlant);
+            await CloneTagFunctions(request.SourcePlant, targetPlant, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -144,7 +144,7 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
             }
         }
 
-        private async Task CloneTagFunctions(string sourcePlant, string targetPlant)
+        private async Task CloneTagFunctions(string sourcePlant, string targetPlant, CancellationToken cancellationToken)
         {
             var originalPlant = _plantProvider.Plant;
             _plantSetter.SetPlant(sourcePlant);
@@ -162,7 +162,8 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
                 var mainTagFunction = await _tagFunctionApiService.TryGetTagFunctionAsync(
                     targetPlant,
                     sourceTagFunction.Code,
-                    sourceTagFunction.RegisterCode);
+                    sourceTagFunction.RegisterCode,
+                    cancellationToken);
                 if (mainTagFunction == null)
                 {
                     continue;

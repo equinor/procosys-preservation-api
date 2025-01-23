@@ -52,7 +52,11 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
             var addedTags = new List<Tag>();
             var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
             
-            var tagDetailList = await _tagApiService.GetTagDetailsAsync(_plantProvider.Plant, request.ProjectName, request.TagNos);
+            var tagDetailList = await _tagApiService.GetTagDetailsAsync(
+                _plantProvider.Plant,
+                request.ProjectName,
+                request.TagNos,
+                cancellationToken);
             
             foreach (var tagNo in request.TagNos)
             {
@@ -82,7 +86,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
             }
 
             // Todo Remove Migration handling when migration period from old to new preservation in ProCoSys is over
-            await _tagApiService.MarkTagsAsMigratedAsync(_plantProvider.Plant, tagDetailList.Select(t => t.Id));
+            await _tagApiService.MarkTagsAsMigratedAsync(
+                _plantProvider.Plant,
+                tagDetailList.Select(t => t.Id),
+                cancellationToken);
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
