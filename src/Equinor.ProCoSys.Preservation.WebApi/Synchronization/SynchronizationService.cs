@@ -27,7 +27,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IPlantSetter _plantSetter;
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IClaimsTransformation _claimsTransformation;
-        private readonly IMainApiAuthenticator _mainApiAuthenticator;
         private readonly IPermissionCache _permissionCache;
         private ISettingRepository _settingRepository;
         private string _machine;
@@ -39,7 +38,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IPlantSetter plantSetter,
             ICurrentUserSetter currentUserSetter,
             IClaimsTransformation claimsTransformation,
-            IMainApiAuthenticator mainApiAuthenticator,
             IPermissionCache permissionCache,
             IOptionsSnapshot<PreservationAuthenticatorOptions> authenticatorOptions,
             ISettingRepository settingRepository)
@@ -50,7 +48,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _currentUserSetter = currentUserSetter;
             _claimsTransformation = claimsTransformation;
             _plantSetter = plantSetter;
-            _mainApiAuthenticator = mainApiAuthenticator;
             _permissionCache = permissionCache;
             _preservationApiOid = authenticatorOptions.Value.PreservationApiObjectId;
             _settingRepository = settingRepository;
@@ -66,8 +63,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 return;
             }
 
-            _mainApiAuthenticator.AuthenticationType = AuthenticationType.AsApplication;
-
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
             var currentUser = _claimsPrincipalProvider.GetCurrentClaimsPrincipal();
@@ -77,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             var saveChanges = _settingRepository.GetByCodeAsync("SaveChanges").Result;
             _logger.LogInformation($"SynchronizationService: Using oId {_preservationApiOid}");
-            var plants = await _permissionCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid);
+            var plants = await _permissionCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid, cancellationToken);
             _logger.LogInformation($"SynchronizationService: Plant count = {plants.Count}");
             _logger.LogInformation($"SynchronizationService: Plants = {string.Join(",", plants)}");
 
