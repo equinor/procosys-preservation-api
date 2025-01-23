@@ -2,23 +2,21 @@
 
 namespace Equinor.ProCoSys.Preservation.Query.GetJourneyById
 {
-    public class JourneyDetailsDto
+    public class JourneyDetailsDto(
+        int id,
+        string title,
+        bool isInUse,
+        bool isVoided,
+        IEnumerable<StepDetailsDto> steps,
+        ProjectDetailsDto projectDetailsDto,
+        string rowVersion)
     {
-        public JourneyDetailsDto(int id, string title, bool isInUse, bool isVoided, IEnumerable<StepDetailsDto> steps, string rowVersion)
-        {
-            Id = id;
-            Title = title;
-            IsInUse = isInUse;
-            IsVoided = isVoided;
-            Steps = steps;
-            RowVersion = rowVersion;
-        }
-
-        public int Id { get; }
-        public string Title { get; }
-        public bool IsVoided { get; }
-        public bool IsInUse { get; }
-        public IEnumerable<StepDetailsDto> Steps { get; }
-        public string RowVersion { get; }
+        public int Id { get; } = id;
+        public string Title { get; } = title;
+        public bool IsVoided { get; } = isVoided;
+        public bool IsInUse { get; } = isInUse;
+        public IEnumerable<StepDetailsDto> Steps { get; } = steps;
+        public string RowVersion { get; } = rowVersion;
+        public ProjectDetailsDto Project { get; set; } = projectDetailsDto;
     }
 }
