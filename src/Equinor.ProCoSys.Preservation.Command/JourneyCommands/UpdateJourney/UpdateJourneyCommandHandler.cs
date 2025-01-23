@@ -34,33 +34,26 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
 
             journey.Title = request.Title;
             journey.SetRowVersion(request.RowVersion);
-            var updateSuccess = await UpdateProject(request, journey);
-            if (!updateSuccess)
+
+            if (request.ProjectName is not null && journey.Project?.Name != request.ProjectName)
             {
-                return new NotFoundResult<string>("Project not found");
+                var project = await GetOrCreateProjectAsync(request);
+                if (project is null)
+                {
+                    return new NotFoundResult<string>("Project not found");
+                }
+
+                journey.Project = project;
+            }
+
+            if (request.ProjectName is null)
+            {
+                journey.Project = null;
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<string>(journey.RowVersion.ConvertToString());
-        }
-
-        private async Task<bool> UpdateProject(UpdateJourneyCommand request, Journey journey)
-        {
-            if (HasProjectChanged(request, journey))
-            {
-                var project = await GetOrCreateProjectAsync(request);
-                if (project == null)
-                {
-                    return false;
-                }
-
-                journey.Project = project;
-                return true;
-            }
-
-            journey.Project = null;
-            return true;
         }
 
         private async Task<Project> GetOrCreateProjectAsync(UpdateJourneyCommand request)
@@ -73,9 +66,6 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
 
             return project;
         }
-
-        private static bool HasProjectChanged(UpdateJourneyCommand request, Journey journey) =>
-            request.ProjectName != null && journey.Project?.Name != request.ProjectName;
 
         private async Task<Project> ImportProjectAsync(string projectName)
         {
