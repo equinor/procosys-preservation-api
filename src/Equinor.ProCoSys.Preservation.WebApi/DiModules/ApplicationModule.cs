@@ -68,6 +68,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
         public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
+            services.Configure<MainApiAuthenticatorOptions>(configuration.GetSection("Authenticator"));
             services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
 
@@ -216,7 +217,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IHistoryRepository, HistoryRepository>();
             services.AddScoped<ISettingRepository, SettingRepository>();
 
-            services.AddScoped<IAuthenticatorOptions, AuthenticatorOptions>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IMeApiService, MainApiMeService>();
             services.AddScoped<IProjectApiService, MainApiProjectService>();
