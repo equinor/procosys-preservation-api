@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Common;
@@ -42,25 +43,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc
         public async Task EnsureValidProjectAsync_ShouldValidateOK()
         {
             // Arrange
-            _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(Plant, _currentUserOid, Project)).Returns(Task.FromResult(true));
+            _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(Plant, _currentUserOid, Project, CancellationToken.None)).Returns(Task.FromResult(true));
 
             // Act
-            await _dut.EnsureValidProjectAsync(_testRequest);
+            await _dut.EnsureValidProjectAsync(_testRequest, CancellationToken.None);
         }
 
         [TestMethod]
         public async Task EnsureValidProjectAsync_ShouldThrowInvalidException_WhenProjectIsNotValid()
         {
             // Arrange
-            _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(Plant, _currentUserOid, Project)).Returns(Task.FromResult(false));
+            _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(Plant, _currentUserOid, Project, CancellationToken.None)).Returns(Task.FromResult(false));
 
             // Act
-            await Assert.ThrowsExceptionAsync<InValidProjectException>(() => _dut.EnsureValidProjectAsync(_testRequest));
+            await Assert.ThrowsExceptionAsync<InValidProjectException>(() => _dut.EnsureValidProjectAsync(_testRequest, CancellationToken.None));
         }
 
         [TestMethod]
         public async Task EnsureValidProjectAsync_ShouldThrowException_WhenRequestIsNull()
-            => await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _dut.EnsureValidProjectAsync((IBaseRequest)null));
+            => await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _dut.EnsureValidProjectAsync((IBaseRequest)null, CancellationToken.None));
 
         private class TestRequest : IBaseRequest, IProjectRequest
         {

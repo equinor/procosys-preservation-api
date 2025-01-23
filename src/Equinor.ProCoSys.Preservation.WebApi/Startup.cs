@@ -230,7 +230,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi
 
             // order of adding middelwares are crucial. Some depend that other has been run in advance
             app.UseCurrentPlant();
-            app.UseCurrentBearerToken();
             app.UseAuthentication();
             app.UseCurrentUser();
             app.UsePersonValidator();

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Common.Misc;
@@ -32,14 +33,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpPut("Clear")]
-        public void Clear(
+        public async Task Clear(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
-            string plant)
+            string plant,
+            CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            _permissionCache.ClearAll(plant, currentUserOid);
+            await _permissionCache.ClearAllAsync(plant, currentUserOid, cancellationToken);
         }
 
         [Authorize]
@@ -47,10 +49,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
         public async Task<IList<string>> GetPermissionsFromCache(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            string plant)
+            string plant,
+            CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var permissions = await _permissionCache.GetPermissionsForUserAsync(plant, currentUserOid);
+            var permissions = await _permissionCache.GetPermissionsForUserAsync(plant, currentUserOid, cancellationToken);
             return permissions;
         }
 
@@ -59,9 +62,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
         public async Task<IList<string>> GetPermissionsFromMain(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            string plant)
+            string plant,
+            CancellationToken cancellationToken)
         {
-            var permissions = await _permissionApiService.GetPermissionsForCurrentUserAsync(plant);
+            var permissions = await _permissionApiService.GetPermissionsForCurrentUserAsync(plant, cancellationToken);
             return permissions;
         }
 
@@ -70,10 +74,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
         public async Task<IList<AccessableProject>> GetProjectsFromCache(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            string plant)
+            string plant,
+            CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var projects = await _permissionCache.GetProjectsForUserAsync(plant, currentUserOid);
+            var projects = await _permissionCache.GetProjectsForUserAsync(plant, currentUserOid, cancellationToken);
             return projects;
         }
 
@@ -82,27 +87,28 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
         public async Task<IList<AccessableProject>> GetProjectsFromMain(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            string plant)
+            string plant,
+            CancellationToken cancellationToken)
         {
-            var projects = await _permissionApiService.GetAllOpenProjectsForCurrentUserAsync(plant);
+            var projects = await _permissionApiService.GetAllOpenProjectsForCurrentUserAsync(plant, cancellationToken);
             return projects;
         }
 
         [Authorize]
         [HttpGet("PlantsFromCache")]
-        public async Task<IList<string>> GetPlantsFromCache()
+        public async Task<IList<string>> GetPlantsFromCache(CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var plants = await _permissionCache.GetPlantIdsWithAccessForUserAsync(currentUserOid);
+            var plants = await _permissionCache.GetPlantIdsWithAccessForUserAsync(currentUserOid, cancellationToken);
             return plants;
         }
 
         [Authorize]
         [HttpGet("AllPlantsFromMain")]
-        public async Task<IList<AccessablePlant>> GetPlantsFromMain()
+        public async Task<IList<AccessablePlant>> GetPlantsFromMain(CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var plants = await _permissionApiService.GetAllPlantsForUserAsync(currentUserOid);
+            var plants = await _permissionApiService.GetAllPlantsForUserAsync(currentUserOid, cancellationToken);
             return plants;
         }
     }

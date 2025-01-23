@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Behaviors
 
             _logger.LogInformation($"----- Checking project for {typeName}");
 
-            await _projectChecker.EnsureValidProjectAsync(request as IBaseRequest);
+            await _projectChecker.EnsureValidProjectAsync(request as IBaseRequest, cancellationToken);
 
             return await next();
         }
