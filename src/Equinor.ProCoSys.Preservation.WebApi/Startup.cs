@@ -81,12 +81,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 false => new DefaultAzureCredential()
             };
             services.AddSingleton(credential);
-
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    Configuration.Bind("API", options);
-                });
             
             services.AddMicrosoftIdentityWebApiAuthentication(Configuration)
                 .EnableTokenAcquisitionToCallDownstreamApi()
