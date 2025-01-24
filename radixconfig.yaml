@@ -30,7 +30,8 @@ spec:
       imageTagName: latest
       variables:
         ASPNETCORE_ENVIRONMENT: 'Development'
-        UseAzureAppConfiguration: 'true'
+        UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
+        Application__UseAzureAppConfiguration: 'true'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
       monitoring: false
       resources:
@@ -47,7 +48,8 @@ spec:
           clientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7
       variables:
         ASPNETCORE_ENVIRONMENT: 'Test'
-        UseAzureAppConfiguration: 'true'
+        UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
+        Application__UseAzureAppConfiguration: 'true'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
       monitoring: false
       replicas: 2
@@ -65,7 +67,8 @@ spec:
           clientId: 1eb50c54-e897-4216-93d0-6ca86b0cf681
       variables:
         ASPNETCORE_ENVIRONMENT: 'Prod'
-        UseAzureAppConfiguration: 'true'
+        UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration 
+        Application__UseAzureAppConfiguration: 'true'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
       monitoring: false
       replicas: 3

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Azure.Core;
+using Azure.Identity;
 using Equinor.ProCoSys.Auth;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Swagger;
@@ -11,6 +13,7 @@ using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Query;
 using Equinor.ProCoSys.Preservation.WebApi.DIModules;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Seeding;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -59,6 +62,24 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     services.AddHostedService<Seeder>();
                 }
             }
+            
+            var devOnLocalhost = Configuration.IsDevOnLocalhost();
+            
+            // ChainedTokenCredential iterates through each credential passed to it in order, when running locally
+            // DefaultAzureCredential will probably fail locally, so if an instance of Azure Cli is logged in, those credentials will be used
+            // If those credentials fail, the next credentials will be those of the current user logged into the local Visual Studio Instance
+            // which is also the most likely case
+            TokenCredential credential = devOnLocalhost switch
+            {
+                true
+                    => new ChainedTokenCredential(
+                        new AzureCliCredential(),
+                        new VisualStudioCredential(),
+                        new DefaultAzureCredential()
+                    ),
+                false => new DefaultAzureCredential()
+            };
+            services.AddSingleton(credential);
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -93,7 +114,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 x.MultipartBodyLengthLimit = int.MaxValue;
             });
 
-            if (Configuration.GetValue<bool>("UseAzureAppConfiguration"))
+            if (Configuration.GetValue<bool>("Application:UseAzureAppConfiguration"))
             {
                 services.AddAzureAppConfiguration();
             }
@@ -197,7 +218,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (Configuration.GetValue<bool>("UseAzureAppConfiguration"))
+            if (Configuration.GetValue<bool>("Application:UseAzureAppConfiguration"))
             {
                 app.UseAzureAppConfiguration();
             }

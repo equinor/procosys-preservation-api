@@ -8,15 +8,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
     /// </summary>
     public class PreservationAuthenticatorOptions
     {
-        public string Instance { get; set; }
-
-        public string PreservationApiClientId { get; set; }
+        // TODO 1064: Refactor this. This can probably be consolidated into another config section.
         public Guid PreservationApiObjectId { get; set; }
-        public string PreservationApiSecret { get; set; }
-
-        public bool DisableProjectUserDataClaims { get; set; }
-        public bool DisableRestrictionRoleUserDataClaims { get; set; }
-
-        public string MainApiScope { get; set; }
     }
 }
