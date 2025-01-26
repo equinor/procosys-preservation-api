@@ -141,7 +141,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             options.Setup(s => s.Value).Returns(new PreservationAuthenticatorOptions{PreservationApiObjectId = Guid.NewGuid()});
             _currentUserSetter = new Mock<ICurrentUserSetter>();
             var projectApiService = new Mock<IProjectApiService>();
-            projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation, CancellationToken.None))
+            projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new ProCoSysProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
 
             _dut = new BusReceiverService(_plantSetter.Object,

@@ -95,11 +95,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
                 }
             };
             _certificateApiServiceMock = new Mock<ICertificateApiService>();
-            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfccGuid, CancellationToken.None))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfccGuid, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(_procosysCertificateTagsModel));
-            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfocGuid, CancellationToken.None))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _rfocGuid, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(_procosysCertificateTagsModel));
-            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _tacGuid, CancellationToken.None))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _tacGuid, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(_procosysCertificateTagsModel));
 
             _projectRepoMock = new Mock<IProjectRepository>();
@@ -190,7 +190,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
         public async Task HandlingAutoTransferCommand_ForUnknownCertificate_ShouldDoNothing_AndReturnNotFound()
         {
             // Arrange
-            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _commandForRfcc.ProCoSysGuid, CancellationToken.None))
+            _certificateApiServiceMock.Setup(c => c.TryGetCertificateTagsAsync(TestPlant, _commandForRfcc.ProCoSysGuid, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult<PCSCertificateTagsModel>(null));
 
             // Act

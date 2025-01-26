@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Auth.Client;
@@ -39,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Responsible
                 Description = "Description1",
             };
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSResponsible>(It.IsAny<string>(), CancellationToken.None, null))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSResponsible>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()))
                 .Returns(Task.FromResult(procosysResponsible));
             // Act
             var result = await _dut.TryGetResponsibleAsync(_plant, procosysResponsible.Code, CancellationToken.None);

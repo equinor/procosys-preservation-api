@@ -77,12 +77,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
 
             _projectApiServiceMock = new Mock<IProjectApiService>();
-            _projectApiServiceMock.Setup(s => s.TryGetProjectAsync(TestPlant, TestProjectName, CancellationToken.None))
+            _projectApiServiceMock.Setup(s => s.TryGetProjectAsync(TestPlant, TestProjectName, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new ProCoSysProject {Description = "ProjectDescription"}));
 
             var disciplineCode = "D";
             _disciplineApiServiceMock = new Mock<IDisciplineApiService>();
-            _disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode, CancellationToken.None))
+            _disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSDiscipline
                 {
                     Code = disciplineCode,
@@ -91,7 +91,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             var areaCode = "A";
             _areaApiServiceMock = new Mock<IAreaApiService>();
-            _areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode, CancellationToken.None))
+            _areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSArea
                 {
                     Code = areaCode,

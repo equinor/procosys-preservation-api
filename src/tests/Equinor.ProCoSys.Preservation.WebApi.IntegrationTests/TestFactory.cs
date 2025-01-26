@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Azure.Core;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Auth.Permission;
 using Equinor.ProCoSys.Auth.Person;
@@ -26,6 +27,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
@@ -170,6 +172,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 EnsureTestDatabaseDeletedAtTeardown(services);
 
                 services.AddMassTransitTestHarness();
+                
+                ReplaceRealTokenCredentialsWithTestCredentials(services);
             });
         }
 
@@ -240,13 +244,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         
         private void SetupPermissionMock(string plant, ITestUser testUser)
         {
-            _permissionApiServiceMock.Setup(p => p.GetPermissionsForCurrentUserAsync(plant, CancellationToken.None))
+            _permissionApiServiceMock.Setup(p => p.GetPermissionsForCurrentUserAsync(plant, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(testUser.Permissions));
                         
-            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsForCurrentUserAsync(plant, CancellationToken.None))
+            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsForCurrentUserAsync(plant, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(testUser.AccessableProjects));
 
-            _permissionApiServiceMock.Setup(p => p.GetRestrictionRolesForCurrentUserAsync(plant, CancellationToken.None))
+            _permissionApiServiceMock.Setup(p => p.GetRestrictionRolesForCurrentUserAsync(plant, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(testUser.Restrictions));
         }
 
@@ -326,22 +330,22 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             {
                 if (testUser.AuthProCoSysPerson != null)
                 {
-                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid), false, CancellationToken.None))
+                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid), false, It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(testUser.AuthProCoSysPerson));
                 }
                 else
                 {
-                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid), false, CancellationToken.None))
+                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid), false, It.IsAny<CancellationToken>()))
                         .Returns(Task.FromResult((ProCoSysPerson)null));
                 }
-                _permissionApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid), CancellationToken.None))
+                _permissionApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(testUser.AccessablePlants));
             }
 
             // Need to mock getting info for current application from Main. This to satisfy VerifyIpoApiClientExists middelware
             var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
             var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
-            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(preservationApiObjectId), false, CancellationToken.None))
+            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(preservationApiObjectId), false, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new ProCoSysPerson
                 {
                     AzureOid = preservationApiObjectId,
@@ -499,6 +503,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             {
                 client.DefaultRequestHeaders.Add(CurrentPlantMiddleware.PlantHeader, plant);
             }
+        }
+        
+        private static void ReplaceRealTokenCredentialsWithTestCredentials(IServiceCollection services)
+        {
+            services.RemoveAll(typeof(TokenCredential));
+            
+            var tokenCredentialsMock = new Mock<TokenCredential>();
+            services.AddSingleton(tokenCredentialsMock.Object);
         }
     }
 }

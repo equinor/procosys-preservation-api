@@ -43,25 +43,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc
         public async Task EnsureValidProjectAsync_ShouldValidateOK()
         {
             // Arrange
-            _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(Plant, _currentUserOid, Project, CancellationToken.None)).Returns(Task.FromResult(true));
+            _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(Plant, _currentUserOid, Project, It.IsAny<CancellationToken>())).Returns(Task.FromResult(true));
 
             // Act
-            await _dut.EnsureValidProjectAsync(_testRequest, CancellationToken.None);
+            await _dut.EnsureValidProjectAsync(_testRequest, It.IsAny<CancellationToken>());
         }
 
         [TestMethod]
         public async Task EnsureValidProjectAsync_ShouldThrowInvalidException_WhenProjectIsNotValid()
         {
             // Arrange
-            _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(Plant, _currentUserOid, Project, CancellationToken.None)).Returns(Task.FromResult(false));
+            _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(Plant, _currentUserOid, Project, It.IsAny<CancellationToken>())).Returns(Task.FromResult(false));
 
             // Act
-            await Assert.ThrowsExceptionAsync<InValidProjectException>(() => _dut.EnsureValidProjectAsync(_testRequest, CancellationToken.None));
+            await Assert.ThrowsExceptionAsync<InValidProjectException>(() => _dut.EnsureValidProjectAsync(_testRequest, It.IsAny<CancellationToken>()));
         }
 
         [TestMethod]
         public async Task EnsureValidProjectAsync_ShouldThrowException_WhenRequestIsNull()
-            => await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _dut.EnsureValidProjectAsync((IBaseRequest)null, CancellationToken.None));
+            => await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => _dut.EnsureValidProjectAsync((IBaseRequest)null, It.IsAny<CancellationToken>()));
 
         private class TestRequest : IBaseRequest, IProjectRequest
         {

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
@@ -41,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSDiscipline>(It.IsAny<string>(), CancellationToken.None, null))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSDiscipline>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()))
                 .Returns(Task.FromResult(_procosysDiscipline));
 
             // Act

@@ -87,7 +87,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             
             var disciplineCode = "D";
             var disciplineApiServiceMock = new Mock<IDisciplineApiService>();
-            disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode, CancellationToken.None))
+            disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSDiscipline
                 {
                     Code = disciplineCode,
@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
 
             var areaCode = "A";
             var areaApiServiceMock = new Mock<IAreaApiService>();
-            areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode, CancellationToken.None))
+            areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSArea
                 {
                     Code = areaCode,

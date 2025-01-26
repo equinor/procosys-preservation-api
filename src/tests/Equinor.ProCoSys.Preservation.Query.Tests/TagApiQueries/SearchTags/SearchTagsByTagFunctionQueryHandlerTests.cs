@@ -79,7 +79,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     }
                 };
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, _testDataSet.Project1.Name, new List<string>{_tagFunctionCodeRegisterCodePair}, CancellationToken.None))
+                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, _testDataSet.Project1.Name, new List<string>{_tagFunctionCodeRegisterCodePair}, It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(_apiTags));
                 _query = new SearchTagsByTagFunctionQuery(_testDataSet.Project1.Name);
             }
@@ -174,7 +174,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, _testDataSet.Project1.Name, new List<string>{_tagFunctionCodeRegisterCodePair}, CancellationToken.None))
+                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, _testDataSet.Project1.Name, new List<string>{_tagFunctionCodeRegisterCodePair}, It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult<IList<PCSTagOverview>>(null));
 
                 var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
@@ -191,7 +191,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, "Project XYZ", new List<string>{_tagFunctionCodeRegisterCodePair}, CancellationToken.None))
+                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, "Project XYZ", new List<string>{_tagFunctionCodeRegisterCodePair}, It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(_apiTags));
 
                 var query = new SearchTagsByTagFunctionQuery("Project XYZ");
