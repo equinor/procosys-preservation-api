@@ -46,7 +46,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.TagFunction
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSTagFunction>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSTagFunction>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null))
                 .Returns(Task.FromResult(_result));
 
             // Act

@@ -96,7 +96,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
             };
 
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserializeAsync<PCSTagSearchResult>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<PCSTagSearchResult>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null))
                 .Returns(Task.FromResult(_searchPage1WithThreeItems))
                 .Returns(Task.FromResult(_searchPage2WithOneItem));
 
@@ -121,7 +124,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
         public async Task SearchTagsByTagNo_ShouldReturnEmptyList_WhenResultIsInvalid()
         {
             _mainApiClient
-                .Setup(x => x.QueryAndDeserializeAsync<PCSTagSearchResult>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+                .Setup(x => x.QueryAndDeserializeAsync<PCSTagSearchResult>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null))
                 .Returns(Task.FromResult<PCSTagSearchResult>(null));
 
             var result = await _dut.SearchTagsByTagNoAsync("PCS$TESTPLANT", "TestProject", "A", CancellationToken.None);
@@ -156,7 +162,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
         public async Task SearchTagsByTagFunctions_ShouldReturnEmptyList_WhenResultIsInvalid()
         {
             _mainApiClient
-                .Setup(x => x.QueryAndDeserializeAsync<PCSTagSearchResult>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+                .Setup(x => x.QueryAndDeserializeAsync<PCSTagSearchResult>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null))
                 .Returns(Task.FromResult<PCSTagSearchResult>(null));
 
             var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"M"}, CancellationToken.None);
@@ -182,7 +191,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
         {
             // Arrange
             _mainApiClient
-                .Setup(x => x.QueryAndDeserializeAsync<List<PCSTagDetails>>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+                .Setup(x => x.QueryAndDeserializeAsync<List<PCSTagDetails>>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null))
                 .Returns(Task.FromResult(new List<PCSTagDetails>()));
 
             // Act
@@ -197,7 +209,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
         {
             // Arrange
             _mainApiClient
-                .Setup(x => x.QueryAndDeserializeAsync<List<PCSTagDetails>>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+                .Setup(x => x.QueryAndDeserializeAsync<List<PCSTagDetails>>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null))
                 .Returns(Task.FromResult(_tagDetails));
 
             // Act
@@ -225,7 +240,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
         {
             // Arrange
             _mainApiClient
-                .Setup(x => x.QueryAndDeserializeAsync<List<PCSTagDetails>>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()))
+                .Setup(x => x.QueryAndDeserializeAsync<List<PCSTagDetails>>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null))
                 .Returns(Task.FromResult(_tagDetails));
             var allTagNos = new List<string>();
             for (var i = 0; i < 60; i++)
@@ -237,7 +255,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
             await _dut.GetTagDetailsAsync("PCS$TESTPLANT", "TestProject", allTagNos, CancellationToken.None);
 
             // Assert
-            _mainApiClient.Verify(x => x.QueryAndDeserializeAsync<List<PCSTagDetails>>(It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<List<KeyValuePair<string, string>>>()),
+            _mainApiClient.Verify(x => x.QueryAndDeserializeAsync<List<PCSTagDetails>>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null),
                 Times.Exactly(2));
         }
     }

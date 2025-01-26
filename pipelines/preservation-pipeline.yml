@@ -67,7 +67,7 @@ stages:
      parameters:
        deploymentName: 'docker_build'
        dependsOn: ''
-       condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.Reason'], 'Manual')))
+       condition: and(succeeded(), or(ne(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.Reason'], 'Manual')))
        env: 'pcs-${{ variables.envName }}'
        envGroup: '${{ variables.envGroupName }}'
        buildCommand: build
