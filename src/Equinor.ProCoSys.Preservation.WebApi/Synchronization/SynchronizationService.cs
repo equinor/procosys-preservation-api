@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.ProCoSys.Common.Time;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -38,7 +37,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ICurrentUserSetter currentUserSetter,
             IClaimsTransformation claimsTransformation,
             IPermissionCache permissionCache,
-            IOptionsSnapshot<PreservationAuthenticatorOptions> authenticatorOptions,
+            IOptionsSnapshot<ApplicationOptions> authenticatorOptions,
             ISettingRepository settingRepository)
         {
             _logger = logger;
@@ -48,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _claimsTransformation = claimsTransformation;
             _plantSetter = plantSetter;
             _permissionCache = permissionCache;
-            _preservationApiOid = authenticatorOptions.Value.PreservationApiObjectId;
+            _preservationApiOid = authenticatorOptions.Value.ObjectId;
             _settingRepository = settingRepository;
             _machine = Environment.MachineName;
         }

@@ -11,7 +11,6 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -136,8 +135,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _tagFunction = new TagFunction(Plant, TagFunctionCode, TagFunctionDescription, RegisterCode);
             _tagFunctionRepository.Setup(t => t.GetByCodesAsync(TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(_tagFunction));
-            var options = new Mock<IOptionsSnapshot<PreservationAuthenticatorOptions>>();
-            options.Setup(s => s.Value).Returns(new PreservationAuthenticatorOptions{PreservationApiObjectId = Guid.NewGuid()});
+            var options = new Mock<IOptionsSnapshot<ApplicationOptions>>();
+            options.Setup(s => s.Value).Returns(new ApplicationOptions{ObjectId = Guid.NewGuid()});
             _currentUserSetter = new Mock<ICurrentUserSetter>();
             var projectApiService = new Mock<IProjectApiService>();
             projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation, It.IsAny<CancellationToken>()))

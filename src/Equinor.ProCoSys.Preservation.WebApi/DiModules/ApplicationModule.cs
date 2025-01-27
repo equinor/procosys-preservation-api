@@ -39,7 +39,6 @@ using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Excel;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
@@ -73,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
 
             services.Configure<TagOptions>(configuration.GetSection("TagOptions"));
-            services.Configure<PreservationAuthenticatorOptions>(configuration.GetSection("Authenticator"));
+            services.Configure<ApplicationOptions>(configuration.GetSection("Application"));
             services.Configure<SynchronizationOptions>(configuration.GetSection("Synchronization"));
 
             services.AddDbContext<PreservationContext>(options =>

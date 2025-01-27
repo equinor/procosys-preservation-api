@@ -12,7 +12,6 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Microsoft.Extensions.Options;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Telemetry;
@@ -40,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IProjectRepository projectRepository,
             ITagFunctionRepository tagFunctionRepository,
             ICurrentUserSetter currentUserSetter,
-            IOptionsSnapshot<PreservationAuthenticatorOptions> options,
+            IOptionsSnapshot<ApplicationOptions> options,
             IProjectApiService projectApiService,
             ICertificateEventProcessorService certificateEventProcessorService)
         {
@@ -54,7 +53,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _projectApiService = projectApiService;
             _certificateEventProcessorService = certificateEventProcessorService;
 
-            _preservationApiOid = options.Value.PreservationApiObjectId;
+            _preservationApiOid = options.Value.ObjectId;
         }
 
         public async Task ProcessMessageAsync(string pcsTopic, string messageJson, CancellationToken cancellationToken)
