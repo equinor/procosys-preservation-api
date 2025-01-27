@@ -344,7 +344,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
             // Need to mock getting info for current application from Main. This to satisfy VerifyIpoApiClientExists middelware
             var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
-            var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
+            var preservationApiObjectId = config["Application:ObjectId"];
             _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(preservationApiObjectId), false, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new ProCoSysPerson
                 {
