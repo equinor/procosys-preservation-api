@@ -172,8 +172,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 EnsureTestDatabaseDeletedAtTeardown(services);
 
                 services.AddMassTransitTestHarness();
-                
-                ReplaceRealTokenCredentialsWithTestCredentials(services);
             });
         }
 
@@ -503,14 +501,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             {
                 client.DefaultRequestHeaders.Add(CurrentPlantMiddleware.PlantHeader, plant);
             }
-        }
-        
-        private static void ReplaceRealTokenCredentialsWithTestCredentials(IServiceCollection services)
-        {
-            services.RemoveAll(typeof(TokenCredential));
-            
-            var tokenCredentialsMock = new Mock<TokenCredential>();
-            services.AddSingleton(tokenCredentialsMock.Object);
         }
     }
 }
