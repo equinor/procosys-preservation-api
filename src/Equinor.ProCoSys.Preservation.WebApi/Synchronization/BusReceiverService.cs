@@ -14,7 +14,6 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Microsoft.Extensions.Options;
-using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Telemetry;
 
