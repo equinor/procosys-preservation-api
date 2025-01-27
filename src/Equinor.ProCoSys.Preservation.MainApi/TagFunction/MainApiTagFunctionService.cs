@@ -11,9 +11,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.TagFunction
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IMainApiClientForApplication _mainApiClient;
+        private readonly IMainApiClientForUser _mainApiClient;
 
-        public MainApiTagFunctionService(IMainApiClientForApplication mainApiClient,
+        public MainApiTagFunctionService(IMainApiClientForUser mainApiClient,
             IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;

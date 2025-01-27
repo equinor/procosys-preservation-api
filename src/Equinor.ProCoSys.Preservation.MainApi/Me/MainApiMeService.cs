@@ -13,9 +13,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Me
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IMainApiClientForApplication _mainApiClient;
+        private readonly IMainApiClientForUser _mainApiClient;
 
-        public MainApiMeService(IMainApiClientForApplication mainApiClient, IOptionsSnapshot<MainApiOptions> options)
+        public MainApiMeService(IMainApiClientForUser mainApiClient, IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
             _apiVersion = options.Value.ApiVersion;

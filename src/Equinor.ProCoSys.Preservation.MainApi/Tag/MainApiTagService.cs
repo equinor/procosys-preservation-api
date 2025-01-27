@@ -18,11 +18,11 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IMainApiClientForApplication _mainApiClient;
+        private readonly IMainApiClientForUser _mainApiClient;
         private readonly int _tagSearchPageSize;
 
         public MainApiTagService(
-            IMainApiClientForApplication mainApiClient,
+            IMainApiClientForUser mainApiClient,
             IOptionsMonitor<MainApiOptions> mainApiOptions,
             IOptionsMonitor<TagOptions> tagOptions,
             ILogger<MainApiTagService> logger)

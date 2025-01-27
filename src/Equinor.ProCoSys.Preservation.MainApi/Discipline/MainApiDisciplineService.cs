@@ -11,9 +11,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Discipline
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IMainApiClientForApplication _mainApiClient;
+        private readonly IMainApiClientForUser _mainApiClient;
 
-        public MainApiDisciplineService(IMainApiClientForApplication mainApiClient,
+        public MainApiDisciplineService(IMainApiClientForUser mainApiClient,
             IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;

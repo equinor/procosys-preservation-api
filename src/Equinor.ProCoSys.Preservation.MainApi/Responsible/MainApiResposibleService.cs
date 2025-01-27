@@ -11,9 +11,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Responsible
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IMainApiClientForApplication _mainApiClient;
+        private readonly IMainApiClientForUser _mainApiClient;
 
-        public MainApiResponsibleService(IMainApiClientForApplication mainApiClient,
+        public MainApiResponsibleService(IMainApiClientForUser mainApiClient,
             IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;

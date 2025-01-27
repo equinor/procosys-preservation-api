@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
         private Mock<ILogger<MainApiTagService>> _logger;
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IOptionsMonitor<TagOptions>> _tagOptions;
-        private Mock<IMainApiClientForApplication> _mainApiClient;
+        private Mock<IMainApiClientForUser> _mainApiClient;
         private PCSTagSearchResult _searchPage1WithThreeItems;
         private PCSTagSearchResult _searchPage2WithOneItem;
         private List<PCSTagDetails> _tagDetails;
@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
             _tagOptions
                 .Setup(x => x.CurrentValue)
                 .Returns(new TagOptions { TagSearchPageSize = 3 });
-            _mainApiClient = new Mock<IMainApiClientForApplication>();
+            _mainApiClient = new Mock<IMainApiClientForUser>();
 
             _searchPage2WithOneItem = new PCSTagSearchResult
             {

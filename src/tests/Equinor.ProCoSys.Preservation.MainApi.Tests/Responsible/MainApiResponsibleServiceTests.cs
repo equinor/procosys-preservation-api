@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Responsible
     {
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
-        private Mock<IMainApiClientForApplication> _mainApiClient;
+        private Mock<IMainApiClientForUser> _mainApiClient;
         private MainApiResponsibleService _dut;
 
         [TestInitialize]
@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Responsible
             _mainApiOptions
                 .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
-            _mainApiClient = new Mock<IMainApiClientForApplication>();
+            _mainApiClient = new Mock<IMainApiClientForUser>();
 
             _dut = new MainApiResponsibleService(_mainApiClient.Object, _mainApiOptions.Object);
         }
