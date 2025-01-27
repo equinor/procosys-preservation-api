@@ -128,7 +128,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 typeof(Startup).Assembly
             });
 
-            var scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
+            var scopes = GetSwaggerScopes();
 
             services.AddSwaggerGen(c =>
             {
@@ -142,7 +142,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     {
                         Implicit = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri(Configuration["Swagger:AuthorizationUrl"]),
+                            AuthorizationUrl = new Uri(GetConfig<string>("Swagger:AuthorizationUrl")),
                             Scopes = scopes
                         }
                     }
@@ -183,20 +183,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             services.AddMediatrModules();
             services.AddApplicationModules(Configuration);
 
-            var serviceBusEnabled = Configuration.GetValue<bool>("ServiceBus:Enable") && 
-                (!_environment.IsDevelopment() || Configuration.GetValue<bool>("ServiceBus:EnableInDevelopment"));
-            if (serviceBusEnabled)
+            if (IsServiceBusEnabled())
             {
                 // Env variable used in radix. Configuration is added for easier use locally
                 // Url will be validated during startup of service bus integration and give a
                 // Uri exception if invalid.
              
-                var leaderElectorUrl = Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE") ?? ( Configuration["ServiceBus:LeaderElectorUrl"] + ":3003");
-
                 services.AddPcsServiceBusIntegration(options => options
-                    .UseBusConnection(Configuration.GetConnectionString("ServiceBus"))
-                    .WithLeaderElector(leaderElectorUrl)
-                    .WithRenewLeaseInterval(int.Parse(Configuration["ServiceBus:LeaderElectorRenewLeaseInterval"]))
+                    .UseBusConnection(GetConfig<string>("ConnectionStrings:ServiceBus"))
+                    .WithLeaderElector(GetLeaderElectorUri())
+                    .WithRenewLeaseInterval(GetConfig<int>("ServiceBus:LeaderElectorRenewLeaseInterval"))
                     .WithSubscription(PcsTopicConstants.Tag, "preservation_tag")
                     .WithSubscription(PcsTopicConstants.TagFunction, "preservation_tagfunction")
                     .WithSubscription(PcsTopicConstants.Project, "preservation_project")
@@ -211,6 +207,54 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 
             }
             services.AddHostedService<VerifyApplicationExistsAsPerson>();
+        }
+        
+        private T GetConfig<T>(string configKey)
+        {
+            var value = Configuration.GetValue<T>(configKey);
+            if(value is null)
+            {
+                throw new Exception($"Missing configuration for {configKey}");
+            }
+
+            return value;
+        }
+        
+        private Dictionary<string, string> GetSwaggerScopes()
+        {
+            var scopes = Configuration.GetSection("Swagger:Scopes").Get<Dictionary<string, string>>();
+            if (scopes != null)
+            {
+                return scopes;
+            }
+            
+            return new Dictionary<string, string>();
+        }
+
+        private bool IsServiceBusEnabled()
+        {
+            if (!_environment.IsDevelopment() && Configuration.GetValue<bool>("ServiceBus:Enable"))
+            {
+                return true;
+            }
+
+            if (_environment.IsDevelopment() || Configuration.GetValue<bool>("ServiceBus:EnableInDevelopment"))
+            {
+                return true;
+            }
+            
+            return false;
+        }
+
+        private string GetLeaderElectorUri()
+        {
+            var uriString = Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE");
+            if (uriString != null)
+            {
+                return uriString;
+            }
+
+            return Configuration["ServiceBus:LeaderElectorUrl"] + ":3003";
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
