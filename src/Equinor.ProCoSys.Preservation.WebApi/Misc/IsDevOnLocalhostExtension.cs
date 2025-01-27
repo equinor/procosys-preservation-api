@@ -2,7 +2,7 @@
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Misc;
 
-public static class IIsDevOnLocalhostExtension
+public static class IsDevOnLocalhostExtension
 {
     public static bool IsDevOnLocalhost(this IConfiguration configuration)
         => configuration.GetValue<bool>("Application:DevOnLocalhost");
