@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpPut("Clear")]
-        public async Task Clear(
+        public async Task ClearAsync(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -46,7 +46,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("PermissionsFromCache")]
-        public async Task<IList<string>> GetPermissionsFromCache(
+        public async Task<IList<string>> GetPermissionsFromCacheAsync(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -59,7 +59,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("PermissionsFromMain")]
-        public async Task<IList<string>> GetPermissionsFromMain(
+        public async Task<IList<string>> GetPermissionsFromMainAsync(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -71,7 +71,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("ProjectsFromCache")]
-        public async Task<IList<AccessableProject>> GetProjectsFromCache(
+        public async Task<IList<AccessableProject>> GetProjectsFromCacheAsync(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -84,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("AllProjectsFromMain")]
-        public async Task<IList<AccessableProject>> GetProjectsFromMain(
+        public async Task<IList<AccessableProject>> GetProjectsFromMainAsync(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("PlantsFromCache")]
-        public async Task<IList<string>> GetPlantsFromCache(CancellationToken cancellationToken)
+        public async Task<IList<string>> GetPlantsFromCacheAsync(CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var plants = await _permissionCache.GetPlantIdsWithAccessForUserAsync(currentUserOid, cancellationToken);
@@ -105,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("AllPlantsFromMain")]
-        public async Task<IList<AccessablePlant>> GetPlantsFromMain(CancellationToken cancellationToken)
+        public async Task<IList<AccessablePlant>> GetPlantsFromMainAsync(CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var plants = await _permissionApiService.GetAllPlantsForUserAsync(currentUserOid, cancellationToken);
