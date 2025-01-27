@@ -16,7 +16,6 @@ using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.Preservation.Domain;
 
