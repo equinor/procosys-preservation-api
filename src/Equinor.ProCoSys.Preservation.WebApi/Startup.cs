@@ -233,17 +233,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi
 
         private bool IsServiceBusEnabled()
         {
-            if (!_environment.IsDevelopment() && Configuration.GetValue<bool>("ServiceBus:Enable"))
+            if (!Configuration.GetValue<bool>("ServiceBus:Enable"))
+            {
+                return false;
+            }
+            
+            if (!_environment.IsDevelopment())
             {
                 return true;
             }
 
-            if (_environment.IsDevelopment() || Configuration.GetValue<bool>("ServiceBus:EnableInDevelopment"))
-            {
-                return true;
-            }
-            
-            return false;
+            return Configuration.GetValue<bool>("ServiceBus:EnableInDevelopment");
         }
 
         private string GetLeaderElectorUri()
