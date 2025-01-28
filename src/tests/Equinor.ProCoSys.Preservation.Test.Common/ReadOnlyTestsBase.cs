@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -9,13 +12,10 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
-using Equinor.ProCoSys.Common;
-using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Test.Common
 {
@@ -83,9 +83,9 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             return mode;
         }
 
-        protected Journey AddJourneyWithStep(PreservationContext context, string journeyTitle, string stepTitle, Mode mode, Responsible responsible)
+        protected Journey AddJourneyWithStep(PreservationContext context, string journeyTitle, string stepTitle, Mode mode, Responsible responsible, Project project = null)
         {
-            var journey = new Journey(TestPlant, journeyTitle);
+            var journey = new Journey(TestPlant, journeyTitle, project);
             journey.AddStep(new Step(TestPlant, stepTitle, mode, responsible));
             context.Journeys.Add(journey);
             context.SaveChangesAsync().Wait();
