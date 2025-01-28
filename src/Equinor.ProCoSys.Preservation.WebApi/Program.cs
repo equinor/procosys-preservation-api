@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     var settings = config.Build();
-                    var azConfig = settings.GetValue<bool>("UseAzureAppConfiguration");
+                    var azConfig = settings.GetValue<bool>("Application:UseAzureAppConfiguration");
                     if (azConfig)
                     {
                         config.AddAzureAppConfiguration(options =>

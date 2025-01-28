@@ -51,7 +51,6 @@ using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Excel;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
@@ -69,11 +68,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
         public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
+            services.Configure<MainApiAuthenticatorOptions>(configuration.GetSection("AzureAd"));
             services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
 
             services.Configure<TagOptions>(configuration.GetSection("TagOptions"));
-            services.Configure<PreservationAuthenticatorOptions>(configuration.GetSection("Authenticator"));
+            services.Configure<ApplicationOptions>(configuration.GetSection("Application"));
             services.Configure<SynchronizationOptions>(configuration.GetSection("Synchronization"));
 
             services.AddDbContext<PreservationContext>(options =>
@@ -282,7 +282,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IAccessValidator, AccessValidator>();
             services.AddScoped<IProjectChecker, ProjectChecker>();
             services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
-            services.AddScoped<IRestrictionRolesChecker, RestrictionRolesChecker>();
             services.AddScoped<ITagHelper, TagHelper>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
@@ -300,7 +299,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IHistoryRepository, HistoryRepository>();
             services.AddScoped<ISettingRepository, SettingRepository>();
 
-            services.AddScoped<IAuthenticatorOptions, AuthenticatorOptions>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IMeApiService, MainApiMeService>();
             services.AddScoped<IProjectApiService, MainApiProjectService>();

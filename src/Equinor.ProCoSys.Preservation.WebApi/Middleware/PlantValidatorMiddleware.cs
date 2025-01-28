@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Common.Misc;
@@ -23,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             var plantId = plantProvider.Plant;
             if (context.User.Identity != null && context.User.Identity.IsAuthenticated && plantId != null)
             {
-                if (!await permissionCache.IsAValidPlantForCurrentUserAsync(plantId))
+                if (!await permissionCache.IsAValidPlantForCurrentUserAsync(plantId, CancellationToken.None))
                 {
                     var errors = new Dictionary<string, string[]>
                     {

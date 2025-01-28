@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Client;
 using Microsoft.Extensions.Options;
@@ -10,9 +11,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Area
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IMainApiClient _mainApiClient;
+        private readonly IMainApiClientForUser _mainApiClient;
 
-        public MainApiAreaService(IMainApiClient mainApiClient,
+        public MainApiAreaService(IMainApiClientForUser mainApiClient,
             IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
@@ -20,14 +21,14 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Area
             _baseAddress = new Uri(options.Value.BaseAddress);
         }
 
-        public async Task<PCSArea> TryGetAreaAsync(string plant, string code)
+        public async Task<PCSArea> TryGetAreaAsync(string plant, string code, CancellationToken cancellationToken)
         {
             var url = $"{_baseAddress}Library/Area" +
                       $"?plantId={plant}" +
                       $"&code={WebUtility.UrlEncode(code)}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSArea>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSArea>(url, cancellationToken);
         }
     }
 }

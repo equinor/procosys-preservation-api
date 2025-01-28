@@ -10,6 +10,5 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
         public static void UseCurrentPlant(this IApplicationBuilder app) => app.UseMiddleware<CurrentPlantMiddleware>();
         public static void UsePersonValidator(this IApplicationBuilder app) => app.UseMiddleware<PersonValidatorMiddleware>();
         public static void UsePlantValidator(this IApplicationBuilder app) => app.UseMiddleware<PlantValidatorMiddleware>();
-        public static void UseCurrentBearerToken(this IApplicationBuilder app) => app.UseMiddleware<CurrentBearerTokenMiddleware>();
     }
 }

@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney
             Project project = null;
             if (request.ProjectName is not null)
             {
-                project = await _projectImportService.TryGetOrImportProjectAsync(request.ProjectName);
+                project = await _projectImportService.TryGetOrImportProjectAsync(request.ProjectName, cancellationToken);
                 if (project is null)
                 {
                     return new NotFoundResult<int>("Project not found");

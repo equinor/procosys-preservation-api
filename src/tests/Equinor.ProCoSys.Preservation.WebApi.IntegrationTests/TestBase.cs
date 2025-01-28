@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.Validators;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
@@ -132,6 +133,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                     TestFactory.PlantWithAccess,
                     TestFactory.ProjectWithAccess,
                     new List<string> { tagNo },
+                    CancellationToken.None,
                     false))
                 .Returns(Task.FromResult(mainTagDetailList));
         }

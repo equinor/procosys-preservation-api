@@ -11,12 +11,10 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.Preservation.Domain;
 
@@ -137,11 +135,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _tagFunction = new TagFunction(Plant, TagFunctionCode, TagFunctionDescription, RegisterCode);
             _tagFunctionRepository.Setup(t => t.GetByCodesAsync(TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(_tagFunction));
-            var options = new Mock<IOptionsSnapshot<PreservationAuthenticatorOptions>>();
-            options.Setup(s => s.Value).Returns(new PreservationAuthenticatorOptions{PreservationApiObjectId = Guid.NewGuid()});
+            var options = new Mock<IOptionsSnapshot<ApplicationOptions>>();
+            options.Setup(s => s.Value).Returns(new ApplicationOptions{ObjectId = Guid.NewGuid()});
             _currentUserSetter = new Mock<ICurrentUserSetter>();
             var projectApiService = new Mock<IProjectApiService>();
-            projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation)).Returns(Task.FromResult(new ProCoSysProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
+            projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation, It.IsAny<CancellationToken>()))
+                .Returns(Task.FromResult(new ProCoSysProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
 
             _dut = new BusReceiverService(_plantSetter.Object,
                                           _unitOfWork.Object,
@@ -150,7 +149,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           _projectRepository.Object,
                                           _tagFunctionRepository.Object,
                                           _currentUserSetter.Object,
-                                          new Mock<IMainApiAuthenticator>().Object,
                                           options.Object,
                                           projectApiService.Object,
                                           _certificationEventProcessorService.Object);

@@ -66,13 +66,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 
             _tagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
             _tagFunctionApiServiceMock
-                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeA, _regCodeA))
+                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeA, _regCodeA, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSTagFunction
                 {
                     Code = _tfCodeA, RegisterCode = _regCodeA
                 }));
             _tagFunctionApiServiceMock
-                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeB, _regCodeB))
+                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeB, _regCodeB, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSTagFunction
                 {
                     Code = _tfCodeB, RegisterCode = _regCodeB
@@ -133,10 +133,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
         {
             // Arrange
             _tagFunctionApiServiceMock
-                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeA, _regCodeA))
+                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeA, _regCodeA, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult<PCSTagFunction>(null));
             _tagFunctionApiServiceMock
-                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeB, _regCodeB))
+                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeB, _regCodeB, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult<PCSTagFunction>(null));
             // Act
             await _dut.Handle(_command, default);

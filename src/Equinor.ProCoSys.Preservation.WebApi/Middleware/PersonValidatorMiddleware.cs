@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Common.Misc;
@@ -24,8 +25,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             if (currentUserProvider.HasCurrentUser)
             {
                 var oid = currentUserProvider.GetCurrentUserOid();
-                if (!await localPersonRepository.ExistsAsync(oid) &&
-                    !await personCache.ExistsAsync(oid))
+                if (!await localPersonRepository.ExistsAsync(oid, CancellationToken.None) &&
+                    !await personCache.ExistsAsync(oid, CancellationToken.None))
                 {
                     await context.WriteForbidden(logger);
                     return;

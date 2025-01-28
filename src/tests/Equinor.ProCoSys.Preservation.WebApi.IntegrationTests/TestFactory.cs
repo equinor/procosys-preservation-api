@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
+using Azure.Core;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Auth.Permission;
 using Equinor.ProCoSys.Auth.Person;
@@ -25,6 +27,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
@@ -239,13 +242,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         
         private void SetupPermissionMock(string plant, ITestUser testUser)
         {
-            _permissionApiServiceMock.Setup(p => p.GetPermissionsForCurrentUserAsync(plant))
+            _permissionApiServiceMock.Setup(p => p.GetPermissionsForCurrentUserAsync(plant, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(testUser.Permissions));
                         
-            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsForCurrentUserAsync(plant))
+            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsForCurrentUserAsync(plant, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(testUser.AccessableProjects));
 
-            _permissionApiServiceMock.Setup(p => p.GetRestrictionRolesForCurrentUserAsync(plant))
+            _permissionApiServiceMock.Setup(p => p.GetRestrictionRolesForCurrentUserAsync(plant, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(testUser.Restrictions));
         }
 
@@ -325,22 +328,22 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             {
                 if (testUser.AuthProCoSysPerson != null)
                 {
-                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
+                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid), false, It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(testUser.AuthProCoSysPerson));
                 }
                 else
                 {
-                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
+                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid), false, It.IsAny<CancellationToken>()))
                         .Returns(Task.FromResult((ProCoSysPerson)null));
                 }
-                _permissionApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
+                _permissionApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid), It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(testUser.AccessablePlants));
             }
 
             // Need to mock getting info for current application from Main. This to satisfy VerifyIpoApiClientExists middelware
             var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
-            var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
-            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(preservationApiObjectId)))
+            var preservationApiObjectId = config["Application:ObjectId"];
+            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(preservationApiObjectId), false, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new ProCoSysPerson
                 {
                     AzureOid = preservationApiObjectId,

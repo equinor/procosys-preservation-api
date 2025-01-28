@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
 using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {
@@ -63,7 +65,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             TestFactory.Instance
                 .DisciplineApiServiceMock
-                .Setup(service => service.TryGetDisciplineAsync(TestFactory.PlantWithAccess, KnownDisciplineCode))
+                .Setup(service => service.TryGetDisciplineAsync(TestFactory.PlantWithAccess, KnownDisciplineCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSDiscipline
                 {
                     Code = KnownDisciplineCode, Description = $"{KnownDisciplineCode} - Description"
@@ -71,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             TestFactory.Instance
                 .AreaApiServiceMock
-                .Setup(service => service.TryGetAreaAsync(TestFactory.PlantWithAccess, KnownAreaCode))
+                .Setup(service => service.TryGetAreaAsync(TestFactory.PlantWithAccess, KnownAreaCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSArea
                 {
                     Code = KnownAreaCode, Description = $"{KnownAreaCode} - Description"

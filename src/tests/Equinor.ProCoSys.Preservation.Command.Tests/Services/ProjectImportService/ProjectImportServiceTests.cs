@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -39,10 +40,10 @@ public class ProjectImportServiceTests
         {
             Name = projectName, Description = projectDescription, ProCoSysGuid = Guid.NewGuid()
         };
-        _projectApiServiceMock.Setup(p => p.TryGetProjectAsync(_plant, projectName)).ReturnsAsync(mainProject);
+        _projectApiServiceMock.Setup(p => p.TryGetProjectAsync(_plant, projectName, It.IsAny<CancellationToken>())).ReturnsAsync(mainProject);
 
         // Act
-        var result = await _dut.TryGetOrImportProjectAsync(projectName);
+        var result = await _dut.TryGetOrImportProjectAsync(projectName, CancellationToken.None);
 
         // Assert
         Assert.IsNotNull(result);
@@ -51,7 +52,7 @@ public class ProjectImportServiceTests
         Assert.AreEqual(mainProject.ProCoSysGuid, result.Guid);
         _projectRepositoryMock.Verify(
             r => r.Add(It.Is<Project>(p => p.Name == projectName && p.Description == projectDescription)), Times.Once);
-        _projectApiServiceMock.Verify(p => p.TryGetProjectAsync(_plant, projectName), Times.Once);
+        _projectApiServiceMock.Verify(p => p.TryGetProjectAsync(_plant, projectName, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [TestMethod]
@@ -63,14 +64,14 @@ public class ProjectImportServiceTests
         _projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(projectName)).ReturnsAsync(project);
 
         // Act
-        var result = await _dut.TryGetOrImportProjectAsync(projectName);
+        var result = await _dut.TryGetOrImportProjectAsync(projectName, CancellationToken.None);
 
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual(projectName, result.Name);
         Assert.AreEqual(project.Description, result.Description);
         _projectRepositoryMock.Verify(r => r.GetProjectOnlyByNameAsync(projectName), Times.Once);
-        _projectApiServiceMock.Verify(p => p.TryGetProjectAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _projectApiServiceMock.Verify(p => p.TryGetProjectAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [TestMethod]
@@ -80,7 +81,7 @@ public class ProjectImportServiceTests
         var projectName = "NonExistentProject";
 
         // Act
-        var result = await _dut.TryGetOrImportProjectAsync(projectName);
+        var result = await _dut.TryGetOrImportProjectAsync(projectName, CancellationToken.None);
 
         // Assert
         Assert.IsNull(result);

@@ -12,9 +12,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Microsoft.Extensions.Options;
-using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Telemetry;
 
@@ -29,7 +27,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IProjectRepository _projectRepository;
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly ICurrentUserSetter _currentUserSetter;
-        private readonly IMainApiAuthenticator _mainApiAuthenticator;
         private readonly IProjectApiService _projectApiService;
         private readonly ICertificateEventProcessorService _certificateEventProcessorService;
         private readonly Guid _preservationApiOid;
@@ -42,8 +39,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IProjectRepository projectRepository,
             ITagFunctionRepository tagFunctionRepository,
             ICurrentUserSetter currentUserSetter,
-            IMainApiAuthenticator mainApiAuthenticator,
-            IOptionsSnapshot<PreservationAuthenticatorOptions> options,
+            IOptionsSnapshot<ApplicationOptions> options,
             IProjectApiService projectApiService,
             ICertificateEventProcessorService certificateEventProcessorService)
         {
@@ -54,17 +50,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _projectRepository = projectRepository;
             _tagFunctionRepository = tagFunctionRepository;
             _currentUserSetter = currentUserSetter;
-            _mainApiAuthenticator = mainApiAuthenticator;
             _projectApiService = projectApiService;
             _certificateEventProcessorService = certificateEventProcessorService;
 
-            _preservationApiOid = options.Value.PreservationApiObjectId;
+            _preservationApiOid = options.Value.ObjectId;
         }
 
         public async Task ProcessMessageAsync(string pcsTopic, string messageJson, CancellationToken cancellationToken)
         {
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
-            _mainApiAuthenticator.AuthenticationType = AuthenticationType.AsApplication;
 
             switch (pcsTopic)
             {
@@ -78,13 +72,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     await ProcessTagFunctionEvent(messageJson);
                     break;
                 case PcsTopicConstants.CommPkg:
-                    await ProcessCommPkgEvent(messageJson);
+                    await ProcessCommPkgEvent(messageJson, cancellationToken);
                     break;
                 case PcsTopicConstants.McPkg:
                     await ProcessMcPkgEvent(messageJson);
                     break;
                 case PcsTopicConstants.Tag:
-                    await ProcessTagEvent(messageJson);
+                    await ProcessTagEvent(messageJson, cancellationToken);
                     break;
                 case PcsTopicConstants.Certificate:
                     await _certificateEventProcessorService.ProcessCertificateEventAsync(messageJson);
@@ -94,7 +88,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task ProcessTagEvent(string messageJson)
+        private async Task ProcessTagEvent(string messageJson, CancellationToken cancellationToken)
         {
             var tagEvent = JsonSerializer.Deserialize<TagTopic>(messageJson);
             if (tagEvent != null && tagEvent.Behavior == "delete")
@@ -103,11 +97,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             }
             else
             {
-                await ProcessTagEventAsync(tagEvent, messageJson);
+                await ProcessTagEventAsync(tagEvent, messageJson, cancellationToken);
             }
         }
 
-        private async Task ProcessTagEventAsync(TagTopic tagEvent, string messageJson)
+        private async Task ProcessTagEventAsync(TagTopic tagEvent, string messageJson, CancellationToken cancellationToken)
         {
             if (tagEvent == null ||
                 tagEvent.Plant.IsEmpty() ||
@@ -137,7 +131,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 }
                 if (project.Name != tagEvent.ProjectName)
                 {
-                    var projectToMoveTagInto = await FindOrCreatePreservationCopyOfProjectAsync(tagEvent.Plant, tagEvent.ProjectName);
+                    var projectToMoveTagInto = await FindOrCreatePreservationCopyOfProjectAsync(tagEvent.Plant, tagEvent.ProjectName, cancellationToken);
                     project.MoveToProject(tagToUpdate, projectToMoveTagInto);
                 }
 
@@ -175,12 +169,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             }
         }
 
-        private async Task<Project> FindOrCreatePreservationCopyOfProjectAsync(string plant, string projectName)
+        private async Task<Project> FindOrCreatePreservationCopyOfProjectAsync(string plant, string projectName, CancellationToken cancellationToken)
         {
             var projectToMoveTagInto = await _projectRepository.GetProjectWithTagsByNameAsync(projectName);
             if (projectToMoveTagInto == null)
             {
-                var pcsProject = await _projectApiService.TryGetProjectAsync(plant, projectName);
+                var pcsProject = await _projectApiService.TryGetProjectAsync(plant, projectName, cancellationToken);
                 if (pcsProject == null)
                 {
                     throw new ArgumentException($"Unable to create local copy of {projectName}, not found.");
@@ -242,7 +236,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             }
         }
 
-        private async Task ProcessCommPkgEvent(string messageJson)
+        private async Task ProcessCommPkgEvent(string messageJson, CancellationToken cancellationToken)
         {
             var commPkgEvent = JsonSerializer.Deserialize<CommPkgTmpTopic>(messageJson);
             if (commPkgEvent != null && commPkgEvent.Behavior == "delete")
@@ -276,7 +270,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 return;
             }
 
-            var toProject = await FindOrCreatePreservationCopyOfProjectAsync(commPkgEvent.Plant, commPkgEvent.ProjectName);
+            var toProject = await FindOrCreatePreservationCopyOfProjectAsync(
+                commPkgEvent.Plant,
+                commPkgEvent.ProjectName,
+                cancellationToken);
 
             var tagsToMove = fromProject.Tags.Where(t => t.CommPkgNo == commPkgEvent.CommPkgNo).ToList();
 

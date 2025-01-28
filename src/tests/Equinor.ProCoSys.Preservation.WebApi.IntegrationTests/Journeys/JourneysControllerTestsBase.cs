@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 {
@@ -33,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 
             TestFactory.Instance
                 .ResponsibleApiServiceMock
-                .Setup(service => service.TryGetResponsibleAsync(TestFactory.PlantWithAccess, KnownTestData.ResponsibleCode))
+                .Setup(service => service.TryGetResponsibleAsync(TestFactory.PlantWithAccess, KnownTestData.ResponsibleCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSResponsible
                 {
                     Code = KnownTestData.ResponsibleCode, Description = KnownTestData.ResponsibleDescription

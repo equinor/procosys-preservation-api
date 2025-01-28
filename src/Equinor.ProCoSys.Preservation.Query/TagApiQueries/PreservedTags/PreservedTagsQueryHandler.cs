@@ -28,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
         public async Task<Result<List<PCSPreservedTagDto>>> Handle(PreservedTagsQuery request, CancellationToken cancellationToken)
         {
             var apiTags = await _tagApiService
-                .GetPreservedTagsAsync(_plantProvider.Plant, request.ProjectName)
+                .GetPreservedTagsAsync(_plantProvider.Plant, request.ProjectName, cancellationToken)
                 ?? new List<PCSPreservedTag>();
 
             var presTagNos = await (from tag in _context.QuerySet<Tag>()

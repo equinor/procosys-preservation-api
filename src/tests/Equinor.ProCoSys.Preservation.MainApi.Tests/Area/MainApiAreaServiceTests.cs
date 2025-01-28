@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Auth.Client;
 using Microsoft.Extensions.Options;
@@ -12,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
     {
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
-        private Mock<IMainApiClient> _mainApiClient;
+        private Mock<IMainApiClientForUser> _mainApiClient;
         private MainApiAreaService _dut;
         private PCSArea _procosysArea;
 
@@ -23,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
             _mainApiOptions
                 .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
-            _mainApiClient = new Mock<IMainApiClient>();
+            _mainApiClient = new Mock<IMainApiClientForUser>();
 
             _procosysArea = new PCSArea
             {
@@ -40,10 +41,13 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSArea>(It.IsAny<string>(), null))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSArea>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null))
                 .Returns(Task.FromResult(_procosysArea));
             // Act
-            var result = await _dut.TryGetAreaAsync(_plant, _procosysArea.Code);
+            var result = await _dut.TryGetAreaAsync(_plant, _procosysArea.Code, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(_procosysArea.Code, result.Code);

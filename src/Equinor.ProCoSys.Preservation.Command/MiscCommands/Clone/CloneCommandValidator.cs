@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Caches;
 using FluentValidation;
@@ -25,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
                 .WithMessage(command => $"Target plant can not be a basis plant! Plant={command.TargetPlant}");
 
             async Task<bool> UserHaveAccessToPlantAsync(string plantId)
-                => await permissionCache.HasCurrentUserAccessToPlantAsync(plantId);
+                => await permissionCache.HasCurrentUserAccessToPlantAsync(plantId, CancellationToken.None);
             
             bool NotBeABasisPlant(string plantId) => !BasisPlants.Contains(plantId);
         }

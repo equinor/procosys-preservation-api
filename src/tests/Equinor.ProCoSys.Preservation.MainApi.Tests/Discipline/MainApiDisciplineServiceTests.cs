@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
 using Microsoft.Extensions.Options;
@@ -12,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
     {
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
-        private Mock<IMainApiClient> _mainApiClient;
+        private Mock<IMainApiClientForUser> _mainApiClient;
         private PCSDiscipline _procosysDiscipline;
         private MainApiDisciplineService _dut;
 
@@ -23,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
             _mainApiOptions
                 .Setup(x => x.Value)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
-            _mainApiClient = new Mock<IMainApiClient>();
+            _mainApiClient = new Mock<IMainApiClientForUser>();
 
             _procosysDiscipline = new PCSDiscipline
             {
@@ -40,11 +41,14 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSDiscipline>(It.IsAny<string>(), null))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSDiscipline>(
+                    It.IsAny<string>(),
+                    It.IsAny<CancellationToken>(),
+                    null))
                 .Returns(Task.FromResult(_procosysDiscipline));
 
             // Act
-            var result = await _dut.TryGetDisciplineAsync(_plant, _procosysDiscipline.Code);
+            var result = await _dut.TryGetDisciplineAsync(_plant, _procosysDiscipline.Code, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(_procosysDiscipline.Code, result.Code);

@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep
 
             if (responsible == null)
             {
-                responsible = await CreateResponsibleAsync(request.ResponsibleCode);
+                responsible = await CreateResponsibleAsync(request.ResponsibleCode, cancellationToken);
                 if (responsible == null)
                 {
                     return new NotFoundResult<string>($"Responsible with code {request.ResponsibleCode} not found");
@@ -67,9 +67,13 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep
             return new SuccessResult<string>(step.RowVersion.ConvertToString());
         }
 
-        private async Task<Responsible> CreateResponsibleAsync(string responsibleCode)
+        private async Task<Responsible> CreateResponsibleAsync(string responsibleCode, CancellationToken cancellationToken)
         {
-            var mainResponsible = await _responsibleApiService.TryGetResponsibleAsync(_plantProvider.Plant, responsibleCode);
+            var mainResponsible = await _responsibleApiService.TryGetResponsibleAsync(
+                _plantProvider.Plant,
+                responsibleCode,
+                cancellationToken);
+            
             if (mainResponsible == null)
             {
                 return null;

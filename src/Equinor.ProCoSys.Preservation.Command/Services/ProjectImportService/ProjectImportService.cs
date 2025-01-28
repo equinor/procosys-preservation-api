@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
@@ -21,20 +22,20 @@ public class ProjectImportService : IProjectImportService
         _plantProvider = plantProvider;
     }
 
-    public async Task<Project> TryGetOrImportProjectAsync(string projectName)
+    public async Task<Project> TryGetOrImportProjectAsync(string projectName, CancellationToken cancellationToken)
     {
         var project = await _projectRepository.GetProjectOnlyByNameAsync(projectName);
         if (project == null)
         {
-            project = await TryGetProjectFromPCS(projectName);
+            project = await TryGetProjectFromPCS(projectName, cancellationToken);
         }
 
         return project;
     }
 
-    private async Task<Project> TryGetProjectFromPCS(string projectName)
+    private async Task<Project> TryGetProjectFromPCS(string projectName, CancellationToken cancellationToken)
     {
-        var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName);
+        var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName, cancellationToken);
         if (mainProject == null)
         {
             return null;

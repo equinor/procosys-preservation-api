@@ -31,17 +31,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.13.1" />
+    <PackageReference Include="Azure.Identity" Version="1.13.2" />
     <PackageReference Include="ClosedXML" Version="0.104.2" />
     <PackageReference Include="Equinor.ProCoSys.PcsServiceBus" Version="4.0.10" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-    <PackageReference Include="MediatR" Version="12.0.1" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="MassTransit" Version="8.2.3" />
     <PackageReference Include="MassTransit.EntityFrameworkCore" Version="8.2.3" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector" Version="2.21.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.22.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.PerfCounterCollector" Version="2.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.11" />
@@ -51,7 +51,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.66.2" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.67.2" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="3.6.2" />
+    <PackageReference Include="Microsoft.Identity.Web.TokenAcquisition" Version="3.6.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="ServiceResult" Version="1.0.1" />
     <PackageReference Include="ServiceResult.ApiExtensions" Version="1.0.1" />
@@ -75,6 +77,10 @@
     <None Update="Excel\CarlitoFont\SIL Open Font License.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Authentication\" />
   </ItemGroup>
 
 </Project>

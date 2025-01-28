@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney;
@@ -55,12 +56,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             journeyRepositoryMock.Setup(j => j.GetByIdAsync(testJourneyWithProjectId))
                 .Returns(Task.FromResult(_journeyWithProject));
 
-            projectImportServiceMock.Setup(p => p.TryGetOrImportProjectAsync(testProjectName))
+            projectImportServiceMock.Setup(p => p.TryGetOrImportProjectAsync(testProjectName, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(project));
-            projectImportServiceMock.Setup(p => p.TryGetOrImportProjectAsync(_replacementProjectName))
+            projectImportServiceMock.Setup(p => p.TryGetOrImportProjectAsync(_replacementProjectName, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(replacementProject));
 
-            projectImportServiceMock.Setup(p => p.TryGetOrImportProjectAsync(_procosysProjectName))
+            projectImportServiceMock.Setup(p => p.TryGetOrImportProjectAsync(_procosysProjectName, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(_procosysProject));
 
             _command = new UpdateJourneyCommand(testJourneyId, _newTitle, _rowVersion);

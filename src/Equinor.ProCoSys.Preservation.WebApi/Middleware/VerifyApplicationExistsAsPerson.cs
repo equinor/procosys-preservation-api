@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson;
-using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,12 +18,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
     public class VerifyApplicationExistsAsPerson : IHostedService
     {
         private readonly IServiceScopeFactory _serviceProvider;
-        private readonly IOptionsMonitor<PreservationAuthenticatorOptions> _options;
+        private readonly IOptionsMonitor<ApplicationOptions> _options;
         private readonly ILogger<VerifyApplicationExistsAsPerson> _logger;
 
         public VerifyApplicationExistsAsPerson(
             IServiceScopeFactory serviceProvider,
-            IOptionsMonitor<PreservationAuthenticatorOptions> options, 
+            IOptionsMonitor<ApplicationOptions> options, 
             ILogger<VerifyApplicationExistsAsPerson> logger)
         {
             _serviceProvider = serviceProvider;
@@ -43,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
                 scope.ServiceProvider
                     .GetRequiredService<ICurrentUserSetter>();
 
-            var oid = _options.CurrentValue.PreservationApiObjectId;
+            var oid = _options.CurrentValue.ObjectId;
             _logger.LogInformation($"Ensuring '{oid}' exists as Person");
             try
             {

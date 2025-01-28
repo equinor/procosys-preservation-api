@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -63,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _pcsResponsibleMock = new Mock<PCSResponsible>();
 
             _responsibleApiServiceMock = new Mock<IResponsibleApiService>();
-            _responsibleApiServiceMock.Setup(r => r.TryGetResponsibleAsync(TestPlant, ResponsibleCode))
+            _responsibleApiServiceMock.Setup(r => r.TryGetResponsibleAsync(TestPlant, ResponsibleCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(_pcsResponsibleMock.Object));
 
             _command = new CreateStepCommand(JourneyId, _title, ModeId, ResponsibleCode, _autoTransferMethod);
@@ -98,7 +99,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
             // Arrange
             _responsibleRepositoryMock
                 .Setup(r => r.GetByCodeAsync(ResponsibleCode)).Returns(Task.FromResult((Responsible)null));
-            _responsibleApiServiceMock.Setup(s => s.TryGetResponsibleAsync(TestPlant, ResponsibleCode))
+            _responsibleApiServiceMock.Setup(s => s.TryGetResponsibleAsync(TestPlant, ResponsibleCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult((PCSResponsible)null));
 
             // Act

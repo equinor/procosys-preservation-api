@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney;
 using Equinor.ProCoSys.Preservation.Command.Services.ProjectImportService;
@@ -76,7 +77,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJour
             // Assert
             Assert.AreEqual(TestJourney, _journeyAdded.Title);
             Assert.AreEqual(TestPlant, _journeyAdded.Plant);
-            _projectImportService.Verify(service => service.TryGetOrImportProjectAsync(It.IsAny<string>()),
+            _projectImportService.Verify(service => service.TryGetOrImportProjectAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -86,7 +87,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJour
             // Arrange
             var projectName = "ExistingProject";
             var existingProject = new Project(TestPlant, projectName, "Description", Guid.NewGuid());
-            _projectImportService.Setup(repo => repo.TryGetOrImportProjectAsync(projectName))
+            _projectImportService.Setup(repo => repo.TryGetOrImportProjectAsync(projectName, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(existingProject);
             var commandWithProject = new CreateJourneyCommand(TestJourney, projectName);
 
@@ -97,7 +98,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJour
             Assert.AreEqual(TestJourney, _journeyAdded.Title);
             Assert.AreEqual(TestPlant, _journeyAdded.Plant);
             Assert.AreEqual(existingProject, _journeyAdded.Project);
-            _projectImportService.Verify(service => service.TryGetOrImportProjectAsync(projectName), Times.Once);
+            _projectImportService.Verify(service => service.TryGetOrImportProjectAsync(projectName, It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

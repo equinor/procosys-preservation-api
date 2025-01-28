@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
 using Equinor.ProCoSys.Common.Misc;
@@ -53,7 +54,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
                 .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
 
             _tagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
-            _tagFunctionApiServiceMock.Setup(t => t.TryGetTagFunctionAsync(TestPlant, TagFunctionCode, RegisterCode))
+            _tagFunctionApiServiceMock.Setup(t => t.TryGetTagFunctionAsync(TestPlant, TagFunctionCode, RegisterCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSTagFunction
                 {
                     Code = TagFunctionCode,
