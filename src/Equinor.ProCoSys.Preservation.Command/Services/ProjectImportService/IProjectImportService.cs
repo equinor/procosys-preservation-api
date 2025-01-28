@@ -5,5 +5,5 @@ namespace Equinor.ProCoSys.Preservation.Command.Services.ProjectImportService;
 
 public interface IProjectImportService
 {
-    Task<Project> ImportProjectAsync(string projectName);
+    Task<Project> TryGetOrImportProjectAsync(string projectName);
 }

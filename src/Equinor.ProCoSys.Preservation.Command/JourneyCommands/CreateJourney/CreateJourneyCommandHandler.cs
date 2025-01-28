@@ -15,17 +15,15 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
-        private readonly IProjectRepository _projectRepository;
         private readonly IProjectImportService _projectImportService;
 
         public CreateJourneyCommandHandler(IJourneyRepository journeyRepository, IUnitOfWork unitOfWork,
-            IPlantProvider plantProvider, IProjectRepository projectRepository,
+            IPlantProvider plantProvider,
             IProjectImportService projectImportService)
         {
             _journeyRepository = journeyRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
-            _projectRepository = projectRepository;
             _projectImportService = projectImportService;
         }
 
@@ -34,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney
             Project project = null;
             if (request.ProjectName is not null)
             {
-                project = await GetOrCreateProjectAsync(request);
+                project = await _projectImportService.TryGetOrImportProjectAsync(request.ProjectName);
                 if (project is null)
                 {
                     return new NotFoundResult<int>("Project not found");
@@ -47,17 +45,6 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<int>(newJourney.Id);
-        }
-
-        private async Task<Project> GetOrCreateProjectAsync(CreateJourneyCommand request)
-        {
-            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-            if (project == null)
-            {
-                project = await _projectImportService.ImportProjectAsync(request.ProjectName);
-            }
-
-            return project;
         }
     }
 }

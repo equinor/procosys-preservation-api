@@ -73,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             _importProject = new Project(TestPlant, TestProjectName, "ProjectDescription",
                 ProjectProCoSysGuid);
             _projectImportServiceMock = new Mock<IProjectImportService>();
-            _projectImportServiceMock.Setup(s => s.ImportProjectAsync(TestProjectName))
+            _projectImportServiceMock.Setup(s => s.TryGetOrImportProjectAsync(TestProjectName))
                 .Returns(Task.FromResult(_importProject));
 
             var disciplineCode = "D";
@@ -173,7 +173,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            _projectImportServiceMock.Verify(s => s.ImportProjectAsync(TestProjectName), Times.Once);
+            _projectImportServiceMock.Verify(s => s.TryGetOrImportProjectAsync(TestProjectName), Times.Once);
         }
 
         [TestMethod]
@@ -191,7 +191,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(TestProjectName, _importProject.Name);
             Assert.AreEqual("ProjectDescription", _importProject.Description);
-            _projectImportServiceMock.Verify(s => s.ImportProjectAsync(TestProjectName), Times.Never);
+            _projectImportServiceMock.Verify(s => s.TryGetOrImportProjectAsync(TestProjectName), Times.Once);
         }
 
         [TestMethod]
@@ -210,8 +210,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         {
             // Arrange
             var project = new Project(TestPlant, TestProjectName, "", ProjectProCoSysGuid);
-            _projectRepositoryMock
-                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
+            _projectImportServiceMock
+                .Setup(r => r.TryGetOrImportProjectAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);
 
             // Act

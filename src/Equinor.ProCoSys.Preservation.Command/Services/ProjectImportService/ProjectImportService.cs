@@ -21,7 +21,18 @@ public class ProjectImportService : IProjectImportService
         _plantProvider = plantProvider;
     }
 
-    public async Task<Project> ImportProjectAsync(string projectName)
+    public async Task<Project> TryGetOrImportProjectAsync(string projectName)
+    {
+        var project = await _projectRepository.GetProjectOnlyByNameAsync(projectName);
+        if (project == null)
+        {
+            project = await TryGetProjectFromPCS(projectName);
+        }
+
+        return project;
+    }
+
+    private async Task<Project> TryGetProjectFromPCS(string projectName)
     {
         var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName);
         if (mainProject == null)

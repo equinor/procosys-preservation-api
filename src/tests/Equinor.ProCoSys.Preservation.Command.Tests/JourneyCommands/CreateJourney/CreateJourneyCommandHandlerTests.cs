@@ -17,7 +17,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJour
         private Mock<IJourneyRepository> _journeyRepositoryMock;
         private CreateJourneyCommand _command;
         private CreateJourneyCommandHandler _dut;
-        private Mock<IProjectRepository> _projectRepository;
         private Mock<IProjectImportService> _projectImportService;
 
         [TestInitialize]
@@ -34,14 +33,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJour
 
             _projectImportService = new Mock<IProjectImportService>();
 
-            _projectRepository = new Mock<IProjectRepository>();
-
             _command = new CreateJourneyCommand(TestJourney);
 
             _dut = new CreateJourneyCommandHandler(
                 _journeyRepositoryMock.Object,
                 UnitOfWorkMock.Object,
-                PlantProviderMock.Object, _projectRepository.Object, _projectImportService.Object);
+                PlantProviderMock.Object, _projectImportService.Object);
         }
 
         [TestMethod]
@@ -69,34 +66,28 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJour
         }
 
         [TestMethod]
-        public async Task HandlingCreateJourneyCommand_ShouldImportProject_WhenProjectDoesNotExist()
+        public async Task HandlingCreateJourneyCommand_ShouldNotGetProject_WhenNoProject()
         {
             // Arrange
-            var projectName = "NewProject";
-            var commandWithProject = new CreateJourneyCommand(TestJourney, projectName);
-            var importedProject = new Project(TestPlant, projectName, "Description", Guid.NewGuid());
-            // _projectRepository.Setup(repo => repo.GetProjectOnlyByNameAsync(projectName)).ReturnsAsync((Project)null);
-            _projectImportService.Setup(service => service.ImportProjectAsync(projectName))
-                .ReturnsAsync(importedProject);
-
+            var commandWithoutProject = new CreateJourneyCommand(TestJourney);
             // Act
-            await _dut.Handle(commandWithProject, default);
+            await _dut.Handle(commandWithoutProject, default);
 
             // Assert
             Assert.AreEqual(TestJourney, _journeyAdded.Title);
             Assert.AreEqual(TestPlant, _journeyAdded.Plant);
-            Assert.AreEqual(importedProject, _journeyAdded.Project);
-            _projectRepository.Verify(repo => repo.GetProjectOnlyByNameAsync(projectName), Times.Once);
-            _projectImportService.Verify(service => service.ImportProjectAsync(projectName), Times.Once);
+            _projectImportService.Verify(service => service.TryGetOrImportProjectAsync(It.IsAny<string>()),
+                Times.Never);
         }
 
         [TestMethod]
-        public async Task HandlingCreateJourneyCommand_ShouldGetExistingProject()
+        public async Task HandlingCreateJourneyCommand_ShouldGetProject_WhenProjectIsAssigned()
         {
             // Arrange
             var projectName = "ExistingProject";
             var existingProject = new Project(TestPlant, projectName, "Description", Guid.NewGuid());
-            _projectRepository.Setup(repo => repo.GetProjectOnlyByNameAsync(projectName)).ReturnsAsync(existingProject);
+            _projectImportService.Setup(repo => repo.TryGetOrImportProjectAsync(projectName))
+                .ReturnsAsync(existingProject);
             var commandWithProject = new CreateJourneyCommand(TestJourney, projectName);
 
             // Act
@@ -106,8 +97,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJour
             Assert.AreEqual(TestJourney, _journeyAdded.Title);
             Assert.AreEqual(TestPlant, _journeyAdded.Plant);
             Assert.AreEqual(existingProject, _journeyAdded.Project);
-            _projectRepository.Verify(repo => repo.GetProjectOnlyByNameAsync(projectName), Times.Once);
-            _projectImportService.Verify(service => service.ImportProjectAsync(It.IsAny<string>()), Times.Never);
+            _projectImportService.Verify(service => service.TryGetOrImportProjectAsync(projectName), Times.Once);
         }
     }
 }

@@ -4,7 +4,6 @@ using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.Services.ProjectImportService;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
@@ -14,15 +13,13 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IProjectRepository _projectRepository;
         private readonly IProjectImportService _projectImportService;
 
         public UpdateJourneyCommandHandler(IJourneyRepository journeyRepository, IUnitOfWork unitOfWork,
-            IProjectRepository projectRepository, IProjectImportService projectImportService)
+            IProjectImportService projectImportService)
         {
             _journeyRepository = journeyRepository;
             _unitOfWork = unitOfWork;
-            _projectRepository = projectRepository;
             _projectImportService = projectImportService;
         }
 
@@ -35,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
 
             if (request.ProjectName is not null && journey.Project?.Name != request.ProjectName)
             {
-                var project = await GetOrCreateProjectAsync(request);
+                var project = await _projectImportService.TryGetOrImportProjectAsync(request.ProjectName);
                 if (project is null)
                 {
                     return new NotFoundResult<string>("Project not found");
@@ -52,17 +49,6 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<string>(journey.RowVersion.ConvertToString());
-        }
-
-        private async Task<Project> GetOrCreateProjectAsync(UpdateJourneyCommand request)
-        {
-            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-            if (project == null)
-            {
-                project = await _projectImportService.ImportProjectAsync(request.ProjectName);
-            }
-
-            return project;
         }
     }
 }

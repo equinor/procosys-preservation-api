@@ -30,7 +30,7 @@ public class ProjectImportServiceTests
     }
 
     [TestMethod]
-    public async Task ImportProjectAsync_ShouldReturnProject_WhenProjectExists()
+    public async Task ImportProjectAsync_ShouldImportProject_WhenProjectDoesNotExists()
     {
         // Arrange
         var projectName = "TestProject";
@@ -41,7 +41,7 @@ public class ProjectImportServiceTests
         _projectApiServiceMock.Setup(p => p.TryGetProjectAsync(_plant, projectName)).ReturnsAsync(mainProject);
 
         // Act
-        var result = await _dut.ImportProjectAsync(projectName);
+        var result = await _dut.TryGetOrImportProjectAsync(projectName);
 
         // Assert
         Assert.IsNotNull(result);
@@ -49,16 +49,36 @@ public class ProjectImportServiceTests
         Assert.AreEqual(mainProject.Description, result.Description);
         Assert.AreEqual(mainProject.ProCoSysGuid, result.Guid);
         _projectRepositoryMock.Verify(r => r.Add(It.IsAny<Project>()), Times.Once);
+        _projectApiServiceMock.Verify(p => p.TryGetProjectAsync(_plant, projectName), Times.Once);
     }
 
     [TestMethod]
-    public async Task ImportProjectAsync_ShouldReturnNull_WhenProjectDoesNotExist()
+    public async Task ImportProjectAsync_ShouldGetProject_WhenProjectDoesExists()
+    {
+        // Arrange
+        var projectName = "TestProject";
+        var project = new Project(_plant, projectName, "TestDescription", Guid.NewGuid());
+        _projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(projectName)).ReturnsAsync(project);
+
+        // Act
+        var result = await _dut.TryGetOrImportProjectAsync(projectName);
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(projectName, result.Name);
+        Assert.AreEqual(project.Description, result.Description);
+        _projectRepositoryMock.Verify(r => r.GetProjectOnlyByNameAsync(projectName), Times.Once);
+        _projectApiServiceMock.Verify(p => p.TryGetProjectAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [TestMethod]
+    public async Task ImportProjectAsync_ShouldReturnNull_WhenProjectIsNotFound()
     {
         // Arrange
         var projectName = "NonExistentProject";
 
         // Act
-        var result = await _dut.ImportProjectAsync(projectName);
+        var result = await _dut.TryGetOrImportProjectAsync(projectName);
 
         // Assert
         Assert.IsNull(result);

@@ -49,15 +49,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
 
         public async Task<Result<int>> Handle(CreateAreaTagCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-
+            var project = await _projectImportService.TryGetOrImportProjectAsync(request.ProjectName);
             if (project == null)
             {
-                project = await _projectImportService.ImportProjectAsync(request.ProjectName);
-                if (project == null)
-                {
-                    return new NotFoundResult<int>($"Project with name {request.ProjectName} not found");
-                }
+                return new NotFoundResult<int>($"Project with name {request.ProjectName} not found");
             }
 
             var areaTagToAdd = await CreateAreaTagAsync(request);
