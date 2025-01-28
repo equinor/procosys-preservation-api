@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Journeys
             string plant,
             [FromBody] CreateJourneyDto dto)
         {
-            var result = await _mediator.Send(new CreateJourneyCommand(dto.Title));
+            var result = await _mediator.Send(new CreateJourneyCommand(dto.Title, dto.ProjectName));
             return this.FromResult(result);
         }
 
@@ -95,7 +95,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Journeys
             var result = await _mediator.Send(new DuplicateJourneyCommand(id));
             return this.FromResult(result);
         }
-        
+
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Void")]
         public async Task<ActionResult<string>> VoidJourney(
@@ -233,11 +233,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Journeys
             [FromBody] PairedStepIdWithRowVersionDto pairedStepsDto)
         {
             var command = new SwapStepsCommand(
-                id, pairedStepsDto.StepA.Id, 
-                pairedStepsDto.StepA.RowVersion, 
+                id, pairedStepsDto.StepA.Id,
+                pairedStepsDto.StepA.RowVersion,
                 pairedStepsDto.StepB.Id,
                 pairedStepsDto.StepB.RowVersion
-                );
+            );
             var result = await _mediator.Send(command);
             return this.FromResult(result);
         }

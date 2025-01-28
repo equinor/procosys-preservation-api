@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.Services.ProjectImportService;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
-using Equinor.ProCoSys.Preservation.MainApi.Project;
 using MediatR;
 using ServiceResult;
 
@@ -23,9 +23,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
-        private readonly IProjectApiService _projectApiService;
         private readonly IDisciplineApiService _disciplineApiService;
         private readonly IAreaApiService _areaApiService;
+        private readonly IProjectImportService _projectImportService;
 
         public CreateAreaTagCommandHandler(
             IProjectRepository projectRepository,
@@ -33,31 +33,26 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
-            IProjectApiService projectApiService,
             IDisciplineApiService disciplineApiService,
-            IAreaApiService areaApiService)
+            IAreaApiService areaApiService,
+            IProjectImportService projectImportService)
         {
             _projectRepository = projectRepository;
             _journeyRepository = journeyRepository;
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
-            _projectApiService = projectApiService;
             _disciplineApiService = disciplineApiService;
             _areaApiService = areaApiService;
+            _projectImportService = projectImportService;
         }
 
         public async Task<Result<int>> Handle(CreateAreaTagCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-            
+            var project = await _projectImportService.TryGetOrImportProjectAsync(request.ProjectName);
             if (project == null)
             {
-                project = await CreateProjectAsync(request.ProjectName);
-                if (project == null)
-                {
-                    return new NotFoundResult<int>($"Project with name {request.ProjectName} not found");
-                }
+                return new NotFoundResult<int>($"Project with name {request.ProjectName} not found");
             }
 
             var areaTagToAdd = await CreateAreaTagAsync(request);
@@ -71,7 +66,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             {
                 return new NotFoundResult<int>($"Discipline with code {request.DisciplineCode} not found");
             }
-            
+
             project.AddTag(areaTagToAdd);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -85,6 +80,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             {
                 return false;
             }
+
             tag.SetDiscipline(disciplineCode, discipline.Description);
             return true;
         }
@@ -95,11 +91,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             {
                 return true;
             }
+
             var area = await _areaApiService.TryGetAreaAsync(_plantProvider.Plant, areaCode);
             if (area == null)
             {
                 return false;
             }
+
             tag.SetArea(areaCode, area.Description);
             return true;
         }
@@ -123,8 +121,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             {
                 if (string.IsNullOrEmpty(request.PurchaseOrderCalloffCode))
                 {
-                    throw new Exception($"Tags of type {TagType.PoArea} must have {nameof(request.PurchaseOrderCalloffCode)}");
+                    throw new Exception(
+                        $"Tags of type {TagType.PoArea} must have {nameof(request.PurchaseOrderCalloffCode)}");
                 }
+
                 var poParts = request.PurchaseOrderCalloffCode.Split('/');
                 purchaseOrderNo = poParts[0].Trim();
                 if (poParts.Length > 1)
@@ -148,19 +148,6 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
                 Remark = request.Remark,
                 StorageArea = request.StorageArea
             };
-        }
-
-        private async Task<Project> CreateProjectAsync(string projectName)
-        {
-            var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName);
-            if (mainProject == null)
-            {
-                return null;
-            }
-
-            var project = new Project(_plantProvider.Plant, projectName, mainProject.Description, mainProject.ProCoSysGuid);
-            _projectRepository.Add(project);
-            return project;
         }
     }
 }

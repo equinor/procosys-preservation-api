@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.Services.ProjectImportService;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Preservation.MainApi.Project;
 using MediatR;
 using ServiceResult;
 
@@ -14,18 +13,14 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IProjectRepository _projectRepository;
-        private readonly IProjectApiService _projectApiService;
-        private readonly IPlantProvider _plantProvider;
+        private readonly IProjectImportService _projectImportService;
 
         public UpdateJourneyCommandHandler(IJourneyRepository journeyRepository, IUnitOfWork unitOfWork,
-            IProjectRepository projectRepository, IProjectApiService projectApiService, IPlantProvider plantProvider)
+            IProjectImportService projectImportService)
         {
             _journeyRepository = journeyRepository;
             _unitOfWork = unitOfWork;
-            _projectRepository = projectRepository;
-            _projectApiService = projectApiService;
-            _plantProvider = plantProvider;
+            _projectImportService = projectImportService;
         }
 
         public async Task<Result<string>> Handle(UpdateJourneyCommand request, CancellationToken cancellationToken)
@@ -35,50 +30,25 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             journey.Title = request.Title;
             journey.SetRowVersion(request.RowVersion);
 
-            if (request.ProjectName is not null && journey.Project?.Name != request.ProjectName)
+            if (request.ProjectName is null)
             {
-                var project = await GetOrCreateProjectAsync(request);
+                journey.ClearProject();
+            }
+            else if (journey.Project?.Name != request.ProjectName)
+            {
+                var project = await _projectImportService.TryGetOrImportProjectAsync(request.ProjectName);
                 if (project is null)
                 {
                     return new NotFoundResult<string>("Project not found");
                 }
 
-                journey.Project = project;
+                journey.SetProject(project);
             }
 
-            if (request.ProjectName is null)
-            {
-                journey.Project = null;
-            }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<string>(journey.RowVersion.ConvertToString());
-        }
-
-        private async Task<Project> GetOrCreateProjectAsync(UpdateJourneyCommand request)
-        {
-            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-            if (project == null)
-            {
-                project = await ImportProjectAsync(request.ProjectName);
-            }
-
-            return project;
-        }
-
-        private async Task<Project> ImportProjectAsync(string projectName)
-        {
-            var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName);
-            if (mainProject == null)
-            {
-                return null;
-            }
-
-            var project = new Project(_plantProvider.Plant, projectName, mainProject.Description,
-                mainProject.ProCoSysGuid);
-            _projectRepository.Add(project);
-            return project;
         }
     }
 }

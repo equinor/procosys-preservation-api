@@ -23,8 +23,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
         {
         }
 
-        public Journey(string schema, string title, Project project = null)
-            : base(schema)
+        public Journey(string plant, string title, Project project = null)
+            : base(plant)
         {
             if (string.IsNullOrEmpty(title))
             {
@@ -33,7 +33,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             Title = title;
             Guid = Guid.NewGuid();
-            Project = project;
+            if (project is not null)
+            {
+                SetProject(project);
+            }
         }
 
         public Guid Guid { get; private set; }
@@ -45,8 +48,24 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-        public Project Project { get; set; }
+        public Project Project { get; private set; }
         public override string ToString() => Title;
+
+        public void ClearProject() => Project = null;
+
+        public void SetProject(Project project)
+        {
+            if (project == null)
+            {
+                throw new ArgumentNullException(nameof(project));
+            }
+
+            if (project.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't relate item in {project.Plant} to item in {Plant}");
+            }
+            Project = project;
+        }
 
         public void AddStep(Step step)
         {
