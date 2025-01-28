@@ -37,7 +37,7 @@ Choose to run as *Equinor.ProcoSys.Preservation.WebApi* in the dropdown menu and
 ### Set secrets
 In folder
 ```
-src\Equinor.Procosys.Preservation.WebApi
+src\Equinor.ProCoSys.Preservation.WebApi
 ```
 Set secrets using
 ```console
@@ -46,7 +46,7 @@ dotnet user-secrets "<key>" "<value>"
 ### Run
 In folder
 ```
-src\Equinor.Procosys.Preservation.WebApi
+src\Equinor.ProCoSys.Preservation.WebApi
 ```
 run
 ```console
