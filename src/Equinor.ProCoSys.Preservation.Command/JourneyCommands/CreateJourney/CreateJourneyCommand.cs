@@ -3,10 +3,9 @@ using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney
 {
-    public class CreateJourneyCommand : IRequest<Result<int>>
+    public class CreateJourneyCommand(string title, string projectName = null) : IRequest<Result<int>>
     {
-        public CreateJourneyCommand(string title) => Title = title;
-
-        public string Title { get; }
+        public string Title { get; } = title;
+        public string ProjectName { get; } = projectName;
     }
 }

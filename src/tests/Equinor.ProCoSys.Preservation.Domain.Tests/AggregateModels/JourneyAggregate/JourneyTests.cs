@@ -4,6 +4,7 @@ using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.Test.Common;
@@ -18,6 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
     {
         private Journey _dutWithNoSteps;
         private Journey _dutWith3Steps;
+        private Journey _dutWithProject;
         private Step _stepA;
         private Step _stepB;
         private Step _stepC;
@@ -26,6 +28,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         private int _stepCId;
         private Mode _mode;
         private Responsible _responsible;
+        private Project _project;
         private const string TestPlant = "PlantA";
 
         [TestInitialize]
@@ -43,7 +46,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
 
             _mode = new Mode(TestPlant, "M", false);
             _responsible = new Responsible(TestPlant, "RC", "RD");
-            
+            _project = new Project(TestPlant, "P", "D", Guid.NewGuid());
+            _dutWithProject = new Journey(TestPlant, "TitleP", _project);
+
             _stepA = new Step(TestPlant, "SA", _mode, _responsible);
             _stepA.SetProtectedIdForTesting(_stepAId);
             _stepB = new Step(TestPlant, "SB", _mode, _responsible);
@@ -62,14 +67,50 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(TestPlant, _dutWithNoSteps.Plant);
             Assert.AreEqual("TitleA", _dutWithNoSteps.Title);
             Assert.IsFalse(_dutWithNoSteps.IsVoided);
+            Assert.IsNull(_dutWithNoSteps.Project);
             Assert.AreEqual(0, _dutWithNoSteps.Steps.Count);
         }
-        
+
+        [TestMethod]
+        public void Constructor_ShouldSetProject()
+            => Assert.AreEqual(_project, _dutWithProject.Project);
+
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenTitleNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new Journey(TestPlant, null)
             );
+
+        [TestMethod]
+        public void Constructor_ShouldThrowException_WhenAssignProjectFromOtherPlant()
+        {
+            var project = new Project(TestPlant + "X", "P", "D", Guid.NewGuid());
+            Assert.ThrowsException<ArgumentException>(() =>
+                new Journey(TestPlant, "Title", project)
+            );
+        }
+
+        [TestMethod]
+        public void ClearProject_ShouldClearProject()
+        {
+            _dutWithProject.ClearProject();
+            Assert.IsNull(_dutWithProject.Project);
+        }
+
+        [TestMethod]
+        public void SetProject_ShouldThrowException_WhenProjectNotGiven() =>
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                _dutWithProject.SetProject(null)
+            );
+
+        [TestMethod]
+        public void SetProject_ShouldThrowException_WhenAssignProjectFromOtherPlant()
+        {
+            var project = new Project(TestPlant + "X", "P", "D", Guid.NewGuid());
+            Assert.ThrowsException<ArgumentException>(() =>
+                _dutWithProject.SetProject(project)
+            );
+        }
 
         [TestMethod]
         public void AddStep_ShouldThrowException_WhenStepNotGiven()
