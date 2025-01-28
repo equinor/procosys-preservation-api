@@ -30,7 +30,11 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             journey.Title = request.Title;
             journey.SetRowVersion(request.RowVersion);
 
-            if (request.ProjectName is not null && journey.Project?.Name != request.ProjectName)
+            if (request.ProjectName is null)
+            {
+                journey.ClearProject();
+            }
+            else if (journey.Project?.Name != request.ProjectName)
             {
                 var project = await _projectImportService.TryGetOrImportProjectAsync(request.ProjectName);
                 if (project is null)
@@ -38,18 +42,9 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
                     return new NotFoundResult<string>("Project not found");
                 }
 
-                if (journey.Plant != project?.Plant)
-                {
-                    return new NotFoundResult<string>("Project plant does not match current plant");
-                }
-
-                journey.Project = project;
+                journey.SetProject(project);
             }
 
-            if (request.ProjectName is null)
-            {
-                journey.Project = null;
-            }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
