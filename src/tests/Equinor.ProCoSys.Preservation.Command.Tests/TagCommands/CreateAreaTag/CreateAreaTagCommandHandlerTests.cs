@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Preservation.Command.Services.ProjectImportService;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
-using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -30,18 +30,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
         private Mock<Step> _stepMock;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
-        private Project _projectAddedToRepository;
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
-        private Mock<IProjectApiService> _projectApiServiceMock;
         private Mock<IDisciplineApiService> _disciplineApiServiceMock;
         private Mock<IAreaApiService> _areaApiServiceMock;
+        private Mock<IProjectImportService> _projectImportServiceMock;
 
         private CreateAreaTagCommand _createPreAreaCommand;
         private CreateAreaTagCommand _createSiteAreaCommand;
         private CreateAreaTagCommand _createPoAreaWithPurchasedOrderCommand;
         private CreateAreaTagCommand _createPoAreaWithCalloffCommand;
         private CreateAreaTagCommandHandler _dut;
+        private Project _importProject;
 
         [TestInitialize]
         public void Setup()
@@ -50,7 +50,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             _stepMock = new Mock<Step>();
             _stepMock.SetupGet(s => s.Id).Returns(StepId);
             _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
-            
+
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyRepositoryMock
                 .Setup(x => x.GetStepByStepIdAsync(StepId))
@@ -58,12 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _projectRepositoryMock
-                .Setup(x => x.Add(It.IsAny<Project>()))
-                .Callback<Project>(project =>
-                {
-                    _projectAddedToRepository = project;
-                });
-
+                .Setup(x => x.Add(It.IsAny<Project>()));
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             var rdMock1 = new Mock<RequirementDefinition>();
             rdMock1.SetupGet(x => x.Id).Returns(ReqDefId1);
@@ -72,30 +67,27 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             rdMock2.SetupGet(x => x.Id).Returns(ReqDefId2);
             rdMock2.SetupGet(x => x.Plant).Returns(TestPlant);
             _rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2}))
-                .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
+                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> { ReqDefId1, ReqDefId2 }))
+                .Returns(Task.FromResult(new List<RequirementDefinition> { rdMock1.Object, rdMock2.Object }));
 
-            _projectApiServiceMock = new Mock<IProjectApiService>();
-            _projectApiServiceMock.Setup(s => s.TryGetProjectAsync(TestPlant, TestProjectName))
-                .Returns(Task.FromResult(new ProCoSysProject {Description = "ProjectDescription"}));
+            _importProject = new Project(TestPlant, TestProjectName, "ProjectDescription",
+                ProjectProCoSysGuid);
+            _projectImportServiceMock = new Mock<IProjectImportService>();
+            _projectImportServiceMock.Setup(s => s.ImportProjectAsync(TestProjectName))
+                .Returns(Task.FromResult(_importProject));
 
             var disciplineCode = "D";
             _disciplineApiServiceMock = new Mock<IDisciplineApiService>();
             _disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode))
                 .Returns(Task.FromResult(new PCSDiscipline
                 {
-                    Code = disciplineCode,
-                    Description = DisciplineDescription
+                    Code = disciplineCode, Description = DisciplineDescription
                 }));
 
             var areaCode = "A";
             _areaApiServiceMock = new Mock<IAreaApiService>();
             _areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode))
-                .Returns(Task.FromResult(new PCSArea
-                {
-                    Code = areaCode,
-                    Description = AreaDescription
-                }));
+                .Returns(Task.FromResult(new PCSArea { Code = areaCode, Description = AreaDescription }));
 
             _createPreAreaCommand = new CreateAreaTagCommand(
                 TestProjectName,
@@ -168,9 +160,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 _rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object,
-                _projectApiServiceMock.Object,
                 _disciplineApiServiceMock.Object,
-                _areaApiServiceMock.Object);
+                _areaApiServiceMock.Object,
+                _projectImportServiceMock.Object);
         }
 
         [TestMethod]
@@ -181,8 +173,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(TestProjectName, _projectAddedToRepository.Name);
-            Assert.AreEqual("ProjectDescription", _projectAddedToRepository.Description);
+            _projectImportServiceMock.Verify(s => s.ImportProjectAsync(TestProjectName), Times.Once);
         }
 
         [TestMethod]
@@ -198,7 +189,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.IsNull(_projectAddedToRepository);
+            Assert.AreEqual(TestProjectName, _importProject.Name);
+            Assert.AreEqual("ProjectDescription", _importProject.Description);
+            _projectImportServiceMock.Verify(s => s.ImportProjectAsync(TestProjectName), Times.Never);
         }
 
         [TestMethod]
@@ -209,9 +202,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            
-            var tags = _projectAddedToRepository.Tags;
-            Assert.AreEqual(1, tags.Count);
+            Assert.AreEqual(1, _importProject.Tags.Count);
         }
 
         [TestMethod]
@@ -222,13 +213,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             _projectRepositoryMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);
-            
+
             // Act
             var result = await _dut.Handle(_createPreAreaCommand, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            
+
             var tags = project.Tags;
             Assert.AreEqual(1, tags.Count);
         }
@@ -241,10 +232,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            
-            var tags = _projectAddedToRepository.Tags;
-            Assert.AreEqual(1, tags.Count);
-            AssertTagProperties(_createPreAreaCommand, tags.First(), null, null);
+            Assert.AreEqual(1, _importProject.Tags.Count);
+            AssertTagProperties(_createPreAreaCommand, _importProject.Tags.First(), null, null);
         }
 
         [TestMethod]
@@ -255,10 +244,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            
-            var tags = _projectAddedToRepository.Tags;
-            Assert.AreEqual(1, tags.Count);
-            AssertTagProperties(_createSiteAreaCommand, tags.First(), null, null);
+            Assert.AreEqual(1, _importProject.Tags.Count);
+            AssertTagProperties(_createSiteAreaCommand, _importProject.Tags.First(), null, null);
         }
 
         [TestMethod]
@@ -269,10 +256,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            
-            var tags = _projectAddedToRepository.Tags;
-            Assert.AreEqual(1, tags.Count);
-            AssertTagProperties(_createPoAreaWithPurchasedOrderCommand, tags.First(), TestPurchaseOrder, null);
+            Assert.AreEqual(1, _importProject.Tags.Count);
+            AssertTagProperties(_createPoAreaWithPurchasedOrderCommand, _importProject.Tags.First(), TestPurchaseOrder,
+                null);
         }
 
         [TestMethod]
@@ -283,25 +269,26 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            
-            var tags = _projectAddedToRepository.Tags;
-            Assert.AreEqual(1, tags.Count);
-            AssertTagProperties(_createPoAreaWithCalloffCommand, tags.First(), TestPurchaseOrder, TestCalloff);
+            Assert.AreEqual(1, _importProject.Tags.Count);
+            AssertTagProperties(_createPoAreaWithCalloffCommand, _importProject.Tags.First(), TestPurchaseOrder,
+                TestCalloff);
         }
 
         [TestMethod]
         public async Task HandlingCreateAreaTagCommand_ShouldSave()
         {
             _projectRepositoryMock
-                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(new Project(TestPlant, TestProjectName, "", ProjectProCoSysGuid)));
+                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName))
+                .Returns(Task.FromResult(new Project(TestPlant, TestProjectName, "", ProjectProCoSysGuid)));
             // Act
             await _dut.Handle(_createPreAreaCommand, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
-        private void AssertTagProperties(CreateAreaTagCommand command, Tag tagAddedToProject, string expectedPurchaseOrder, string expectedCalloff)
+        private void AssertTagProperties(CreateAreaTagCommand command, Tag tagAddedToProject,
+            string expectedPurchaseOrder, string expectedCalloff)
         {
             Assert.AreEqual(command.AreaCode, tagAddedToProject.AreaCode);
             Assert.AreEqual(AreaDescription, tagAddedToProject.AreaDescription);
