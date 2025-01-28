@@ -34,9 +34,10 @@ public class ProjectImportServiceTests
     {
         // Arrange
         var projectName = "TestProject";
+        var projectDescription = "TestDescription";
         var mainProject = new ProCoSysProject
         {
-            Name = projectName, Description = "TestDescription", ProCoSysGuid = Guid.NewGuid()
+            Name = projectName, Description = projectDescription, ProCoSysGuid = Guid.NewGuid()
         };
         _projectApiServiceMock.Setup(p => p.TryGetProjectAsync(_plant, projectName)).ReturnsAsync(mainProject);
 
@@ -48,7 +49,8 @@ public class ProjectImportServiceTests
         Assert.AreEqual(projectName, result.Name);
         Assert.AreEqual(mainProject.Description, result.Description);
         Assert.AreEqual(mainProject.ProCoSysGuid, result.Guid);
-        _projectRepositoryMock.Verify(r => r.Add(It.IsAny<Project>()), Times.Once);
+        _projectRepositoryMock.Verify(
+            r => r.Add(It.Is<Project>(p => p.Name == projectName && p.Description == projectDescription)), Times.Once);
         _projectApiServiceMock.Verify(p => p.TryGetProjectAsync(_plant, projectName), Times.Once);
     }
 
