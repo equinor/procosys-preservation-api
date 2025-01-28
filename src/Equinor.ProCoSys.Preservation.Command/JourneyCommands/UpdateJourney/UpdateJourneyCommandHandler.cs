@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.Services.ProjectImportService;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Preservation.MainApi.Project;
 using MediatR;
 using ServiceResult;
 
@@ -15,17 +15,15 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProjectRepository _projectRepository;
-        private readonly IProjectApiService _projectApiService;
-        private readonly IPlantProvider _plantProvider;
+        private readonly IProjectImportService _projectImportService;
 
         public UpdateJourneyCommandHandler(IJourneyRepository journeyRepository, IUnitOfWork unitOfWork,
-            IProjectRepository projectRepository, IProjectApiService projectApiService, IPlantProvider plantProvider)
+            IProjectRepository projectRepository, IProjectImportService projectImportService)
         {
             _journeyRepository = journeyRepository;
             _unitOfWork = unitOfWork;
             _projectRepository = projectRepository;
-            _projectApiService = projectApiService;
-            _plantProvider = plantProvider;
+            _projectImportService = projectImportService;
         }
 
         public async Task<Result<string>> Handle(UpdateJourneyCommand request, CancellationToken cancellationToken)
@@ -61,23 +59,9 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
             var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
             if (project == null)
             {
-                project = await ImportProjectAsync(request.ProjectName);
+                project = await _projectImportService.ImportProjectAsync(request.ProjectName);
             }
 
-            return project;
-        }
-
-        private async Task<Project> ImportProjectAsync(string projectName)
-        {
-            var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName);
-            if (mainProject == null)
-            {
-                return null;
-            }
-
-            var project = new Project(_plantProvider.Plant, projectName, mainProject.Description,
-                mainProject.ProCoSysGuid);
-            _projectRepository.Add(project);
             return project;
         }
     }

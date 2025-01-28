@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney;
+using Equinor.ProCoSys.Preservation.Command.Services.ProjectImportService;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
@@ -28,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         private UpdateJourneyCommandHandler _dut;
         private Journey _journey;
         private Journey _journeyWithProject;
-        private ProCoSysProject _procosysProject;
+        private Project _procosysProject;
 
         [TestInitialize]
         public void Setup()
@@ -40,6 +41,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
             var projectRepositoryMock = new Mock<IProjectRepository>();
             var mainApiProjectServiceMock = new Mock<IProjectApiService>();
+            var projectImportServiceMock = new Mock<IProjectImportService>();
 
             var project = new Project(TestPlant, testProjectName, "ProjectDescription", Guid.NewGuid());
             var replacementProject =
@@ -48,10 +50,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             _journey = new Journey(TestPlant, _oldTitle);
             _journeyWithProject = new Journey(TestPlant, _oldTitle, project);
 
-            _procosysProject = new ProCoSysProject
-            {
-                Id = 1, Name = _procosysProjectName, Description = "ProjectDescription", IsClosed = false
-            };
+            _procosysProject = new Project(
+                TestPlant, _procosysProjectName, "ProjectDescription", Guid.NewGuid());
 
             journeyRepositoryMock.Setup(j => j.GetByIdAsync(testJourneyId))
                 .Returns(Task.FromResult(_journey));
@@ -63,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(_replacementProjectName))
                 .Returns(Task.FromResult(replacementProject));
 
-            mainApiProjectServiceMock.Setup(p => p.TryGetProjectAsync(TestPlant, _procosysProjectName))
+            projectImportServiceMock.Setup(p => p.ImportProjectAsync(_procosysProjectName))
                 .Returns(Task.FromResult(_procosysProject));
 
             _command = new UpdateJourneyCommand(testJourneyId, _newTitle, _rowVersion);
@@ -76,8 +76,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
 
             _dut = new UpdateJourneyCommandHandler(
                 journeyRepositoryMock.Object,
-                UnitOfWorkMock.Object, projectRepositoryMock.Object, mainApiProjectServiceMock.Object,
-                PlantProviderMock.Object);
+                UnitOfWorkMock.Object, projectRepositoryMock.Object, projectImportServiceMock.Object);
         }
 
 
