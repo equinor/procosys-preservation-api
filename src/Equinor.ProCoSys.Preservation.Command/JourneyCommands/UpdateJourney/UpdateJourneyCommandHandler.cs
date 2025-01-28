@@ -38,6 +38,11 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
                     return new NotFoundResult<string>("Project not found");
                 }
 
+                if (journey.Plant != project?.Plant)
+                {
+                    return new NotFoundResult<string>("Project plant does not match current plant");
+                }
+
                 journey.Project = project;
             }
 

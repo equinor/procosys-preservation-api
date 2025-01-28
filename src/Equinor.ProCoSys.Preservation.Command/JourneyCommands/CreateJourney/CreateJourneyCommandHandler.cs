@@ -39,6 +39,11 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney
                 }
             }
 
+            if (_plantProvider.Plant != project?.Plant)
+            {
+                return new NotFoundResult<int>("Project plant does not match current plant");
+            }
+
             var newJourney = new Journey(_plantProvider.Plant, request.Title, project);
 
             _journeyRepository.Add(newJourney);
