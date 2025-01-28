@@ -15,6 +15,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
 
             builder
                 .HasDiscriminator<string>("FieldType")
+                // When adding a new value be sure to run a migration since the length of the discriminator column might need to be increased.
                 .HasValue<CheckBoxChecked>("CheckBoxChecked")
                 .HasValue<AttachmentValue>("AttachmentValue")
                 .HasValue<NumberValue>("NumberValue");

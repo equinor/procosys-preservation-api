@@ -19,6 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllJourneys
         private readonly string _mode2Title = "M2";
         private readonly string _responsible1Code = "R1";
         private readonly string _responsible2Code = "R2";
+        private readonly string _projectName = "Test-Project";
         private int _supplierModeId;
         private int _otherModeId;
         private int _responsible1Id;
@@ -26,11 +27,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllJourneys
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher,
+                       _currentUserProvider))
             {
                 var supplierMode = AddMode(context, _mode1Title, true);
                 var responsible1 = AddResponsible(context, _responsible1Code);
-                var journey = AddJourneyWithStep(context, _journeyTitle, _step1Title, supplierMode, responsible1);
+                var project = AddProject(context, _projectName, "Test description");
+                var journey = AddJourneyWithStep(context, _journeyTitle, _step1Title, supplierMode, responsible1,
+                    project);
 
                 var otherMode = AddMode(context, _mode2Title, false);
                 var responsible2 = AddResponsible(context, _responsible2Code);
@@ -47,32 +51,57 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllJourneys
         [TestMethod]
         public async Task HandleGetAllJourneysQuery_ShouldReturnNonVoidedJourneysOnly_WhenNotGettingVoided()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                       _currentUserProvider))
             {
                 var dut = new GetAllJourneysQueryHandler(context);
 
-                var result = await dut.Handle(new GetAllJourneysQuery(false), default);
+                var result = await dut.Handle(new GetAllJourneysQuery(false, null), default);
 
                 var journeys = result.Data.ToList();
 
                 Assert.AreEqual(1, journeys.Count);
                 var journey = journeys.First();
-            
+
                 Assert.IsFalse(journey.IsVoided);
                 Assert.AreEqual(_journeyTitle, journey.Title);
-            
+
                 var steps = journey.Steps.ToList();
                 Assert.AreEqual(2, steps.Count);
 
-                AssertStep(steps.ElementAt(0), _step1Title, _supplierModeId, _responsible1Id, _mode1Title, _responsible1Code, false, true);
-                AssertStep(steps.ElementAt(1), _step2Title, _otherModeId, _responsible2Id, _mode2Title, _responsible2Code, false, false);
+                AssertStep(steps.ElementAt(0), _step1Title, _supplierModeId, _responsible1Id, _mode1Title,
+                    _responsible1Code, false, true);
+                AssertStep(steps.ElementAt(1), _step2Title, _otherModeId, _responsible2Id, _mode2Title,
+                    _responsible2Code, false, false);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllJourneysQuery_ShouldReturnJourneyWithProject_WhenWithProjectName()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                       _currentUserProvider))
+            {
+                var dut = new GetAllJourneysQueryHandler(context);
+
+                var result = await dut.Handle(new GetAllJourneysQuery(false, _projectName), default);
+
+                var journeys = result.Data.ToList();
+
+                Assert.AreEqual(1, journeys.Count);
+                var journey = journeys.First();
+
+                Assert.IsNotNull(journey.Project);
+                Assert.AreEqual(journey.Project.Name, _projectName);
+                Assert.AreEqual(_journeyTitle, journey.Title);
             }
         }
 
         [TestMethod]
         public async Task HandleGetAllJourneysQuery_ShouldReturnVoidedJourneys_WhenGettingVoided()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                       _currentUserProvider))
             {
                 var journey = context.Journeys.Include(j => j.Steps).First();
                 journey.IsVoided = true;
@@ -80,10 +109,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllJourneys
                 context.SaveChangesAsync().Wait();
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                       _currentUserProvider))
             {
                 var dut = new GetAllJourneysQueryHandler(context);
-                var result = await dut.Handle(new GetAllJourneysQuery(true), default);
+                var result = await dut.Handle(new GetAllJourneysQuery(true, null), default);
 
                 var journeys = result.Data.ToList();
                 Assert.AreEqual(1, journeys.Count);
@@ -93,7 +123,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllJourneys
             }
         }
 
-        private void AssertStep(StepDto step, string title, int modeId, int responsibleId, string modeTitle, string responsibleCode, bool isVoided, bool forSupplier)
+        private void AssertStep(StepDto step, string title, int modeId, int responsibleId, string modeTitle,
+            string responsibleCode, bool isVoided, bool forSupplier)
         {
             Assert.IsNotNull(step.Mode);
             Assert.AreEqual(forSupplier, step.Mode.ForSupplier);

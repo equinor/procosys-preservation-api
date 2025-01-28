@@ -4,13 +4,15 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
 {
     public class JourneyDto
     {
-        public JourneyDto(int id, string title, bool isVoided, IEnumerable<StepDto> steps, string rowVersion)
+        public JourneyDto(int id, string title, bool isVoided, IEnumerable<StepDto> steps,
+            ProjectDetailsDto projectDetails, string rowVersion)
         {
             Id = id;
             Title = title;
             IsVoided = isVoided;
             Steps = steps;
             RowVersion = rowVersion;
+            Project = projectDetails;
         }
 
         public int Id { get; }
@@ -18,5 +20,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
         public bool IsVoided { get; }
         public IEnumerable<StepDto> Steps { get; }
         public string RowVersion { get; }
+        public ProjectDetailsDto Project { get; set; }
     }
 }
