@@ -61,10 +61,10 @@ spec:
       replicas: 2
       resources:
         requests:
-          memory: '350Mi'
+          memory: '350Mi' #TODO 1064: Memory usage is at 99% usage when set to 256. If it also goes to 99% with 350, we have a leak. 
           cpu: '100m'
         limits:
-          memory: '350Mi'
+          memory: '350Mi' #TODO 1064: Memory usage is at 99% usage when set to 256. If it also goes to 99% with 350, we have a leak. 
           cpu: '250m'
     # Prod environment
     - environment: prod
