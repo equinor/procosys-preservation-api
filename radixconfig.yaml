@@ -61,10 +61,10 @@ spec:
       replicas: 2
       resources:
         requests:
-          memory: '256Mi'
+          memory: '350Mi'
           cpu: '100m'
         limits:
-          memory: '256Mi'
+          memory: '350Mi'
           cpu: '250m'
     # Prod environment
     - environment: prod
