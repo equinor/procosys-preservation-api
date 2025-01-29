@@ -35,6 +35,7 @@ spec:
         AzureAd__ClientId: '67b2f053-30bf-4ffc-9206-ef57f631efcb'
         AzureAd__MainApiScope: 'api://dd38f169-bccf-4d0e-a4ad-d830893cfa75/.default'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
+        ServiceBus__Enable: 'true'
         Swagger__Audience: 'api://67b2f053-30bf-4ffc-9206-ef57f631efcb'
         UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
       monitoring: false
@@ -57,6 +58,7 @@ spec:
         AzureAd__ClientId: 'f23bcde6-d6a4-42d5-94fa-96b184968cf7'
         AzureAd__MainApiScope: 'api://2d0ed80f-3013-422d-b8bd-2b8ac70b2ce1/.default'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
+        ServiceBus__Enable: 'true'
         Swagger__Audience: 'api://f23bcde6-d6a4-42d5-94fa-96b184968cf7'
         UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
       monitoring: false
@@ -80,6 +82,7 @@ spec:
         AzureAd__ClientId: '1eb50c54-e897-4216-93d0-6ca86b0cf681'
         AzureAd__MainApiScope: 'api://47641c40-0135-459b-8ab4-459e68dc8d08/.default'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
+        ServiceBus__Enable: 'true'
         Swagger__Audience: 'api://1eb50c54-e897-4216-93d0-6ca86b0cf681'
         UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
       monitoring: false
