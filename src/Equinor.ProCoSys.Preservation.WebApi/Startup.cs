@@ -284,7 +284,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                 c.OAuthClientId(Configuration["Swagger:ClientId"]);
                 c.OAuthAppName("ProCoSys Preservation API V1");
                 c.OAuthScopeSeparator(" ");
-                c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", Configuration["API:Audience"] } });
+                c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", Configuration["Swagger:Audience"] } });
             });
 
             app.UseHttpsRedirection();
