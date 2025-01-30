@@ -57,11 +57,6 @@ public static class SwaggerConfig
         });
 
         builder.Services.AddFluentValidationRulesToSwagger();
-
-        builder.Services.AddResponseCompression(options =>
-        {
-            options.EnableForHttps = true;
-        });
     }
     
     public static void UseCompletionSwagger(this IApplicationBuilder app, IConfiguration configuration)

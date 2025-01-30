@@ -1,29 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Text.Json.Serialization;
 using Azure.Core;
 using Azure.Identity;
 using Equinor.ProCoSys.Auth;
+using Equinor.ProCoSys.Completion.WebApi.DIModules;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Query;
-using Equinor.ProCoSys.Preservation.WebApi;
 using Equinor.ProCoSys.Preservation.WebApi.DiModules;
 using Equinor.ProCoSys.Preservation.WebApi.DIModules;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
-using Swashbuckle.AspNetCore.SwaggerUI;
-
-const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,25 +44,7 @@ builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration)
     .EnableTokenAcquisitionToCallDownstreamApi()
     .AddInMemoryTokenCaches();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(AllowAllOriginsCorsPolicy,
-        builder =>
-        {
-            builder
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-        });
-});
-
-builder.Services.AddMvc(config =>
-{
-    var policy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-    config.Filters.Add(new AuthorizeFilter(policy));
-}).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.ConfigureHttp();
 
 // this to solve "Multipart body length limit exceeded"
 builder.Services.Configure<FormOptions>(x =>
@@ -120,7 +96,7 @@ if (builder.Environment.IsDevelopment())
 
 app.UseGlobalExceptionHandling();
 
-app.UseCors(AllowAllOriginsCorsPolicy);
+app.UseCors(HttpConfig.AllowAllOriginsCorsPolicy);
 
 app.UseCompletionSwagger(builder.Configuration);
 
