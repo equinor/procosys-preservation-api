@@ -1,54 +1,146 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Text.Json.Serialization;
+using Azure.Core;
 using Azure.Identity;
-using Microsoft.AspNetCore.Hosting;
+using Equinor.ProCoSys.Auth;
+using Equinor.ProCoSys.Preservation.Command;
+using Equinor.ProCoSys.Preservation.Query;
+using Equinor.ProCoSys.Preservation.WebApi;
+using Equinor.ProCoSys.Preservation.WebApi.DiModules;
+using Equinor.ProCoSys.Preservation.WebApi.DIModules;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureAppConfiguration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Web;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace Equinor.ProCoSys.Preservation.WebApi
+const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
+
+var builder = WebApplication.CreateBuilder(args);
+
+var devOnLocalhost = builder.Configuration.IsDevOnLocalhost();
+
+// ChainedTokenCredential iterates through each credential passed to it in order, when running locally
+// DefaultAzureCredential will probably fail locally, so if an instance of Azure Cli is logged in, those credentials will be used
+// If those credentials fail, the next credentials will be those of the current user logged into the local Visual Studio Instance
+// which is also the most likely case
+TokenCredential credential = devOnLocalhost switch
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            var host = CreateHostBuilder(args).Build();
-            host.Run();
-        }
+    true
+        => new ChainedTokenCredential(
+            new AzureCliCredential(),
+            new VisualStudioCredential(),
+            new DefaultAzureCredential()
+        ),
+    false => new DefaultAzureCredential()
+};
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, config) =>
-                {
-                    var settings = config.Build();
-                    var azConfig = settings.GetValue<bool>("Application:UseAzureAppConfiguration");
-                    if (azConfig)
-                    {
-                        config.AddAzureAppConfiguration(options =>
-                        {
-                            var connectionString = settings["ConnectionStrings:AppConfig"];
-                            options.Connect(connectionString)
-                                .ConfigureKeyVault(kv =>
-                                {
-                                    kv.SetCredential(new ManagedIdentityCredential());
-                                })
-                                .Select(KeyFilter.Any)
-                                .Select(KeyFilter.Any, context.HostingEnvironment.EnvironmentName)
-                                .ConfigureRefresh(refreshOptions =>
-                                {
-                                    refreshOptions.Register("Sentinel", true);
-                                    refreshOptions.SetRefreshInterval(TimeSpan.FromSeconds(30));
-                                });
-                        });
-                    }
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseKestrel(options =>
-                    {
-                        options.AddServerHeader = false;
-                        options.Limits.MaxRequestBodySize = null;
-                    });
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+builder.Services.AddSingleton(credential);
+
+builder.Services.AddMicrosoftIdentityWebApiAuthentication(builder.Configuration)
+    .EnableTokenAcquisitionToCallDownstreamApi()
+    .AddInMemoryTokenCaches();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AllowAllOriginsCorsPolicy,
+        builder =>
+        {
+            builder
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
+});
+
+builder.Services.AddMvc(config =>
+{
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    config.Filters.Add(new AuthorizeFilter(policy));
+}).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+// this to solve "Multipart body length limit exceeded"
+builder.Services.Configure<FormOptions>(x =>
+{
+    x.ValueLengthLimit = int.MaxValue;
+    x.MultipartBodyLengthLimit = int.MaxValue;
+});
+
+if (builder.Configuration.GetValue<bool>("Application:UseAzureAppConfiguration"))
+{
+    builder.Services.AddAzureAppConfiguration();
 }
+
+builder.Services.AddFluentValidationAutoValidation(fv =>
+{
+    fv.DisableDataAnnotationsValidation = true;
+});
+
+builder.Services.AddValidatorsFromAssemblies(new List<Assembly>
+{
+    typeof(IQueryMarker).GetTypeInfo().Assembly,
+    typeof(ICommandMarker).GetTypeInfo().Assembly,
+});
+
+builder.ConfigureSwagger();
+
+builder.Services.AddPcsAuthIntegration();
+
+builder.Services.AddApplicationInsightsTelemetry(options =>
+{
+    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
+});
+builder.Services.AddMediatrModules();
+builder.Services.AddApplicationModules(builder.Configuration);
+
+builder.ConfigureServiceBus();
+
+var app = builder.Build();
+
+if (builder.Configuration.GetValue<bool>("Application:UseAzureAppConfiguration"))
+{
+    app.UseAzureAppConfiguration();
+}
+
+if (builder.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
+app.UseGlobalExceptionHandling();
+
+app.UseCors(AllowAllOriginsCorsPolicy);
+
+app.UseCompletionSwagger(builder.Configuration);
+
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+// order of adding middelwares are crucial. Some depend that other has been run in advance
+app.UseCurrentPlant();
+app.UseAuthentication();
+app.UseCurrentUser();
+app.UsePersonValidator();
+app.UsePlantValidator();
+app.UseVerifyOidInDb();
+app.UseAuthorization();
+            
+app.UseResponseCompression();
+
+app.MapControllers();
+
+app.Run();
+
+public partial class Program;

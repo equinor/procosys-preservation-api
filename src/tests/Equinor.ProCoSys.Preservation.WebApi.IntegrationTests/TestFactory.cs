@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Azure.Core;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Auth.Permission;
 using Equinor.ProCoSys.Auth.Person;
@@ -27,12 +26,11 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Moq;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
-    public sealed class TestFactory : WebApplicationFactory<Startup>
+    public sealed class TestFactory : WebApplicationFactory<Program>
     {
         private readonly string _libraryAdminOid = "00000000-0000-0000-0000-000000000001";
         private readonly string _plannerOid = "00000000-0000-0000-0000-000000000002";
@@ -309,7 +307,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             config.AddInMemoryCollection(connectionStrings);
         }
 
-        private void CreateAuthenticatedHttpClients(WebApplicationFactory<Startup> webHostBuilder)
+        private void CreateAuthenticatedHttpClients(WebApplicationFactory<Program> webHostBuilder)
         {
             foreach (var testUser in _testUsers.Values)
             {
