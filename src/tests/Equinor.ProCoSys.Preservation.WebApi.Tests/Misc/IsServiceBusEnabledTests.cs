@@ -15,8 +15,9 @@ public class IsServiceBusEnabledTests
     [DataRow("true", "true", "Development", true)]
     [DataRow("true", "false", "Production", true)]
     [DataRow("true", "false", "Development", false)]
-    [DataRow("false", "false", "Production", false)]
     [DataRow("false", "true", "Production", false)]
+    [DataRow("false", "true", "Development", false)]
+    [DataRow("false", "false", "Production", false)]
     [DataRow("false", "false", "Development", false)]
     public void IsServiceBusEnabled_ShouldGiveExpectedIndicationForConfiguration(string enable, string enableInDevelopment, string environment, bool expected)
     {
