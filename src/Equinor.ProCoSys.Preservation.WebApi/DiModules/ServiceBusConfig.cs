@@ -3,7 +3,6 @@ using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DiModules;
 
@@ -35,22 +34,7 @@ public static class ServiceBusConfig
             //WHEN SET TO TRUE, MESSAGES ARE READ FROM DEAD LETTER QUEUE INSTEAD OF NORMAL QUEUE
             .WithReadFromDeadLetterQueue(builder.Configuration.GetValue("ServiceBus:ReadFromDeadLetterQueue", defaultValue: false)));
     }
-    
-    private static bool IsServiceBusEnabled(this WebApplicationBuilder builder)
-    {
-        if (!builder.Configuration.GetValue<bool>("ServiceBus:Enable"))
-        {
-            return false;
-        }
 
-        if (!builder.Environment.IsDevelopment())
-        {
-            return true;
-        }
-
-        return builder.Configuration.GetValue<bool>("ServiceBus:EnableInDevelopment");
-    }
-    
     private static string GetLeaderElectorUri(this WebApplicationBuilder builder)
     {
         var uriString = Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE");
