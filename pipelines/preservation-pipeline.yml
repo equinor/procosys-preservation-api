@@ -106,7 +106,7 @@ stages:
 - stage: DeployDev
   displayName: 'Deploy to dev'
   dependsOn: 'Build' 
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) 
+  condition: succeeded() # TODO: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master')) 
   variables:
     envName: 'dev'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
