@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Equinor.ProCoSys.Common.Misc;
+﻿using System.Collections.Generic;
 using Equinor.ProCoSys.Preservation.WebApi.DiModules;
 using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc;
 
@@ -14,18 +11,22 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc;
 public class IsServiceBusEnabledTests
 {
     [TestMethod]
+    [DataRow("true", "true", "Production", true)]
+    [DataRow("true", "true", "Development", true)]
     [DataRow("true", "false", "Production", true)]
+    [DataRow("true", "false", "Development", false)]
     [DataRow("false", "false", "Production", false)]
     [DataRow("false", "true", "Production", false)]
-    [DataRow("true", "false", "Development", false)]
-    [DataRow("true", "true", "Development", true)]
     [DataRow("false", "false", "Development", false)]
-    public void IsServiceBusEnabled_ShouldGiveExpectedIndicationGivenConfiguration(string enable, string enableInDevelopment, string environment, bool expected)
+    public void IsServiceBusEnabled_ShouldGiveExpectedIndicationForConfiguration(string enable, string enableInDevelopment, string environment, bool expected)
     {
         // Arrange
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
+        var options = new WebApplicationOptions
+        {
+            EnvironmentName = environment
+        };
         
-        var builder = WebApplication.CreateBuilder();
+        var builder = WebApplication.CreateBuilder(options);
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
         {
             { "ServiceBus:Enable", enable },
