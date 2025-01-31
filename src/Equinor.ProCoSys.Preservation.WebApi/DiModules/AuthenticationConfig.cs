@@ -25,7 +25,7 @@ public static class AuthenticationConfig
                     new VisualStudioCredential(),
                     new DefaultAzureCredential()
                 ),
-            false => new DefaultAzureCredential()
+            false => new WorkloadIdentityCredential()
         };
 
         builder.Services.AddSingleton(credential);
