@@ -1,7 +1,7 @@
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
-  name: procosys-preservation-api
+  name: preservation-identity-test # TODO rename to: procosys-preservation-api
 spec:
   environments:
   - name: dev
@@ -14,7 +14,7 @@ spec:
   #---------- 
 
   - name: backend
-    image: procosys.azurecr.io/preservation/api:{imageTagName}
+    image: procosys.azurecr.io/preservation-poc/api:{imageTagName} # TODO remove -poc
     ports:
     - name: http
       port: 5000
@@ -26,20 +26,18 @@ spec:
     - environment: dev
       identity:
         azure:
-          clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb
+          clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb # MI: 7f865cc1-686e-4194-b84a-a4ca783aa7d7
       imageTagName: latest
       variables:
         Application__ObjectId: 'e4a7f1b1-da31-40ac-9089-d00afc2f1fa7'
         Application__UseAzureAppConfiguration: 'true'
         ASPNETCORE_ENVIRONMENT: 'Development'
-        AzureAd__ClientId: '67b2f053-30bf-4ffc-9206-ef57f631efcb'
-        AzureAd__MainApiScope: 'api://dd38f169-bccf-4d0e-a4ad-d830893cfa75/.default'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         MainApi__BaseAddress: 'https://pcs-main-api-dev.azurewebsites.net/api/'
+        MainApi__MainApiScope: 'api://dd38f169-bccf-4d0e-a4ad-d830893cfa75/.default'
         ServiceBus__Enable: 'true'
         Swagger__Audience: 'api://67b2f053-30bf-4ffc-9206-ef57f631efcb'
         Swagger__ClientId: '97505617-302f-409a-a37e-7ca859b5b56c'
-        UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
       monitoring: false
       resources:
         requests:
@@ -52,19 +50,17 @@ spec:
     - environment: test
       identity:
         azure:
-          clientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7
+          clientId: 5b113da5-2d1e-4dc7-97fc-d5d97f90f934 # f23bcde6-d6a4-42d5-94fa-96b184968cf7
       variables:
         Application__ObjectId: 'a0ff0648-043e-49fd-ac69-5a8d9af932c6'
         Application__UseAzureAppConfiguration: 'true'
         ASPNETCORE_ENVIRONMENT: 'Test'
-        AzureAd__ClientId: 'f23bcde6-d6a4-42d5-94fa-96b184968cf7'
-        AzureAd__MainApiScope: 'api://2d0ed80f-3013-422d-b8bd-2b8ac70b2ce1/.default'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         MainApi__BaseAddress: 'https://procosyswebapitest.equinor.com/api/'
+        MainApi__MainApiScope: 'api://2d0ed80f-3013-422d-b8bd-2b8ac70b2ce1/.default'
         ServiceBus__Enable: 'true'
         Swagger__Audience: 'api://f23bcde6-d6a4-42d5-94fa-96b184968cf7'
         Swagger__ClientId: '3c391792-dbea-446e-bb2c-a7bda2fe40dd'
-        UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
       monitoring: false
       replicas: 2
       resources:
@@ -78,19 +74,17 @@ spec:
     - environment: prod
       identity:
         azure:
-          clientId: 1eb50c54-e897-4216-93d0-6ca86b0cf681
+          clientId: 26102272-d98c-4d00-846e-7eace9f49738 # 1eb50c54-e897-4216-93d0-6ca86b0cf681
       variables:
         Application__ObjectId: 'd28c8b2a-2a2a-4fc1-97c6-49c3e601a3e3'
         Application__UseAzureAppConfiguration: 'true'
         ASPNETCORE_ENVIRONMENT: 'Prod'
-        AzureAd__ClientId: '1eb50c54-e897-4216-93d0-6ca86b0cf681'
-        AzureAd__MainApiScope: 'api://47641c40-0135-459b-8ab4-459e68dc8d08/.default'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         MainApi__BaseAddress: 'https://procosyswebapi.equinor.com/api/'
+        MainApi__MainApiScope: 'api://47641c40-0135-459b-8ab4-459e68dc8d08/.default'
         ServiceBus__Enable: 'true'
         Swagger__Audience: 'api://1eb50c54-e897-4216-93d0-6ca86b0cf681'
         Swagger__ClientId: '42f01d41-df15-426f-8332-bf58d7274964'
-        UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
       monitoring: false
       replicas: 3
       resources:
