@@ -31,6 +31,7 @@ spec:
       variables:
         Application__ObjectId: 'e4a7f1b1-da31-40ac-9089-d00afc2f1fa7'
         Application__UseAzureAppConfiguration: 'true'
+        AzureAd__ClientId: '67b2f053-30bf-4ffc-9206-ef57f631efcb'
         ASPNETCORE_ENVIRONMENT: 'Development'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         MainApi__BaseAddress: 'https://pcs-main-api-dev.azurewebsites.net/api/'
@@ -54,6 +55,7 @@ spec:
       variables:
         Application__ObjectId: 'a0ff0648-043e-49fd-ac69-5a8d9af932c6'
         Application__UseAzureAppConfiguration: 'true'
+        AzureAd__ClientId: '5b113da5-2d1e-4dc7-97fc-d5d97f90f934'
         ASPNETCORE_ENVIRONMENT: 'Test'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         MainApi__BaseAddress: 'https://procosyswebapitest.equinor.com/api/'
@@ -78,6 +80,7 @@ spec:
       variables:
         Application__ObjectId: 'd28c8b2a-2a2a-4fc1-97c6-49c3e601a3e3'
         Application__UseAzureAppConfiguration: 'true'
+        AzureAd__ClientId: '26102272-d98c-4d00-846e-7eace9f49738'
         ASPNETCORE_ENVIRONMENT: 'Prod'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         MainApi__BaseAddress: 'https://procosyswebapi.equinor.com/api/'
