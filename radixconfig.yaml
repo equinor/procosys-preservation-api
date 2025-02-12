@@ -1,7 +1,7 @@
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
-  name: preservation-identity-test # TODO rename to: procosys-preservation-api
+  name: preservation-identity-test
 spec:
   environments:
   - name: dev
@@ -14,7 +14,7 @@ spec:
   #---------- 
 
   - name: backend
-    image: procosys.azurecr.io/preservation-poc/api:{imageTagName} # TODO remove -poc
+    image: procosys.azurecr.io/preservation/api:{imageTagName}
     ports:
     - name: http
       port: 5000
@@ -26,7 +26,7 @@ spec:
     - environment: dev
       identity:
         azure:
-          clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb # MI: 7f865cc1-686e-4194-b84a-a4ca783aa7d7
+          clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb
       imageTagName: latest
       variables:
         Application__ObjectId: 'e4a7f1b1-da31-40ac-9089-d00afc2f1fa7'
@@ -52,7 +52,7 @@ spec:
     - environment: test
       identity:
         azure:
-          clientId: 5b113da5-2d1e-4dc7-97fc-d5d97f90f934 # f23bcde6-d6a4-42d5-94fa-96b184968cf7
+          clientId: 5b113da5-2d1e-4dc7-97fc-d5d97f90f934
       variables:
         Application__ObjectId: 'a0ff0648-043e-49fd-ac69-5a8d9af932c6'
         Application__UseAzureAppConfiguration: 'true'
@@ -78,7 +78,7 @@ spec:
     - environment: prod
       identity:
         azure:
-          clientId: 26102272-d98c-4d00-846e-7eace9f49738 # 1eb50c54-e897-4216-93d0-6ca86b0cf681
+          clientId: 26102272-d98c-4d00-846e-7eace9f49738
       variables:
         Application__ObjectId: 'd28c8b2a-2a2a-4fc1-97c6-49c3e601a3e3'
         Application__UseAzureAppConfiguration: 'true'
