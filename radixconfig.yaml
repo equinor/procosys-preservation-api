@@ -31,7 +31,8 @@ spec:
       variables:
         Application__ObjectId: 'e4a7f1b1-da31-40ac-9089-d00afc2f1fa7'
         Application__UseAzureAppConfiguration: 'true'
-        AzureAd__ClientId: '67b2f053-30bf-4ffc-9206-ef57f631efcb'
+        AzureAd__ClientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb
+        AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
         ASPNETCORE_ENVIRONMENT: 'Development'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         MainApi__BaseAddress: 'https://pcs-main-api-dev.azurewebsites.net/api/'
