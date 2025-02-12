@@ -40,6 +40,7 @@ spec:
         ServiceBus__Enable: 'true'
         Swagger__Audience: 'api://67b2f053-30bf-4ffc-9206-ef57f631efcb'
         Swagger__ClientId: '97505617-302f-409a-a37e-7ca859b5b56c'
+        UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
       monitoring: false
       resources:
         requests:
@@ -65,6 +66,7 @@ spec:
         ServiceBus__Enable: 'true'
         Swagger__Audience: 'api://f23bcde6-d6a4-42d5-94fa-96b184968cf7'
         Swagger__ClientId: '3c391792-dbea-446e-bb2c-a7bda2fe40dd'
+        UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
       monitoring: false
       replicas: 2
       resources:
@@ -91,6 +93,7 @@ spec:
         ServiceBus__Enable: 'true'
         Swagger__Audience: 'api://1eb50c54-e897-4216-93d0-6ca86b0cf681'
         Swagger__ClientId: '42f01d41-df15-426f-8332-bf58d7274964'
+        UseAzureAppConfiguration: 'true' #TODO 1064: Remove this once all environments are using Application__UseAzureAppConfiguration
       monitoring: false
       replicas: 3
       resources:
