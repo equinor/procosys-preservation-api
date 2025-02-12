@@ -52,11 +52,11 @@ spec:
     - environment: test
       identity:
         azure:
-          clientId: 5b113da5-2d1e-4dc7-97fc-d5d97f90f934
+          clientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7
       variables:
         Application__ObjectId: 'a0ff0648-043e-49fd-ac69-5a8d9af932c6'
         Application__UseAzureAppConfiguration: 'true'
-        AzureAd__ClientId: 5b113da5-2d1e-4dc7-97fc-d5d97f90f934
+        AzureAd__ClientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7
         AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
         ASPNETCORE_ENVIRONMENT: 'Test'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
@@ -78,11 +78,11 @@ spec:
     - environment: prod
       identity:
         azure:
-          clientId: 26102272-d98c-4d00-846e-7eace9f49738
+          clientId: 1eb50c54-e897-4216-93d0-6ca86b0cf681
       variables:
         Application__ObjectId: 'd28c8b2a-2a2a-4fc1-97c6-49c3e601a3e3'
         Application__UseAzureAppConfiguration: 'true'
-        AzureAd__ClientId: 26102272-d98c-4d00-846e-7eace9f49738
+        AzureAd__ClientId: 1eb50c54-e897-4216-93d0-6ca86b0cf681
         AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
         ASPNETCORE_ENVIRONMENT: 'Prod'
         LEADERELECTOR_SERVICE: http://leader-elector:3003
