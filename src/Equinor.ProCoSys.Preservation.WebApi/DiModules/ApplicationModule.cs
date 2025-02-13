@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
         public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
-            services.Configure<MainApiAuthenticatorOptions>(configuration.GetSection("AzureAd"));
+            services.Configure<MainApiAuthenticatorOptions>(configuration.GetSection("MainApi"));
             services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
 
