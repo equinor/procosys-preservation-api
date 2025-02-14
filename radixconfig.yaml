@@ -20,7 +20,7 @@ spec:
       port: 5000
     publicPort: http
     secrets:
-    - CONNECTIONSTRINGS__APPCONFIG
+    - CONNECTIONSTRINGS__APPCONFIG #TODO 1073: Remove this once all environments are using federated credentials
     environmentConfig:
     # Development environment
     - environment: dev
