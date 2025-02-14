@@ -29,7 +29,8 @@ spec:
           clientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb
       imageTagName: latest
       variables:
-        Application__ObjectId: 'e4a7f1b1-da31-40ac-9089-d00afc2f1fa7'
+        Application__AppConfigurationUrl: https://pcs-pres-non-prod-config.azconfig.io
+        Application__ObjectId: e4a7f1b1-da31-40ac-9089-d00afc2f1fa7
         Application__UseAzureAppConfiguration: 'true'
         AzureAd__ClientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb
         AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
@@ -55,7 +56,8 @@ spec:
         azure:
           clientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7
       variables:
-        Application__ObjectId: 'a0ff0648-043e-49fd-ac69-5a8d9af932c6'
+        Application__AppConfigurationUrl: https://pcs-pres-non-prod-config.azconfig.io
+        Application__ObjectId: a0ff0648-043e-49fd-ac69-5a8d9af932c6
         Application__UseAzureAppConfiguration: 'true'
         AzureAd__ClientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7
         AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
@@ -82,6 +84,7 @@ spec:
         azure:
           clientId: 1eb50c54-e897-4216-93d0-6ca86b0cf681
       variables:
+        Application__AppConfigurationUrl: https://pcs-pres-prod-config.azconfig.io
         Application__ObjectId: 'd28c8b2a-2a2a-4fc1-97c6-49c3e601a3e3'
         Application__UseAzureAppConfiguration: 'true'
         AzureAd__ClientId: 1eb50c54-e897-4216-93d0-6ca86b0cf681
