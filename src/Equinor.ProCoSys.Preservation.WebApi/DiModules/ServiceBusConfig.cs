@@ -18,9 +18,6 @@ public static class ServiceBusConfig
 
         var serviceBusNamespace = builder.GetConfig<string>("ServiceBus:Namespace");
         
-        // Env variable used in radix. Configuration is added for easier use locally
-        // Url will be validated during startup of service bus integration and give a
-        // Uri exception if invalid.
         builder.Services.AddPcsServiceBusIntegration(options => options
             .UseCredentialAuthentication($"{serviceBusNamespace}.servicebus.windows.net", credential)
             .WithLeaderElector(builder.GetLeaderElectorUri())
