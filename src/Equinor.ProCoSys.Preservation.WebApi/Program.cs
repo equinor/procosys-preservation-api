@@ -64,7 +64,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
 builder.Services.AddMediatrModules();
 builder.Services.AddApplicationModules(builder.Configuration);
 
-builder.ConfigureServiceBus();
+builder.ConfigureServiceBus(credential);
 
 var app = builder.Build();
 

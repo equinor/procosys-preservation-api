@@ -1,4 +1,5 @@
 ﻿using System;
+using Azure.Core;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Builder;
@@ -8,18 +9,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DiModules;
 
 public static class ServiceBusConfig
 {
-    public static void ConfigureServiceBus(this WebApplicationBuilder builder)
+    public static void ConfigureServiceBus(this WebApplicationBuilder builder, TokenCredential credential)
     {
         if (!builder.IsServiceBusEnabled())
         {
             return;
         }
+
+        var serviceBusNamespace = builder.GetConfig<string>("ServiceBus:Namespace");
         
         // Env variable used in radix. Configuration is added for easier use locally
         // Url will be validated during startup of service bus integration and give a
         // Uri exception if invalid.
         builder.Services.AddPcsServiceBusIntegration(options => options
-            .UseBusConnection(builder.GetConfig<string>("ConnectionStrings:ServiceBus"))
+            .UseCredentialAuthentication($"{serviceBusNamespace}.servicebus.windows.net", credential)
             .WithLeaderElector(builder.GetLeaderElectorUri())
             .WithRenewLeaseInterval(builder.GetConfig<int>("ServiceBus:LeaderElectorRenewLeaseInterval"))
             .WithSubscription(PcsTopicConstants.Tag, "preservation_tag")
