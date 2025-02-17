@@ -18,9 +18,9 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.ConfigureAuthentication();
+builder.ConfigureAuthentication(out var credential);
 
-builder.ConfigureAzureAppConfig();
+builder.ConfigureAzureAppConfig(credential);
 
 builder.WebHost.UseKestrel(options =>
 {
