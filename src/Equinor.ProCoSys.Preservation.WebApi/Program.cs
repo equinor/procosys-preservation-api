@@ -62,7 +62,7 @@ builder.Services.AddApplicationInsightsTelemetry(options =>
     options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
 });
 builder.Services.AddMediatrModules();
-builder.Services.AddApplicationModules(builder.Configuration);
+builder.Services.AddApplicationModules(builder.Configuration, credential);
 
 builder.ConfigureServiceBus(credential);
 

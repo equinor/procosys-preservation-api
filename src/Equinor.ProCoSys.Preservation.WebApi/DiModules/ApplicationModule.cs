@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
+using Azure.Core;
 using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Auth.Caches;
@@ -60,12 +62,13 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
     public static class ApplicationModule
     {
-        public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
+        public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration, TokenCredential credential)
         {
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
             services.Configure<MainApiAuthenticatorOptions>(configuration.GetSection("MainApi"));
@@ -93,8 +96,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
                 x.UsingAzureServiceBus((context, cfg) =>
                 {
-                    var connectionString = configuration.GetConnectionString("ServiceBus");
-                    cfg.Host(connectionString);
+                    var serviceBusNamespace = configuration.GetConfig<string>("ServiceBus:Namespace");
+                    
+                    var serviceUri = new Uri($"sb://{serviceBusNamespace}.servicebus.windows.net/");
+                    cfg.Host(serviceUri, host =>
+                    {
+                        host.TokenCredential = credential;
+                    });
 
                     cfg.OverrideDefaultBusEndpointQueueName("preservationfamtransferqueue");
                     cfg.UseRawJsonSerializer();
