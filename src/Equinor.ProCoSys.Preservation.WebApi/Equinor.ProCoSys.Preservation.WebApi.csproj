@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <UserSecretsId>e47b709b-5c82-4a61-935c-823e332955f9</UserSecretsId>
@@ -7,14 +6,12 @@
     <ApplicationInsightsResourceId>/subscriptions/343069e3-ceaa-4256-bdc8-49fa3646c1c4/resourcegroups/pcs-preservation-dev-rg/providers/microsoft.insights/components/pcs-pres-dev-ai</ApplicationInsightsResourceId>
     <ApplicationInsightsAnnotationResourceId>/subscriptions/343069e3-ceaa-4256-bdc8-49fa3646c1c4/resourcegroups/pcs-preservation-dev-rg/providers/microsoft.insights/components/pcs-pres-dev-ai</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="Excel\CarlitoFont\Carlito-Bold.ttf" />
     <None Remove="Excel\CarlitoFont\Carlito-BoldItalic.ttf" />
     <None Remove="Excel\CarlitoFont\Carlito-Italic.ttf" />
     <None Remove="Excel\CarlitoFont\Carlito-Regular.ttf" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="Excel\CarlitoFont\Carlito-Bold.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -29,7 +26,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Azure.Identity" Version="1.13.2" />
     <PackageReference Include="ClosedXML" Version="0.104.2" />
@@ -60,7 +56,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Command\Equinor.ProCoSys.Preservation.Command.csproj" />
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Domain\Equinor.ProCoSys.Preservation.Domain.csproj" />
@@ -68,19 +63,15 @@
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.MainApi\Equinor.ProCoSys.Preservation.MainApi.csproj" />
     <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Query\Equinor.ProCoSys.Preservation.Query.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <WCFMetadata Include="Connected Services" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Excel\CarlitoFont\SIL Open Font License.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="Authentication\" />
   </ItemGroup>
-
 </Project>
