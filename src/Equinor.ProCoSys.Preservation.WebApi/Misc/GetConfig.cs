@@ -6,7 +6,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Misc;
 
 public static class GetConfigExtension
 {
-    public static T GetConfig<T>(this WebApplicationBuilder builder, string configKey) => builder.Configuration.GetValue<T>(configKey);
+    public static T GetConfig<T>(this WebApplicationBuilder builder, string configKey) => builder.Configuration.GetConfig<T>(configKey);
 
     public static T GetConfig<T>(this IConfiguration configuration, string configKey)
     {
