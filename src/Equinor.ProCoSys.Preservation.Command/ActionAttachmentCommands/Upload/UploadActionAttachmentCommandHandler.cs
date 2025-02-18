@@ -58,7 +58,8 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload
             await _azureBlobService.UploadAsync(
                 _blobStorageOptions.Value.BlobContainer,
                 fullBlobPath, 
-                request.Content, 
+                request.Content,
+                "application/octet-stream",
                 request.OverwriteIfExists, 
                 cancellationToken);
 

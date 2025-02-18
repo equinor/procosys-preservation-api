@@ -56,7 +56,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Upload
             await _azureBlobService.UploadAsync(
                 _blobStorageOptions.Value.BlobContainer,
                 fullBlobPath, 
-                request.Content, 
+                request.Content,
+                "application/octet-stream",
                 request.OverwriteIfExists, 
                 cancellationToken);
 
