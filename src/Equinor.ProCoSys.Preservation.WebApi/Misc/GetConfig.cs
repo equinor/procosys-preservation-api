@@ -13,7 +13,7 @@ public static class GetConfigExtension
         var value = configuration.GetValue<T>(configKey);
         if(value is null)
         {
-            throw new Exception($"Missing configuration for {configKey}");
+            throw new ArgumentException($"Missing configuration for {configKey}");
         }
 
         return value;
