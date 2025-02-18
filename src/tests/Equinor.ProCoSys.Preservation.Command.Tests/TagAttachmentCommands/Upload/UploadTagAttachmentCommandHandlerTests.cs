@@ -136,7 +136,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
                     _blobContainer,
                     p,
                     It.IsAny<Stream>(),
-                    null,
+                    "application/octet-stream",
                     _commandWithoutOverwrite.OverwriteIfExists, 
                     default), Times.Once);
         }

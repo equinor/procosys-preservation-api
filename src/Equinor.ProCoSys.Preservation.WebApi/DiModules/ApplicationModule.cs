@@ -51,6 +51,7 @@ using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
+using Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Excel;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
@@ -116,6 +117,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             // TimedSynchronization WAS WRITTEN TO RUN A ONETIME TRANSFORMATION WHEN WE INTRODUCED ProCoSysGuid
             // WE KEEP THE CODE ... MAYBE WE WANT TO DO SIMILAR STUFF LATER
             // services.AddHostedService<TimedSynchronization>();
+            
+            // Singleton - Created the first time they are requested
+            services.AddSingleton<IUserDelegationProvider, UserDelegationProvider>();
 
             services.AddHttpContextAccessor();
             services.AddHttpClient();

@@ -17,6 +17,7 @@ using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
+using Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -52,6 +53,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();
         public readonly Mock<IAreaApiService> AreaApiServiceMock = new Mock<IAreaApiService>();
         public readonly Mock<IAzureBlobService> BlobStorageMock = new Mock<IAzureBlobService>();
+        public readonly Mock<IUserDelegationProvider> UserDelegationProviderMock = new Mock<IUserDelegationProvider>();
         public readonly Mock<ITagApiService> TagApiServiceMock = new Mock<ITagApiService>();
         public readonly Mock<ITagFunctionApiService> TagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
 
@@ -161,6 +163,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 services.AddScoped(_ => DisciplineApiServiceMock.Object);
                 services.AddScoped(_ => AreaApiServiceMock.Object);
                 services.AddScoped(_ => BlobStorageMock.Object);
+                services.AddScoped(_ => UserDelegationProviderMock.Object);
             });
 
             builder.ConfigureServices(services =>

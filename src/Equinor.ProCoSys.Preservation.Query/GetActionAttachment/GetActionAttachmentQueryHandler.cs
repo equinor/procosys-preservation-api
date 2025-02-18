@@ -6,6 +6,7 @@ using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -14,26 +15,20 @@ using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggre
 
 namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachment
 {
-    public class GetActionAttachmentQueryHandler : IRequestHandler<GetActionAttachmentQuery, Result<Uri>>
+    public class GetActionAttachmentQueryHandler(
+        IReadOnlyContext context,
+        IAzureBlobService azureBlobService,
+        IUserDelegationProvider userDelegationProvider,
+        IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
+        : IRequestHandler<GetActionAttachmentQuery, Result<Uri>>
     {
-        private readonly IReadOnlyContext _context;
-        private readonly IAzureBlobService _azureBlobService;
-        private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
-
-        public GetActionAttachmentQueryHandler(IReadOnlyContext context, IAzureBlobService azureBlobService, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
-        {
-            _context = context;
-            _azureBlobService = azureBlobService;
-            _blobStorageOptions = blobStorageOptions;
-        }
-
         public async Task<Result<Uri>> Handle(GetActionAttachmentQuery request, CancellationToken cancellationToken)
         {
             var attachment = await
-                (from a in _context.QuerySet<ActionAttachment>()
+                (from a in context.QuerySet<ActionAttachment>()
                     // also join action to return null if request.ActionId not exists
-                 join action in _context.QuerySet<Action>() on request.ActionId equals action.Id
-                 join tag in _context.QuerySet<Tag>() on request.TagId equals tag.Id
+                 join action in context.QuerySet<Action>() on request.ActionId equals action.Id
+                 join tag in context.QuerySet<Tag>() on request.TagId equals tag.Id
                  where a.Id == request.AttachmentId
                  select a).SingleOrDefaultAsync(cancellationToken);
 
@@ -44,11 +39,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachment
 
             var now = TimeService.UtcNow;
             var fullBlobPath = attachment.GetFullBlobPath();
-            var uri = _azureBlobService.GetDownloadSasUri(
-                _blobStorageOptions.Value.BlobContainer,
+            var uri = azureBlobService.GetDownloadSasUri(
+                blobStorageOptions.Value.BlobContainer,
                 fullBlobPath,
-                new DateTimeOffset(now.AddMinutes(_blobStorageOptions.Value.BlobClockSkewMinutes * -1)),
-                new DateTimeOffset(now.AddMinutes(_blobStorageOptions.Value.BlobClockSkewMinutes)));
+                new DateTimeOffset(now.AddMinutes(blobStorageOptions.Value.BlobClockSkewMinutes * -1)),
+                new DateTimeOffset(now.AddMinutes(blobStorageOptions.Value.BlobClockSkewMinutes)),
+                userDelegationProvider.GetUserDelegationKey());
             return new SuccessResult<Uri>(uri);
         }
     }

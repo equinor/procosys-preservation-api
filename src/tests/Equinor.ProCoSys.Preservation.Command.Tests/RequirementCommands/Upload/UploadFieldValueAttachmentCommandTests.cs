@@ -136,7 +136,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
                 _blobContainer,
                 p, 
                 It.IsAny<Stream>(),
-                null,
+                "application/octet-stream",
                 true, 
                 default), Times.Once);
         }
@@ -158,7 +158,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
                 _blobContainer,
                 It.IsAny<string>(),
                 It.IsAny<Stream>(),
-                null,
+                "application/octet-stream",
                 true,
                 default), Times.Once);
         }
