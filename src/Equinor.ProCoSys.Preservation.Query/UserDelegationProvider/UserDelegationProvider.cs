@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 public class UserDelegationProvider : IUserDelegationProvider
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private UserDelegationKey? _userDelegationKeyCached;
+    private UserDelegationKey _userDelegationKeyCached;
     private DateTimeOffset? _expirationTime;
 
     public UserDelegationProvider(IOptionsMonitor<BlobStorageOptions> options, TokenCredential credential)
@@ -31,14 +31,24 @@ public class UserDelegationProvider : IUserDelegationProvider
         // expire, and then have it expire and be invalid as we are trying to use it.
         if (_userDelegationKeyCached == null || _expirationTime <= DateTimeOffset.UtcNow.AddHours(1))
         {
-            // Set to about 7 days in the future, because that is the maximum lifetime
-            // of a user delegation key.
-            var startsOn = DateTimeOffset.UtcNow.AddMinutes(-4);
-            var expiresOn = DateTimeOffset.UtcNow.AddDays(7).AddMinutes(-5);
-            _userDelegationKeyCached = _blobServiceClient.GetUserDelegationKey(startsOn, expiresOn);
-            _expirationTime = _userDelegationKeyCached.SignedExpiresOn;
+            UpdateCachedUserDelegationKey();
         }
 
         return _userDelegationKeyCached;
+    }
+
+    private void UpdateCachedUserDelegationKey()
+    {
+        // Set to about 7 days in the future, because that is the maximum lifetime
+        // of a user delegation key.
+        var startsOn = DateTimeOffset.UtcNow.AddMinutes(-4);
+        var expiresOn = DateTimeOffset.UtcNow.AddDays(7).AddMinutes(-5);
+        _userDelegationKeyCached = _blobServiceClient.GetUserDelegationKey(startsOn, expiresOn);
+        if (_userDelegationKeyCached == null)
+        {
+            return;
+        }
+        
+        _expirationTime = _userDelegationKeyCached.SignedExpiresOn;
     }
 }
