@@ -10,7 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'equinor'
-    ref: 'master'
+    ref: '1071-preservation-sql-migration-update'
         
 # Global variables for the pipeline
 variables:
