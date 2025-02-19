@@ -85,7 +85,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             {
                 var dataSource = configuration.GetConfig<string>("PreservationContext:DataSource");
                 var initialCatalog = configuration.GetConfig<string>("PreservationContext:InitialCatalog");
+                
+                // Test & pipeline configuration values. Needed for generating a connection string when not actually
+                // connecting to an external database.
                 var integratedSecurity = configuration.GetValue("PreservationContext:IntegratedSecurity", false);
+                var attachDbFilename = configuration.GetValue<string>("PreservationContext:AttachDBFilename", null);
                 
                 var connectionStringBuilder = new SqlConnectionStringBuilder
                 {
@@ -94,7 +98,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
                     IntegratedSecurity = integratedSecurity,
                 };
                 
-                var attachDbFilename = configuration.GetValue<string>("PreservationContext:AttachDBFilename", null);
                 if (!string.IsNullOrEmpty(attachDbFilename))
                 {
                     connectionStringBuilder.AttachDBFilename = attachDbFilename;
