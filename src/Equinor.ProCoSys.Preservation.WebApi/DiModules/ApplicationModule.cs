@@ -83,20 +83,31 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             services.AddDbContext<PreservationContext>(options =>
             {
-                var serverName = configuration.GetConfig<string>("PreservationContext:ServerName");
-                var databaseName = configuration.GetConfig<string>("PreservationContext:DatabaseName");
+                var dataSource = configuration.GetConfig<string>("PreservationContext:DataSource");
+                var initialCatalog = configuration.GetConfig<string>("PreservationContext:InitialCatalog");
+                var integratedSecurity = configuration.GetValue("PreservationContext:IntegratedSecurity", false);
                 
-                var connectionString = new SqlConnectionStringBuilder
+                var connectionStringBuilder = new SqlConnectionStringBuilder
                 {
-                    DataSource = $"{serverName}.database.windows.net",
-                    InitialCatalog = databaseName,
-                }.ConnectionString;
+                    DataSource = dataSource,
+                    InitialCatalog = initialCatalog,
+                    IntegratedSecurity = integratedSecurity,
+                };
                 
-                var connection = new SqlConnection(connectionString);
-                connection.AccessToken = credential.GetToken(
-                    new TokenRequestContext(new[] { "https://database.windows.net/.default" }),
-                    CancellationToken.None
-                ).Token;
+                var attachDbFilename = configuration.GetValue<string>("PreservationContext:AttachDBFilename", null);
+                if (!string.IsNullOrEmpty(attachDbFilename))
+                {
+                    connectionStringBuilder.AttachDBFilename = attachDbFilename;
+                }
+                
+                var connection = new SqlConnection(connectionStringBuilder.ConnectionString);
+                if (integratedSecurity is false)
+                {
+                    connection.AccessToken = credential.GetToken(
+                        new TokenRequestContext(new[] { "https://database.windows.net/.default" }),
+                        CancellationToken.None
+                    ).Token;
+                }
                 
                 options.UseSqlServer(connection);
             });
