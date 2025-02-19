@@ -7,6 +7,7 @@ using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -14,26 +15,17 @@ using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetHistoricalFieldValueAttachment
 {
-    public class GetHistoricalFieldValueAttachmentQueryHandler : IRequestHandler<GetHistoricalFieldValueAttachmentQuery, Result<Uri>>
+    public class GetHistoricalFieldValueAttachmentQueryHandler(
+        IReadOnlyContext context,
+        IAzureBlobService azureBlobService,
+        IUserDelegationProvider userDelegationProvider,
+        IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
+        : IRequestHandler<GetHistoricalFieldValueAttachmentQuery, Result<Uri>>
     {
-        private readonly IReadOnlyContext _context;
-        private readonly IAzureBlobService _azureBlobService;
-        private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
-
-        public GetHistoricalFieldValueAttachmentQueryHandler(
-            IReadOnlyContext context,
-            IAzureBlobService azureBlobService,
-            IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
-        {
-            _context = context;
-            _azureBlobService = azureBlobService;
-            _blobStorageOptions = blobStorageOptions;
-        }
-
         public async Task<Result<Uri>> Handle(GetHistoricalFieldValueAttachmentQuery request, CancellationToken cancellationToken)
         {
             var tag = await
-                (from t in _context.QuerySet<Tag>()
+                (from t in context.QuerySet<Tag>()
                         .Include(t => t.Requirements)
                         .ThenInclude(r => r.PreservationPeriods)
                         .ThenInclude(p => p.PreservationRecord)
@@ -76,8 +68,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetHistoricalFieldValueAttachment
             var fieldValue = preservationPeriod.FieldValues.ToList()[0];
 
             var attachment = await
-                (from a in _context.QuerySet<Attachment>()
-                 join t in _context.QuerySet<Tag>() on request.TagId equals t.Id
+                (from a in context.QuerySet<Attachment>()
+                 join t in context.QuerySet<Tag>() on request.TagId equals t.Id
                  where a.Id == fieldValue.FieldValueAttachment.Id
                  select a).SingleOrDefaultAsync(cancellationToken);
 
@@ -88,11 +80,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetHistoricalFieldValueAttachment
 
             var now = TimeService.UtcNow;
             var fullBlobPath = attachment.GetFullBlobPath();
-            var uri = _azureBlobService.GetDownloadSasUri(
-                _blobStorageOptions.Value.BlobContainer,
+            var uri = azureBlobService.GetDownloadSasUri(
+                blobStorageOptions.Value.BlobContainer,
                 fullBlobPath,
-                new DateTimeOffset(now.AddMinutes(_blobStorageOptions.Value.BlobClockSkewMinutes * -1)),
-                new DateTimeOffset(now.AddMinutes(_blobStorageOptions.Value.BlobClockSkewMinutes)));
+                new DateTimeOffset(now.AddMinutes(blobStorageOptions.Value.BlobClockSkewMinutes * -1)),
+                new DateTimeOffset(now.AddMinutes(blobStorageOptions.Value.BlobClockSkewMinutes)),
+                userDelegationProvider.GetUserDelegationKey());
             return new SuccessResult<Uri>(uri);
         }
     }

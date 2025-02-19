@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs.Models;
 using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetFieldValueAttachment;
+using Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,6 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
     public class GetFieldValueAttachmentQueryHandlerTests : ReadOnlyTestsBase
     {
         private Mock<IAzureBlobService> _blobStorageMock;
+        private Mock<IUserDelegationProvider> _userDelegationProviderMock;
         private Uri _uri;
         private string BlobContainer = "bc";
         private Mock<IOptionsSnapshot<BlobStorageOptions>> _blobStorageOptionsMock;
@@ -80,8 +83,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
                     BlobContainer,
                     fullBlobPath, 
                     It.IsAny<DateTimeOffset>(), 
-                    It.IsAny<DateTimeOffset>()))
+                    It.IsAny<DateTimeOffset>(),
+                    It.IsAny<UserDelegationKey>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>()))
                 .Returns(_uri);
+            
+            _userDelegationProviderMock = new Mock<IUserDelegationProvider>();
+            _userDelegationProviderMock.Setup(u => u.GetUserDelegationKey()).Returns(new Mock<UserDelegationKey>().Object);
         }
 
         [TestMethod]
@@ -90,7 +99,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             var query = new GetFieldValueAttachmentQuery(_tagId, _requirementId, _attachmentFieldId);
-            var dut = new GetFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _blobStorageOptionsMock.Object);
+            var dut = new GetFieldValueAttachmentQueryHandler(
+                context,
+                _blobStorageMock.Object,
+                _userDelegationProviderMock.Object,
+                _blobStorageOptionsMock.Object);
 
             var result = await dut.Handle(query, default);
 
@@ -106,7 +119,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             var query = new GetFieldValueAttachmentQuery(0, _requirementId, _attachmentFieldId);
-            var dut = new GetFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _blobStorageOptionsMock.Object);
+            var dut = new GetFieldValueAttachmentQueryHandler(
+                context,
+                _blobStorageMock.Object,
+                _userDelegationProviderMock.Object,
+                _blobStorageOptionsMock.Object);
 
             var result = await dut.Handle(query, default);
 

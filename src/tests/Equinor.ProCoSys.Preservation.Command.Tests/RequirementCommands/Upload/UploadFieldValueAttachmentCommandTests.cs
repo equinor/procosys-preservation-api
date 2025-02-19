@@ -135,7 +135,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
             _blobStorageMock.Verify(b => b.UploadAsync(
                 _blobContainer,
                 p, 
-                It.IsAny<Stream>(), 
+                It.IsAny<Stream>(),
+                "application/octet-stream",
                 true, 
                 default), Times.Once);
         }
@@ -153,7 +154,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
 
             // Assert
             _blobStorageMock.Verify(b => b.DeleteAsync(_blobContainer, p, default), Times.Once);
-            _blobStorageMock.Verify(b => b.UploadAsync(_blobContainer, It.IsAny<string>(), It.IsAny<Stream>(), true, default), Times.Once);
+            _blobStorageMock.Verify(b => b.UploadAsync(
+                _blobContainer,
+                It.IsAny<string>(),
+                It.IsAny<Stream>(),
+                "application/octet-stream",
+                true,
+                default), Times.Once);
         }
 
         [TestMethod]
