@@ -109,7 +109,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
                     ).Token;
                 }
                 
-                options.UseSqlServer(connection);
+                options.UseSqlServer(connection, 
+                    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
             });
 
             services.AddMassTransit(x =>
