@@ -1,7 +1,7 @@
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
-  name: procosys-preservation-api
+  name: preservation-identity-test # TODO rename to: procosys-preservation-api
 spec:
   environments:
   - name: dev
@@ -14,7 +14,7 @@ spec:
   #---------- 
 
   - name: backend
-    image: procosys.azurecr.io/preservation/api:{imageTagName}
+    image: procosys.azurecr.io/preservation-poc/api:{imageTagName} # TODO remove -poc
     ports:
     - name: http
       port: 5000
