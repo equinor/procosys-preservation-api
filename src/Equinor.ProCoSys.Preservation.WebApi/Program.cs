@@ -66,6 +66,11 @@ builder.Services.AddApplicationModules(builder.Configuration, credential);
 
 builder.ConfigureServiceBus(credential);
 
+if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("MigrateDatabase"))
+{
+    builder.Services.AddHostedService<DatabaseMigrator>();
+}
+
 var app = builder.Build();
 
 if (builder.Configuration.GetValue<bool>("Application:UseAzureAppConfiguration"))
