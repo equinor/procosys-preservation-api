@@ -36,11 +36,10 @@ spec:
         AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
         ASPNETCORE_ENVIRONMENT: 'Development'
         BlobStorage__AccountName: pcsdevsa
+        ConnectionStrings__PreservationContext: Server=pcs-dev-sqlserver.database.windows.net;Authentication=Active Directory Workload Identity;Encrypt=True;Database=pcs-pres-dev-db
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         MainApi__BaseAddress: 'https://pcs-main-api-dev.azurewebsites.net/api/'
         MainApi__MainApiScope: 'api://dd38f169-bccf-4d0e-a4ad-d830893cfa75/.default'
-        PreservationContext__DataSource: pcs-dev-sqlserver.database.windows.net
-        PreservationContext__InitialCatalog: pcs-pres-dev-db
         ServiceBus__Enable: 'true'
         ServiceBus__Namespace: sb-pcs-dev
         Swagger__Audience: 'api://67b2f053-30bf-4ffc-9206-ef57f631efcb'
@@ -66,12 +65,11 @@ spec:
         AzureAd__ClientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7 # App registration: ProCoSys - Preservation Api - Test
         AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
         ASPNETCORE_ENVIRONMENT: 'Test'
+        ConnectionStrings__PreservationContext: Server=pcs-test-sqlserver.database.windows.net;Authentication=Active Directory Workload Identity;Encrypt=True;Database=pcs-pres-test-db
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         BlobStorage__AccountName: pcstestsa
         MainApi__BaseAddress: 'https://procosyswebapitest.equinor.com/api/'
         MainApi__MainApiScope: 'api://2d0ed80f-3013-422d-b8bd-2b8ac70b2ce1/.default'
-        PreservationContext__DataSource: pcs-test-sqlserver.database.windows.net
-        PreservationContext__InitialCatalog: pcs-pres-test-db
         ServiceBus__Enable: 'true'
         ServiceBus__Namespace: sb-pcs-test
         Swagger__Audience: 'api://f23bcde6-d6a4-42d5-94fa-96b184968cf7'
@@ -99,11 +97,10 @@ spec:
         AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
         ASPNETCORE_ENVIRONMENT: 'Prod'
         BlobStorage__AccountName: pcsprodsa
+        ConnectionStrings__PreservationContext: Server=pcs-prod-sqlserver.database.windows.net;Authentication=Active Directory Workload Identity;Encrypt=True;Database=pcs-pres-prod-db
         LEADERELECTOR_SERVICE: http://leader-elector:3003
         MainApi__BaseAddress: 'https://procosyswebapi.equinor.com/api/'
         MainApi__MainApiScope: 'api://47641c40-0135-459b-8ab4-459e68dc8d08/.default'
-        PreservationContext__ServerName: pcs-prod-sqlserver.database.windows.net
-        PreservationContext__InitialCatalog: pcs-pres-prod-db
         ServiceBus__Enable: 'true'
         ServiceBus__Namespace: sb-pcs-prod
         Swagger__Audience: 'api://1eb50c54-e897-4216-93d0-6ca86b0cf681'

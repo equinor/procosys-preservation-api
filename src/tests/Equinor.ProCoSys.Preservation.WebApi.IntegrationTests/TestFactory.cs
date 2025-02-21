@@ -39,6 +39,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         private readonly string _hackerOid = "00000000-0000-0000-0000-000000000666";
         private readonly string _crossPlantAppOid = "00000000-0000-0000-0000-000000000888";
         private readonly string _integrationTestEnvironment = "IntegrationTests";
+        private readonly string _connectionString;
         private readonly string _configPath;
         private readonly Dictionary<UserType, ITestUser> _testUsers = new Dictionary<UserType, ITestUser>();
         private readonly List<Action> _teardownList = new List<Action>();
@@ -94,6 +95,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             SeededData = new Dictionary<string, KnownTestData>();
 
             var projectDir = Directory.GetCurrentDirectory();
+            _connectionString = GetTestDbConnectionString(projectDir);
             _configPath = Path.Combine(projectDir, "appsettings.json");
 
             SetupTestUsers();
@@ -216,10 +218,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 dbContext.Database.EnsureDeleted();
             });
 
-        private static string GetTestAttachDbFilename(string projectDir)
+        private string GetTestDbConnectionString(string projectDir)
         {
-            const string DbName = "IntegrationTestsPresDB";
-            return Path.Combine(projectDir, $"{DbName}.mdf");
+            var dbName = "IntegrationTestsPresDB";
+            var dbPath = Path.Combine(projectDir, $"{dbName}.mdf");
+            
+            // Set Initial Catalog to be able to delete database!
+            return $"Server=(LocalDB)\\MSSQLLocalDB;Initial Catalog={dbName};Integrated Security=true;AttachDbFileName={dbPath}";
         }
         
         private void SetupPermissionMock(string plant, ITestUser testUser)
@@ -282,16 +287,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
             var projectDir = Directory.GetCurrentDirectory();
 
-            var testConfig = new Dictionary<string, string>
+            var connectionStrings = new Dictionary<string, string>
             {
-                {"ConnectionStrings:ServiceBus", "Endpoint=sb://mock.service.bus.test.connection.string/;SharedAccessKeyName=ListenSend;SharedAccessKey=abcdefghijklmnopqrstuvwxyz123456789abcdefgh="},
-                {"PreservationContext:AttachDBFilename", GetTestAttachDbFilename(projectDir)},
-                {"PreservationContext:DataSource", "(LocalDB)\\MSSQLLocalDB"},
-                {"PreservationContext:IntegratedSecurity", "true"},
-                {"PreservationContext:InitialCatalog", "IntegrationTestsPresDB"},
+                {"ConnectionStrings:PreservationContext", GetTestDbConnectionString(projectDir)},
+                {"ConnectionStrings:ServiceBus", "Endpoint=sb://mock.service.bus.test.connection.string/;SharedAccessKeyName=ListenSend;SharedAccessKey=abcdefghijklmnopqrstuvwxyz123456789abcdefgh="}
             };
 
-            config.AddInMemoryCollection(testConfig);
+            config.AddInMemoryCollection(connectionStrings);
         }
 
         private void CreateAuthenticatedHttpClients(WebApplicationFactory<Program> webHostBuilder)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json.Serialization;
-using System.Threading;
 using Azure.Core;
 using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Auth.Authorization;
@@ -61,7 +60,6 @@ using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
 using MassTransit;
 using MediatR;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -84,36 +82,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             services.AddDbContext<PreservationContext>(options =>
             {
-                var dataSource = configuration.GetConfig<string>("PreservationContext:DataSource");
-                var initialCatalog = configuration.GetConfig<string>("PreservationContext:InitialCatalog");
-                
-                // Test & pipeline configuration values. Needed for generating a connection string when not actually
-                // connecting to an external database.
-                var integratedSecurity = configuration.GetValue("PreservationContext:IntegratedSecurity", false);
-                var attachDbFilename = configuration.GetValue<string>("PreservationContext:AttachDBFilename", null);
-                
-                var connectionStringBuilder = new SqlConnectionStringBuilder
-                {
-                    DataSource = dataSource,
-                    InitialCatalog = initialCatalog,
-                    IntegratedSecurity = integratedSecurity,
-                };
-                
-                if (!string.IsNullOrEmpty(attachDbFilename))
-                {
-                    connectionStringBuilder.AttachDBFilename = attachDbFilename;
-                }
-                
-                var connection = new SqlConnection(connectionStringBuilder.ConnectionString);
-                if (integratedSecurity is false)
-                {
-                    connection.AccessToken = credential.GetToken(
-                        new TokenRequestContext(new[] { "https://database.windows.net/.default" }),
-                        CancellationToken.None
-                    ).Token;
-                }
-                
-                options.UseSqlServer(connection, 
+                var connectionString = configuration.GetConnectionString("PreservationContext");
+                options.UseSqlServer(connectionString,
                     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
             });
 
