@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Equinor.ProCoSys.Preservation.WebApi.DiModules;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
@@ -16,59 +17,60 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests;
 [TestClass]
 public class SetupDatabaseTests
 {
+    private Mock<IHostApplicationBuilder> _builderMock;
+    private Mock<IWebHostEnvironment> _environmentMock;
+    
+    private IList<ServiceDescriptor> _services;
+    private IEnumerable<Type> ServiceTypes => _services.Select(s => s.ImplementationType);
+    
+    [TestInitialize]
+    public void TestInitialize()
+    {
+        _builderMock = new Mock<IHostApplicationBuilder>();
+        
+        _environmentMock = new Mock<IWebHostEnvironment>();
+        _builderMock.Setup(b => b.Environment).Returns(_environmentMock.Object);
+        
+        _services = new List<ServiceDescriptor>();
+        var servicesMock = new Mock<IServiceCollection>();
+        servicesMock.Setup(s => s.Add(It.IsAny<ServiceDescriptor>())).Callback<ServiceDescriptor>(sd => _services.Add(sd));
+        _builderMock.Setup(b => b.Services).Returns(servicesMock.Object);
+    }
+    
     [TestMethod]
     public void ConfigureDatabase_ShouldNotAddServices_WhenNotInDevelopment()
     {
         // Arrange
-        var builderMock = new Mock<IHostApplicationBuilder>();
-        
-        var environmentMock = new Mock<IWebHostEnvironment>();
-        environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Production);
-        builderMock.Setup(b => b.Environment).Returns(environmentMock.Object);
+        _environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Production);
         
         var configuration = new ConfigurationManager();
         configuration["MigrateDatabase"] = "true";
         configuration["SeedDummyData"] = "true";
-        builderMock.Setup(b => b.Configuration).Returns(configuration);
+        _builderMock.Setup(b => b.Configuration).Returns(configuration);
         
-        var services = new List<ServiceDescriptor>();
-        var servicesMock = new Mock<IServiceCollection>();
-        servicesMock.Setup(s => s.Add(It.IsAny<ServiceDescriptor>())).Callback<ServiceDescriptor>(sd => services.Add(sd));
-        builderMock.Setup(b => b.Services).Returns(servicesMock.Object);
-
         // Act
-        builderMock.Object.ConfigureDatabase();
+        _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        services.Should().BeEmpty();
+        ServiceTypes.Should().BeEmpty();
     }
     
     [TestMethod]
     public void ConfigureDatabase_ShouldAddServices_WhenInDevelopmentAndConfigurationsAreFalse()
     {
         // Arrange
-        var builderMock = new Mock<IHostApplicationBuilder>();
-        
-        var environmentMock = new Mock<IWebHostEnvironment>();
-        environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
-        builderMock.Setup(b => b.Environment).Returns(environmentMock.Object);
+        _environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
         
         var configuration = new ConfigurationManager();
         configuration["MigrateDatabase"] = "false";
         configuration["SeedDummyData"] = "false";
-        builderMock.Setup(b => b.Configuration).Returns(configuration);
+        _builderMock.Setup(b => b.Configuration).Returns(configuration);
         
-        var services = new List<ServiceDescriptor>();
-        var servicesMock = new Mock<IServiceCollection>();
-        servicesMock.Setup(s => s.Add(It.IsAny<ServiceDescriptor>())).Callback<ServiceDescriptor>(sd => services.Add(sd));
-        builderMock.Setup(b => b.Services).Returns(servicesMock.Object);
-
         // Act
-        builderMock.Object.ConfigureDatabase();
-        var serviceTypes = services.Select(s => s.ImplementationType);
+        _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        services.Should().BeEmpty();
+        ServiceTypes.Should().BeEmpty();
     }
     
     
@@ -76,53 +78,33 @@ public class SetupDatabaseTests
     public void ConfigureDatabase_ShouldAddDatabaseMigratorService_WhenInDevelopmentAndConfigurationIsTrue()
     {
         // Arrange
-        var builderMock = new Mock<IHostApplicationBuilder>();
-        
-        var environmentMock = new Mock<IWebHostEnvironment>();
-        environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
-        builderMock.Setup(b => b.Environment).Returns(environmentMock.Object);
+        _environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
         
         var configuration = new ConfigurationManager();
         configuration["MigrateDatabase"] = "true";
-        builderMock.Setup(b => b.Configuration).Returns(configuration);
+        _builderMock.Setup(b => b.Configuration).Returns(configuration);
         
-        var services = new List<ServiceDescriptor>();
-        var servicesMock = new Mock<IServiceCollection>();
-        servicesMock.Setup(s => s.Add(It.IsAny<ServiceDescriptor>())).Callback<ServiceDescriptor>(sd => services.Add(sd));
-        builderMock.Setup(b => b.Services).Returns(servicesMock.Object);
-
         // Act
-        builderMock.Object.ConfigureDatabase();
-        var serviceTypes = services.Select(s => s.ImplementationType);
+        _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        serviceTypes.Should().Contain(typeof(DatabaseMigrator));
+        ServiceTypes.Should().Contain(typeof(DatabaseMigrator));
     }
     
     [TestMethod]
     public void ConfigureDatabase_ShouldAddSeederService_WhenInDevelopmentAndConfigurationIsTrue()
     {
         // Arrange
-        var builderMock = new Mock<IHostApplicationBuilder>();
-        
-        var environmentMock = new Mock<IWebHostEnvironment>();
-        environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
-        builderMock.Setup(b => b.Environment).Returns(environmentMock.Object);
+        _environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
         
         var configuration = new ConfigurationManager();
         configuration["SeedDummyData"] = "true";
-        builderMock.Setup(b => b.Configuration).Returns(configuration);
-        
-        var services = new List<ServiceDescriptor>();
-        var servicesMock = new Mock<IServiceCollection>();
-        servicesMock.Setup(s => s.Add(It.IsAny<ServiceDescriptor>())).Callback<ServiceDescriptor>(sd => services.Add(sd));
-        builderMock.Setup(b => b.Services).Returns(servicesMock.Object);
+        _builderMock.Setup(b => b.Configuration).Returns(configuration);
 
         // Act
-        builderMock.Object.ConfigureDatabase();
-        var serviceTypes = services.Select(s => s.ImplementationType);
+        _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        serviceTypes.Should().Contain(typeof(Seeder));
+        ServiceTypes.Should().Contain(typeof(Seeder));
     }
 }
