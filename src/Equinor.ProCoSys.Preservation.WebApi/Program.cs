@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using Equinor.ProCoSys.Auth;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Completion.WebApi.DIModules;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Query;
@@ -17,6 +18,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.ConfigureDatabase();
 
 builder.ConfigureAuthentication(out var credential);
 
@@ -80,6 +83,8 @@ if (builder.Configuration.GetValue<bool>("Application:UseAzureAppConfiguration")
 
 if (builder.Environment.IsDevelopment())
 {
+    DebugOptions.DebugEntityFrameworkInDevelopment = builder.Configuration.GetValue<bool>("DebugEntityFrameworkInDevelopment");
+    
     app.UseDeveloperExceptionPage();
 }
 
