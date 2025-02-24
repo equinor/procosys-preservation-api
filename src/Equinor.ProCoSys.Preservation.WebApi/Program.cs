@@ -57,10 +57,7 @@ builder.ConfigureSwagger();
 
 builder.Services.AddPcsAuthIntegration();
 
-builder.Services.AddApplicationInsightsTelemetry(options =>
-{
-    options.ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"];
-});
+builder.Services.ConfigureTelemetry(builder.Configuration, credential);
 builder.Services.AddMediatrModules();
 builder.Services.AddApplicationModules(builder.Configuration, credential);
 
