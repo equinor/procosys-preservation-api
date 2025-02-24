@@ -19,8 +19,6 @@ using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.ConfigureDatabase();
-
 builder.ConfigureAuthentication(out var credential);
 
 builder.ConfigureAzureAppConfig(credential);
@@ -69,10 +67,7 @@ builder.Services.AddApplicationModules(builder.Configuration, credential);
 
 builder.ConfigureServiceBus(credential);
 
-if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("MigrateDatabase"))
-{
-    builder.Services.AddHostedService<DatabaseMigrator>();
-}
+builder.ConfigureDatabase();
 
 var app = builder.Build();
 
