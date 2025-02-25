@@ -15,12 +15,12 @@ public static class SetupDatabase
             return;
         }
 
-        if (builder.Configuration.GetValue<bool>("MigrateDatabase"))
+        if (builder.Configuration.GetValue<bool>("Application:MigrateDatabase"))
         {
             builder.Services.AddHostedService<DatabaseMigrator>();
         }
 
-        if (builder.Configuration.GetValue<bool>("SeedDummyData"))
+        if (builder.Configuration.GetValue<bool>("Application:SeedDummyData"))
         {
             builder.Services.AddHostedService<Seeder>();
         }

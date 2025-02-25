@@ -62,8 +62,8 @@ builder.Services.ConfigureTelemetry(builder.Configuration, credential);
 builder.Services.AddMediatrModules();
 builder.Services.AddApplicationModules(builder.Configuration, credential);
 
+builder.ConfigureMassTransit(credential);
 builder.ConfigureServiceBus(credential);
-
 builder.ConfigureDatabase();
 
 var app = builder.Build();
@@ -75,7 +75,7 @@ if (builder.Configuration.GetValue<bool>("Application:UseAzureAppConfiguration")
 
 if (builder.Environment.IsDevelopment())
 {
-    DebugOptions.DebugEntityFrameworkInDevelopment = builder.Configuration.GetValue<bool>("DebugEntityFrameworkInDevelopment");
+    DebugOptions.DebugEntityFrameworkInDevelopment = builder.Configuration.GetValue<bool>("Application:DebugEntityFrameworkInDevelopment");
     
     app.UseDeveloperExceptionPage();
 }
