@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using Equinor.ProCoSys.Auth;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Completion.WebApi.DIModules;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Query;
@@ -66,10 +67,7 @@ builder.Services.AddApplicationModules(builder.Configuration, credential);
 
 builder.ConfigureServiceBus(credential);
 
-if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue<bool>("MigrateDatabase"))
-{
-    builder.Services.AddHostedService<DatabaseMigrator>();
-}
+builder.ConfigureDatabase();
 
 var app = builder.Build();
 
@@ -80,6 +78,8 @@ if (builder.Configuration.GetValue<bool>("Application:UseAzureAppConfiguration")
 
 if (builder.Environment.IsDevelopment())
 {
+    DebugOptions.DebugEntityFrameworkInDevelopment = builder.Configuration.GetValue<bool>("DebugEntityFrameworkInDevelopment");
+    
     app.UseDeveloperExceptionPage();
 }
 
