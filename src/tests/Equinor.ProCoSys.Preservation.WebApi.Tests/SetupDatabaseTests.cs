@@ -44,8 +44,8 @@ public class SetupDatabaseTests
         _environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Production);
         
         var configuration = new ConfigurationManager();
-        configuration["MigrateDatabase"] = "true";
-        configuration["SeedDummyData"] = "true";
+        configuration["Application:MigrateDatabase"] = "true";
+        configuration["Application:SeedDummyData"] = "true";
         _builderMock.Setup(b => b.Configuration).Returns(configuration);
         
         // Act
@@ -62,8 +62,8 @@ public class SetupDatabaseTests
         _environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
         
         var configuration = new ConfigurationManager();
-        configuration["MigrateDatabase"] = "false";
-        configuration["SeedDummyData"] = "false";
+        configuration["Application:MigrateDatabase"] = "false";
+        configuration["Application:SeedDummyData"] = "false";
         _builderMock.Setup(b => b.Configuration).Returns(configuration);
         
         // Act
@@ -81,7 +81,7 @@ public class SetupDatabaseTests
         _environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
         
         var configuration = new ConfigurationManager();
-        configuration["MigrateDatabase"] = "true";
+        configuration["Application:MigrateDatabase"] = "true";
         _builderMock.Setup(b => b.Configuration).Returns(configuration);
         
         // Act
@@ -98,7 +98,7 @@ public class SetupDatabaseTests
         _environmentMock.Setup(e => e.EnvironmentName).Returns(Environments.Development);
         
         var configuration = new ConfigurationManager();
-        configuration["SeedDummyData"] = "true";
+        configuration["Application:SeedDummyData"] = "true";
         _builderMock.Setup(b => b.Configuration).Returns(configuration);
 
         // Act

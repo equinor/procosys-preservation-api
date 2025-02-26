@@ -87,39 +87,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
                     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
             });
 
-            services.AddMassTransit(x =>
-            {
-                x.AddEntityFrameworkOutbox<PreservationContext>(o =>
-                {
-                    o.UseSqlServer();
-                    o.UseBusOutbox();
-                });
-
-                x.UsingAzureServiceBus((context, cfg) =>
-                {
-                    var serviceBusNamespace = configuration.GetConfig<string>("ServiceBus:Namespace");
-                    
-                    var serviceUri = new Uri($"sb://{serviceBusNamespace}.servicebus.windows.net/");
-                    cfg.Host(serviceUri, host =>
-                    {
-                        host.TokenCredential = credential;
-                    });
-
-                    cfg.OverrideDefaultBusEndpointQueueName("preservationfamtransferqueue");
-                    cfg.UseRawJsonSerializer();
-                    cfg.ConfigureJsonSerializerOptions(opts =>
-                    {
-                        opts.Converters.Add(new JsonStringEnumConverter());
-
-                        // Set it to null to use the default .NET naming convention (PascalCase)
-                        opts.PropertyNamingPolicy = null;
-                        return opts;
-                    });
-
-                    cfg.AutoStart = true;
-                });
-            });
-
             // Hosted services
 
             // TimedSynchronization WAS WRITTEN TO RUN A ONETIME TRANSFORMATION WHEN WE INTRODUCED ProCoSysGuid
