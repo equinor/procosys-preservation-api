@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids
     {
         private readonly ILogger<FillPCSGuidsCommand> _logger;
         private readonly IProjectRepository _projectRepository;
-        private readonly IProjectApiForUserService _projectApiService;
+        private readonly IProjectApiForApplicationService _projectApiService;
         private readonly IPlantProvider _plantProvider;
         private readonly IUnitOfWork _unitOfWork;
 
@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids
             ILogger<FillPCSGuidsCommand> logger,
             IPlantProvider plantProvider,
             IProjectRepository projectRepository,
-            IProjectApiForUserService projectApiService,
+            IProjectApiForApplicationService projectApiService,
             IUnitOfWork unitOfWork)
         {
             _logger = logger;
