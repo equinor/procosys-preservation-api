@@ -3,8 +3,8 @@ using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.MainApi.Project
 {
-    public class MainApiProjectForUserService(
+    public class ProjectApiForUserService(
         IMainApiClientForUser mainApiClient,
         IOptionsSnapshot<MainApiOptions> options)
-        : MainApiProjectService(mainApiClient, options), IMainApiProjectApiForUserService;
+        : ProjectApiService(mainApiClient, options), IProjectApiForUserService;
 }

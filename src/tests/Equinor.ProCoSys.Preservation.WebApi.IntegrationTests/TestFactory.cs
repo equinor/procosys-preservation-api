@@ -47,8 +47,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         private readonly Mock<IMeApiService> _meApiServiceMock = new Mock<IMeApiService>();
         private readonly Mock<IPersonApiService> _personApiServiceMock = new Mock<IPersonApiService>();
-        private readonly Mock<IMainApiProjectApiForApplicationService> _projectApiForApplicationServiceMock = new Mock<IMainApiProjectApiForApplicationService>();
-        private readonly Mock<IMainApiProjectApiForUserService> _projectApiServiceForUserMock = new Mock<IMainApiProjectApiForUserService>();
+        private readonly Mock<IProjectApiForApplicationService> _projectApiForApplicationServiceMock = new Mock<IProjectApiForApplicationService>();
+        private readonly Mock<IProjectApiForUserService> _projectApiServiceForUserMock = new Mock<IProjectApiForUserService>();
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock = new Mock<IPermissionApiService>();
         public readonly Mock<IResponsibleApiService> ResponsibleApiServiceMock = new Mock<IResponsibleApiService>();
         public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();

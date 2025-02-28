@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.MainApi.Project
 {
-    public abstract class MainApiProjectService(
+    public abstract class ProjectApiService(
         IApiClient mainApiClient,
         IOptionsSnapshot<MainApiOptions> options)
     {

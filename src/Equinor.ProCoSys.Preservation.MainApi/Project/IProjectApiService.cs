@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Equinor.ProCoSys.Preservation.MainApi.Project
 {
-    public interface IMainApiProjectApiService
+    public interface IProjectApiService
     {
         Task<ProCoSysProject> TryGetProjectAsync(string plant, string name, CancellationToken cancellationToken);
     }
