@@ -29,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
             _mainApiClient = new Mock<IMainApiClientForUser>();
 
             _result = new ProCoSysProject {Id = 1, Name = _name, Description = _description};
-            _dut = new MainApiProjectService(_mainApiClient.Object, _mainApiOptions.Object);
+            _dut = new MainApiProjectForUserService(_mainApiClient.Object, _mainApiOptions.Object);
         }
 
         [TestMethod]

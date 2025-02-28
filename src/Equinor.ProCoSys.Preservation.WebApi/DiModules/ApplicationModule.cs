@@ -279,6 +279,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IMeApiService, MainApiMeService>();
+            services.AddScoped<IMainApiProjectApiForApplicationService, MainApiProjectForApplicationService>();
             services.AddScoped<IMainApiProjectApiForUserService, MainApiProjectForUserService>();
             services.AddScoped<IAreaApiService, MainApiAreaService>();
             services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
