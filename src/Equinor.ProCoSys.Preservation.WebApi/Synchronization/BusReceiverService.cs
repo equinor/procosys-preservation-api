@@ -27,7 +27,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IProjectRepository _projectRepository;
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly ICurrentUserSetter _currentUserSetter;
-        private readonly IProjectApiService _projectApiService;
+        private readonly IMainApiProjectApiForUserService _mainApiProjectApiForUserService;
         private readonly ICertificateEventProcessorService _certificateEventProcessorService;
         private readonly Guid _preservationApiOid;
         private const string PreservationBusReceiverTelemetryEvent = "Preservation Bus Receiver";
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ITagFunctionRepository tagFunctionRepository,
             ICurrentUserSetter currentUserSetter,
             IOptionsSnapshot<ApplicationOptions> options,
-            IProjectApiService projectApiService,
+            IMainApiProjectApiForUserService mainApiProjectApiForUserService,
             ICertificateEventProcessorService certificateEventProcessorService)
         {
             _plantSetter = plantSetter;
@@ -50,7 +50,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _projectRepository = projectRepository;
             _tagFunctionRepository = tagFunctionRepository;
             _currentUserSetter = currentUserSetter;
-            _projectApiService = projectApiService;
+            _mainApiProjectApiForUserService = mainApiProjectApiForUserService;
             _certificateEventProcessorService = certificateEventProcessorService;
 
             _preservationApiOid = options.Value.ObjectId;
@@ -174,7 +174,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var projectToMoveTagInto = await _projectRepository.GetProjectWithTagsByNameAsync(projectName);
             if (projectToMoveTagInto == null)
             {
-                var pcsProject = await _projectApiService.TryGetProjectAsync(plant, projectName, cancellationToken);
+                var pcsProject = await _mainApiProjectApiForUserService.TryGetProjectAsync(plant, projectName, cancellationToken);
                 if (pcsProject == null)
                 {
                     throw new ArgumentException($"Unable to create local copy of {projectName}, not found.");

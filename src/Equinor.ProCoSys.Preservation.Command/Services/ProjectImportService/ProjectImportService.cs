@@ -9,16 +9,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Services.ProjectImportService;
 public class ProjectImportService : IProjectImportService
 {
     private readonly IProjectRepository _projectRepository;
-    private readonly IProjectApiService _projectApiService;
+    private readonly IMainApiProjectApiForUserService _mainApiProjectApiForUserService;
     private readonly IPlantProvider _plantProvider;
 
     public ProjectImportService(
         IProjectRepository projectRepository,
-        IProjectApiService projectApiService,
+        IMainApiProjectApiForUserService mainApiProjectApiForUserService,
         IPlantProvider plantProvider)
     {
         _projectRepository = projectRepository;
-        _projectApiService = projectApiService;
+        _mainApiProjectApiForUserService = mainApiProjectApiForUserService;
         _plantProvider = plantProvider;
     }
 
@@ -35,7 +35,7 @@ public class ProjectImportService : IProjectImportService
 
     private async Task<Project> TryGetProjectFromPCS(string projectName, CancellationToken cancellationToken)
     {
-        var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName, cancellationToken);
+        var mainProject = await _mainApiProjectApiForUserService.TryGetProjectAsync(_plantProvider.Plant, projectName, cancellationToken);
         if (mainProject == null)
         {
             return null;

@@ -7,13 +7,13 @@ using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.MainApi.Project
 {
-    public class MainApiProjectService : IProjectApiService
+    public class MainApiProjectForUserService : IMainApiProjectApiForUserService
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
         private readonly IMainApiClientForUser _mainApiClient;
 
-        public MainApiProjectService(IMainApiClientForUser mainApiClient,
+        public MainApiProjectForUserService(IMainApiClientForUser mainApiClient,
             IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
