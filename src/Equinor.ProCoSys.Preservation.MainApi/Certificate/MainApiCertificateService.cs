@@ -10,9 +10,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
-        private readonly IMainApiClientForUser _mainApiClient;
+        private readonly IMainApiClientForApplication _mainApiClient;
 
-        public MainApiCertificateService(IMainApiClientForUser mainApiClient,
+        public MainApiCertificateService(IMainApiClientForApplication mainApiClient,
             IOptionsSnapshot<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
