@@ -9,7 +9,7 @@ using Moq;
 namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
 {
     [TestClass]
-    public class MainApiProjectServiceTests
+    public class ProjectApiServiceTests
     {
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
@@ -17,7 +17,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
         private ProCoSysProject _result;
         private string _name = "NameA";
         private string _description = "Description1";
-        private MainApiProjectService _dut;
+        private ProjectApiService _dut;
 
         [TestInitialize]
         public void Setup()
@@ -29,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
             _mainApiClient = new Mock<IMainApiClientForUser>();
 
             _result = new ProCoSysProject {Id = 1, Name = _name, Description = _description};
-            _dut = new MainApiProjectService(_mainApiClient.Object, _mainApiOptions.Object);
+            _dut = new ProjectApiForUserService(_mainApiClient.Object, _mainApiOptions.Object);
         }
 
         [TestMethod]

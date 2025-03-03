@@ -27,7 +27,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IProjectRepository _projectRepository;
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly ICurrentUserSetter _currentUserSetter;
-        private readonly IProjectApiService _projectApiService;
+        private readonly IProjectApiForApplicationService _projectApiService;
         private readonly ICertificateEventProcessorService _certificateEventProcessorService;
         private readonly Guid _preservationApiOid;
         private const string PreservationBusReceiverTelemetryEvent = "Preservation Bus Receiver";
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ITagFunctionRepository tagFunctionRepository,
             ICurrentUserSetter currentUserSetter,
             IOptionsSnapshot<ApplicationOptions> options,
-            IProjectApiService projectApiService,
+            IProjectApiForApplicationService projectApiService,
             ICertificateEventProcessorService certificateEventProcessorService)
         {
             _plantSetter = plantSetter;

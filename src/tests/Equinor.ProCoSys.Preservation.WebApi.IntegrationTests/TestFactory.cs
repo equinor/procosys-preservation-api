@@ -47,7 +47,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         private readonly Mock<IMeApiService> _meApiServiceMock = new Mock<IMeApiService>();
         private readonly Mock<IPersonApiService> _personApiServiceMock = new Mock<IPersonApiService>();
-        private readonly Mock<IProjectApiService> _projectApiServiceMock = new Mock<IProjectApiService>();
+        private readonly Mock<IProjectApiForApplicationService> _projectApiForApplicationServiceMock = new Mock<IProjectApiForApplicationService>();
+        private readonly Mock<IProjectApiForUserService> _projectApiServiceForUserMock = new Mock<IProjectApiForUserService>();
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock = new Mock<IPermissionApiService>();
         public readonly Mock<IResponsibleApiService> ResponsibleApiServiceMock = new Mock<IResponsibleApiService>();
         public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();
@@ -155,7 +156,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
                 services.AddScoped(_ => _meApiServiceMock.Object);
                 services.AddScoped(_ => _personApiServiceMock.Object);
-                services.AddScoped(_ => _projectApiServiceMock.Object);
+                services.AddScoped(_ => _projectApiForApplicationServiceMock.Object);
+                services.AddScoped(_ => _projectApiServiceForUserMock.Object);
                 services.AddScoped(_ => TagApiServiceMock.Object);
                 services.AddScoped(_ => TagFunctionApiServiceMock.Object);
                 services.AddScoped(_ => _permissionApiServiceMock.Object);

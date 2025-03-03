@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Services.ProjectImportServ
 public class ProjectImportServiceTests
 {
     private Mock<IProjectRepository> _projectRepositoryMock;
-    private Mock<IProjectApiService> _projectApiServiceMock;
+    private Mock<IProjectApiForUserService> _projectApiServiceMock;
     private Mock<IPlantProvider> _plantProviderMock;
     private Command.Services.ProjectImportService.ProjectImportService _dut;
     private readonly string _plant = "TestPlant";
@@ -22,7 +22,7 @@ public class ProjectImportServiceTests
     public void Setup()
     {
         _projectRepositoryMock = new Mock<IProjectRepository>();
-        _projectApiServiceMock = new Mock<IProjectApiService>();
+        _projectApiServiceMock = new Mock<IProjectApiForUserService>();
         _plantProviderMock = new Mock<IPlantProvider>();
         _dut = new Command.Services.ProjectImportService.ProjectImportService(_projectRepositoryMock.Object,
             _projectApiServiceMock.Object, _plantProviderMock.Object);

@@ -138,7 +138,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var options = new Mock<IOptionsSnapshot<ApplicationOptions>>();
             options.Setup(s => s.Value).Returns(new ApplicationOptions{ObjectId = Guid.NewGuid()});
             _currentUserSetter = new Mock<ICurrentUserSetter>();
-            var projectApiService = new Mock<IProjectApiService>();
+            var projectApiService = new Mock<IProjectApiForApplicationService>();
             projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new ProCoSysProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
 
