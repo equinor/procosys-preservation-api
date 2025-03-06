@@ -41,7 +41,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries
                 let anyReqTypeFiltered = (from req in context.QuerySet<TagRequirement>()
                     join reqDef in context.QuerySet<RequirementDefinition>() on req.RequirementDefinitionId equals reqDef.Id
                     join reqType in context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals reqType.Id
-                    where EF.Property<int>(req, "TagId") == tag.Id && filter.RequirementTypeIds.Contains(reqType.Id)
+                    where
+                        !req.IsVoided &&
+                        EF.Property<int>(req, "TagId") == tag.Id &&
+                        filter.RequirementTypeIds.Contains(reqType.Id)
                     select reqType.Id).Any()
                 let anyOverdueActions = (from a in context.QuerySet<PreservationAction>()
                     where EF.Property<int>(a, "TagId") == tag.Id && !a.ClosedAtUtc.HasValue && a.DueTimeUtc < utcNow
