@@ -5,4 +5,5 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 
 public record TagDeleteEvents(
     TagDeleteEvent TagDeleteEvent,
-    IEnumerable<ActionDeleteEvent> ActionDeleteEvents);
+    IEnumerable<ActionDeleteEvent> ActionDeleteEvents,
+    IEnumerable<TagRequirementDeleteEvent> TagRequirementDeleteEvents);
