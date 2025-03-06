@@ -11,7 +11,6 @@ using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Converters;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Delete;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Command.Events;
