@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetTagsQueries;
 using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags;
@@ -781,6 +782,37 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 {
                     Assert.AreEqual(_testDataSet.ReqType1.Code, tag.Requirements.Single().RequirementTypeCode);
                 }
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetTagsQuery_ShouldExcludeVoidedRequirements_WhenFilterOnRequirements()
+        {
+            int newReqTypeId;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var newReqType = AddRequirementTypeWith1DefWithoutField(context, "XC", "XT", RequirementTypeIcon.Other);
+                var tags = context.Tags.Include(t => t.Requirements).ToList();
+                foreach (var tag in tags)
+                {
+                    var tagRequirement =
+                        new TagRequirement(_plantProvider.Plant, 1, newReqType.RequirementDefinitions.Single())
+                        {
+                            IsVoided = true
+                        };
+                    tag.AddRequirement(tagRequirement);
+                }
+                context.SaveChangesAsync().Wait();
+                newReqTypeId = newReqType.Id;
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var filter = new Filter { RequirementTypeIds = new List<int> { newReqTypeId } };
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
+                AssertCount(result.Data, 0);
             }
         }
 
