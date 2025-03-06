@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -24,7 +25,7 @@ public class DeleteTagRequirementEventHandler  : INotificationHandler<TagRequire
     {
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(notification.SourceGuid);
 
-        var deleteEvent = new TagRequirementDeleteEvent(notification.Entity.Guid, notification.Plant, project.Name);
+        var deleteEvent = CreateTagRequirementDeleteEventHelper.CreateEvent(notification.Entity, project);
         await _integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
     }
 }
