@@ -14,7 +14,7 @@ spec:
   #---------- 
 
   - name: backend
-    image: procosys.azurecr.io/preservation/api:{imageTagName}
+    image: procosys.azurecr.io/preservation-poc/api:{imageTagName} # TODO remove -poc
     ports:
     - name: http
       port: 5000
@@ -51,9 +51,9 @@ spec:
         limits:
           memory: '1024Mi'
           cpu: '250m'
-          
+
   - name: backend-tags
-    image: procosys.azurecr.io/preservation-poc/api:{imageTagName} # TODO remove -poc
+    image: procosys.azurecr.io/preservation-poc/api-tags:{imageTagName}
     ports:
       - name: http
         port: 5000

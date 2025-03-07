@@ -46,6 +46,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservati
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.ProCoSys.Preservation.MessageContracts", "Equinor.ProCoSys.Preservation.MessageContracts\Equinor.ProCoSys.Preservation.MessageContracts.csproj", "{EA356D1E-687D-4E77-9AC9-8D8230A25420}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.ProCoSys.Preservation.WebApi.Tags", "Equinor.ProCoSys.Preservation.WebApi.Tags\Equinor.ProCoSys.Preservation.WebApi.Tags.csproj", "{52F9A49F-E884-4D8B-90B2-D0457E6F7F39}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -112,6 +114,10 @@ Global
 		{EA356D1E-687D-4E77-9AC9-8D8230A25420}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA356D1E-687D-4E77-9AC9-8D8230A25420}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA356D1E-687D-4E77-9AC9-8D8230A25420}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52F9A49F-E884-4D8B-90B2-D0457E6F7F39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52F9A49F-E884-4D8B-90B2-D0457E6F7F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52F9A49F-E884-4D8B-90B2-D0457E6F7F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52F9A49F-E884-4D8B-90B2-D0457E6F7F39}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

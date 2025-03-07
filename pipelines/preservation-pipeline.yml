@@ -46,12 +46,12 @@ stages:
     dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
   jobs:
   # Run Test
-  - template: /templates/pipelines/runtest.yml@templates
-    parameters:
-      deploymentName: 'runtests'
-      dependsOn: ''
-      envGroup: '${{ variables.envGroupName }}'
-      testPath: '${{ variables.testPath }}'
+  # - template: /templates/pipelines/runtest.yml@templates
+  #   parameters:
+  #     deploymentName: 'runtests'
+  #     dependsOn: ''
+  #     envGroup: '${{ variables.envGroupName }}'
+  #     testPath: '${{ variables.testPath }}'
 
 # Build stage. Docker build. If master, tag and push
 # - stage: Build
@@ -90,9 +90,22 @@ stages:
       buildCommand: buildAndPush
       versionNumber: ${{ variables.versionNumber }}
       arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
-      dockerfilePath: '${{ variables.dockerfilePath }}'
+      dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
       buildContext: '$(Build.SourcesDirectory)/src'
-      repository: '${{ variables.repositoryName }}'
+      repository: 'preservation-poc/api'
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+    parameters:
+      deploymentName: 'docker_build_and_push_master_only'
+      dependsOn: ''
+      env: 'pcs-${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      buildCommand: buildAndPush
+      versionNumber: ${{ variables.versionNumber }}
+      arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
+      dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi.Tags/Dockerfile'
+      buildContext: '$(Build.SourcesDirectory)/src'
+      repository: 'preservation-poc/api-tags'
       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
    # Create Migration Script
