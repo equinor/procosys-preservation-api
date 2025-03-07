@@ -14,7 +14,7 @@ spec:
   #---------- 
 
   - name: backend
-    image: procosys.azurecr.io/preservation-poc/api:{imageTagName} # TODO remove -poc
+    image: procosys.azurecr.io/preservation/api:{imageTagName}
     ports:
     - name: http
       port: 5000
@@ -51,68 +51,40 @@ spec:
         limits:
           memory: '1024Mi'
           cpu: '250m'
-    # Test environment
-    - environment: test
-      identity:
-        azure:
-          clientId: 5b113da5-2d1e-4dc7-97fc-d5d97f90f934 # Managed identity: pcs-pres-test-mi
-      variables:
-        Application__AppConfigurationUrl: https://pcs-pres-non-prod-config.azconfig.io
-        Application__ObjectId: a0ff0648-043e-49fd-ac69-5a8d9af932c6 # Enterprise application: ProCoSys - Preservation Api - Test
-        Application__UseAzureAppConfiguration: 'true'
-        ApplicationInsights__ConnectionString: InstrumentationKey=78bf42f0-80a8-4fbd-8acf-79ca230f8f46;IngestionEndpoint=https://northeurope-3.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/
-        AzureAd__ClientId: f23bcde6-d6a4-42d5-94fa-96b184968cf7 # App registration: ProCoSys - Preservation Api - Test
-        AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
-        ASPNETCORE_ENVIRONMENT: 'Test'
-        ConnectionStrings__PreservationContext: Server=pcs-test-sqlserver.database.windows.net;Authentication=Active Directory Workload Identity;Encrypt=True;Database=pcs-pres-test-db
-        LEADERELECTOR_SERVICE: http://leader-elector:3003
-        BlobStorage__AccountName: pcstestsa
-        MainApi__BaseAddress: 'https://procosyswebapitest.equinor.com/api/'
-        MainApi__MainApiScope: 'api://2d0ed80f-3013-422d-b8bd-2b8ac70b2ce1/.default'
-        ServiceBus__Enable: 'true'
-        ServiceBus__Namespace: sb-pcs-test
-        Swagger__Audience: 'api://f23bcde6-d6a4-42d5-94fa-96b184968cf7'
-        Swagger__ClientId: '3c391792-dbea-446e-bb2c-a7bda2fe40dd'
-      monitoring: false
-      replicas: 2
-      resources:
-        requests:
-          memory: '1024Mi' #TODO 1064: Memory usage is at 99% usage when set to 256. If it also goes to 99% with 350, we have a leak. 
-          cpu: '100m'
-        limits:
-          memory: '1024Mi' #TODO 1064: Memory usage is at 99% usage when set to 256. If it also goes to 99% with 350, we have a leak. 
-          cpu: '250m'
-    # Prod environment
-    - environment: prod
-      identity:
-        azure:
-          clientId: 26102272-d98c-4d00-846e-7eace9f49738 # Managed identity: pcs-pres-prod-mi
-      variables:
-        Application__AppConfigurationUrl: https://pcs-pres-prod-config.azconfig.io
-        Application__ObjectId: d28c8b2a-2a2a-4fc1-97c6-49c3e601a3e3 # Enterprise application: ProCoSys - Preservation Api - Prod
-        Application__UseAzureAppConfiguration: 'true'
-        ApplicationInsights__ConnectionString: InstrumentationKey=ac2d4d67-9e6c-482e-96f3-f50c7c9ba72f;IngestionEndpoint=https://northeurope-3.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/
-        AzureAd__ClientId: 1eb50c54-e897-4216-93d0-6ca86b0cf681 # App registration: ProCoSys - Preservation Api - Prod
-        AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
-        ASPNETCORE_ENVIRONMENT: 'Prod'
-        BlobStorage__AccountName: pcsprodsa
-        ConnectionStrings__PreservationContext: Server=pcs-prod-sqlserver.database.windows.net;Authentication=Active Directory Workload Identity;Encrypt=True;Database=pcs-pres-prod-db
-        LEADERELECTOR_SERVICE: http://leader-elector:3003
-        MainApi__BaseAddress: 'https://procosyswebapi.equinor.com/api/'
-        MainApi__MainApiScope: 'api://47641c40-0135-459b-8ab4-459e68dc8d08/.default'
-        ServiceBus__Enable: 'true'
-        ServiceBus__Namespace: sb-pcs-prod
-        Swagger__Audience: 'api://1eb50c54-e897-4216-93d0-6ca86b0cf681'
-        Swagger__ClientId: '42f01d41-df15-426f-8332-bf58d7274964'
-      monitoring: false
-      replicas: 3
-      resources:
-        requests:
-          memory: '2048Mi'
-          cpu: '200m'
-        limits:
-          memory: '4096Mi'
-          cpu: '500m'
+          
+  - name: backend-tags
+    image: procosys.azurecr.io/preservation-poc/api:{imageTagName} # TODO remove -poc
+    ports:
+      - name: http
+        port: 5000
+    publicPort: http
+    environmentConfig:
+      # Development environment
+      - environment: dev
+        identity:
+          azure:
+            clientId: 943e3f0f-075e-41e7-a279-41f8374f6de6 # Managed identity: pcs-pres-dev-mi
+        imageTagName: latest
+        variables:
+          Application__AppConfigurationUrl: https://pcs-pres-non-prod-config.azconfig.io
+          Application__ObjectId: e4a7f1b1-da31-40ac-9089-d00afc2f1fa7 # Enterprise application: ProCoSys - Preservation Api - Dev
+          Application__UseAzureAppConfiguration: 'true'
+          ApplicationInsights__ConnectionString: InstrumentationKey=bd9bd4f0-6875-4ce6-86cb-56e09a72d68b;IngestionEndpoint=https://northeurope-3.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/
+          AzureAd__ClientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb # App registration: ProCoSys - Preservation Api - Dev
+          AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
+          ASPNETCORE_ENVIRONMENT: 'Development'
+          BlobStorage__AccountName: pcsdevsa
+          ConnectionStrings__PreservationContext: Server=pcs-dev-sqlserver.database.windows.net;Authentication=Active Directory Workload Identity;Encrypt=True;Database=pcs-pres-dev-db
+          LEADERELECTOR_SERVICE: http://leader-elector:3003
+          MainApi__BaseAddress: 'https://pcs-main-api-dev.azurewebsites.net/api/'
+          MainApi__MainApiScope: 'api://dd38f169-bccf-4d0e-a4ad-d830893cfa75/.default'
+          ServiceBus__Enable: 'true'
+          ServiceBus__Namespace: sb-pcs-dev
+          Swagger__Audience: 'api://67b2f053-30bf-4ffc-9206-ef57f631efcb'
+          Swagger__ClientId: '97505617-302f-409a-a37e-7ca859b5b56c'
+        monitoring: false
+        horizontalScaling:
+          maxReplicas: 6
 
   #--------------------
   # LeaderElector 
@@ -137,32 +109,7 @@ spec:
         limits:
           memory: '128Mi'
           cpu: '100m'
-    # Test environment
-    - environment: test
-      variables:
-        LEASE_TIME: 5
-      monitoring: false
-      replicas: 1
-      resources:
-        requests:
-          memory: '128Mi'
-          cpu: '100m'
-        limits:
-          memory: '128Mi'
-          cpu: '100m'
-    # Prod environment
-    - environment: prod
-      variables:
-         LEASE_TIME: 5
-      replicas: 1
-      resources:
-        requests:
-          memory: '128Mi'
-          cpu: '100m'
-        limits:
-          memory: '128Mi'
-          cpu: '100m'
-      monitoring: false
+
   #--------------------------------
   # External docker image registry
   #--------------------------------
