@@ -6,7 +6,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.
 
 public static class CreateTagRequirementDeleteEventHelper
 {
-    public static TagRequirementDeleteEvents CreateEvents(TagRequirement entity, Project project) // => new(entity.Guid, entity.Plant, project.Name);
+    public static TagRequirementDeleteEvents CreateEvents(TagRequirement entity, Project project)
     {
         var tagRequirementDeleteEvent = new TagRequirementDeleteEvent(entity.Guid, entity.Plant, project.Name);
         var preservationPeriodDeleteEvents = entity.PreservationPeriods.Select(p => new PreservationPeriodDeleteEvent(p.Guid, entity.Plant, project.Name));
