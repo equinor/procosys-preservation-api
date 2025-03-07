@@ -29,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagRequirementTypes
                             on EF.Property<int>(requirement, "TagId") equals tag.Id
                         join project in _context.QuerySet<Project>()
                             on EF.Property<int>(tag, "ProjectId") equals project.Id
-                 where project.Name == request.ProjectName
+                 where project.Name == request.ProjectName && !requirement.IsVoided
                  select new RequirementTypeDto(
                      requirementType.Id,
                      requirementType.Code,
