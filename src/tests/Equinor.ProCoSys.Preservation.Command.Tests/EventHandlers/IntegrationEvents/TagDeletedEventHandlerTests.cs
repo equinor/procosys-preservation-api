@@ -27,7 +27,11 @@ public class TagDeletedEventHandlerTests
         // Arrange
         var emptyTagDeleteEvent = new TagDeleteEvent(Guid.Empty, string.Empty, string.Empty);
         var emptyActionDeleteEvent = new ActionDeleteEvent(Guid.Empty, string.Empty, string.Empty);
-        var deleteEvents = new TagDeleteEvents(emptyTagDeleteEvent, [emptyActionDeleteEvent]);
+        var emptyTagRequirementDeleteEvent = new TagRequirementDeleteEvent(Guid.Empty, string.Empty, string.Empty);
+        var deleteEvents = new TagDeleteEvents(
+            emptyTagDeleteEvent,
+            [emptyActionDeleteEvent],
+            [emptyTagRequirementDeleteEvent]);
         
         var mockCreateEventHelper = new Mock<ICreateTagDeleteEventHelper>();
         mockCreateEventHelper.Setup(x => x.CreateEvents(It.IsAny<Tag>())).ReturnsAsync(deleteEvents);
@@ -49,7 +53,7 @@ public class TagDeletedEventHandlerTests
         var domainEvent = new DeletedEvent<Tag>(tag.Object);
 
         // Act
-        await _dut.Handle(domainEvent, default);
+        await _dut.Handle(domainEvent, CancellationToken.None);
         var types = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
@@ -64,10 +68,25 @@ public class TagDeletedEventHandlerTests
         var domainEvent = new DeletedEvent<Tag>(tag.Object);
 
         // Act
-        await _dut.Handle(domainEvent, default);
+        await _dut.Handle(domainEvent, CancellationToken.None);
         var types = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
         CollectionAssert.Contains(types, typeof(ActionDeleteEvent));
+    }
+    
+    [TestMethod]
+    public async Task Handle_ShouldTagRequirementDeleteEvent()
+    {
+        // Arrange
+        var tag = new Mock<Tag>();
+        var domainEvent = new DeletedEvent<Tag>(tag.Object);
+
+        // Act
+        await _dut.Handle(domainEvent, CancellationToken.None);
+        var types = _publishedEvents.Select(e => e.GetType()).ToList();
+
+        // Assert
+        CollectionAssert.Contains(types, typeof(TagRequirementDeleteEvent));
     }
 }
