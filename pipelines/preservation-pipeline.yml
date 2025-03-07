@@ -107,6 +107,19 @@ stages:
       buildContext: '$(Build.SourcesDirectory)/src'
       repository: 'preservation-poc/api-tags'
       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+    parameters:
+      deploymentName: 'docker_build_and_push_service_bus'
+      dependsOn: ''
+      env: 'pcs-${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      buildCommand: buildAndPush
+      versionNumber: ${{ variables.versionNumber }}
+      arguments: '--build-arg FEED_ACCESSTOKEN=$(VSS_NUGET_ACCESSTOKEN)'
+      dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi.ServiceBus/Dockerfile'
+      buildContext: '$(Build.SourcesDirectory)/src'
+      repository: 'preservation-poc/api-service-bus'
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
    # Create Migration Script
   #  - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates

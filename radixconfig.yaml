@@ -86,29 +86,37 @@ spec:
         horizontalScaling:
           maxReplicas: 6
 
-  #--------------------
-  # LeaderElector 
-  #--------------------
-  - name: leader-elector
-    image: procosys.azurecr.io/leader-elector:{imageTagName}
+  - name: backend-service-bus
+    image: procosys.azurecr.io/preservation-poc/api-service-bus:{imageTagName}
     ports:
-    - name: http
-      port: 3003
+      - name: http
+        port: 5000
+    publicPort: http
     environmentConfig:
-    # Development environment
-    - environment: dev
-      imageTagName: latest
-      variables:
-        LEASE_TIME: 5
-      monitoring: false
-      replicas: 1
-      resources:
-        requests:
-          memory: '128Mi'
-          cpu: '100m'
-        limits:
-          memory: '128Mi'
-          cpu: '100m'
+      # Development environment
+      - environment: dev
+        identity:
+          azure:
+            clientId: 943e3f0f-075e-41e7-a279-41f8374f6de6 # Managed identity: pcs-pres-dev-mi
+        imageTagName: latest
+        variables:
+          Application__AppConfigurationUrl: https://pcs-pres-non-prod-config.azconfig.io
+          Application__ObjectId: e4a7f1b1-da31-40ac-9089-d00afc2f1fa7 # Enterprise application: ProCoSys - Preservation Api - Dev
+          Application__UseAzureAppConfiguration: 'true'
+          ApplicationInsights__ConnectionString: InstrumentationKey=bd9bd4f0-6875-4ce6-86cb-56e09a72d68b;IngestionEndpoint=https://northeurope-3.in.applicationinsights.azure.com/;LiveEndpoint=https://northeurope.livediagnostics.monitor.azure.com/
+          AzureAd__ClientId: 67b2f053-30bf-4ffc-9206-ef57f631efcb # App registration: ProCoSys - Preservation Api - Dev
+          AzureAd__ClientCredentials__0__SourceType: SignedAssertionFilePath
+          ASPNETCORE_ENVIRONMENT: 'Development'
+          BlobStorage__AccountName: pcsdevsa
+          ConnectionStrings__PreservationContext: Server=pcs-dev-sqlserver.database.windows.net;Authentication=Active Directory Workload Identity;Encrypt=True;Database=pcs-pres-dev-db
+          LEADERELECTOR_SERVICE: http://leader-elector:3003
+          MainApi__BaseAddress: 'https://pcs-main-api-dev.azurewebsites.net/api/'
+          MainApi__MainApiScope: 'api://dd38f169-bccf-4d0e-a4ad-d830893cfa75/.default'
+          ServiceBus__Enable: 'true'
+          ServiceBus__Namespace: sb-pcs-dev
+          Swagger__Audience: 'api://67b2f053-30bf-4ffc-9206-ef57f631efcb'
+          Swagger__ClientId: '97505617-302f-409a-a37e-7ca859b5b56c'
+        monitoring: false
 
   #--------------------------------
   # External docker image registry
