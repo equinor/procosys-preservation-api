@@ -83,7 +83,7 @@ stages:
    # Docker Build and Push (Master Only)
   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
     parameters:
-      deploymentName: 'docker_build_and_push_master_only'
+      deploymentName: 'docker_build_and_push_master'
       dependsOn: ''
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
@@ -96,7 +96,7 @@ stages:
       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
     parameters:
-      deploymentName: 'docker_build_and_push_master_only'
+      deploymentName: 'docker_build_and_push_tags'
       dependsOn: ''
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
