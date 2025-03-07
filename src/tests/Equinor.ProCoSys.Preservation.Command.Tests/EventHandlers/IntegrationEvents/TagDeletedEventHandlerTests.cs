@@ -28,10 +28,11 @@ public class TagDeletedEventHandlerTests
         var emptyTagDeleteEvent = new TagDeleteEvent(Guid.Empty, string.Empty, string.Empty);
         var emptyActionDeleteEvent = new ActionDeleteEvent(Guid.Empty, string.Empty, string.Empty);
         var emptyTagRequirementDeleteEvent = new TagRequirementDeleteEvent(Guid.Empty, string.Empty, string.Empty);
+        var emptyTagRequirementDeleteEvents = new TagRequirementDeleteEvents(emptyTagRequirementDeleteEvent, []);
         var deleteEvents = new TagDeleteEvents(
             emptyTagDeleteEvent,
             [emptyActionDeleteEvent],
-            [emptyTagRequirementDeleteEvent]);
+            [emptyTagRequirementDeleteEvents]);
         
         var mockCreateEventHelper = new Mock<ICreateTagDeleteEventHelper>();
         mockCreateEventHelper.Setup(x => x.CreateEvents(It.IsAny<Tag>())).ReturnsAsync(deleteEvents);
