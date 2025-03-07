@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Tags.Controllers.Tags;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

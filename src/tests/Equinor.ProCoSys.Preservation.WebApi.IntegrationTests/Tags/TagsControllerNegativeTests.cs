@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Tags.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags

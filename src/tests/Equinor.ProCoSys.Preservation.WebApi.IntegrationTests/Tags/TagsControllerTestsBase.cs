@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys;
+using Equinor.ProCoSys.Preservation.WebApi.Tags.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

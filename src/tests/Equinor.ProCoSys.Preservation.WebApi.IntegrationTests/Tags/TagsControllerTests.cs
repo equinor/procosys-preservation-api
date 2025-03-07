@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Tags.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags

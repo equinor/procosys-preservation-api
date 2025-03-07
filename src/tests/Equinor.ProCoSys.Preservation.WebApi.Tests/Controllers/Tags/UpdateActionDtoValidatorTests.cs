@@ -1,5 +1,5 @@
 ﻿using System;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Tags.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Text;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Tags.Controllers.Tags;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {

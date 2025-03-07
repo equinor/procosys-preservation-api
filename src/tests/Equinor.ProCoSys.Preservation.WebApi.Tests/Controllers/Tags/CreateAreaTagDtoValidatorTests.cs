@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Tags.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags

@@ -3,10 +3,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Newtonsoft.Json;
 using ClosedXML.Excel;
 using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.WebApi.Tags.Controllers.Tags;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {

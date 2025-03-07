@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.WebApi.Tags\Equinor.ProCoSys.Preservation.WebApi.Tags.csproj" />
     <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.WebApi\Equinor.ProCoSys.Preservation.WebApi.csproj" />
   </ItemGroup>
 

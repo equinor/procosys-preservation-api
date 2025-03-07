@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Tags.Controllers.Tags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
