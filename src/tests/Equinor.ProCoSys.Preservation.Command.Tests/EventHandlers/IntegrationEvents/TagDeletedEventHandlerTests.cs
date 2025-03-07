@@ -10,6 +10,7 @@ using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.MessageContracts;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -28,7 +29,10 @@ public class TagDeletedEventHandlerTests
         var emptyTagDeleteEvent = new TagDeleteEvent(Guid.Empty, string.Empty, string.Empty);
         var emptyActionDeleteEvent = new ActionDeleteEvent(Guid.Empty, string.Empty, string.Empty);
         var emptyTagRequirementDeleteEvent = new TagRequirementDeleteEvent(Guid.Empty, string.Empty, string.Empty);
-        var emptyTagRequirementDeleteEvents = new TagRequirementDeleteEvents(emptyTagRequirementDeleteEvent, []);
+        var emptyPreservationPeriodDeleteEvent = new PreservationPeriodDeleteEvent(Guid.Empty, string.Empty, string.Empty);
+        var emptyTagRequirementDeleteEvents = new TagRequirementDeleteEvents(
+            emptyTagRequirementDeleteEvent,
+            [emptyPreservationPeriodDeleteEvent]);
         var deleteEvents = new TagDeleteEvents(
             emptyTagDeleteEvent,
             [emptyActionDeleteEvent],
@@ -55,10 +59,10 @@ public class TagDeletedEventHandlerTests
 
         // Act
         await _dut.Handle(domainEvent, CancellationToken.None);
-        var types = _publishedEvents.Select(e => e.GetType()).ToList();
+        var result = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        CollectionAssert.Contains(types, typeof(TagDeleteEvent));
+        result.Should().Contain(typeof(TagDeleteEvent));
     }
     
     [TestMethod]
@@ -70,14 +74,14 @@ public class TagDeletedEventHandlerTests
 
         // Act
         await _dut.Handle(domainEvent, CancellationToken.None);
-        var types = _publishedEvents.Select(e => e.GetType()).ToList();
+        var result = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        CollectionAssert.Contains(types, typeof(ActionDeleteEvent));
+        result.Should().Contain(typeof(ActionDeleteEvent));
     }
     
     [TestMethod]
-    public async Task Handle_ShouldTagRequirementDeleteEvent()
+    public async Task Handle_ShouldSendTagRequirementDeleteEvent()
     {
         // Arrange
         var tag = new Mock<Tag>();
@@ -85,9 +89,24 @@ public class TagDeletedEventHandlerTests
 
         // Act
         await _dut.Handle(domainEvent, CancellationToken.None);
-        var types = _publishedEvents.Select(e => e.GetType()).ToList();
+        var result = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        CollectionAssert.Contains(types, typeof(TagRequirementDeleteEvent));
+        result.Should().Contain(typeof(TagRequirementDeleteEvent));
+    }
+    
+    [TestMethod]
+    public async Task Handle_ShouldSendPreservationPeriodDeleteEvent()
+    {
+        // Arrange
+        var tag = new Mock<Tag>();
+        var domainEvent = new DeletedEvent<Tag>(tag.Object);
+
+        // Act
+        await _dut.Handle(domainEvent, CancellationToken.None);
+        var result = _publishedEvents.Select(e => e.GetType()).ToList();
+
+        // Assert
+        result.Should().Contain(typeof(PreservationPeriodDeleteEvent));
     }
 }

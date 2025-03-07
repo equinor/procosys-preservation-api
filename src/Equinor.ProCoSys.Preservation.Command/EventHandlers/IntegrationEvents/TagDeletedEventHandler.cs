@@ -25,7 +25,19 @@ public class TagDeletedEventHandler(
         
         foreach (var tagRequirementDeleteEvent in integrationEvents.TagRequirementDeleteEvents)
         {
-            await integrationEventPublisher.PublishAsync(tagRequirementDeleteEvent.TagRequirementDeleteEvent, cancellationToken);
+            await HandleTagRequirementDeleteEvent(tagRequirementDeleteEvent, cancellationToken);
+        }
+    }
+
+    private async Task HandleTagRequirementDeleteEvent(
+        TagRequirementDeleteEvents tagRequirementDeleteEvent,
+        CancellationToken cancellationToken)
+    {
+        await integrationEventPublisher.PublishAsync(tagRequirementDeleteEvent.TagRequirementDeleteEvent, cancellationToken);
+
+        foreach (var preservationPeriodDeleteEvent in tagRequirementDeleteEvent.PreservationPeriodDeleteEvents)
+        {
+            await integrationEventPublisher.PublishAsync(preservationPeriodDeleteEvent, cancellationToken);
         }
     }
 }
