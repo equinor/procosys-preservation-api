@@ -13,7 +13,7 @@ public class CreateTagDeleteEventHelper(IProjectRepository projectRepository) : 
         
         var tagDeleteEvent = new TagDeleteEvent(entity.Guid, entity.Plant, project.Name);
         var actionDeleteEvents = entity.Actions.Select(a => CreateActionDeletedEventHelper.CreateEvent(a, project));
-        var tagRequirementEvents = entity.Requirements.Select(r => CreateTagRequirementDeleteEventHelper.CreateEvent(r, project));
+        var tagRequirementEvents = entity.Requirements.Select(r => CreateTagRequirementDeleteEventHelper.CreateEvents(r, project));
 
         return new TagDeleteEvents(tagDeleteEvent, actionDeleteEvents, tagRequirementEvents);
     }
