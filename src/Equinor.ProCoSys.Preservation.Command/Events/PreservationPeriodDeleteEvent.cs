@@ -4,6 +4,6 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.Events;
 
-[EntityNameTagRequirement]
+[EntityNamePreservationPeriod]
 public class PreservationPeriodDeleteEvent(Guid guid, string plant, string projectName)
     : DeleteEvent<PreservationPeriod>(guid, plant, projectName);
