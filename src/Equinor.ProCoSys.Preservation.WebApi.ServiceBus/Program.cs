@@ -35,17 +35,6 @@ if (builder.Configuration.GetValue<bool>("Application:UseAzureAppConfiguration")
     builder.Services.AddAzureAppConfiguration();
 }
 
-builder.Services.AddFluentValidationAutoValidation(fv =>
-{
-    fv.DisableDataAnnotationsValidation = true;
-});
-
-builder.Services.AddValidatorsFromAssemblies(new List<Assembly>
-{
-    typeof(IQueryMarker).GetTypeInfo().Assembly,
-    typeof(ICommandMarker).GetTypeInfo().Assembly,
-});
-
 builder.Services.AddPcsAuthIntegration();
 
 builder.Services.ConfigureTelemetry(builder.Configuration, credential);
@@ -71,10 +60,6 @@ if (builder.Environment.IsDevelopment())
 }
 
 app.UseGlobalExceptionHandling();
-
-app.UseCors(HttpConfig.AllowAllOriginsCorsPolicy);
-
-app.UseHttpsRedirection();
 
 app.UseRouting();
 
