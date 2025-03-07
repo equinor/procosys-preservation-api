@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 
-public class DeleteTagRequirementEventHandler(
+public class TagRequirementDeletedEventHandler(
     IIntegrationEventPublisher integrationEventPublisher,
     IProjectRepository projectRepository)
     : INotificationHandler<TagRequirementDeletedEvent>

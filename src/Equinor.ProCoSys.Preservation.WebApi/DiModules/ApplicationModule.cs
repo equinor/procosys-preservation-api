@@ -110,7 +110,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services
                 .AddTransient<INotificationHandler<ModifiedEvent<TagRequirement>>,
                     IntegrationEventHandler<ModifiedEvent<TagRequirement>, TagRequirement>>();
-            services.AddTransient<INotificationHandler<TagRequirementDeletedEvent>, DeleteTagRequirementEventHandler>();
+            services.AddTransient<INotificationHandler<TagRequirementDeletedEvent>, TagRequirementDeletedEventHandler>();
             services
                 .AddTransient<IPublishEntityEventHelper<TagRequirement>,
                     PublishEntityEventHelper<TagRequirement, TagRequirementEvent>>();
