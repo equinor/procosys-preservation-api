@@ -1,7 +1,7 @@
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
-  name: preservation-identity-test # TODO rename to: procosys-preservation-api
+  name: preservation-identity-test2 # TODO rename to: procosys-preservation-api
 spec:
   environments:
   - name: dev
