@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers.EventCollections;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -30,10 +31,10 @@ public class TagDeletedEventHandlerTests
         var emptyActionDeleteEvent = new ActionDeleteEvent(Guid.Empty, string.Empty, string.Empty);
         var emptyTagRequirementDeleteEvent = new TagRequirementDeleteEvent(Guid.Empty, string.Empty, string.Empty);
         var emptyPreservationPeriodDeleteEvent = new PreservationPeriodDeleteEvent(Guid.Empty, string.Empty, string.Empty);
-        var emptyTagRequirementDeleteEvents = new TagRequirementDeleteEvents(
+        var emptyTagRequirementDeleteEvents = new EventCollectionDeleteTagRequirement(
             emptyTagRequirementDeleteEvent,
             [emptyPreservationPeriodDeleteEvent]);
-        var deleteEvents = new TagDeleteEvents(
+        var deleteEvents = new EventCollectionDeleteTag(
             emptyTagDeleteEvent,
             [emptyActionDeleteEvent],
             [emptyTagRequirementDeleteEvents]);
