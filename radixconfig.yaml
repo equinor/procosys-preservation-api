@@ -84,7 +84,6 @@ spec:
           Swagger__ClientId: '97505617-302f-409a-a37e-7ca859b5b56c'
         monitoring: false
         horizontalScaling:
-          minReplicas: 0
           maxReplicas: 6
 
   - name: backend-service-bus
