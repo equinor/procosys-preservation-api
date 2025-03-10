@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
-using Azure.Core;
+﻿using Azure.Core;
 using Equinor.ProCoSys.Auth.Authentication;
 using Equinor.ProCoSys.Auth.Authorization;
 using Equinor.ProCoSys.Auth.Caches;
@@ -8,13 +6,11 @@ using Equinor.ProCoSys.Auth.Client;
 using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Caches;
-using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.PcsServiceBus.Receiver;
 using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Converters;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Delete;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Command.Events;
@@ -58,7 +54,6 @@ using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Excel;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
-using MassTransit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -115,7 +110,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services
                 .AddTransient<INotificationHandler<ModifiedEvent<TagRequirement>>,
                     IntegrationEventHandler<ModifiedEvent<TagRequirement>, TagRequirement>>();
-            services.AddTransient<INotificationHandler<TagRequirementDeletedEvent>, DeleteTagRequirementEventHandler>();
+            services.AddTransient<INotificationHandler<TagRequirementDeletedEvent>, TagRequirementDeletedEventHandler>();
             services
                 .AddTransient<IPublishEntityEventHelper<TagRequirement>,
                     PublishEntityEventHelper<TagRequirement, TagRequirementEvent>>();
