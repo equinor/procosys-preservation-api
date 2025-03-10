@@ -17,7 +17,12 @@ public class TagRequirementDeletedEventHandler(
     {
         var project = await projectRepository.GetProjectOnlyByTagGuidAsync(notification.SourceGuid);
 
-        var deleteEvent = CreateTagRequirementDeleteEventHelper.CreateEvent(notification.Entity, project);
-        await integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
+        var deleteEvents = CreateTagRequirementDeleteEventHelper.CreateEvents(notification.Entity, project);
+        await integrationEventPublisher.PublishAsync(deleteEvents.TagRequirementDeleteEvent, cancellationToken);
+
+        foreach (var preservationPeriodDeleteEvents in deleteEvents.PreservationPeriodDeleteEvents)
+        {
+            await integrationEventPublisher.PublishAsync(preservationPeriodDeleteEvents, cancellationToken);
+        }
     }
 }

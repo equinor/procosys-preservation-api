@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers.EventCollections;
 using Equinor.ProCoSys.Preservation.Command.EventPublishers;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
@@ -25,7 +26,19 @@ public class TagDeletedEventHandler(
         
         foreach (var tagRequirementDeleteEvent in integrationEvents.TagRequirementDeleteEvents)
         {
-            await integrationEventPublisher.PublishAsync(tagRequirementDeleteEvent, cancellationToken);
+            await HandleTagRequirementDeleteEvent(tagRequirementDeleteEvent, cancellationToken);
+        }
+    }
+
+    private async Task HandleTagRequirementDeleteEvent(
+        EventCollectionDeleteTagRequirement eventCollectionDeleteTagRequirement,
+        CancellationToken cancellationToken)
+    {
+        await integrationEventPublisher.PublishAsync(eventCollectionDeleteTagRequirement.TagRequirementDeleteEvent, cancellationToken);
+
+        foreach (var preservationPeriodDeleteEvent in eventCollectionDeleteTagRequirement.PreservationPeriodDeleteEvents)
+        {
+            await integrationEventPublisher.PublishAsync(preservationPeriodDeleteEvent, cancellationToken);
         }
     }
 }
