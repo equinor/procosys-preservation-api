@@ -130,6 +130,7 @@ spec:
     environmentConfig:
     # Development environment
     - environment: dev
+      imageTagName: latest
       variables:
         LEASE_TIME: 5
       monitoring: false
