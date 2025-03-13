@@ -11,11 +11,7 @@ spec:
     build:
       from: master
   - name: test
-    build:
-      from: master
   - name: prod
-    build:
-      from: master
 
   components:
   # ---------
