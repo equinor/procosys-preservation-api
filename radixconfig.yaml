@@ -1,12 +1,21 @@
 apiVersion: radix.equinor.com/v1
 kind: RadixApplication
 metadata:
-  name: procosys-preservation-api
+  name: preservation-identity-test #TODO procosys-preservation-api
 spec:
+  build:
+    useBuildKit: true
+    useBuildCache: true
   environments:
   - name: dev
+    build:
+      from: master
   - name: test
+    build:
+      from: master
   - name: prod
+    build:
+      from: master
 
   components:
   # ---------
@@ -14,7 +23,8 @@ spec:
   #---------- 
 
   - name: backend
-    image: procosys.azurecr.io/preservation/api:{imageTagName}
+    src: ./src
+    dockerfileName: Equinor.ProCoSys.Preservation.WebApi/Dockerfile
     ports:
     - name: http
       port: 5000
@@ -25,7 +35,6 @@ spec:
       identity:
         azure:
           clientId: 943e3f0f-075e-41e7-a279-41f8374f6de6 # Managed identity: pcs-pres-dev-mi
-      imageTagName: latest
       variables:
         Application__AppConfigurationUrl: https://pcs-pres-non-prod-config.azconfig.io
         Application__ObjectId: e4a7f1b1-da31-40ac-9089-d00afc2f1fa7 # Enterprise application: ProCoSys - Preservation Api - Dev
@@ -125,7 +134,6 @@ spec:
     environmentConfig:
     # Development environment
     - environment: dev
-      imageTagName: latest
       variables:
         LEASE_TIME: 5
       monitoring: false
