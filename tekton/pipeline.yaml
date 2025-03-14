@@ -1,0 +1,9 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: pipeline
+spec:
+  tasks:
+    - name: nuget-feed-token
+      taskRef:
+        name: nuget-feed-token

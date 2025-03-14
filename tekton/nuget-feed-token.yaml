@@ -1,0 +1,38 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: nuget-feed-token
+  labels:
+    # This label is required to enable Workload Identity, it must be lowercase
+    azure.workload.identity/use: "true"
+spec:
+  params:
+    - name: AZURE_CLIENT_ID                    # this value will be delivered from pipeline automatically
+  stepTemplate:
+    # Make sure all steps runs as a regular user. Running as root is not allowed
+    securityContext:
+      runAsUser: 1000
+    image: mcr.microsoft.com/azure-cli:2.55.0
+    env:
+      # Az needs a home directory that the authorizatio information can be stored in
+      - name: HOME
+        value: "/tmp"
+      - name: AZURE_CLIENT_ID
+        value: $(params.AZURE_CLIENT_ID)      # AZURE_CLIENT_ID environment gets value from the task parameter AZURE_CLIENT_ID, set by pipeline parameter
+
+  steps:
+    - name: get-secret
+      script: |
+        #!/usr/bin/env sh
+        TOKEN=`cat $AZURE_FEDERATED_TOKEN_FILE`
+
+        # Log in to Azure with the provided credentials, that matches the configured ferated credential
+        az login --service-principal \
+          --username $AZURE_CLIENT_ID \
+          --tenant $AZURE_TENANT_ID \
+          --federated-token $TOKEN \
+          --query [0].name
+
+        echo "Retrieving nuget feed access token..."
+        FEED_ACCESSTOKEN=$(az account get-access-token --resource=https://pkgs.visualstudio.com --query accessToken -o tsv)
+        echo $FEED_ACCESSTOKEN

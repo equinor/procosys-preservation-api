@@ -6,6 +6,10 @@ spec:
   build:
     useBuildKit: true
     useBuildCache: true
+    subPipeline:
+      nuget-feed-token:
+        azure:
+          clientId: e8c158a9-a200-4897-9d5f-660e377bddc1 # App registration: ProCoSys - Completion Api - Dev TODO replace with preservation 
   environments:
   - name: dev
     build:
