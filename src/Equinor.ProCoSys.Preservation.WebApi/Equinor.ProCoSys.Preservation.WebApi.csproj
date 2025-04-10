@@ -49,7 +49,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Identity.Client" Version="4.67.2" />
     <PackageReference Include="Microsoft.Identity.Web" Version="3.6.2" />
-    <PackageReference Include="Microsoft.Identity.Web.TokenAcquisition" Version="3.6.2" />
+    <PackageReference Include="Microsoft.Identity.Web.TokenAcquisition" Version="3.8.2" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     <PackageReference Include="ServiceResult" Version="1.0.1" />
     <PackageReference Include="ServiceResult.ApiExtensions" Version="1.0.1" />
