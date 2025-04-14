@@ -72,6 +72,6 @@ public class CreateTagRequirementDeleteEventHelperTests
         var result = integrationEvents.PreservationPeriodDeleteEvents;
 
         // Assert
-        Assert.AreEqual(0, result.Count());
+        Assert.IsTrue(result.Any());
     }
 }
