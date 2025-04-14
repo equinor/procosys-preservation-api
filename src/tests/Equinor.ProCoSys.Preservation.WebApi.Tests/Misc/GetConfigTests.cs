@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
-using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -31,16 +30,12 @@ public class GetConfigTests
         var result = _configuration.GetConfig<string>(TestKey);
         
         // Assert
-        result.Should().Be(TestValue);
+        Assert.AreEqual(TestValue, result);
     }
     
     [TestMethod]
-    public void GetConfig_ShouldThrowArgumentException_WhenKeyIsNotFound()
-    {
-        // Arrange
-        var getConfigFunc = () => _configuration.GetConfig<string>("NonExistingKey");
-        
-        // Assert
-        getConfigFunc.Should().Throw<ArgumentException>();
-    }
+    [ExpectedException(typeof(ArgumentException))]
+    public void GetConfig_ShouldThrowArgumentException_WhenKeyIsNotFound() =>
+        // Act
+        _configuration.GetConfig<string>("NonExistingKey");
 }
