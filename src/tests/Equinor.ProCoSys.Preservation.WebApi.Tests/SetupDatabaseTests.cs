@@ -51,7 +51,7 @@ public class SetupDatabaseTests
         _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        Assert.IsFalse(ServiceTypes.Any());
+        Assert.AreEqual(0, ServiceTypes.Count());
     }
     
     [TestMethod]
@@ -69,7 +69,7 @@ public class SetupDatabaseTests
         _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        Assert.IsFalse(ServiceTypes.Any());
+        Assert.AreEqual(0, ServiceTypes.Count());
     }
     
     

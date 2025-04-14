@@ -34,8 +34,9 @@ public class GetConfigTests
     }
     
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void GetConfig_ShouldThrowArgumentException_WhenKeyIsNotFound() =>
-        // Act
-        _configuration.GetConfig<string>("NonExistingKey");
+    public void GetConfig_ShouldThrowArgumentException_WhenKeyIsNotFound()
+    {
+        // Assert
+        Assert.ThrowsException<ArgumentException>(() => _configuration.GetConfig<string>("NonExistingKey"));
+    }
 }
