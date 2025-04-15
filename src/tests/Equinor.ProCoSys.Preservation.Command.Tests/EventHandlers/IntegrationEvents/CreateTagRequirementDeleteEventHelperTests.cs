@@ -6,7 +6,6 @@ using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common;
-using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
@@ -45,7 +44,7 @@ public class CreateTagRequirementDeleteEventHelperTests
             .GetValue(deletionEvent);
 
         // Assert
-        result.Should().Be(expected);
+        Assert.AreEqual(expected, result);
     }
     
     [TestMethod]
@@ -59,7 +58,7 @@ public class CreateTagRequirementDeleteEventHelperTests
         var result = deletionEvents.TagRequirementDeleteEvent.ProCoSysGuid;
 
         // Assert
-        result.Should().Be(expected);
+        Assert.AreEqual(expected, result);
     }
     
     [TestMethod]
@@ -73,6 +72,6 @@ public class CreateTagRequirementDeleteEventHelperTests
         var result = integrationEvents.PreservationPeriodDeleteEvents;
 
         // Assert
-        result.Should().NotBeEmpty();
+        Assert.IsTrue(result.Any());
     }
 }

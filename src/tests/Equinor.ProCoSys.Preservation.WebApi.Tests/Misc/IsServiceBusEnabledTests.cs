@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Equinor.ProCoSys.Preservation.WebApi.DiModules;
-using FluentAssertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,6 +37,6 @@ public class IsServiceBusEnabledTests
         var result = builder.IsServiceBusEnabled();
         
         // Assert
-        result.Should().Be(expected);
+        Assert.AreEqual(expected, result);
     }
 }

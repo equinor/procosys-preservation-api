@@ -11,7 +11,6 @@ using Equinor.ProCoSys.Preservation.Command.Events;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.MessageContracts;
-using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -63,7 +62,7 @@ public class TagDeletedEventHandlerTests
         var result = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        result.Should().Contain(typeof(TagDeleteEvent));
+        CollectionAssert.Contains(result, typeof(TagDeleteEvent));
     }
     
     [TestMethod]
@@ -78,7 +77,7 @@ public class TagDeletedEventHandlerTests
         var result = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        result.Should().Contain(typeof(ActionDeleteEvent));
+        CollectionAssert.Contains(result, typeof(ActionDeleteEvent));
     }
     
     [TestMethod]
@@ -93,7 +92,7 @@ public class TagDeletedEventHandlerTests
         var result = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        result.Should().Contain(typeof(TagRequirementDeleteEvent));
+        CollectionAssert.Contains(result, typeof(TagRequirementDeleteEvent));
     }
     
     [TestMethod]
@@ -108,6 +107,6 @@ public class TagDeletedEventHandlerTests
         var result = _publishedEvents.Select(e => e.GetType()).ToList();
 
         // Assert
-        result.Should().Contain(typeof(PreservationPeriodDeleteEvent));
+        CollectionAssert.Contains(result, typeof(PreservationPeriodDeleteEvent));
     }
 }

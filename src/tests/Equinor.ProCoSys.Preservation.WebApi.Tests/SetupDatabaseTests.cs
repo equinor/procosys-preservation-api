@@ -4,7 +4,6 @@ using System.Linq;
 using Equinor.ProCoSys.Preservation.WebApi.DiModules;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using Equinor.ProCoSys.Preservation.WebApi.Seeding;
-using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -52,7 +51,7 @@ public class SetupDatabaseTests
         _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        ServiceTypes.Should().BeEmpty();
+        Assert.AreEqual(0, ServiceTypes.Count());
     }
     
     [TestMethod]
@@ -70,7 +69,7 @@ public class SetupDatabaseTests
         _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        ServiceTypes.Should().BeEmpty();
+        Assert.AreEqual(0, ServiceTypes.Count());
     }
     
     
@@ -88,7 +87,7 @@ public class SetupDatabaseTests
         _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        ServiceTypes.Should().Contain(typeof(DatabaseMigrator));
+        CollectionAssert.Contains(ServiceTypes.ToList(), typeof(DatabaseMigrator));
     }
     
     [TestMethod]
@@ -105,6 +104,6 @@ public class SetupDatabaseTests
         _builderMock.Object.ConfigureDatabase();
 
         // Assert
-        ServiceTypes.Should().Contain(typeof(Seeder));
+        CollectionAssert.Contains(ServiceTypes.ToList(), typeof(Seeder));
     }
 }
