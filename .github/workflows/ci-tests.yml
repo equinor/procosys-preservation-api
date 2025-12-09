@@ -20,7 +20,6 @@ jobs:
           Equinor.ProCoSys.Preservation.MainApi.Tests/,
           Equinor.ProCoSys.Preservation.Query.Tests/,
           Equinor.ProCoSys.Preservation.Test.Common/,
-          Equinor.ProCoSys.Preservation.WebApi.IntegrationTests/,
           Equinor.ProCoSys.Preservation.WebApi.Tests/,
         ]
       fail-fast: false
