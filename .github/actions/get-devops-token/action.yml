@@ -1,0 +1,19 @@
+name: Get Devops token
+description: 'Login to Azure and obtain a token for DevOps'
+
+outputs:
+  token:
+    description: 'Devops token'
+    value: ${{ steps.token.outputs.token }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get Access Token
+      id: token
+      shell: bash
+      env:
+        AZURE_DEVOPS_APPLICATION_ID: "499b84ac-1321-427f-aa17-267ca6975798"
+      run: |
+        TOKEN=$(az account get-access-token --resource=$AZURE_DEVOPS_APPLICATION_ID | jq -r '.accessToken')
+        echo "token=$TOKEN" >> $GITHUB_OUTPUT
