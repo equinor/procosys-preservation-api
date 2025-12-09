@@ -1,0 +1,17 @@
+name: 🚀🧪 Deploy to test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      github-environment: test
+      radix-environment: test
