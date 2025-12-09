@@ -1,0 +1,52 @@
+name: 🤖🦾 Run Tests
+
+on:
+  pull_request:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  run-test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [
+          Equinor.ProCoSys.Preservation.Command.Tests/,
+          Equinor.ProCoSys.Preservation.Domain.Tests/,
+          Equinor.ProCoSys.Preservation.Infrastructure.Tests/,
+          Equinor.ProCoSys.Preservation.MainApi.Tests/,
+          Equinor.ProCoSys.Preservation.Query.Tests/,
+          Equinor.ProCoSys.Preservation.Test.Common/,
+          Equinor.ProCoSys.Preservation.WebApi.Tests/,
+        ]
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 'Login to Azure'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.EQUINOR_PROCOSYS_NON_PROD_DEVOPS_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true
+
+      - name: Get DevOps Token
+        id: 'get-devops-token'
+        uses: ./.github/actions/get-devops-token
+      
+      - name: Configure Nuget
+        uses: ./.github/actions/nuget-config
+        with:
+          access-token: ${{ steps.get-devops-token.outputs.token }}
+
+      - name: Setup dotnet 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run tests - ${{ matrix.project }}
+        run: |
+          dotnet test ./src/tests/${{ matrix.project }} -c Release

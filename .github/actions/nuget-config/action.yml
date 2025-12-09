@@ -1,0 +1,18 @@
+name: Configure NuGet
+description: 'Configure NuGet feeds'
+inputs:
+  access-token:
+    description: 'Nuget feed access token'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure NuGet source
+      shell: bash
+      run: |
+        dotnet nuget add source --name ProCoSysOfficial \
+            --username statoildeveloper \
+            --password ${{ inputs.access-token }} \
+            --store-password-in-clear-text \
+            https://statoildeveloper.pkgs.visualstudio.com/_packaging/ProCoSysOfficial/nuget/v3/index.json
