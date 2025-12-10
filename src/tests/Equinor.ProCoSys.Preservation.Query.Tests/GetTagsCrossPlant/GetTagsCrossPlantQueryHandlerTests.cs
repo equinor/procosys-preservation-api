@@ -28,11 +28,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
     public class GetTagsCrossPlantQueryHandlerTests
     {
         // NB The PlantProvider affects when debugging and locking into DBSets in PreservationContext
-        protected DbContextOptions<PreservationContext> _dbContextOptions;
-        protected ICurrentUserProvider _currentUserProvider;
-        protected IEventDispatcher _eventDispatcher;
-        protected ManualTimeProvider _timeProvider;
-        protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
+        protected DbContextOptions<PreservationContext> DbContextOptions;
+        protected ICurrentUserProvider CurrentUserProvider;
+        protected IEventDispatcher EventDispatcher;
+        protected ManualTimeProvider TimeProvider;
+        protected readonly Guid CurrentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
 
         private readonly PlantProviderForTest _plantProvider = new PlantProviderForTest(null);
         private readonly Mock<IPermissionCache> _permissionCacheMock = new Mock<IPermissionCache>();
@@ -59,23 +59,23 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             _permissionCacheMock.Setup(p => p.GetPlantTitleForCurrentUserAsync(_plantB.Id, It.IsAny<CancellationToken>())).Returns(Task.FromResult(_plantB.Title));
 
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            currentUserProviderMock.Setup(x => x.GetCurrentUserOid()).Returns(_currentUserOid);
-            _currentUserProvider = currentUserProviderMock.Object;
+            currentUserProviderMock.Setup(x => x.GetCurrentUserOid()).Returns(CurrentUserOid);
+            CurrentUserProvider = currentUserProviderMock.Object;
 
             var eventDispatcher = new Mock<IEventDispatcher>();
-            _eventDispatcher = eventDispatcher.Object;
+            EventDispatcher = eventDispatcher.Object;
 
-            _timeProvider = new ManualTimeProvider(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
-            TimeService.SetProvider(_timeProvider);
+            TimeProvider = new ManualTimeProvider(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
+            TimeService.SetProvider(TimeProvider);
 
-            _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
+            DbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(DbContextOptions, _plantProvider, EventDispatcher, CurrentUserProvider))
             {
                 // ensure current user exists in db
-                _currentUser = new Person(_currentUserOid, "Ole", "Lukkøye");
+                _currentUser = new Person(CurrentUserOid, "Ole", "Lukkøye");
                 context.Persons.Add(_currentUser);
                 context.SaveChangesAsync().Wait();
 
@@ -95,7 +95,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             Project projectB;
             Tag standardTag;
             Tag siteTag;
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(DbContextOptions, _plantProvider, EventDispatcher, CurrentUserProvider))
             {
                 projectA = context.Projects.Single(p => p.Id == _projectAId);
                 projectB = context.Projects.Single(p => p.Id == _projectBId);
@@ -106,13 +106,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 siteTag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _siteTagId);
 
                 standardTag.AddAction(new Action(standardTag.Plant, "AcA", "AcA desc", null));
-                siteTag.AddAction(new Action(siteTag.Plant, "AcB", "AcB desc", _timeProvider.UtcNow));
+                siteTag.AddAction(new Action(siteTag.Plant, "AcB", "AcB desc", TimeProvider.UtcNow));
                 context.SaveChangesAsync().Wait();
 
-                _timeProvider.ElapseWeeks(standardTag.Requirements.Single().IntervalWeeks);
+                TimeProvider.ElapseWeeks(standardTag.Requirements.Single().IntervalWeeks);
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(DbContextOptions, _plantProvider, EventDispatcher, CurrentUserProvider))
             {
                 var query = new GetTagsCrossPlantQuery();
                 var dut = new GetTagsCrossPlantQueryHandler(context, _permissionCacheMock.Object, _plantProvider);
@@ -140,7 +140,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         [TestMethod]
         public async Task Handler_ShouldReturnTags_FromDifferentPlants()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(DbContextOptions, _plantProvider, EventDispatcher, CurrentUserProvider))
             {
                 var query = new GetTagsCrossPlantQuery();
                 var dut = new GetTagsCrossPlantQueryHandler(context, _permissionCacheMock.Object, _plantProvider);
@@ -154,7 +154,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         [TestMethod]
         public async Task Handler_ShouldNotReturnVoidedTags()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(DbContextOptions, _plantProvider, EventDispatcher, CurrentUserProvider))
             {
                 var query = new GetTagsCrossPlantQuery();
                 var dut = new GetTagsCrossPlantQueryHandler(context, _permissionCacheMock.Object, _plantProvider);
@@ -168,7 +168,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         [TestMethod]
         public async Task Handler_ShouldReturnTags_LimitedToMax()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(DbContextOptions, _plantProvider, EventDispatcher, CurrentUserProvider))
             {
                 var query = new GetTagsCrossPlantQuery(1);
                 var dut = new GetTagsCrossPlantQueryHandler(context, _permissionCacheMock.Object, _plantProvider);

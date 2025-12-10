@@ -27,8 +27,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.ResponsibleAggregate
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var _dut = new GetAllResponsiblesQueryHandler(context);
-                var result = await _dut.Handle(new GetAllResponsiblesQuery(), default);
+                var dut = new GetAllResponsiblesQueryHandler(context);
+                var result = await dut.Handle(new GetAllResponsiblesQuery(), default);
 
                 var responsibles = result.Data.ToList();
 

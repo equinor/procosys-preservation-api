@@ -19,21 +19,21 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
     [TestClass]
     public class GetTagRequirementsQueryHandlerTests : ReadOnlyTestsBase
     {
-        protected const string _unit = "unit";
-        const string _requirementType1Code = "Code1";
+        protected const string Unit = "unit";
+        const string RequirementType1Code = "Code1";
         RequirementTypeIcon _requirementType1Icon = RequirementTypeIcon.Other;
-        const string _requirementType1Title = "Title1";
-        const string _requirementType2Code = "Code2";
+        const string RequirementType1Title = "Title1";
+        const string RequirementType2Code = "Code2";
         RequirementTypeIcon _requirementType2Icon = RequirementTypeIcon.Battery;
-        const string _requirementType2Title = "Title2";
-        const string _requirementDefinitionWithoutFieldTitle = "Without fields";
-        const string _requirementDefinitionWithOneInfoTitle = "With 1 info";
-        const string _requirementDefinitionWithOneAttachmentTitle = "With 1 attachment";
-        const string _requirementDefinitionWithTwoCheckBoxesTitle = "With 2 checkboxes";
-        const string _requirementDefinitionWithThreeNumberShowPrevTitle = "With 3 number with previous";
-        const string _requirementDefinitionWithOneNumberNoPrevTitle = "With 1 number no previous";
-        const string _requirementDefinitionForVoidedTest = "With 1 field, for voided test";
-        protected DateTime _currentUtc;
+        const string RequirementType2Title = "Title2";
+        const string RequirementDefinitionWithoutFieldTitle = "Without fields";
+        const string RequirementDefinitionWithOneInfoTitle = "With 1 info";
+        const string RequirementDefinitionWithOneAttachmentTitle = "With 1 attachment";
+        const string RequirementDefinitionWithTwoCheckBoxesTitle = "With 2 checkboxes";
+        const string RequirementDefinitionWithThreeNumberShowPrevTitle = "With 3 number with previous";
+        const string RequirementDefinitionWithOneNumberNoPrevTitle = "With 1 number no previous";
+        const string RequirementDefinitionForVoidedTest = "With 1 field, for voided test";
+        protected DateTime CurrentUtc;
         private DateTime _startedAtUtc;
 
         private int _requirementWithoutFieldId;
@@ -60,7 +60,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
         public void Setup()
         {
             _startedAtUtc = new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
-            _currentUtc = _startedAtUtc.AddWeeks(_requestTimeAfterPreservationStartedInWeeks);
+            CurrentUtc = _startedAtUtc.AddWeeks(_requestTimeAfterPreservationStartedInWeeks);
         }
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -69,47 +69,47 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
             {
                 var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
 
-                var requirementType1 = new RequirementType(TestPlant, _requirementType1Code, _requirementType1Title, _requirementType1Icon, 0);
+                var requirementType1 = new RequirementType(TestPlant, RequirementType1Code, RequirementType1Title, _requirementType1Icon, 0);
                 context.RequirementTypes.Add(requirementType1);
-                var requirementType2 = new RequirementType(TestPlant, _requirementType2Code, _requirementType2Title, _requirementType2Icon, 0);
+                var requirementType2 = new RequirementType(TestPlant, RequirementType2Code, RequirementType2Title, _requirementType2Icon, 0);
                 context.RequirementTypes.Add(requirementType2);
                 context.SaveChangesAsync().Wait();
 
-                var requirementDefinitionWithoutField = new RequirementDefinition(TestPlant, _requirementDefinitionWithoutFieldTitle, 2, RequirementUsage.ForAll, 1);
+                var requirementDefinitionWithoutField = new RequirementDefinition(TestPlant, RequirementDefinitionWithoutFieldTitle, 2, RequirementUsage.ForAll, 1);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithoutField);
 
-                var requirementDefinitionWithOneInfo = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneInfoTitle, 2, RequirementUsage.ForAll, 1);
+                var requirementDefinitionWithOneInfo = new RequirementDefinition(TestPlant, RequirementDefinitionWithOneInfoTitle, 2, RequirementUsage.ForAll, 1);
                 var infoField = new Field(TestPlant, "Label for Info", FieldType.Info, 0);
                 requirementDefinitionWithOneInfo.AddField(infoField);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithOneInfo);
 
-                var requirementDefinitionWithOneAttachment = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneAttachmentTitle, 2, RequirementUsage.ForAll, 1);
+                var requirementDefinitionWithOneAttachment = new RequirementDefinition(TestPlant, RequirementDefinitionWithOneAttachmentTitle, 2, RequirementUsage.ForAll, 1);
                 var attachmentField = new Field(TestPlant, "Label for Attachment", FieldType.Attachment, 0);
                 requirementDefinitionWithOneAttachment.AddField(attachmentField);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithOneAttachment);
 
-                var requirementDefinitionWithTwoCheckBoxes = new RequirementDefinition(TestPlant, _requirementDefinitionWithTwoCheckBoxesTitle, 2, RequirementUsage.ForAll, 1);
+                var requirementDefinitionWithTwoCheckBoxes = new RequirementDefinition(TestPlant, RequirementDefinitionWithTwoCheckBoxesTitle, 2, RequirementUsage.ForAll, 1);
                 var cbField1 = new Field(TestPlant, "Label for checkBox - second", FieldType.CheckBox, 10);
                 var cbField2 = new Field(TestPlant, "Label for checkBox - first", FieldType.CheckBox, 2);
                 requirementDefinitionWithTwoCheckBoxes.AddField(cbField1);
                 requirementDefinitionWithTwoCheckBoxes.AddField(cbField2);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithTwoCheckBoxes);
 
-                var requirementDefinitionWithThreeNumberShowPrev = new RequirementDefinition(TestPlant, _requirementDefinitionWithThreeNumberShowPrevTitle, 2, RequirementUsage.ForAll, 1);
-                var numberFieldPrev1 = new Field(TestPlant, "Label for number - third", FieldType.Number, 15, _unit, true);
-                var numberFieldPrev2 = new Field(TestPlant, "Label for number - first", FieldType.Number, 2, _unit, true);
-                var numberFieldPrev3 = new Field(TestPlant, "Label for number - second", FieldType.Number, 10, _unit, true);
+                var requirementDefinitionWithThreeNumberShowPrev = new RequirementDefinition(TestPlant, RequirementDefinitionWithThreeNumberShowPrevTitle, 2, RequirementUsage.ForAll, 1);
+                var numberFieldPrev1 = new Field(TestPlant, "Label for number - third", FieldType.Number, 15, Unit, true);
+                var numberFieldPrev2 = new Field(TestPlant, "Label for number - first", FieldType.Number, 2, Unit, true);
+                var numberFieldPrev3 = new Field(TestPlant, "Label for number - second", FieldType.Number, 10, Unit, true);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev1);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev2);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev3);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithThreeNumberShowPrev);
 
-                var requirementDefinitionWithOneNumberNoPrev = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneNumberNoPrevTitle, 2, RequirementUsage.ForAll, 1);
-                var numberFieldNoPrev = new Field(TestPlant, "Label for number", FieldType.Number, 10, _unit, false);
+                var requirementDefinitionWithOneNumberNoPrev = new RequirementDefinition(TestPlant, RequirementDefinitionWithOneNumberNoPrevTitle, 2, RequirementUsage.ForAll, 1);
+                var numberFieldNoPrev = new Field(TestPlant, "Label for number", FieldType.Number, 10, Unit, false);
                 requirementDefinitionWithOneNumberNoPrev.AddField(numberFieldNoPrev);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithOneNumberNoPrev);
 
-                var requirementDefinitionForVoidedTest = new RequirementDefinition(TestPlant, _requirementDefinitionForVoidedTest, 2, RequirementUsage.ForAll, 1);
+                var requirementDefinitionForVoidedTest = new RequirementDefinition(TestPlant, RequirementDefinitionForVoidedTest, 2, RequirementUsage.ForAll, 1);
                 var vField1 = new Field(TestPlant, "Label for field", FieldType.CheckBox, 10);
                 requirementDefinitionForVoidedTest.AddField(vField1);
                 requirementType2.AddRequirementDefinition(requirementDefinitionForVoidedTest);
@@ -556,41 +556,41 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
             var requirementWithOneNumberNoPrev = requirements.Single(r => r.Id == _requirementWithOneNumberNoPrevId);
 
             Assert.AreEqual(0, requirementWithoutField.Fields.Count);
-            Assert.AreEqual(_requirementDefinitionWithoutFieldTitle, requirementWithoutField.RequirementDefinition.Title);
-            Assert.AreEqual(_requirementType1Code, requirementWithoutField.RequirementType.Code);
+            Assert.AreEqual(RequirementDefinitionWithoutFieldTitle, requirementWithoutField.RequirementDefinition.Title);
+            Assert.AreEqual(RequirementType1Code, requirementWithoutField.RequirementType.Code);
             Assert.AreEqual(_requirementType1Icon, requirementWithoutField.RequirementType.Icon);
-            Assert.AreEqual(_requirementType1Title, requirementWithoutField.RequirementType.Title);
+            Assert.AreEqual(RequirementType1Title, requirementWithoutField.RequirementType.Title);
 
             Assert.AreEqual(1, requirementWithOneInfo.Fields.Count);
             AssertInfoField(requirementWithOneInfo.Fields.ElementAt(0));
-            Assert.AreEqual(_requirementDefinitionWithOneInfoTitle, requirementWithOneInfo.RequirementDefinition.Title);
-            Assert.AreEqual(_requirementType1Code, requirementWithOneInfo.RequirementType.Code);
+            Assert.AreEqual(RequirementDefinitionWithOneInfoTitle, requirementWithOneInfo.RequirementDefinition.Title);
+            Assert.AreEqual(RequirementType1Code, requirementWithOneInfo.RequirementType.Code);
             Assert.AreEqual(_requirementType1Icon, requirementWithOneInfo.RequirementType.Icon);
-            Assert.AreEqual(_requirementType1Title, requirementWithOneInfo.RequirementType.Title);
+            Assert.AreEqual(RequirementType1Title, requirementWithOneInfo.RequirementType.Title);
 
             Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
             AssertCheckBoxField(requirementWithTwoCheckBoxes.Fields.ElementAt(0));
             AssertCheckBoxField(requirementWithTwoCheckBoxes.Fields.ElementAt(1));
-            Assert.AreEqual(_requirementDefinitionWithTwoCheckBoxesTitle, requirementWithTwoCheckBoxes.RequirementDefinition.Title);
-            Assert.AreEqual(_requirementType2Code, requirementWithTwoCheckBoxes.RequirementType.Code);
+            Assert.AreEqual(RequirementDefinitionWithTwoCheckBoxesTitle, requirementWithTwoCheckBoxes.RequirementDefinition.Title);
+            Assert.AreEqual(RequirementType2Code, requirementWithTwoCheckBoxes.RequirementType.Code);
             Assert.AreEqual(_requirementType2Icon, requirementWithTwoCheckBoxes.RequirementType.Icon);
-            Assert.AreEqual(_requirementType2Title, requirementWithTwoCheckBoxes.RequirementType.Title);
+            Assert.AreEqual(RequirementType2Title, requirementWithTwoCheckBoxes.RequirementType.Title);
 
             Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(0));
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(1));
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(2));
-            Assert.AreEqual(_requirementDefinitionWithThreeNumberShowPrevTitle, requirementWithThreeNumberShowPrev.RequirementDefinition.Title);
-            Assert.AreEqual(_requirementType2Code, requirementWithThreeNumberShowPrev.RequirementType.Code);
+            Assert.AreEqual(RequirementDefinitionWithThreeNumberShowPrevTitle, requirementWithThreeNumberShowPrev.RequirementDefinition.Title);
+            Assert.AreEqual(RequirementType2Code, requirementWithThreeNumberShowPrev.RequirementType.Code);
             Assert.AreEqual(_requirementType2Icon, requirementWithThreeNumberShowPrev.RequirementType.Icon);
-            Assert.AreEqual(_requirementType2Title, requirementWithThreeNumberShowPrev.RequirementType.Title);
+            Assert.AreEqual(RequirementType2Title, requirementWithThreeNumberShowPrev.RequirementType.Title);
 
             Assert.AreEqual(1, requirementWithOneNumberNoPrev.Fields.Count);
             AssertNumberWithNoPreviewField(requirementWithOneNumberNoPrev.Fields.ElementAt(0));
-            Assert.AreEqual(_requirementDefinitionWithOneNumberNoPrevTitle, requirementWithOneNumberNoPrev.RequirementDefinition.Title);
-            Assert.AreEqual(_requirementType2Code, requirementWithOneNumberNoPrev.RequirementType.Code);
+            Assert.AreEqual(RequirementDefinitionWithOneNumberNoPrevTitle, requirementWithOneNumberNoPrev.RequirementDefinition.Title);
+            Assert.AreEqual(RequirementType2Code, requirementWithOneNumberNoPrev.RequirementType.Code);
             Assert.AreEqual(_requirementType2Icon, requirementWithOneNumberNoPrev.RequirementType.Icon);
-            Assert.AreEqual(_requirementType2Title, requirementWithOneNumberNoPrev.RequirementType.Title);
+            Assert.AreEqual(RequirementType2Title, requirementWithOneNumberNoPrev.RequirementType.Title);
         }
 
         private void AssertInfoField(FieldDetailsDto f)
@@ -611,14 +611,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
         {
             Assert.AreEqual(FieldType.Number, f.FieldType);
             Assert.IsTrue(f.ShowPrevious);
-            Assert.AreEqual(_unit, f.Unit);
+            Assert.AreEqual(Unit, f.Unit);
         }
 
         private void AssertNumberWithNoPreviewField(FieldDetailsDto f)
         {
             Assert.AreEqual(FieldType.Number, f.FieldType);
             Assert.IsFalse(f.ShowPrevious);
-            Assert.AreEqual(_unit, f.Unit);
+            Assert.AreEqual(Unit, f.Unit);
         }
 
         private static void AssertNaNumberInCurrentValue(FieldDetailsDto f)

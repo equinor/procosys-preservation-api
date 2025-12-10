@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
         private Mock<IAzureBlobService> _blobStorageMock;
         private Mock<IUserDelegationProvider> _userDelegationProviderMock;
         private Uri _uri;
-        private string BlobContainer = "bc";
+        private string _blobContainer = "bc";
         private Mock<IOptionsSnapshot<BlobStorageOptions>> _blobStorageOptionsMock;
 
         private int _requirementIdWithAttachment;
@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             _blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
             {
-                BlobContainer = BlobContainer
+                BlobContainer = _blobContainer
             };
 
             _blobStorageOptionsMock
@@ -117,7 +117,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             _blobStorageMock = new Mock<IAzureBlobService>();
             _blobStorageMock
                 .Setup(b => b.GetDownloadSasUri(
-                    BlobContainer,
+                    _blobContainer,
                     fullBlobPath,
                     It.IsAny<DateTimeOffset>(),
                     It.IsAny<DateTimeOffset>(),
