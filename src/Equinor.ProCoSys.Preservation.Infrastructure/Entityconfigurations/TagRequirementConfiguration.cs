@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
 {
     internal class TagRequirementConfiguration : IEntityTypeConfiguration<TagRequirement>
     {
-        private readonly string InitialPreservationPeriodStatusPropertyName = "_initialPreservationPeriodStatus";
+        private readonly string _initialPreservationPeriodStatusPropertyName = "_initialPreservationPeriodStatus";
 
         public void Configure(EntityTypeBuilder<TagRequirement> builder)
         {
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
 
-            builder.Property(InitialPreservationPeriodStatusPropertyName)
+            builder.Property(_initialPreservationPeriodStatusPropertyName)
                 .HasMaxLength(TagRequirement.InitialPreservationPeriodStatusMax)
                 .HasConversion<string>()
                 .HasDefaultValue(PreservationPeriodStatus.NeedsUserInput)
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
 
             builder.ToTable(t => t.HasCheckConstraint(
                 "constraint_requirement_check_valid_initial_status",
-                $"{InitialPreservationPeriodStatusPropertyName} in ('{PreservationPeriodStatus.NeedsUserInput}','{PreservationPeriodStatus.ReadyToBePreserved}')"));
+                $"{_initialPreservationPeriodStatusPropertyName} in ('{PreservationPeriodStatus.NeedsUserInput}','{PreservationPeriodStatus.ReadyToBePreserved}')"));
 
             builder.Property(x => x.Usage)
                 .HasConversion<string>()
