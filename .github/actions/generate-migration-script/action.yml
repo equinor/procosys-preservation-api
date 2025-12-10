@@ -1,0 +1,53 @@
+name: Generate Migration Script
+description: 'Generate a migration script for the database and return a path to the generated script.'
+
+outputs:
+  migration-script-path:
+    description: 'Path to the generated migration script'
+    value: ${{ steps.output-migration-path.outputs.migration-path }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get DevOps Token
+      id: 'get-devops-token'
+      uses: ./.github/actions/get-devops-token
+    
+    - name: Configure Nuget
+      uses: ./.github/actions/nuget-config
+      with:
+        access-token: ${{ steps.get-devops-token.outputs.token }}
+
+    - name: Setup dotnet 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    # TODO remove --version when bug has been fixed
+    # https://github.com/dotnet/efcore/issues/37125
+    - name: Setup EF Tools 
+      shell: bash
+      run: | 
+        dotnet tool install --global dotnet-ef --version 9.0.11
+
+    - name: Configure user secrets
+      shell: bash
+      run: |
+        # Set user secrets for API project
+        cd ./src/Equinor.ProCoSys.Preservation.WebApi/
+        dotnet user-secrets set "ConnectionStrings:PreservationContext" "dummydata" # Need input
+    
+    - name: Migrate database
+      shell: bash
+      run: |
+        # Create migration script for MyDbContext
+        dotnet ef migrations script \
+          --project "./src/Equinor.ProCoSys.Preservation.WebApi/Equinor.ProCoSys.Preservation.WebApi.csproj" \
+          --startup-project "./src/Equinor.ProCoSys.Preservation.WebApi/Equinor.ProCoSys.Preservation.WebApi.csproj" \
+          --output ./migration.sql --idempotent
+
+    - name: Output migration path
+      id: output-migration-path
+      shell: bash
+      run: |
+        echo "migration-path=./migration.sql" >> $GITHUB_OUTPUT

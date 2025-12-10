@@ -139,6 +139,7 @@ spec:
           cpu: '100m'
     # Test environment
     - environment: test
+      imageTagName: latest
       variables:
         LEASE_TIME: 5
       monitoring: false
@@ -152,6 +153,7 @@ spec:
           cpu: '100m'
     # Prod environment
     - environment: prod
+      imageTagName: latest
       variables:
          LEASE_TIME: 5
       replicas: 1
