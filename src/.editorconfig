@@ -1,18 +1,18 @@
+root = true
 # EditorConfig is awesome: https://EditorConfig.org
 
 # top-most EditorConfig file
-root = true
 
 # Don't use tabs for indentation.
 [*]
 indent_style = space
+
 # (Please don't specify an indent_size here; that has too many unintended consequences.)
 
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
 insert_final_newline = true
-charset = utf-8-bom
 
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
@@ -61,6 +61,10 @@ dotnet_naming_rule.non_private_static_fields_should_be_pascal_case.severity = su
 dotnet_naming_rule.non_private_static_fields_should_be_pascal_case.symbols = non_private_static_fields
 dotnet_naming_rule.non_private_static_fields_should_be_pascal_case.style = non_private_static_field_style
 
+dotnet_naming_rule.constant_fields_should_be_pascal_case.severity = suggestion
+dotnet_naming_rule.constant_fields_should_be_pascal_case.symbols = constants
+dotnet_naming_rule.constant_fields_should_be_pascal_case.style = pascal_case_style
+
 dotnet_naming_symbols.non_private_static_fields.applicable_kinds = field
 dotnet_naming_symbols.non_private_static_fields.applicable_accessibilities = public, protected, internal, protected_internal, private_protected
 dotnet_naming_symbols.non_private_static_fields.required_modifiers = static
@@ -100,14 +104,13 @@ dotnet_naming_style.static_field_style.capitalization = camel_case
 dotnet_naming_style.static_field_style.required_prefix = s_
 
 # Instance fields are camelCase and start with _
-dotnet_naming_rule.instance_fields_should_be_camel_case.severity = suggestion
-dotnet_naming_rule.instance_fields_should_be_camel_case.symbols = instance_fields
-dotnet_naming_rule.instance_fields_should_be_camel_case.style = instance_field_style
-
-dotnet_naming_symbols.instance_fields.applicable_kinds = field
-
-dotnet_naming_style.instance_field_style.capitalization = camel_case
-dotnet_naming_style.instance_field_style.required_prefix = _
+dotnet_naming_rule.camel_case_for_private_internal_fields.severity = error
+dotnet_naming_rule.camel_case_for_private_internal_fields.symbols = private_internal_fields
+dotnet_naming_rule.camel_case_for_private_internal_fields.style = camel_case_underscore_style
+dotnet_naming_symbols.private_internal_fields.applicable_kinds = field
+dotnet_naming_symbols.private_internal_fields.applicable_accessibilities = private, internal
+dotnet_naming_style.camel_case_underscore_style.required_prefix = _
+dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 
 # Locals and parameters are camelCase
 dotnet_naming_rule.locals_should_be_camel_case.severity = suggestion
@@ -136,6 +139,8 @@ dotnet_naming_symbols.all_members.applicable_kinds = *
 
 dotnet_naming_style.pascal_case_style.capitalization = pascal_case
 
+dotnet_code_quality_unused_parameters = all:error
+
 # CSharp code style settings:
 [*.cs]
 # Newline settings
@@ -143,7 +148,6 @@ csharp_new_line_before_open_brace = all
 csharp_new_line_before_else = true
 csharp_new_line_before_catch = true
 csharp_new_line_before_finally = true
-csharp_new_line_before_members_in_object_initializers = true
 csharp_new_line_before_members_in_anonymous_types = true
 csharp_new_line_between_query_expression_clauses = true
 
@@ -155,20 +159,20 @@ csharp_indent_case_contents_when_block = true
 csharp_indent_switch_labels = true
 csharp_indent_labels = flush_left
 
-# Prefer "var" everywhere
-csharp_style_var_for_built_in_types = true:suggestion
-csharp_style_var_when_type_is_apparent = true:suggestion
-csharp_style_var_elsewhere = true:suggestion
+# "var" preferences
+csharp_style_var_for_built_in_types = true:error
+csharp_style_var_when_type_is_apparent = true:error
+csharp_style_var_elsewhere = true:error
 
 # Prefer method-like constructs to have a block body
-csharp_style_expression_bodied_methods = true:suggestion
-csharp_style_expression_bodied_constructors = true:suggestion
-csharp_style_expression_bodied_operators = false:none
+csharp_style_expression_bodied_methods = true:refactoring
+csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_operators = true:refactoring
 
 # Prefer property-like constructs to have an expression-body
-csharp_style_expression_bodied_properties = true:none
-csharp_style_expression_bodied_indexers = true:none
-csharp_style_expression_bodied_accessors = true:none
+csharp_style_expression_bodied_properties = true:refactoring
+csharp_style_expression_bodied_indexers = true:refactoring
+csharp_style_expression_bodied_accessors = true:refactoring
 
 # Suggest more modern language features when available
 csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
@@ -176,6 +180,12 @@ csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
 csharp_style_inlined_variable_declaration = true:suggestion
 csharp_style_throw_expression = true:suggestion
 csharp_style_conditional_delegate_call = true:suggestion
+
+# Parentheses preferences
+dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_other_binary_operators = always_for_clarity
+dotnet_style_parentheses_in_other_operators = never_if_unnecessary
+dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity
 
 # Space preferences
 csharp_space_after_cast = false
@@ -185,7 +195,7 @@ csharp_space_after_dot = false
 csharp_space_after_keywords_in_control_flow_statements = true
 csharp_space_after_semicolon_in_for_statement = true
 csharp_space_around_binary_operators = before_and_after
-csharp_space_around_declaration_statements = do_not_ignore
+csharp_space_around_declaration_statements = false
 csharp_space_before_colon_in_inheritance_clause = true
 csharp_space_before_comma = false
 csharp_space_before_dot = false
@@ -205,3 +215,6 @@ csharp_space_between_square_brackets = false
 csharp_prefer_braces = true:suggestion
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true
+
+# Disable collection expression can be simplified suggestion
+dotnet_diagnostic.IDE0305.severity = none
