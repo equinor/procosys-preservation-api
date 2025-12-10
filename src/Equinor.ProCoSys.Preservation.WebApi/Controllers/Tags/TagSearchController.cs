@@ -32,6 +32,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.TAG_READ)]
         [HttpGet]
         public async Task<ActionResult<List<PCSTagDto>>> SearchTagsByTagNo(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -51,6 +52,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.TAG_READ)]
         [HttpGet("ByTagFunctions")]
         public async Task<ActionResult<List<PCSTagDto>>> SearchTagsByTagFunctions(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -69,6 +71,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Preserved")]
         public async Task<ActionResult<List<PCSPreservedTagDto>>> Get(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,

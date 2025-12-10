@@ -20,6 +20,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Projects
         [Authorize]
         [HttpGet("{projectName}")]
         public async Task<ActionResult<ProjectDetailsDto>> GetProject(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
