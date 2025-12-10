@@ -15,9 +15,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.TagFunctions
             var intervalWeeks = 4;
 
             // Act
-            var tagFunction = await UpdateAndGetTagFunctionAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
+            var tagFunction = await UpdateAndGetTagFunctionAsync(TestFactory.PlantWithAccess,
                 TagFunctionUnderTest.Code,
                 TagFunctionUnderTest.RegisterCode,
                 newReqDefId,
