@@ -2,6 +2,7 @@ name: 🚀🧪 Deploy to test
 
 on:
   workflow_dispatch:
+  pull_request: #TODO remove debug
   push:
     branches: main
 
