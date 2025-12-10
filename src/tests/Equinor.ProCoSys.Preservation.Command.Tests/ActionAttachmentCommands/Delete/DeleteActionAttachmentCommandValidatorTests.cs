@@ -12,9 +12,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
     [TestClass]
     public class DeleteActionAttachmentCommandValidatorTests
     {
-        private const int _tagId = 1;
-        private const int _actionId = 2;
-        private const int _attachmentId = 3;
+        private const int TagId = 1;
+        private const int ActionId = 2;
+        private const int AttachmentId = 3;
         private readonly string _rowVersion = "AAAAAAAAJ00=";
         private DeleteActionAttachmentCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
@@ -28,10 +28,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
 
-            _command = new DeleteActionAttachmentCommand(_tagId, _actionId, _attachmentId, _rowVersion);
+            _command = new DeleteActionAttachmentCommand(TagId, ActionId, AttachmentId, _rowVersion);
 
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(r => r.ExistsActionAttachmentAsync(_tagId, _actionId, _attachmentId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ExistsActionAttachmentAsync(TagId, ActionId, AttachmentId, default)).Returns(Task.FromResult(true));
 
             _actionValidatorMock = new Mock<IActionValidator>();
 
@@ -80,7 +80,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
         [TestMethod]
         public async Task Validate_ShouldFail_WhenActionIsClosed()
         {
-            _actionValidatorMock.Setup(r => r.IsClosedAsync(_actionId, default)).Returns(Task.FromResult(true));
+            _actionValidatorMock.Setup(r => r.IsClosedAsync(ActionId, default)).Returns(Task.FromResult(true));
 
             var result = await _dut.ValidateAsync(_command);
 
@@ -92,7 +92,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
         [TestMethod]
         public async Task Validate_ShouldFail_WhenAttachmentNotExists()
         {
-            _tagValidatorMock.Setup(r => r.ExistsActionAttachmentAsync(_tagId, _actionId, _attachmentId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ExistsActionAttachmentAsync(TagId, ActionId, AttachmentId, default)).Returns(Task.FromResult(false));
 
             var result = await _dut.ValidateAsync(_command);
 
@@ -104,10 +104,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
         [TestMethod]
         public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
-            const string invalidRowVersion = "String";
+            const string InvalidRowVersion = "String";
 
-            var command = new DeleteActionAttachmentCommand(_tagId, _actionId, _attachmentId, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
+            var command = new DeleteActionAttachmentCommand(TagId, ActionId, AttachmentId, InvalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(InvalidRowVersion)).Returns(false);
 
             var result = await _dut.ValidateAsync(command);
 

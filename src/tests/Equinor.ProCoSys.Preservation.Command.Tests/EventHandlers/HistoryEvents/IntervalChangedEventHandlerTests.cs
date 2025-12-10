@@ -13,24 +13,24 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
     [TestClass]
     public class IntervalChangedEventHandlerTests
     {
-        private const int _requirementDefinitionId = 3;
+        private const int RequirementDefinitionId = 3;
         private Mock<IHistoryRepository> _historyRepositoryMock;
         private IntervalChangedEventHandler _dut;
         private History _historyAdded;
         private RequirementDefinition _requirementDefinition;
         private Mock<IRequirementTypeRepository> _requirementTypeRepositoryMock;
         private string _reqTitle;
-        private const string _plant = "TestPlant";
+        private const string Plant = "TestPlant";
 
         [TestInitialize]
         public void Setup()
         {
             // Arrange
             _reqTitle = "Rotate 2 turns";
-            _requirementDefinition = new RequirementDefinition(_plant, _reqTitle, 2, RequirementUsage.ForAll, 1);
+            _requirementDefinition = new RequirementDefinition(Plant, _reqTitle, 2, RequirementUsage.ForAll, 1);
             _requirementTypeRepositoryMock = new Mock<IRequirementTypeRepository>();
             _requirementTypeRepositoryMock
-                .Setup(repo => repo.GetRequirementDefinitionByIdAsync(_requirementDefinitionId))
+                .Setup(repo => repo.GetRequirementDefinitionByIdAsync(RequirementDefinitionId))
                 .Returns(Task.FromResult(_requirementDefinition));
 
             _historyRepositoryMock = new Mock<IHistoryRepository>();
@@ -55,7 +55,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             var plant = "TestPlant";
             var fromInterval = 1;
             var toInterval = 2;
-            _dut.Handle(new IntervalChangedEvent(plant, sourceGuid, _requirementDefinitionId, fromInterval, toInterval), default);
+            _dut.Handle(new IntervalChangedEvent(plant, sourceGuid, RequirementDefinitionId, fromInterval, toInterval), default);
 
             // Assert
             var expectedDescription = $"{_historyAdded?.EventType.GetDescription()} - From {fromInterval} week(s) to {toInterval} week(s) in '{_reqTitle}'";

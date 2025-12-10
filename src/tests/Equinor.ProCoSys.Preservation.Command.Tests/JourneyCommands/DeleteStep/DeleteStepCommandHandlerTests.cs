@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteStep
     {
         private int _journeyId = 1;
         private int _stepId = 2;
-        private const string _rowVersion = "AAAAAAAAABA=";
+        private const string RowVersion = "AAAAAAAAABA=";
         private Mock<IJourneyRepository> _journeyRepositoryMock;
         private DeleteStepCommand _command;
         private DeleteStepCommandHandler _dut;
@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteStep
             _journeyRepositoryMock
                 .Setup(x => x.GetByIdAsync(_journeyId))
                     .Returns(Task.FromResult(_journey));
-            _command = new DeleteStepCommand(_journeyId, _stepId, _rowVersion);
+            _command = new DeleteStepCommand(_journeyId, _stepId, RowVersion);
 
             _dut = new DeleteStepCommandHandler(_journeyRepositoryMock.Object, UnitOfWorkMock.Object);
         }

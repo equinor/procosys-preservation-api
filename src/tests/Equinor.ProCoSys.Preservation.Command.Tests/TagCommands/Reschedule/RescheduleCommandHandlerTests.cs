@@ -19,8 +19,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
     {
         private RescheduleCommand _rescheduleOneWeekLaterCommand;
         private RescheduleCommand _rescheduleFourWeeksEarlierCommand;
-        private const string _rowVersion1 = "AAAAAAAAABA=";
-        private const string _rowVersion2 = "AAAAAAAABBA=";
+        private const string RowVersion1 = "AAAAAAAAABA=";
+        private const string RowVersion2 = "AAAAAAAABBA=";
         private Tag _tag1;
         private Tag _tag2;
         private TagRequirement _req1OnTag1;
@@ -69,7 +69,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
             var tagIds = new List<int> { _tagId1, _tagId2 };
             var tagIdsWithRowVersion = new List<IdAndRowVersion>
             {
-                new IdAndRowVersion(_tagId1, _rowVersion1), new IdAndRowVersion(_tagId2, _rowVersion2)
+                new IdAndRowVersion(_tagId1, RowVersion1), new IdAndRowVersion(_tagId2, RowVersion2)
             };
 
             var projectRepoMock = new Mock<IProjectRepository>();
@@ -137,8 +137,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
             Assert.AreEqual(0, result.Errors.Count);
             // In real life EF Core will create a new RowVersion when save.
             // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
-            Assert.AreEqual(_rowVersion1, result.Data.First().RowVersion);
-            Assert.AreEqual(_rowVersion1, _tag1.RowVersion.ConvertToString());
+            Assert.AreEqual(RowVersion1, result.Data.First().RowVersion);
+            Assert.AreEqual(RowVersion1, _tag1.RowVersion.ConvertToString());
         }
     }
 }

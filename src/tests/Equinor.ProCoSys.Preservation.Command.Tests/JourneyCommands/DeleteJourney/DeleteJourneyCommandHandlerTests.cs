@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
     public class DeleteJourneyCommandHandlerTests : CommandHandlerTestsBase
     {
         private const int JourneyId = 12;
-        private const string _rowVersion = "AAAAAAAAABA=";
+        private const string RowVersion = "AAAAAAAAABA=";
         private Mock<IJourneyRepository> _journeyRepositoryMock;
         private Journey _journey;
         private DeleteJourneyCommand _command;
@@ -27,7 +27,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
             _journeyRepositoryMock
                 .Setup(x => x.GetByIdAsync(JourneyId))
                     .Returns(Task.FromResult(_journey));
-            _command = new DeleteJourneyCommand(JourneyId, _rowVersion);
+            _command = new DeleteJourneyCommand(JourneyId, RowVersion);
 
             _dut = new DeleteJourneyCommandHandler(
                 _journeyRepositoryMock.Object,

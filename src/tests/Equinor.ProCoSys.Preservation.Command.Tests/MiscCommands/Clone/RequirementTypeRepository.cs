@@ -17,7 +17,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 
         public void Save()
         {
-            var requirementDefinitions = _targetItems
+            var requirementDefinitions = TargetItems
                 .SelectMany(rt => rt.RequirementDefinitions)
                 .ToList();
             var nextId = requirementDefinitions.Count;

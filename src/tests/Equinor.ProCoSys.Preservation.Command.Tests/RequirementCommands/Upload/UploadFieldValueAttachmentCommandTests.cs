@@ -28,28 +28,28 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
         [TestInitialize]
         public void Setup()
         {
-            var _tagId = 1;
-            var _attachmentFieldId = 12;
-            var _reqId = 21;
+            var tagId = 1;
+            var attachmentFieldId = 12;
+            var reqId = 21;
 
             _command = new UploadFieldValueAttachmentCommand(
-                _tagId,
-                _reqId,
-                _attachmentFieldId,
+                tagId,
+                reqId,
+                attachmentFieldId,
                 _fileName,
                 new MemoryStream());
 
             _requirementDefinition = new Mock<RequirementDefinition>();
-            _requirementDefinition.SetupGet(r => r.Id).Returns(_reqId);
+            _requirementDefinition.SetupGet(r => r.Id).Returns(reqId);
             _requirementDefinition.SetupGet(r => r.Plant).Returns(TestPlant);
 
             var attachmentFieldMock = new Mock<Field>(TestPlant, "", FieldType.Attachment, 0, "", false);
-            attachmentFieldMock.SetupGet(f => f.Id).Returns(_attachmentFieldId);
+            attachmentFieldMock.SetupGet(f => f.Id).Returns(attachmentFieldId);
             attachmentFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _requirementDefinition.Object.AddField(attachmentFieldMock.Object);
 
             var requirementMock = new Mock<TagRequirement>(TestPlant, 2, _requirementDefinition.Object);
-            requirementMock.SetupGet(r => r.Id).Returns(_reqId);
+            requirementMock.SetupGet(r => r.Id).Returns(reqId);
             requirementMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
@@ -66,12 +66,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock
-                .Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(_tagId))
+                .Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(tagId))
                 .Returns(Task.FromResult(tag));
 
             var rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
+                .Setup(r => r.GetRequirementDefinitionByIdAsync(reqId))
                 .Returns(Task.FromResult(_requirementDefinition.Object));
 
             _blobStorageMock = new Mock<IAzureBlobService>();

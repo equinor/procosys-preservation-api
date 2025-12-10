@@ -26,8 +26,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
         private Mock<RequirementDefinition> _rd1Mock;
         private Mock<RequirementDefinition> _rd2Mock;
 
-        private const string _rowVersion1 = "AAAAAAAAABA=";
-        private const string _rowVersion2 = "AAAAAAAABBA=";
+        private const string RowVersion1 = "AAAAAAAAABA=";
+        private const string RowVersion2 = "AAAAAAAABBA=";
 
         private CompletePreservationCommandHandler _dut;
 
@@ -84,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
             };
 
             var tagIds = new List<int> { tagId1, tagId2 };
-            var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2) };
+            var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(tagId1, RowVersion1), new IdAndRowVersion(tagId2, RowVersion2) };
 
             var projectRepoMock = new Mock<IProjectRepository>();
             projectRepoMock.Setup(r => r.GetTagsWithPreservationHistoryByTagIdsAsync(tagIds))
@@ -147,8 +147,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
             Assert.AreEqual(0, result.Errors.Count);
             // In real life EF Core will create a new RowVersion when save.
             // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
-            Assert.AreEqual(_rowVersion1, result.Data.First().RowVersion);
-            Assert.AreEqual(_rowVersion1, _tag1.RowVersion.ConvertToString());
+            Assert.AreEqual(RowVersion1, result.Data.First().RowVersion);
+            Assert.AreEqual(RowVersion1, _tag1.RowVersion.ConvertToString());
         }
     }
 }

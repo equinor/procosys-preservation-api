@@ -90,10 +90,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
             var req2OnTag1WithFourWeekIntervalInitialPeriod = _req2OnTag1WithFourWeekInterval.ActivePeriod;
             var req2OnTag2WithFourWeekIntervalInitialPeriod = _req2OnTag2WithFourWeekInterval.ActivePeriod;
 
-            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+            TimeProvider.ElapseWeeks(TwoWeeksInterval);
             await _dut.Handle(_command, default);
 
-            var expectedNextDueTimeUtcForTwoWeeksInterval = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
+            var expectedNextDueTimeUtcForTwoWeeksInterval = TimeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtcForTwoWeeksInterval, _req1OnTag1WithTwoWeekInterval.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtcForTwoWeeksInterval, _req1OnTag2WithTwoWeekInterval.NextDueTimeUtc);
 
@@ -109,15 +109,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldPreserveAllRequirementsOnAllTags_WhenOnDueAtLatestRequirement()
         {
-            _timeProvider.ElapseWeeks(FourWeeksInterval);
+            TimeProvider.ElapseWeeks(FourWeeksInterval);
 
             await _dut.Handle(_command, default);
 
-            var expectedNextDueTimeUtcForTwoWeeksInterval = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
+            var expectedNextDueTimeUtcForTwoWeeksInterval = TimeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtcForTwoWeeksInterval, _req1OnTag1WithTwoWeekInterval.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtcForTwoWeeksInterval, _req1OnTag2WithTwoWeekInterval.NextDueTimeUtc);
 
-            var expectedNextDueTimeUtcForFourWeeksInterval = _timeProvider.UtcNow.AddWeeks(FourWeeksInterval);
+            var expectedNextDueTimeUtcForFourWeeksInterval = TimeProvider.UtcNow.AddWeeks(FourWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtcForFourWeeksInterval, _req2OnTag1WithFourWeekInterval.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtcForFourWeeksInterval, _req2OnTag2WithFourWeekInterval.NextDueTimeUtc);
         }
@@ -133,7 +133,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
         {
-            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+            TimeProvider.ElapseWeeks(TwoWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
@@ -142,7 +142,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
         {
-            _timeProvider.ElapseWeeks(FourWeeksInterval);
+            TimeProvider.ElapseWeeks(FourWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);

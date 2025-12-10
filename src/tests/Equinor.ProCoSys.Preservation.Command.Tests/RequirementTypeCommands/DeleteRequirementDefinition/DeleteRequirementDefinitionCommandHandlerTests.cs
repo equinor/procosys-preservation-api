@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
     {
         private int _requirementTypeId = 1;
         private int _requirementDefinitionId = 2;
-        private const string _rowVersion = "AAAAAAAAABA=";
+        private const string RowVersion = "AAAAAAAAABA=";
         private Mock<IRequirementTypeRepository> _requirementTypeRepositoryMock;
         private DeleteRequirementDefinitionCommand _command;
         private DeleteRequirementDefinitionCommandHandler _dut;
@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
             _requirementTypeRepositoryMock
                 .Setup(x => x.GetByIdAsync(_requirementTypeId))
                     .Returns(Task.FromResult(_requirementType));
-            _command = new DeleteRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, _rowVersion);
+            _command = new DeleteRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, RowVersion);
 
             _dut = new DeleteRequirementDefinitionCommandHandler(_requirementTypeRepositoryMock.Object, UnitOfWorkMock.Object);
         }

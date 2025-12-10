@@ -531,7 +531,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
         [TestMethod]
         public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
-            const string invalidRowVersion = "String";
+            const string InvalidRowVersion = "String";
 
             var command = new UpdateTagRequirementsCommand(
                 _tagId,
@@ -543,8 +543,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
                     new RequirementForCommand(_rdForOtherThanSupplierId, 1)
                 },
                 null,
-                invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
+                InvalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(InvalidRowVersion)).Returns(false);
 
             var result = await _dut.ValidateAsync(command);
 

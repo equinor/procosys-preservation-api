@@ -80,10 +80,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         [TestMethod]
         public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
-            const string invalidRowVersion = "String";
+            const string InvalidRowVersion = "String";
 
-            var command = new DeleteJourneyCommand(_id, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
+            var command = new DeleteJourneyCommand(_id, InvalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(InvalidRowVersion)).Returns(false);
 
             var result = await _dut.ValidateAsync(command);
 

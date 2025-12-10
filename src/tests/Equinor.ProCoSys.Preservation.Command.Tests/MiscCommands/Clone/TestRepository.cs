@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
     {
         private readonly PlantProviderForTest _plantProvider;
         private readonly List<T> _sourceItems;
-        protected readonly List<T> _targetItems = new List<T>();
+        protected readonly List<T> TargetItems = new List<T>();
         private readonly string _targetPlant;
 
         protected TestRepository(PlantProviderForTest plantProvider, List<T> sourceModes)
@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
         {
             if (_plantProvider.Plant == _targetPlant)
             {
-                _targetItems.Add(item);
+                TargetItems.Add(item);
             }
             else
             {
@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
         {
             if (_plantProvider.Plant == _targetPlant)
             {
-                return Task.FromResult(_targetItems);
+                return Task.FromResult(TargetItems);
             }
             return Task.FromResult(_sourceItems);
         }

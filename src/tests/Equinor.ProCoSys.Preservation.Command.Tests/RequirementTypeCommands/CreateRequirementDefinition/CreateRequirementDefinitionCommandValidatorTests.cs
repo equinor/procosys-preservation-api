@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         private readonly int _reqTypeId = 1;
         private readonly int _sortKey = 10;
         private readonly string _title = "Title";
-        private RequirementUsage Usage = RequirementUsage.ForAll;
+        private RequirementUsage _usage = RequirementUsage.ForAll;
         private readonly IList<FieldsForCommand> _fields = new List<FieldsForCommand>
         {
             new FieldsForCommand("Label text", FieldType.Attachment, 10)
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
             _requirementTypeValidatorMock = new Mock<IRequirementTypeValidator>();
             _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(_reqTypeId, default)).Returns(Task.FromResult(true));
 
-            _command = new CreateRequirementDefinitionCommand(_reqTypeId, _sortKey, Usage, _title, 4, _fields);
+            _command = new CreateRequirementDefinitionCommand(_reqTypeId, _sortKey, _usage, _title, 4, _fields);
             _dut = new CreateRequirementDefinitionCommandValidator(_requirementTypeValidatorMock.Object);
         }
 

@@ -95,10 +95,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         [TestMethod]
         public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
-            const string invalidRowVersion = "String";
+            const string InvalidRowVersion = "String";
 
-            var command = new UpdateRequirementTypeCommand(_requirementTypeId, invalidRowVersion, _sortKey, _title, _code, _icon);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
+            var command = new UpdateRequirementTypeCommand(_requirementTypeId, InvalidRowVersion, _sortKey, _title, _code, _icon);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(InvalidRowVersion)).Returns(false);
 
             var result = await _dut.ValidateAsync(command);
 

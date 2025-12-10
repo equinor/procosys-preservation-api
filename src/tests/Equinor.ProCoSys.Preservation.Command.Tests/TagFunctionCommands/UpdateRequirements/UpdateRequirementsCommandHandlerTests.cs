@@ -15,9 +15,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
     [TestClass]
     public class UpdateRequirementsCommandHandlerTests : CommandHandlerTestsBase
     {
-        private readonly string TagFunctionCode = "TFC";
-        private readonly string RegisterCode = "RC";
-        private readonly string PCSDescription = "PCSDescription";
+        private readonly string _tagFunctionCode = "TFC";
+        private readonly string _registerCode = "RC";
+        private readonly string _pcsDescription = "PCSDescription";
         private RequirementDefinition _reqDef1;
         private RequirementDefinition _reqDef2;
         private const int ReqDefId1 = 99;
@@ -54,20 +54,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
                 .Returns(Task.FromResult(new List<RequirementDefinition> { rdMock1.Object, rdMock2.Object }));
 
             _tagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
-            _tagFunctionApiServiceMock.Setup(t => t.TryGetTagFunctionAsync(TestPlant, TagFunctionCode, RegisterCode, It.IsAny<CancellationToken>()))
+            _tagFunctionApiServiceMock.Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tagFunctionCode, _registerCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSTagFunction
                 {
-                    Code = TagFunctionCode,
-                    Description = PCSDescription,
-                    RegisterCode = RegisterCode
+                    Code = _tagFunctionCode,
+                    Description = _pcsDescription,
+                    RegisterCode = _registerCode
                 }));
-            _commandWithTwoRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode,
+            _commandWithTwoRequirements = new UpdateRequirementsCommand(_tagFunctionCode, _registerCode,
                 new List<RequirementForCommand>
                 {
                     new RequirementForCommand(ReqDefId1, Interval1),
                     new RequirementForCommand(ReqDefId2, Interval2),
                 });
-            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null);
+            _commandWithoutRequirements = new UpdateRequirementsCommand(_tagFunctionCode, _registerCode, null);
 
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
             _tfRepositoryMock
@@ -90,15 +90,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         {
             // Arrange
             _tfRepositoryMock
-                .Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode)).Returns(Task.FromResult((TagFunction)null));
+                .Setup(r => r.GetByCodesAsync(_tagFunctionCode, _registerCode)).Returns(Task.FromResult((TagFunction)null));
 
             // Act
             await _dut.Handle(_commandWithTwoRequirements, default);
 
             // Assert
-            Assert.AreEqual(TagFunctionCode, _tfAddedToRepository.Code);
-            Assert.AreEqual(PCSDescription, _tfAddedToRepository.Description);
-            Assert.AreEqual(RegisterCode, _tfAddedToRepository.RegisterCode);
+            Assert.AreEqual(_tagFunctionCode, _tfAddedToRepository.Code);
+            Assert.AreEqual(_pcsDescription, _tfAddedToRepository.Description);
+            Assert.AreEqual(_registerCode, _tfAddedToRepository.RegisterCode);
             Assert.AreEqual(2, _tfAddedToRepository.Requirements.Count);
         }
 
@@ -107,14 +107,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         {
             // Arrange
             _tfRepositoryMock
-                .Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode)).Returns(Task.FromResult((TagFunction)null));
+                .Setup(r => r.GetByCodesAsync(_tagFunctionCode, _registerCode)).Returns(Task.FromResult((TagFunction)null));
 
             // Act
             await _dut.Handle(_commandWithoutRequirements, default);
 
             // Assert
-            Assert.AreEqual(TagFunctionCode, _tfAddedToRepository.Code);
-            Assert.AreEqual(RegisterCode, _tfAddedToRepository.RegisterCode);
+            Assert.AreEqual(_tagFunctionCode, _tfAddedToRepository.Code);
+            Assert.AreEqual(_registerCode, _tfAddedToRepository.RegisterCode);
             Assert.AreEqual(0, _tfAddedToRepository.Requirements.Count);
         }
 
@@ -122,9 +122,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         public async Task HandlingUpdateRequirementsCommand_ShouldNotAddAnyTagFunctionToRepository_WhenTagFunctionAlreadyExists()
         {
             // Arrange
-            var tagFunction = new TagFunction(TestPlant, TagFunctionCode, "", RegisterCode);
+            var tagFunction = new TagFunction(TestPlant, _tagFunctionCode, "", _registerCode);
             _tfRepositoryMock
-                .Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode)).Returns(Task.FromResult(tagFunction));
+                .Setup(r => r.GetByCodesAsync(_tagFunctionCode, _registerCode)).Returns(Task.FromResult(tagFunction));
 
             // Act
             var result = await _dut.Handle(_commandWithTwoRequirements, default);
@@ -138,10 +138,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         public async Task HandlingUpdateRequirementsCommand_ShouldAddNewRequirementsToExistingTagFunction()
         {
             // Arrange
-            var tagFunction = new TagFunction(TestPlant, TagFunctionCode, "", RegisterCode);
+            var tagFunction = new TagFunction(TestPlant, _tagFunctionCode, "", _registerCode);
             Assert.AreEqual(0, tagFunction.Requirements.Count);
             _tfRepositoryMock
-                .Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode)).Returns(Task.FromResult(tagFunction));
+                .Setup(r => r.GetByCodesAsync(_tagFunctionCode, _registerCode)).Returns(Task.FromResult(tagFunction));
 
             // Act
             await _dut.Handle(_commandWithTwoRequirements, default);
@@ -156,7 +156,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         public async Task HandlingUpdateRequirementsCommand_ShouldUpdateRequirementsInExistingTagFunction_WhenNewIntervals()
         {
             // Arrange
-            var tagFunction = new TagFunction(TestPlant, TagFunctionCode, "", RegisterCode);
+            var tagFunction = new TagFunction(TestPlant, _tagFunctionCode, "", _registerCode);
             tagFunction.AddRequirement(new TagFunctionRequirement(TestPlant, Interval3, _reqDef1));
             tagFunction.AddRequirement(new TagFunctionRequirement(TestPlant, Interval3, _reqDef2));
             Assert.AreEqual(2, tagFunction.Requirements.Count);
@@ -164,7 +164,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
             AssertRequirement(tagFunction.Requirements, ReqDefId2, Interval3);
 
             _tfRepositoryMock
-                .Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode)).Returns(Task.FromResult(tagFunction));
+                .Setup(r => r.GetByCodesAsync(_tagFunctionCode, _registerCode)).Returns(Task.FromResult(tagFunction));
 
             // Act
             await _dut.Handle(_commandWithTwoRequirements, default);
@@ -179,7 +179,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         public async Task HandlingUpdateRequirementsCommand_ShouldRemoveRequirementsFromExistingTagFunction()
         {
             // Arrange
-            var tagFunction = new TagFunction(TestPlant, TagFunctionCode, "", RegisterCode);
+            var tagFunction = new TagFunction(TestPlant, _tagFunctionCode, "", _registerCode);
             tagFunction.AddRequirement(new TagFunctionRequirement(TestPlant, Interval3, _reqDef1));
             tagFunction.AddRequirement(new TagFunctionRequirement(TestPlant, Interval3, _reqDef2));
             Assert.AreEqual(2, tagFunction.Requirements.Count);
@@ -187,7 +187,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
             AssertRequirement(tagFunction.Requirements, ReqDefId2, Interval3);
 
             _tfRepositoryMock
-                .Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode)).Returns(Task.FromResult(tagFunction));
+                .Setup(r => r.GetByCodesAsync(_tagFunctionCode, _registerCode)).Returns(Task.FromResult(tagFunction));
 
             // Act
             await _dut.Handle(_commandWithoutRequirements, default);

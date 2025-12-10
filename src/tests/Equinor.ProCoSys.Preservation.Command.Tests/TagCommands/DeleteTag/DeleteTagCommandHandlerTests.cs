@@ -17,8 +17,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
     public class DeleteTagCommandHandlerTests : CommandHandlerTestsBase
     {
         private int _tagId = 2;
-        private const string _projectName = "ProjectName";
-        private const string _rowVersion = "AAAAAAAAABA=";
+        private const string ProjectName = "ProjectName";
+        private const string RowVersion = "AAAAAAAAABA=";
         private DeleteTagCommand _command;
         private DeleteTagCommandHandler _dut;
         private Tag _tag;
@@ -28,26 +28,26 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
         public void Setup()
         {
             // Arrange
-            var _stepMock = new Mock<Step>();
-            _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
+            var stepMock = new Mock<Step>();
+            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
-            var _rdMock = new Mock<RequirementDefinition>();
-            _rdMock.SetupGet(rd => rd.Id).Returns(2);
-            _rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
+            var rdMock = new Mock<RequirementDefinition>();
+            rdMock.SetupGet(rd => rd.Id).Returns(2);
+            rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            var requirement = new TagRequirement(TestPlant, 2, _rdMock.Object);
-            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", _stepMock.Object, new List<TagRequirement> { requirement });
+            var requirement = new TagRequirement(TestPlant, 2, rdMock.Object);
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement> { requirement });
             _tag.SetProtectedIdForTesting(2);
             _tag.IsVoided = true;
 
-            _project = new Project(TestPlant, _projectName, "", ProjectProCoSysGuid);
+            _project = new Project(TestPlant, ProjectName, "", ProjectProCoSysGuid);
             _project.AddTag(_tag);
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock
                 .Setup(x => x.GetProjectAndTagWithPreservationHistoryByTagIdAsync(_tag.Id))
                 .Returns(Task.FromResult(_project));
-            _command = new DeleteTagCommand(_tagId, _rowVersion);
+            _command = new DeleteTagCommand(_tagId, RowVersion);
 
             _dut = new DeleteTagCommandHandler(projectRepositoryMock.Object, UnitOfWorkMock.Object);
         }

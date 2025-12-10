@@ -17,17 +17,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
     [TestClass]
     public class StepChangedEventHandlerTests
     {
-        private readonly string TestPlant = "TestPlant";
-        private readonly string Journey1 = "TestJourney1";
-        private readonly string Journey2 = "TestJourney2";
-        private readonly string FromStep = "TestStep1";
-        private readonly string ToStepInJourney1 = "TestStep2";
-        private readonly string ToStepInJourney2 = "TestStep3";
-        private readonly int Journey1Id = 12;
-        private readonly int Journey2Id = 13;
-        private readonly int FromStepId = 1;
-        private readonly int ToStepIdInJourney1 = 2;
-        private readonly int ToStepIdInJourney2 = 3;
+        private readonly string _testPlant = "TestPlant";
+        private readonly string _journey1 = "TestJourney1";
+        private readonly string _journey2 = "TestJourney2";
+        private readonly string _fromStep = "TestStep1";
+        private readonly string _toStepInJourney1 = "TestStep2";
+        private readonly string _toStepInJourney2 = "TestStep3";
+        private readonly int _journey1Id = 12;
+        private readonly int _journey2Id = 13;
+        private readonly int _fromStepId = 1;
+        private readonly int _toStepIdInJourney1 = 2;
+        private readonly int _toStepIdInJourney2 = 3;
         private Mock<IHistoryRepository> _historyRepositoryMock;
         private StepChangedEventHandler _dut;
         private History _historyAdded;
@@ -37,25 +37,25 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
         public void Setup()
         {
             var modeMock = new Mock<Mode>();
-            modeMock.SetupGet(m => m.Plant).Returns(TestPlant);
+            modeMock.SetupGet(m => m.Plant).Returns(_testPlant);
             var respMock = new Mock<Responsible>();
-            respMock.SetupGet(m => m.Plant).Returns(TestPlant);
+            respMock.SetupGet(m => m.Plant).Returns(_testPlant);
 
             // Arrange
-            var fromStep = new Step(TestPlant, FromStep, modeMock.Object, respMock.Object);
-            fromStep.SetProtectedIdForTesting(FromStepId);
-            var toStepInJourney1 = new Step(TestPlant, ToStepInJourney1, modeMock.Object, respMock.Object);
-            toStepInJourney1.SetProtectedIdForTesting(ToStepIdInJourney1);
-            var toStepInJourney2 = new Step(TestPlant, ToStepInJourney2, modeMock.Object, respMock.Object);
-            toStepInJourney2.SetProtectedIdForTesting(ToStepIdInJourney2);
+            var fromStep = new Step(_testPlant, _fromStep, modeMock.Object, respMock.Object);
+            fromStep.SetProtectedIdForTesting(_fromStepId);
+            var toStepInJourney1 = new Step(_testPlant, _toStepInJourney1, modeMock.Object, respMock.Object);
+            toStepInJourney1.SetProtectedIdForTesting(_toStepIdInJourney1);
+            var toStepInJourney2 = new Step(_testPlant, _toStepInJourney2, modeMock.Object, respMock.Object);
+            toStepInJourney2.SetProtectedIdForTesting(_toStepIdInJourney2);
 
-            var journey1 = new Journey(TestPlant, Journey1);
-            journey1.SetProtectedIdForTesting(Journey1Id);
+            var journey1 = new Journey(_testPlant, _journey1);
+            journey1.SetProtectedIdForTesting(_journey1Id);
             journey1.AddStep(fromStep);
             journey1.AddStep(toStepInJourney1);
 
-            var journey2 = new Journey(TestPlant, Journey2);
-            journey2.SetProtectedIdForTesting(Journey2Id);
+            var journey2 = new Journey(_testPlant, _journey2);
+            journey2.SetProtectedIdForTesting(_journey2Id);
             journey2.AddStep(toStepInJourney2);
 
             _historyRepositoryMock = new Mock<IHistoryRepository>();
@@ -68,10 +68,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyRepositoryMock
-                .Setup(repo => repo.GetJourneysByStepIdsAsync(new List<int> { FromStepId, ToStepIdInJourney1 }))
+                .Setup(repo => repo.GetJourneysByStepIdsAsync(new List<int> { _fromStepId, _toStepIdInJourney1 }))
                 .Returns(Task.FromResult(new List<Journey> { journey1, journey1 }));
             _journeyRepositoryMock
-                .Setup(repo => repo.GetJourneysByStepIdsAsync(new List<int> { FromStepId, ToStepIdInJourney2 }))
+                .Setup(repo => repo.GetJourneysByStepIdsAsync(new List<int> { _fromStepId, _toStepIdInJourney2 }))
                 .Returns(Task.FromResult(new List<Journey> { journey1, journey2 }));
             _dut = new StepChangedEventHandler(_historyRepositoryMock.Object, _journeyRepositoryMock.Object);
         }
@@ -84,13 +84,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             // Act
             var sourceGuid = Guid.NewGuid();
-            await _dut.Handle(new StepChangedEvent(TestPlant, sourceGuid, FromStepId, ToStepIdInJourney1), default);
+            await _dut.Handle(new StepChangedEvent(_testPlant, sourceGuid, _fromStepId, _toStepIdInJourney1), default);
 
             // Assert
-            var expectedDescription = $"{EventType.StepChanged.GetDescription()} - From '{FromStep}' to '{ToStepInJourney1}' in journey '{Journey1}'";
+            var expectedDescription = $"{EventType.StepChanged.GetDescription()} - From '{_fromStep}' to '{_toStepInJourney1}' in journey '{_journey1}'";
 
             Assert.IsNotNull(_historyAdded);
-            Assert.AreEqual(TestPlant, _historyAdded.Plant);
+            Assert.AreEqual(_testPlant, _historyAdded.Plant);
             Assert.AreEqual(sourceGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.StepChanged, _historyAdded.EventType);
@@ -108,13 +108,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             // Act
             var sourceGuid = Guid.NewGuid();
-            await _dut.Handle(new StepChangedEvent(TestPlant, sourceGuid, FromStepId, ToStepIdInJourney2), default);
+            await _dut.Handle(new StepChangedEvent(_testPlant, sourceGuid, _fromStepId, _toStepIdInJourney2), default);
 
             // Assert
-            var expectedDescription = $"{EventType.JourneyChanged.GetDescription()} - From journey '{Journey1}' / step '{FromStep}' to journey '{Journey2}' / step '{ToStepInJourney2}'";
+            var expectedDescription = $"{EventType.JourneyChanged.GetDescription()} - From journey '{_journey1}' / step '{_fromStep}' to journey '{_journey2}' / step '{_toStepInJourney2}'";
 
             Assert.IsNotNull(_historyAdded);
-            Assert.AreEqual(TestPlant, _historyAdded.Plant);
+            Assert.AreEqual(_testPlant, _historyAdded.Plant);
             Assert.AreEqual(sourceGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.JourneyChanged, _historyAdded.EventType);
