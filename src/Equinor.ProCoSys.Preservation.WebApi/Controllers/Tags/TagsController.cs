@@ -81,6 +81,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet]
         public async Task<ActionResult<TagsResult>> GetTags(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -97,6 +98,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("ExportTagsWithHistoryToExcel")]
         public async Task<ActionResult> ExportTagsWithHistoryToExcel(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -122,6 +124,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}")]
         public async Task<ActionResult<TagDetailsDto>> GetTagDetails(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -134,6 +137,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Requirements")]
         public async Task<ActionResult<List<RequirementDetailsDto>>> GetTagRequirements(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -148,6 +152,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Actions")]
         public async Task<ActionResult<List<ActionDto>>> GetTagActions(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -160,6 +165,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Actions/{actionId}")]
         public async Task<ActionResult<ActionDetailsDto>> GetTagActionDetails(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -173,6 +179,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_CREATE, Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("{id}/Actions")]
         public async Task<ActionResult<int>> CreateAction(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -194,6 +201,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Actions/{actionId}")]
         public async Task<ActionResult<string>> UpdateAction(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -217,6 +225,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Actions/{actionId}/Close")]
         public async Task<ActionResult<string>> CloseAction(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -237,6 +246,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Actions/{actionId}/Attachments")]
         public async Task<ActionResult<List<ActionAttachmentDto>>> GetActionAttachments(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -250,6 +260,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Actions/{actionId}/Attachments/{attachmentId}")]
         public async Task<ActionResult> GetActionAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -276,6 +287,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_ATTACHFILE, Permissions.PRESERVATION_PLAN_ATTACHFILE)]
         [HttpPost("{id}/Actions/{actionId}/Attachments")]
         public async Task<ActionResult<int>> UploadActionAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -300,6 +312,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_DETACHFILE, Permissions.PRESERVATION_PLAN_DETACHFILE)]
         [HttpDelete("{id}/Actions/{actionId}/Attachments/{attachmentId}")]
         public async Task<ActionResult<int>> DeleteActionAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -322,6 +335,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}")]
         public async Task<ActionResult<string>> UpdateTag(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -340,6 +354,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/UpdateTagRequirements")]
         public async Task<ActionResult<string>> UpdateTagRequirements(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -370,6 +385,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("UpdateTagStep")]
         public async Task<ActionResult<string>> UpdateTagStep(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -386,6 +402,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("Standard")]
         public async Task<ActionResult<List<int>>> CreateTags(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -410,6 +427,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("MigrateStandard")]
         public async Task<ActionResult<int>> MigrateTags(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -434,6 +452,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("AutoScope")]
         public async Task<ActionResult<int>> AutoScopeTags(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -453,6 +472,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("Area")]
         public async Task<ActionResult<int>> CreateAreaTag(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -483,6 +503,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("DuplicateArea")]
         public async Task<ActionResult<int>> DuplicateAreaTag(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -506,6 +527,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("CheckAreaTagNo")]
         public async Task<ActionResult<Query.CheckAreaTagNo.AreaTagDto>> CheckAreaTagNo(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -526,6 +548,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/StartPreservation")]
         public async Task<IActionResult> StartPreservation(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -538,6 +561,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("StartPreservation")]
         public async Task<IActionResult> StartPreservation(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -550,6 +574,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("SetInService")]
         public async Task<IActionResult> SetInService(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -563,6 +588,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("UndoStartPreservation")]
         public async Task<ActionResult<List<IdAndRowVersion>>> UndoStartPreservation(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -576,6 +602,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Preserve")]
         public async Task<IActionResult> PreserveTag(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -588,6 +615,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("BulkPreserve")]
         public async Task<IActionResult> BulkPreserveTags(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -600,6 +628,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("Transfer")]
         public async Task<ActionResult<List<IdAndRowVersion>>> Transfer(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -613,6 +642,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("AutoTransfer")]
         public async Task<IActionResult> AutoTransfer(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -629,6 +659,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("CompletePreservation")]
         public async Task<ActionResult<List<IdAndRowVersion>>> CompletePreservation(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -642,6 +673,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPost("{id}/Requirements/{requirementId}/RecordValues")]
         public async Task<IActionResult> RecordValues(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -671,6 +703,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPost("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> UploadFieldValueAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -696,6 +729,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpDelete("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> DeleteFieldValueAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -716,6 +750,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpGet("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> GetFieldValueAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -743,6 +778,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [HttpPost("{id}/Requirements/{requirementId}/Preserve")]
         public async Task<IActionResult> PreserveRequirement
         (
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -758,6 +794,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Attachments")]
         public async Task<ActionResult<List<TagAttachmentDto>>> GetTagAttachments(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -770,6 +807,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_ATTACHFILE, Permissions.PRESERVATION_PLAN_ATTACHFILE)]
         [HttpPost("{id}/Attachments")]
         public async Task<ActionResult<int>> UploadTagAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -792,6 +830,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_DETACHFILE, Permissions.PRESERVATION_PLAN_DETACHFILE)]
         [HttpDelete("{id}/Attachments/{attachmentId}")]
         public async Task<ActionResult<int>> DeleteTagAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -812,6 +851,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Attachments/{attachmentId}")]
         public async Task<ActionResult> GetTagAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -837,6 +877,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_VOIDUNVOID)]
         [HttpPut("{id}/Void")]
         public async Task<IActionResult> VoidTag(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -851,6 +892,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_VOIDUNVOID)]
         [HttpPut("{id}/Unvoid")]
         public async Task<IActionResult> UnvoidTag(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -865,6 +907,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Requirements/{tagRequirementId}/PreservationRecord/{preservationRecordGuid}")]
         public async Task<ActionResult<PreservationRecordDto>> GetPreservationRecord(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -880,6 +923,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Requirements/{tagRequirementId}/PreservationRecord/{preservationRecordGuid}/Attachment")]
         public async Task<IActionResult> GetHistoricalFieldValueAttachment(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -906,6 +950,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/History")]
         public async Task<ActionResult<List<HistoryDto>>> GetTagHistory(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -918,6 +963,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_DELETE)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteTag(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -931,6 +977,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("Reschedule")]
         public async Task<IActionResult> Reschedule(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
