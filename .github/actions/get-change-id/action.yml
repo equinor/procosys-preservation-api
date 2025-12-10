@@ -1,0 +1,18 @@
+name: Get change ID
+description: 'Get an ID that represent the change in the repository.'
+
+outputs:
+  change-id:
+    description: 'Change ID'
+    value: ${{ steps.id-from-sha.outputs.change-id }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Parse change ID from SHA
+      id: id-from-sha
+      shell: bash
+      run: |
+        CHANGE_ID=$(echo $GITHUB_SHA | cut -c1-7)
+        echo "change-id=$CHANGE_ID" >> $GITHUB_OUTPUT
+        echo "Change ID: $CHANGE_ID"

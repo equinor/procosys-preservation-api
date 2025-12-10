@@ -1,0 +1,29 @@
+name: Check if a Docker Image Exists
+description: 'Returns true or false indicating if a Docker image with the specified tag exists in the Container Registry.'
+
+inputs:
+  tag:
+    description: 'Docker image tag to check for existence'
+    required: true
+
+outputs:
+  image-exists:
+    description: 'Indicates if the Docker image exists'
+    value: ${{ steps.check-image-exists.outputs.image-exists }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Login to Azure Container Registry
+      shell: bash
+      run: az acr login --name procosys
+
+    - name: Check if image already exists
+      id: check-image-exists
+      shell: bash
+      run: |
+        if az acr repository show --name procosys --image preservation/api:${{ inputs.tag }}; then
+          echo "image-exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "image-exists=false" >> $GITHUB_OUTPUT
+        fi

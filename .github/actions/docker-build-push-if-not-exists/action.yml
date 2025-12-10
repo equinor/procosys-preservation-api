@@ -1,0 +1,32 @@
+name: Builds and pushes Docker Image if it does not exist
+description: 'Builds and pushes a Docker image to the Container Registry if it does not already exist.'
+
+inputs:
+  client-id:
+    description: 'Identity client id'
+    required: true
+  tenant-id:
+    description: 'Equinor tenant id'
+    required: true
+  tag:
+    description: 'Docker image tag to check, build, and push'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check if image already exists
+      id: check-if-image-exists
+      uses: ./.github/actions/docker-check-if-image-exists
+      with:
+        tag: ${{ inputs.tag }}
+
+    - name: 'Build and Push Image'
+      if: ${{ steps.check-if-image-exists.outputs.image-exists == 'false' }}
+      id: build-image
+      uses: ./.github/actions/docker-build-push
+      with:
+        client-id: ${{ inputs.client-id }}
+        tenant-id: ${{ inputs.tenant-id }}
+        tag: ${{ inputs.tag }}
+        

@@ -1,0 +1,116 @@
+name: 🚀 Deploy to environment
+
+on:
+  workflow_call:
+    inputs:
+      github-environment:
+        description: 'Github environment to deploy to'
+        required: true
+        type: string
+      radix-environment:
+        description: 'Radix environment to deploy to'
+        required: false
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.github-environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 'Login to Azure'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true
+
+      - name: Get change ID
+        id: get-change-id
+        uses: ./.github/actions/get-change-id
+
+      - name: 'Build and Push Image'
+        uses: ./.github/actions/docker-build-push-if-not-exists
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          tag: ${{ steps.get-change-id.outputs.change-id }}
+  
+  generate-migration-script:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.github-environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 'Login to Azure'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true
+
+      - name: Generate migration script
+        id: generate-migration-script
+        uses: ./.github/actions/generate-migration-script
+
+      - name: Upload EF Migrations script Artifact 
+        uses: actions/upload-artifact@v4
+        with: 
+          name: migration-script
+          path: ${{ steps.generate-migration-script.outputs.migration-script-path }}
+
+  migrate-database:
+    needs: 
+      - build-and-push-image
+      - generate-migration-script
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.github-environment }}
+    steps:
+      - name: 'Login to Azure'
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          allow-no-subscriptions: true 
+      
+      - uses: actions/download-artifact@v4
+        with:
+          name: migration-script
+
+      - uses: azure/sql-action@v2.3
+        with:        
+          connection-string: ${{ vars.AZURE_SQL_CONNECTION_STRING }}
+          path: './migration.sql'
+
+  deploy-to-radix:
+    needs:
+      - build-and-push-image
+      - migrate-database
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.github-environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get change ID
+        id: get-change-id
+        uses: ./.github/actions/get-change-id
+
+      - name: Radix CLI setup
+        uses: equinor/radix-github-actions@v2
+        with:
+          azure_client_id: ${{ vars.AZURE_CLIENT_ID }}
+
+      - name: Deploy to Radix
+        run: |
+          rx create job deploy \
+            --application procosys-preservation-api \
+            --from-config \
+            --environment ${{ inputs.radix-environment }} \
+            --component backend \
+            --image-tag-name backend=${{ steps.get-change-id.outputs.change-id }} \
+            --follow
