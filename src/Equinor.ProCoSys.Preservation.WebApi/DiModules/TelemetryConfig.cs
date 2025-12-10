@@ -14,12 +14,12 @@ public static class TelemetryConfig
         TokenCredential credential)
     {
         services.AddScoped<ITelemetryClient, ApplicationInsightsTelemetryClient>();
-        
+
         services.AddApplicationInsightsTelemetry(options =>
         {
             options.ConnectionString = configuration.GetValue<string>("ApplicationInsights:ConnectionString");
         });
-        
+
         services.Configure<TelemetryConfiguration>(config =>
         {
             config.SetAzureTokenCredential(credential);

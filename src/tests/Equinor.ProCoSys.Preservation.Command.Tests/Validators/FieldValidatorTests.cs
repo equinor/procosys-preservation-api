@@ -71,7 +71,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
         [TestMethod]
         public async Task IsValidForRecordingAsync_ForInfoField_ShouldReturnFalse()
-        { 
+        {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new FieldValidator(context);
@@ -82,7 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
         [TestMethod]
         public async Task IsValidForRecordingAsync_ForCheckBoxField_ShouldReturnTrue()
-        { 
+        {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new FieldValidator(context);
@@ -93,7 +93,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
         [TestMethod]
         public async Task IsValidForRecordingAsync_ForNumberField_ShouldReturnTrue()
-        { 
+        {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new FieldValidator(context);
@@ -104,7 +104,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
         [TestMethod]
         public async Task IsValidForAttachmentAsync_ForAttachmentField_ShouldReturnTrue()
-        { 
+        {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new FieldValidator(context);
@@ -115,7 +115,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
         [TestMethod]
         public async Task IsValidForAttachmentAsync_ForInfoField_ShouldReturnFalse()
-        { 
+        {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new FieldValidator(context);
@@ -126,7 +126,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
         [TestMethod]
         public async Task IsValidForAttachmentAsync_ForNumberField_ShouldReturnFalse()
-        { 
+        {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new FieldValidator(context);
@@ -137,7 +137,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
         [TestMethod]
         public async Task VerifyFieldTypeAsync_ForInfoField_ShouldReturnFalseForNumber()
-        { 
+        {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new FieldValidator(context);
@@ -148,7 +148,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
         [TestMethod]
         public async Task VerifyFieldTypeAsync_ForInfoField_ShouldReturnTrueForInfo()
-        { 
+        {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new FieldValidator(context);

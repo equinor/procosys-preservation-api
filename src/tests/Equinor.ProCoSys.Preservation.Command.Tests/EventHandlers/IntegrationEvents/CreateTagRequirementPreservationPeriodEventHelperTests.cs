@@ -37,14 +37,14 @@ public class CreateTagRequirementPreservationPeriodEventHelperTests
         var requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
         _tagRequirement = new TagRequirement(TestPlant, Interval, requirementDefinition);
         _tagRequirement.StartPreservation();
-        
+
         _preservationPeriod = _tagRequirement.PreservationPeriods.First();
-        
+
         _person = new Person(TestGuid, "Test", "Person");
 
         var personRepositoryMock = new Mock<IPersonRepository>();
         personRepositoryMock.Setup(x => x.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
-        
+
         _dut = new CreateTagRequirementPreservationPeriodEventHelper(personRepositoryMock.Object);
     }
 
@@ -67,13 +67,13 @@ public class CreateTagRequirementPreservationPeriodEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreatePreservationPeriodsEventExpectedProCoSysGuidValue()
     {
         // Arrange
         var expected = _preservationPeriod.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_tagRequirement, _preservationPeriod);
         var result = integrationEvent.ProCoSysGuid;
@@ -81,7 +81,7 @@ public class CreateTagRequirementPreservationPeriodEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreatePreservationPeriodsEventExpectedCreatedByGuidValue()
     {
@@ -92,13 +92,13 @@ public class CreateTagRequirementPreservationPeriodEventHelperTests
         // Assert
         Assert.AreEqual(TestGuid, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreatePreservationPeriodsEventExpectedTagRequirementGuidValue()
     {
         // Arrange
         var expected = _tagRequirement.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_tagRequirement, _preservationPeriod);
         var result = integrationEvent.TagRequirementGuid;
@@ -119,7 +119,7 @@ public class CreateTagRequirementPreservationPeriodEventHelperTests
         // Assert
         Assert.AreEqual(expected, integrationEvent.DueTimeUtc);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreatePreservationPeriodsEventWithExpectedCreatedAtUtcValue()
     {
@@ -132,13 +132,13 @@ public class CreateTagRequirementPreservationPeriodEventHelperTests
         // Assert
         Assert.AreEqual(TestTime, integrationEvent.CreatedAtUtc);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreatePreservationPeriodsEventWithModifiedByGuid()
     {
         // Arrange
         _preservationPeriod.SetModified(_person);
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_tagRequirement, _preservationPeriod);
         var result = integrationEvent.ModifiedByGuid;
@@ -159,13 +159,13 @@ public class CreateTagRequirementPreservationPeriodEventHelperTests
         // Assert
         Assert.AreEqual(TestTime, integrationEvent.ModifiedAtUtc);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreatePreservationPeriodsEventWithPreservedByGuid()
     {
         // Arrange
         _preservationPeriod.Preserve(_person, false);
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_tagRequirement, _preservationPeriod);
         var result = integrationEvent.PreservedByGuid;
@@ -173,7 +173,7 @@ public class CreateTagRequirementPreservationPeriodEventHelperTests
         // Assert
         Assert.AreEqual(TestGuid, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreatePreservationPeriodsEventWithExpectedPreservedAtUtcValue()
     {
@@ -186,7 +186,7 @@ public class CreateTagRequirementPreservationPeriodEventHelperTests
         // Assert
         Assert.AreEqual(TestTime, integrationEvent.PreservedAtUtc);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreatePreservationPeriodsEventWithExpectedBulkPreservedValue()
     {

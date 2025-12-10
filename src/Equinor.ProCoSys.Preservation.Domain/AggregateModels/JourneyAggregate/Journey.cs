@@ -73,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             {
                 throw new ArgumentNullException(nameof(step));
             }
-            
+
             if (step.Plant != Plant)
             {
                 throw new ArgumentException($"Can't relate item in {step.Plant} to item in {Plant}");
@@ -81,7 +81,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             _steps.Add(step);
             step.SortKey = _steps.Select(s => s.SortKey).Max() + 1;
-            
+
             AddDomainEvent(new ChildAddedEvent<Journey, Step>(this, step));
         }
 
@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             {
                 throw new Exception($"{nameof(step)} must be voided before delete");
             }
-            
+
             if (step.Plant != Plant)
             {
                 throw new ArgumentException($"Can't remove item in {step.Plant} from item in {Plant}");
@@ -116,7 +116,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             var step1 = _steps.Single(s => s.Id == stepId1);
             var step2 = _steps.Single(s => s.Id == stepId2);
             (step1.SortKey, step2.SortKey) = (step2.SortKey, step1.SortKey);
-            
+
             AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step1));
             AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step2));
         }
@@ -137,9 +137,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             step.IsVoided = true;
             step.SetRowVersion(stepRowVersion);
-            
+
             AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step));
-            
+
             return step;
         }
 
@@ -159,9 +159,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             step.IsVoided = false;
             step.SetRowVersion(stepRowVersion);
-            
+
             AddDomainEvent(new ChildModifiedEvent<Journey, Step>(this, step));
-            
+
             return step;
         }
 
@@ -190,7 +190,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             var stepIndex = orderedSteps.FindIndex(s => s.Id == stepId);
             if (stepIndex < orderedSteps.Count - 1)
             {
-                return orderedSteps[stepIndex+1];
+                return orderedSteps[stepIndex + 1];
             }
 
             return null;

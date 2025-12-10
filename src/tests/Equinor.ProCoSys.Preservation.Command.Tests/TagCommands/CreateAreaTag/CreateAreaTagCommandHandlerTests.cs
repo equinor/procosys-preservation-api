@@ -82,7 +82,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             _disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSDiscipline
                 {
-                    Code = disciplineCode, Description = DisciplineDescription
+                    Code = disciplineCode,
+                    Description = DisciplineDescription
                 }));
 
             var areaCode = "A";

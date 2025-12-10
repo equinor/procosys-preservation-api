@@ -5,7 +5,7 @@ using Equinor.ProCoSys.Preservation.Domain.Audit;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public interface IPublishEntityEventHelper<in TEntity> 
+public interface IPublishEntityEventHelper<in TEntity>
     where TEntity : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
 {
     Task PublishEvent(TEntity entity, CancellationToken cancellationToken);

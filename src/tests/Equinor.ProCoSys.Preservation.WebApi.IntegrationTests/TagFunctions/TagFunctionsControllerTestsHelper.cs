@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.TagFunctions
     public static class TagFunctionsControllerTestsHelper
     {
         private const string _route = "TagFunctions";
-        
+
         public static async Task<TagFunctionDetailsDto> GetTagFunctionDetailsAsync(
             UserType userType,
             string plant,

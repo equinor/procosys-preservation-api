@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 new Mode(TestPlant, "M2", false),
                 modeMock.Object
             };
-            
+
             _dbSetMock = _modes.AsQueryable().BuildMockDbSet();
 
             ContextHelper
@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetByIds_KnownId_ShouldReturnMode()
         {
-            var result = await _dut.GetByIdsAsync(new List<int>{ModeId});
+            var result = await _dut.GetByIdsAsync(new List<int> { ModeId });
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(ModeId, result.First().Id);
@@ -65,7 +65,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetByIds_UnknownId_ShouldReturnEmptyList()
         {
-            var result = await _dut.GetByIdsAsync(new List<int>{12672});
+            var result = await _dut.GetByIdsAsync(new List<int> { 12672 });
 
             Assert.AreEqual(0, result.Count);
         }

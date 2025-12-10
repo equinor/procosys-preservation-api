@@ -43,15 +43,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DuplicateJ
             mode.SetProtectedIdForTesting(_modeId);
             _modeRepositoryMock = new Mock<IModeRepository>();
             _modeRepositoryMock
-                .Setup(m => m.GetByIdsAsync(new List<int> {_modeId}))
-                .Returns(Task.FromResult(new List<Mode> {mode}));
-            
+                .Setup(m => m.GetByIdsAsync(new List<int> { _modeId }))
+                .Returns(Task.FromResult(new List<Mode> { mode }));
+
             var responsible = new Responsible(TestPlant, "RC", "RD");
             responsible.SetProtectedIdForTesting(_responsibleId);
             _responsibleRepositoryMock = new Mock<IResponsibleRepository>();
             _responsibleRepositoryMock
-                .Setup(r => r.GetByIdsAsync(new List<int> {_responsibleId}))
-                .Returns(Task.FromResult(new List<Responsible> {responsible}));
+                .Setup(r => r.GetByIdsAsync(new List<int> { _responsibleId }))
+                .Returns(Task.FromResult(new List<Responsible> { responsible }));
 
             var stepA = new Step(TestPlant, _stepA, mode, responsible);
             stepA.SetProtectedIdForTesting(_stepAId);
@@ -94,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DuplicateJ
         {
             // Act
             var result = await _dut.Handle(_journeyWithoutStepsCommand, default);
-            
+
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, result.Data);
@@ -106,7 +106,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DuplicateJ
         {
             // Act
             var result = await _dut.Handle(_journeyWithoutStepsCommand, default);
-            
+
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual($"{TestJourneyWithoutSteps}{Journey.DuplicatePrefix}", _journeyAdded.Title);
@@ -118,7 +118,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DuplicateJ
         {
             // Act
             var result = await _dut.Handle(_journeyWith3StepsCommand, default);
-            
+
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual($"{TestJourneyWith3Steps}{Journey.DuplicatePrefix}", _journeyAdded.Title);
@@ -134,10 +134,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DuplicateJ
         {
             // Arrange
             _sourceJourneyWith3Steps.SwapSteps(_stepBId, _stepCId);
-            
+
             // Act
             var result = await _dut.Handle(_journeyWith3StepsCommand, default);
-            
+
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual($"{TestJourneyWith3Steps}{Journey.DuplicatePrefix}", _journeyAdded.Title);
@@ -153,7 +153,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DuplicateJ
         {
             // Act
             await _dut.Handle(_journeyWithoutStepsCommand, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

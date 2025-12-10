@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using MediatR;
@@ -32,9 +32,9 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
                 ?? new List<PCSPreservedTag>();
 
             var presTagNos = await (from tag in _context.QuerySet<Tag>()
-                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
-                where p.Name == request.ProjectName
-                select tag.TagNo).ToListAsync(cancellationToken);
+                                    join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                                    where p.Name == request.ProjectName
+                                    select tag.TagNo).ToListAsync(cancellationToken);
 
             // Join all tags from API with preservation tags on TagNo. If a tag is not in preservation scope, use default value (null).
             var combinedTags = apiTags
@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
                     apiTag => apiTag.TagNo,
                     presTagNo => presTagNo,
                     (x, y) =>
-                        new {ApiTag = x, PresTagNo = y})
+                        new { ApiTag = x, PresTagNo = y })
                 .SelectMany(x => x.PresTagNo.DefaultIfEmpty(),
                     (x, y) =>
                         new PCSPreservedTagDto(

@@ -4,9 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -31,9 +31,9 @@ namespace Equinor.ProCoSys.Preservation.Query.GetFieldValueAttachment
                             .ThenInclude(r => r.PreservationPeriods)
                             .ThenInclude(p => p.FieldValues)
                             .ThenInclude(fv => fv.FieldValueAttachment)
-                    where t.Id == request.TagId
-                    select t).SingleOrDefaultAsync(cancellationToken);
-            
+                 where t.Id == request.TagId
+                 select t).SingleOrDefaultAsync(cancellationToken);
+
             if (tag == null)
             {
                 return new NotFoundResult<Uri>($"{nameof(Tag)} with ID {request.TagId} not found");
@@ -43,8 +43,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetFieldValueAttachment
 
             var requirementDefinition = await
                 (from rd in context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
-                    where rd.Id == requirement.RequirementDefinitionId
-                    select rd
+                 where rd.Id == requirement.RequirementDefinitionId
+                 select rd
                 ).SingleOrDefaultAsync(cancellationToken);
 
             var attachment = requirement.GetAlreadyRecordedAttachment(request.FieldId, requirementDefinition);

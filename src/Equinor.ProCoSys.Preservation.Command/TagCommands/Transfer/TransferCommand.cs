@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer
         public TransferCommand(IEnumerable<IdAndRowVersion> tags) => Tags = tags ?? new List<IdAndRowVersion>();
 
         public IEnumerable<IdAndRowVersion> Tags { get; }
-        
+
         public int TagId
         {
             get

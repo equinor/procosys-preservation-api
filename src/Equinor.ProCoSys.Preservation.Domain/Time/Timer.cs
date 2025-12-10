@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Time
 
         public string Elapsed()
         {
-            long elapsedFromStart = _stopWatch.ElapsedMilliseconds;
+            var elapsedFromStart = _stopWatch.ElapsedMilliseconds;
 
             var elapsed = $"{elapsedFromStart - _previousElapsedFromStart}ms / {elapsedFromStart}ms";
             _previousElapsedFromStart = elapsedFromStart;

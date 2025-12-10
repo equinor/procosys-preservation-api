@@ -91,7 +91,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
                     }
 
                     var tag = new Tag(
-                        plant, 
+                        plant,
                         TagType.Standard,
                         Guid.NewGuid(),
                         $"TagNo-{i}",

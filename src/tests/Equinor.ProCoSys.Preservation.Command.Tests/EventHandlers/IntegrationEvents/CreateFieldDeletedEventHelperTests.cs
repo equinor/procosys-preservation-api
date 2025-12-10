@@ -34,13 +34,13 @@ public class CreateFieldDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateFieldDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _field.Guid;
-        
+
         // Act
         var deletionEvent = CreateFieldDeleteEventHelper.CreateEvent(_field);
         var result = deletionEvent.ProCoSysGuid;

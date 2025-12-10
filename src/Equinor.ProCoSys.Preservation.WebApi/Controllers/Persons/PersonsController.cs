@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Persons
             var result = await _mediator.Send(new CreateSavedFilterCommand(dto.ProjectName, dto.Title, dto.Criteria, dto.DefaultFilter));
             return this.FromResult(result);
         }
-         
+
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("SavedFilters")]
         public async Task<ActionResult<List<SavedFilterDto>>> GetSavedFiltersInProject(

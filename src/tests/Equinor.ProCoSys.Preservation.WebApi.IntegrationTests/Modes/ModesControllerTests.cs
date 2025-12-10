@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
             // Assert
             Assert.IsTrue(id > 0);
             var modes = await ModesControllerTestsHelper.GetAllModesAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            Assert.AreEqual(_initialModesCount+1, modes.Count);
+            Assert.AreEqual(_initialModesCount + 1, modes.Count);
             var mode = modes.SingleOrDefault(m => m.Id == id);
             Assert.IsNotNull(mode);
             Assert.AreEqual(title, mode.Title);

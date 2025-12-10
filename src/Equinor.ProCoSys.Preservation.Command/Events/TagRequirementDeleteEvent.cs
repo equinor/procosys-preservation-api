@@ -9,6 +9,6 @@ public class TagRequirementDeleteEvent : DeleteEvent<TagRequirement>
 {
     public TagRequirementDeleteEvent(Guid guid, string plant, string projectName) : base(guid, plant, projectName)
     {
-        
+
     }
 }

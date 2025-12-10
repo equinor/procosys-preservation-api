@@ -5,7 +5,7 @@ using Equinor.ProCoSys.Preservation.MessageContracts;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public interface ICreateEventHelper<in TEntity, TEvent> 
+public interface ICreateEventHelper<in TEntity, TEvent>
     where TEntity : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
     where TEvent : class, IIntegrationEvent
 {

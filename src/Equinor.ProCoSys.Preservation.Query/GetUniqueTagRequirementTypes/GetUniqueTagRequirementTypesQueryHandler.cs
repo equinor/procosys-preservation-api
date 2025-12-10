@@ -21,14 +21,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagRequirementTypes
         {
             var requirementTypes = await
                 (from requirementType in _context.QuerySet<RequirementType>()
-                        join requirementDefinition in _context.QuerySet<RequirementDefinition>()
-                            on requirementType.Id equals EF.Property<int>(requirementDefinition, "RequirementTypeId")
-                        join requirement in _context.QuerySet<TagRequirement>()
-                            on requirementDefinition.Id equals requirement.RequirementDefinitionId
-                        join tag in _context.QuerySet<Tag>()
-                            on EF.Property<int>(requirement, "TagId") equals tag.Id
-                        join project in _context.QuerySet<Project>()
-                            on EF.Property<int>(tag, "ProjectId") equals project.Id
+                 join requirementDefinition in _context.QuerySet<RequirementDefinition>()
+                     on requirementType.Id equals EF.Property<int>(requirementDefinition, "RequirementTypeId")
+                 join requirement in _context.QuerySet<TagRequirement>()
+                     on requirementDefinition.Id equals requirement.RequirementDefinitionId
+                 join tag in _context.QuerySet<Tag>()
+                     on EF.Property<int>(requirement, "TagId") equals tag.Id
+                 join project in _context.QuerySet<Project>()
+                     on EF.Property<int>(tag, "ProjectId") equals project.Id
                  where project.Name == request.ProjectName && !requirement.IsVoided
                  select new RequirementTypeDto(
                      requirementType.Id,
@@ -37,7 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagRequirementTypes
                      requirementType.Title))
                 .Distinct()
                 .ToListAsync(cancellationToken);
-            
+
             return new SuccessResult<List<RequirementTypeDto>>(requirementTypes);
         }
     }

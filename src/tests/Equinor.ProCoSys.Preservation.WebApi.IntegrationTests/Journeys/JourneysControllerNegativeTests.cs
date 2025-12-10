@@ -598,7 +598,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         {
             // Arrange
             var (journeyIdUnderTest, step) = await CreateStepAsync(Guid.NewGuid().ToString(), OtherModeIdUnderTest);
-           
+
             // Act
             await JourneysControllerTestsHelper.UpdateStepAsync(
                            UserType.LibraryAdmin,
@@ -704,7 +704,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 TestFactory.WrongButValidRowVersion,
                 HttpStatusCode.Conflict);
         }
-         
+
         #endregion
 
         #region UnvoidStep
@@ -794,7 +794,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 journeyIdUnderTest,
                 step.Id,
                 step.RowVersion);
-            
+
             // Act
             await JourneysControllerTestsHelper.UnvoidStepAsync(
                 UserType.LibraryAdmin,
@@ -1030,12 +1030,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 JourneyId1UnderTest,
                 new StepIdAndRowVersion
                 {
-                    Id = 2, 
+                    Id = 2,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 new StepIdAndRowVersion
                 {
-                    Id = 12, 
+                    Id = 12,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 HttpStatusCode.Unauthorized);
@@ -1048,12 +1048,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 JourneyId1UnderTest,
                 new StepIdAndRowVersion
                 {
-                    Id = 2, 
+                    Id = 2,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 new StepIdAndRowVersion
                 {
-                    Id = 12, 
+                    Id = 12,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 HttpStatusCode.BadRequest,
@@ -1067,12 +1067,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 JourneyId1UnderTest,
                 new StepIdAndRowVersion
                 {
-                    Id = 2, 
+                    Id = 2,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 new StepIdAndRowVersion
                 {
-                    Id = 12, 
+                    Id = 12,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 HttpStatusCode.BadRequest,
@@ -1086,12 +1086,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 JourneyId1UnderTest,
                 new StepIdAndRowVersion
                 {
-                    Id = 2, 
+                    Id = 2,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 new StepIdAndRowVersion
                 {
-                    Id = 12, 
+                    Id = 12,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 HttpStatusCode.Forbidden);
@@ -1104,12 +1104,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 JourneyId1UnderTest,
                 new StepIdAndRowVersion
                 {
-                    Id = 2, 
+                    Id = 2,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 new StepIdAndRowVersion
                 {
-                    Id = 12, 
+                    Id = 12,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 HttpStatusCode.Forbidden);
@@ -1122,12 +1122,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 JourneyId1UnderTest,
                 new StepIdAndRowVersion
                 {
-                    Id = 2, 
+                    Id = 2,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 new StepIdAndRowVersion
                 {
-                    Id = 12, 
+                    Id = 12,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 HttpStatusCode.Forbidden);
@@ -1140,12 +1140,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 JourneyId1UnderTest,
                 new StepIdAndRowVersion
                 {
-                    Id = 2, 
+                    Id = 2,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 new StepIdAndRowVersion
                 {
-                    Id = 12, 
+                    Id = 12,
                     RowVersion = TestFactory.AValidRowVersion
                 },
                 HttpStatusCode.Forbidden);

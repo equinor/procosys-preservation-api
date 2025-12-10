@@ -6,7 +6,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
 
-public class CreateProjectTagEventHelper  : ICreateChildEventHelper<Project, Tag, TagEvent>
+public class CreateProjectTagEventHelper : ICreateChildEventHelper<Project, Tag, TagEvent>
 {
     private readonly IJourneyRepository _journeyRepository;
     private readonly IPersonRepository _personRepository;

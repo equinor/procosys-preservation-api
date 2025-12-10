@@ -31,6 +31,6 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRe
         public bool IsVoided { get; }
         public int SortKey { get; }
         public FieldType FieldType { get; }
-        public string RowVersion { get;  }
+        public string RowVersion { get; }
     }
 }

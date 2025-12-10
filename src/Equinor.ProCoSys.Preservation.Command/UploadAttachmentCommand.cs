@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command
             {
                 Content.Dispose();
             }
-       
+
             _isDisposed = true;
         }
 

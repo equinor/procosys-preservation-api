@@ -23,15 +23,15 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SetInService
         public async Task<Result<IEnumerable<IdAndRowVersion>>> Handle(SetInServiceCommand request, CancellationToken cancellationToken)
         {
             var tags = await _projectRepository.GetTagsWithPreservationHistoryByTagIdsAsync(request.Tags.Select(x => x.Id));
-            
+
             foreach (var tag in tags)
             {
                 tag.SetRowVersion(request.Tags.Single(x => x.Id == tag.Id).RowVersion);
                 tag.SetInService();
             }
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             return new SuccessResult<IEnumerable<IdAndRowVersion>>(tags.CreateIdAndRowVersionList());
         }
     }

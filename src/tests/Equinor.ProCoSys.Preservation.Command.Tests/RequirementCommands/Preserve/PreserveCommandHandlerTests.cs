@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -82,7 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
                 .Returns(Task.FromResult(_tagInSupplierStep));
             projectRepoMock.Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(TagInOtherStepId))
                 .Returns(Task.FromResult(_tagInOtherStep));
-            
+
             var personRepoMock = new Mock<IPersonRepository>();
             personRepoMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
@@ -94,9 +94,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
             _timeProvider.Elapse(TimeSpan.FromDays(-1));
             _tagInSupplierStep.StartPreservation();
             _tagInOtherStep.StartPreservation();
-            
+
             _timeProvider.SetTime(_utcNow);
-            
+
             _initialPreservationPeriodForSupplierRequirement = _requirementForSupplier.PreservationPeriods.Single();
             _initialPreservationPeriodForOtherRequirement = _requirementForOther.PreservationPeriods.Single();
 

@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Responsible
             var timeProvider = new ManualTimeProvider(utcNow);
             TimeService.SetProvider(timeProvider);
         }
-        
+
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
@@ -59,38 +59,38 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Responsible
 
             dut.RenameResponsible(" ");
         }
-        
+
         [TestMethod]
         public void SetCreated_ShouldAddPlantEntityCreatedEvent()
         {
             var dut = new Responsible("PlantA", "CodeA", "DescA");
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
+
             dut.SetCreated(person);
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(CreatedEvent<Responsible>));
         }
-        
+
         [TestMethod]
         public void SetModified_ShouldAddPlantEntityModifiedEvent()
         {
             var dut = new Responsible("PlantA", "CodeA", "DescA");
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
+
             dut.SetModified(person);
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Responsible>));
         }
-        
+
         [TestMethod]
         public void SetRemoved_ShouldAddPlantEntityDeletedEvent()
         {
             var dut = new Responsible("PlantA", "CodeA", "DescA");
-            
+
             dut.SetRemoved();
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
 

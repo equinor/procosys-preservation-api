@@ -11,7 +11,7 @@ public static class CreateJourneyDeletedEventHelper
     {
         var journeyDeletedEvent = new JourneyDeleteEvent(entity.Guid, entity.Plant);
         var stepDeletedEvents = entity.Steps.Select(CreateStepDeletedEventHelper.CreateEvent).ToList();
-        
+
         return new EventCollectionDeleteJourney(journeyDeletedEvent, stepDeletedEvents);
     }
 }

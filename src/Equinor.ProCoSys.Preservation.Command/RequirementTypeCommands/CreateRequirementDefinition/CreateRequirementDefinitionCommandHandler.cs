@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRe
                     field.Unit,
                     field.ShowPrevious));
             }
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<int>(newRequirementDefinition.Id);
         }

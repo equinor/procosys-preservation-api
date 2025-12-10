@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer
                 _logger.LogInformation($"Early exit in AutoTransfer handling. Project {request.ProjectName} does not exists in Preservation module");
                 return new SuccessResult<Unit>(Unit.Value);
             }
-            
+
             if (project.IsClosed)
             {
                 _logger.LogInformation($"Early exit in AutoTransfer handling. Project {request.ProjectName} is closed in Preservation module");
@@ -90,7 +90,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer
             await AutoTransferTagsAsync(request.ProjectName, tagNos, autoTransferMethod, journeysWithAutoTransferSteps);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             return new SuccessResult<Unit>(Unit.Value);
         }
 

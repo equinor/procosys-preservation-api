@@ -7,5 +7,5 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 [EntityNameField]
 public class FieldDeleteEvent : DeleteEvent<Field>
 {
-    public FieldDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
+    public FieldDeleteEvent(Guid guid, string plant) : base(guid, plant, null) { }
 }

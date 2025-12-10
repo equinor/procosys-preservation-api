@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.RequirementTypes
             RuleFor(x => x)
                 .Must(NotHaveDuplicateFieldLabels)
                 .WithMessage("Cannot have duplicate field labels");
-            
+
             bool BeUniqueFieldIds(IList<UpdateFieldDto> updatedFields)
             {
                 var fieldIds = updatedFields.Select(u => u.Id).ToList();

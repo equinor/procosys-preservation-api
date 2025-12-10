@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder.HasOne<Mode>()
                 .WithMany()
                 .OnDelete(DeleteBehavior.NoAction);
-            
+
             builder.HasOne<Responsible>()
                 .WithMany()
                 .OnDelete(DeleteBehavior.NoAction);
@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasIndex(x => x.Plant)
                 .HasDatabaseName("IX_Steps_Plant_ASC")
-                .IncludeProperties(x => new {x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, x.SortKey, x.Title});
+                .IncludeProperties(x => new { x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, x.SortKey, x.Title });
 
             builder.Property(f => f.AutoTransferMethod)
                 .HasConversion<string>()

@@ -41,7 +41,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             var newRowVersion = await RequirementTypesControllerTestsHelper.UpdateRequirementTypeAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
-                reqType.Id, 
+                reqType.Id,
                 newTitle,
                 reqType.RowVersion);
 
@@ -278,7 +278,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                         SortKey = 20
                     }
                 });
-            
+
             var fieldDetailsDto = reqDef.Fields.Single();
             var oldFieldRowVersion = fieldDetailsDto.RowVersion;
             var newFieldLabel = Guid.NewGuid().ToString();

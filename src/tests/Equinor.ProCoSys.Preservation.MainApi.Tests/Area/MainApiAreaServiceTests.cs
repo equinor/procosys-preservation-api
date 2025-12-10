@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Auth.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
                 Code = "CodeA",
                 Description = "Description1",
             };
-           
+
             _dut = new MainApiAreaService(_mainApiClient.Object, _mainApiOptions.Object);
         }
 

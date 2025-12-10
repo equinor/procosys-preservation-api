@@ -24,8 +24,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetJourneyById
         public async Task<Result<JourneyDetailsDto>> Handle(GetJourneyByIdQuery request, CancellationToken cancellationToken)
         {
             var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps).Include(j => j.Project)
-                where j.Id == request.Id
-                select j).SingleOrDefaultAsync(cancellationToken);
+                                 where j.Id == request.Id
+                                 select j).SingleOrDefaultAsync(cancellationToken);
             if (journey == null)
             {
                 return new NotFoundResult<JourneyDetailsDto>(Strings.EntityNotFound(nameof(Journey), request.Id));
@@ -34,19 +34,19 @@ namespace Equinor.ProCoSys.Preservation.Query.GetJourneyById
             var stepIds = journey.Steps.Select(s => s.Id).ToList();
 
             var anyStepInUse = await (from tag in _context.QuerySet<Tag>()
-                where stepIds.Contains(tag.StepId)
-                select tag).AnyAsync(cancellationToken);
+                                      where stepIds.Contains(tag.StepId)
+                                      select tag).AnyAsync(cancellationToken);
 
             var modeIds = journey.Steps.Select(x => x.ModeId);
             var responsibleIds = journey.Steps.Select(x => x.ResponsibleId);
 
             var modes = await (from m in _context.QuerySet<Mode>()
-                    where modeIds.Contains(m.Id)
-                    select new ModeDto(m.Id, m.Title, m.IsVoided, m.ForSupplier, true, m.RowVersion.ConvertToString()))
+                               where modeIds.Contains(m.Id)
+                               select new ModeDto(m.Id, m.Title, m.IsVoided, m.ForSupplier, true, m.RowVersion.ConvertToString()))
                 .ToListAsync(cancellationToken);
             var responsibles = await (from r in _context.QuerySet<Responsible>()
-                    where responsibleIds.Contains(r.Id)
-                    select new ResponsibleDto(r.Id, r.Code, r.Description, r.RowVersion.ConvertToString()))
+                                      where responsibleIds.Contains(r.Id)
+                                      select new ResponsibleDto(r.Id, r.Code, r.Description, r.RowVersion.ConvertToString()))
                 .ToListAsync(cancellationToken);
 
             var journeyDto = new JourneyDetailsDto(
@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetJourneyById
                             step.RowVersion.ConvertToString()
                         )
                     ),
-                journey.Project != null ? new ProjectDetailsDto(journey.Project.Id, journey.Project.Name, journey.Project.Description): null,
+                journey.Project != null ? new ProjectDetailsDto(journey.Project.Id, journey.Project.Name, journey.Project.Description) : null,
                 journey.RowVersion.ConvertToString());
             return new SuccessResult<JourneyDetailsDto>(journeyDto);
         }

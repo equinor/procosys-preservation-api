@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
                 .WithMessage("At least 1 TagNo must be given!")
                 .Must(BeUniqueTagNos)
                 .WithMessage("Tags must be unique!");
-            
+
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
             {
                 RuleFor(command => command.Requirements)
@@ -62,36 +62,36 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
                 .MustAsync((_, req, _, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) =>
                     $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
-                        
+
             bool BeUniqueTagNos(IEnumerable<string> tagNos)
             {
                 var lowerTagNos = tagNos.Select(t => t.ToLower()).ToList();
                 return lowerTagNos.Distinct().Count() == lowerTagNos.Count;
             }
-                        
+
             bool BeUniqueRequirements(IEnumerable<RequirementForCommand> requirements)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return reqIds.Distinct().Count() == reqIds.Count;
             }
-            
+
             async Task<bool> RequirementUsageIsForAllJourneysAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(reqIds, token);
-            }                        
+            }
 
             async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return await requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(reqIds, token);
-            }                        
+            }
 
             async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return !await requirementDefinitionValidator.HasAnyForSupplierOnlyUsageAsync(reqIds, token);
-            }                        
+            }
 
             async Task<bool> NotBeAnExistingTagWithinProjectAsync(string tagNo, string projectName, CancellationToken token) =>
                 !await tagValidator.ExistsAsync(tagNo, projectName, token);

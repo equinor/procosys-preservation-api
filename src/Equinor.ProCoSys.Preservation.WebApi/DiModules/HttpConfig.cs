@@ -9,7 +9,7 @@ namespace Equinor.ProCoSys.Completion.WebApi.DIModules;
 public static class HttpConfig
 {
     public static string AllowAllOriginsCorsPolicy { get => "AllowAllOrigins"; }
-    
+
     public static void ConfigureHttp(this WebApplicationBuilder builder)
     {
         builder.Services.AddCors(options =>
@@ -31,7 +31,7 @@ public static class HttpConfig
                 .Build();
             config.Filters.Add(new AuthorizeFilter(policy));
         }).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-        
+
         builder.Services.AddResponseCompression(options =>
         {
             options.EnableForHttps = true;

@@ -1,16 +1,16 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.Converters;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
+using Equinor.ProCoSys.Preservation.Command.Events;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Moq;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using System.Linq;
-using Equinor.ProCoSys.Preservation.Command.Events;
-using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.IntegrationEvents.EventHelpers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.IntegrationEvents;
 
@@ -37,8 +37,8 @@ public class ProjectTagAddedEventConverterTests
         _project.AddTag(_tag);
 
         var mockTagCreateEvent = new Mock<ICreateChildEventHelper<Project, Tag, TagEvent>>();
-        mockTagCreateEvent.Setup(c => c.CreateEvent(It.IsAny<Project>(),It.IsAny<Tag>())).Returns(Task.FromResult(new TagEvent()));
-        
+        mockTagCreateEvent.Setup(c => c.CreateEvent(It.IsAny<Project>(), It.IsAny<Tag>())).Returns(Task.FromResult(new TagEvent()));
+
         var mockTagRequirementCreateEvent = new Mock<ICreateChildEventHelper<Project, TagRequirement, TagRequirementEvent>>();
         mockTagRequirementCreateEvent.Setup(c => c.CreateEvent(It.IsAny<Project>(), It.IsAny<TagRequirement>())).Returns(Task.FromResult(new TagRequirementEvent()));
 
@@ -58,7 +58,7 @@ public class ProjectTagAddedEventConverterTests
         // Assert
         CollectionAssert.Contains(eventTypes, typeof(TagEvent));
     }
-    
+
     [TestMethod]
     public async Task Convert_ShouldConvertToIntegrationEventsWithTagRequirementEvent()
     {

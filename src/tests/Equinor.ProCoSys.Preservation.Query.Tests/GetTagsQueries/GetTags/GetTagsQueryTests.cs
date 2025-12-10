@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         {
             var sorting = new Sorting(SortingDirection.Asc, SortingProperty.Area);
             var filter = new Filter();
-            var paging = new Paging(0,10);
+            var paging = new Paging(0, 10);
             var dut = new GetTagsQuery("PX", sorting, filter, paging);
 
             Assert.AreEqual("PX", dut.ProjectName);
@@ -60,12 +60,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             Assert.AreEqual(0, dut.Filter.StepIds.Count());
             Assert.IsNotNull(dut.Filter.TagFunctionCodes);
             Assert.AreEqual(0, dut.Filter.TagFunctionCodes.Count());
-            
+
             Assert.IsNotNull(dut.Paging);
             Assert.AreEqual(GetTagsQuery.DefaultPage, dut.Paging.Page);
             Assert.AreEqual(GetTagsQuery.DefaultPagingSize, dut.Paging.Size);
         }
-        
+
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenStepNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => new GetTagsQuery(""));

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -62,7 +62,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
                 _tag1, _tag2
             };
 
-            var tagIds = new List<int> {_tagId1, _tagId2};
+            var tagIds = new List<int> { _tagId1, _tagId2 };
             var projectRepoMock = new Mock<IProjectRepository>();
             projectRepoMock.Setup(r => r.GetTagsWithPreservationHistoryByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(tags));

@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DuplicateJ
         public async Task Validate_ShouldFail_WhenJourneyWithCopyTitleAlreadyExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsWithDuplicateTitleAsync(_id, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

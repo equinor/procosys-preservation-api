@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             var plantProvider = serviceProvider.GetRequiredService<PlantProvider>();
             userProvider.SetCurrentUserOid(new Guid(_seederOid));
             plantProvider.SetPlant(knownTestData.Plant);
-            
+
             /* 
              * Add the initial seeder user. Don't do this through the UnitOfWork as this expects/requires the current user to exist in the database.
              * This is the first user that is added to the database and will not get "Created" and "CreatedBy" data.
@@ -74,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             var journey2 = SeedJourney(dbContext, plant, KnownTestData.TwoStepJourneyWithTags);
             var stepInJourneyWithTags = SeedStep(dbContext, journey2, KnownTestData.StepAInJourneyWithTags, supplierModeA, responsible);
             SeedStep(dbContext, journey2, KnownTestData.StepBInJourneyWithTags, otherMode, responsible);
-            
+
             var journey3 = SeedJourney(dbContext, plant, KnownTestData.OneStepJourneyWithoutTags);
             SeedStep(dbContext, journey3, KnownTestData.StepInJourneyWithoutTags, supplierModeA, responsible);
 
@@ -122,7 +122,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             var closedAreaTagAction = SeedAction(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
             closedAreaTagAction.Close(new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc), seeder);
             dbContext.SaveChangesAsync().Wait();
-            
+
             SeedActionAttachment(dbContext, closedAreaTagAction);
             SeedActionAttachment(dbContext, closedAreaTagAction);
             knownTestData.ActionId_ForActionWithAttachments_Closed = closedAreaTagAction.Id;
@@ -165,7 +165,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         private static Action SeedAction(PreservationContext dbContext, Tag tag)
         {
-            var suffix = Guid.NewGuid().ToString().Substring(3,8);
+            var suffix = Guid.NewGuid().ToString().Substring(3, 8);
             var title = $"{KnownTestData.Action}-{suffix}";
             var action = new Action(tag.Plant, title, $"{title}-Desc", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
             tag.AddAction(action);
@@ -205,7 +205,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             Step step,
             RequirementDefinition requirementDef)
         {
-            var suffix = Guid.NewGuid().ToString().Substring(3,8);
+            var suffix = Guid.NewGuid().ToString().Substring(3, 8);
             var tagNo = $"{KnownTestData.StandardTagNo}-{suffix}";
             var tag = new Tag(
                 project.Plant,
@@ -227,7 +227,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         private static Tag SeedSiteTag(PreservationContext dbContext, Project project, Step step,
             RequirementDefinition requirementDef)
         {
-            var suffix = Guid.NewGuid().ToString().Substring(3,8);
+            var suffix = Guid.NewGuid().ToString().Substring(3, 8);
             var tagNo = $"{KnownTestData.SiteTagNo}-{suffix}";
             var tag = new Tag(
                 project.Plant,

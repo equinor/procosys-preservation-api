@@ -53,7 +53,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetUniqueTagRequirementTypesQueryHandler(context);
-                
+
                 var result = await dut.Handle(_queryForProject1, default);
                 Assert.AreEqual(3, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == typeCode));

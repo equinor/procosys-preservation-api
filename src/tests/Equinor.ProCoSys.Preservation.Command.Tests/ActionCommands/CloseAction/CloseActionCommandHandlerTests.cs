@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
@@ -72,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
             await _dut.Handle(_command, default);
             Assert.AreEqual(_personId, _action.ClosedById);
         }
-                
+
         [TestMethod]
         public async Task HandlingCloseActionCommand_ShouldSetRowVersion()
         {

@@ -74,31 +74,31 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(reqIds, token);
-            }                        
+            }
 
             async Task<bool> RequirementUsageIsForSupplierAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return await requirementDefinitionValidator.UsageCoversForSuppliersAsync(reqIds, token);
-            }                        
+            }
 
             async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return await requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(reqIds, token);
-            }                        
+            }
 
             async Task<bool> RequirementUsageIsNotForOtherThanSupplierAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return !await requirementDefinitionValidator.HasAnyForForOtherThanSuppliersUsageAsync(reqIds, token);
-            }                        
+            }
 
             async Task<bool> RequirementUsageIsNotForSupplierOnlyAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return !await requirementDefinitionValidator.HasAnyForSupplierOnlyUsageAsync(reqIds, token);
-            }                        
+            }
 
             async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken token)
                 => !await projectValidator.IsExistingAndClosedAsync(projectName, token);

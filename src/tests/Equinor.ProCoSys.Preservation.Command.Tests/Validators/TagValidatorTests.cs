@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -51,12 +51,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         private int _poAreaTagAttachmentId;
         private int _poAreaTagActionAttachmentId;
         private TagRequirement _tagRequirementForPoAreaTag;
-        
+
         private int _tagWithAllReqUsagesId;
         private int _tagWithSingleReqForAllUsageId;
         private int _tagWithSingleReqForSupplierUsageId;
         private int _tagWithSingleReqForOtherUsageId;
-        
+
         private const int IntervalWeeks = 4;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var resp1 = AddResponsible(context, "R1");
                 var otherMode = AddMode(context, "FAB", false);
                 var resp2 = AddResponsible(context, "R2");
-                
+
                 var journeyWithSupplierStepFirst = AddJourneyWithStep(context, "J1", "Sup1", supMode1, resp1);
                 var supplierStep1 = journeyWithSupplierStepFirst.Steps.Single();
                 var otherStep1 = new Step(TestPlant, "Fab", otherMode, resp2);
@@ -122,13 +122,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 standardTagStartedInLastStep.StartPreservation();
                 var standardTagWithTwoReqsInLastStep = AddTag(
-                    context, 
-                    project, 
-                    TagType.Standard, 
-                    Guid.NewGuid(), 
-                    Guid.NewGuid().ToString("N"), 
+                    context,
+                    project,
+                    TagType.Standard,
+                    Guid.NewGuid(),
+                    Guid.NewGuid().ToString("N"),
                     "",
-                    otherStep1, 
+                    otherStep1,
                     new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1),
@@ -165,13 +165,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1) });
                 _tagWithSingleReqForOtherUsageId = preAreaTagOtherRequirementOnlyInFirstOtherStep.Id;
                 var preAreaTagAllRequirementsInFirstOtherStep = AddTag(
-                    context, 
-                    project, 
-                    TagType.PreArea, 
+                    context,
+                    project,
+                    TagType.PreArea,
                     Guid.NewGuid(),
-                    Guid.NewGuid().ToString("N"), 
+                    Guid.NewGuid().ToString("N"),
                     _tagDescription,
-                    otherStep2, 
+                    otherStep2,
                     new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1),
@@ -179,13 +179,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1)
                     });
                 var preAreaTagStartedInFirstSupplierStep = AddTag(
-                    context, 
-                    project, 
-                    TagType.PreArea, 
+                    context,
+                    project,
+                    TagType.PreArea,
                     Guid.NewGuid(),
-                    Guid.NewGuid().ToString("N"), 
+                    Guid.NewGuid().ToString("N"),
                     _tagDescription,
-                    supplierStep1, 
+                    supplierStep1,
                     new List<TagRequirement> {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)
                     });
@@ -241,13 +241,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 poAreaTagCompleted.StartPreservation();
                 poAreaTagCompleted.CompletePreservation(journeyWithSupplierStepFirst);
                 var poAreaTagWithTwoReqs = AddTag(
-                    context, 
-                    project, 
-                    TagType.PoArea, 
+                    context,
+                    project,
+                    TagType.PoArea,
                     Guid.NewGuid(),
-                    Guid.NewGuid().ToString("N"), 
+                    Guid.NewGuid().ToString("N"),
                     _tagDescription,
-                    supplierStep1, 
+                    supplierStep1,
                     new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier),
@@ -261,7 +261,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 poAreaTagStarted.AddAction(action);
                 var actionAttachment = new ActionAttachment(TestPlant, Guid.Empty, "fil2.txt");
                 action.AddAttachment(actionAttachment);
-                
+
                 context.SaveChangesAsync().Wait();
 
                 _reqDefForAll2Id = reqDefForAll2.Id;
@@ -311,7 +311,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task ExistsRequirementAsync_KnownIds_ShouldReturnTrue()
         {
@@ -353,7 +353,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task ExistsFieldForRequirementAsync_KnownIds_ShouldReturnTrue()
         {
@@ -362,7 +362,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             requirementDefinitionValidatorMock.Setup(
                     r => r.ExistsFieldAsync(_tagRequirementForPoAreaTag.RequirementDefinitionId, fieldId, default))
                 .Returns(Task.FromResult(true));
-            
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, requirementDefinitionValidatorMock.Object);
@@ -383,7 +383,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             requirementDefinitionValidatorMock.Setup(
                     r => r.ExistsFieldAsync(_tagRequirementForPoAreaTag.RequirementDefinitionId, fieldId, default))
                 .Returns(Task.FromResult(true));
-            
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, requirementDefinitionValidatorMock.Object);
@@ -404,7 +404,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             requirementDefinitionValidatorMock.Setup(
                     r => r.ExistsFieldAsync(_tagRequirementForPoAreaTag.RequirementDefinitionId, fieldId, default))
                 .Returns(Task.FromResult(true));
-            
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, requirementDefinitionValidatorMock.Object);
@@ -425,7 +425,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             requirementDefinitionValidatorMock.Setup(
                     r => r.ExistsFieldAsync(_tagRequirementForPoAreaTag.RequirementDefinitionId, fieldId, default))
                 .Returns(Task.FromResult(false));
-            
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, requirementDefinitionValidatorMock.Object);
@@ -437,7 +437,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task ExistsActionAsync_KnownIds_ShouldReturnTrue()
         {
@@ -479,7 +479,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task ExistsTagAttachmentAsync_KnownIds_ShouldReturnTrue()
         {
@@ -889,7 +889,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task IsReadyToBeTransferredAsync_StandardTagNotStarted_ShouldReturnTrue()
         {
@@ -966,7 +966,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
- 
+
         [TestMethod]
         public async Task IsReadyToBeCompletedAsync_StandardTagNotStarted_ShouldReturnFalse()
         {
@@ -1043,7 +1043,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
- 
+
         [TestMethod]
         public async Task IsReadyToBeStartedAsync_StandardTagNotStarted_ShouldReturnTrue()
         {
@@ -1263,7 +1263,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-                    
+
         [TestMethod]
         public async Task IsReadyToBeDuplicatedAsync_StandardTag_ShouldReturnFalse()
         {
@@ -1368,7 +1368,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var reqDefId = tag.Requirements.ElementAt(0).RequirementDefinitionId;
                 var dut = new TagValidator(context, null);
-                var result = await dut.AllRequirementsWillBeUniqueAsync(tag.Id, new List<int>{reqDefId}, default);
+                var result = await dut.AllRequirementsWillBeUniqueAsync(tag.Id, new List<int> { reqDefId }, default);
                 Assert.IsFalse(result);
             }
         }
@@ -1380,7 +1380,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithOneReqsId);
                 var dut = new TagValidator(context, null);
-                var result = await dut.AllRequirementsWillBeUniqueAsync(tag.Id, new List<int>{_reqDefForAll2Id}, default);
+                var result = await dut.AllRequirementsWillBeUniqueAsync(tag.Id, new List<int> { _reqDefForAll2Id }, default);
                 Assert.IsTrue(result);
             }
         }
@@ -1458,9 +1458,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
                 var result = await dut.RequirementUsageWillCoverBothForSupplierAndOtherAsync(
-                    tag.Id, 
+                    tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForAll1Id, _tagReqForSupplierId},
+                    new List<int> { _tagReqForAll1Id, _tagReqForSupplierId },
                     new List<int>(),
                     default);
                 Assert.IsFalse(result);
@@ -1477,8 +1477,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var result = await dut.RequirementUsageWillCoverBothForSupplierAndOtherAsync(
                     tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForAll1Id, _tagReqForOther1Id}, 
-                    new List<int>(), 
+                    new List<int> { _tagReqForAll1Id, _tagReqForOther1Id },
+                    new List<int>(),
                     default);
                 Assert.IsFalse(result);
             }
@@ -1494,8 +1494,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var result = await dut.RequirementUsageWillCoverBothForSupplierAndOtherAsync(
                     tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForAll1Id, _tagReqForSupplierId}, 
-                    new List<int>{_reqDefForAll2Id}, 
+                    new List<int> { _tagReqForAll1Id, _tagReqForSupplierId },
+                    new List<int> { _reqDefForAll2Id },
                     default);
                 Assert.IsTrue(result);
             }
@@ -1515,16 +1515,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 context.SaveChangesAsync().Wait();
                 reqId2 = tag.Requirements.Last().Id;
             }
-            
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _poAreaTagWithTwoReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
                 var result = await dut.RequirementUsageWillCoverBothForSupplierAndOtherAsync(
                     tag.Id,
-                    new List<int>{reqId1},
-                    new List<int>{reqId2}, 
-                    new List<int>(), 
+                    new List<int> { reqId1 },
+                    new List<int> { reqId2 },
+                    new List<int>(),
                     default);
                 Assert.IsTrue(result);
             }
@@ -1603,9 +1603,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
                 var result = await dut.RequirementUsageWillCoverForSuppliersAsync(
-                    tag.Id, 
+                    tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForAll1Id, _tagReqForSupplierId},
+                    new List<int> { _tagReqForAll1Id, _tagReqForSupplierId },
                     new List<int>(),
                     default);
                 Assert.IsFalse(result);
@@ -1622,8 +1622,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var result = await dut.RequirementUsageWillCoverForSuppliersAsync(
                     tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForAll1Id, _tagReqForOther1Id}, 
-                    new List<int>(), 
+                    new List<int> { _tagReqForAll1Id, _tagReqForOther1Id },
+                    new List<int>(),
                     default);
                 Assert.IsTrue(result);
             }
@@ -1639,8 +1639,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var result = await dut.RequirementUsageWillCoverForSuppliersAsync(
                     tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForAll1Id, _tagReqForSupplierId}, 
-                    new List<int>{_reqDefForAll2Id}, 
+                    new List<int> { _tagReqForAll1Id, _tagReqForSupplierId },
+                    new List<int> { _reqDefForAll2Id },
                     default);
                 Assert.IsTrue(result);
             }
@@ -1719,10 +1719,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
                 var result = await dut.RequirementUsageWillCoverForOtherThanSuppliersAsync(
-                    tag.Id, 
+                    tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForAll1Id, _tagReqForOther1Id}, 
-                    new List<int>(), 
+                    new List<int> { _tagReqForAll1Id, _tagReqForOther1Id },
+                    new List<int>(),
                     default);
                 Assert.IsFalse(result);
             }
@@ -1736,10 +1736,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
                 var result = await dut.RequirementUsageWillCoverForOtherThanSuppliersAsync(
-                    tag.Id, 
+                    tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForAll1Id, _tagReqForOther1Id}, 
-                    new List<int>{_reqDefForAll2Id}, 
+                    new List<int> { _tagReqForAll1Id, _tagReqForOther1Id },
+                    new List<int> { _reqDefForAll2Id },
                     default);
                 Assert.IsTrue(result);
             }
@@ -1765,10 +1765,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithTwoReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
                 var result = await dut.RequirementUsageWillCoverForOtherThanSuppliersAsync(
-                    tag.Id, 
-                    new List<int>{reqId1},
-                    new List<int>{reqId2}, 
-                    new List<int>(), 
+                    tag.Id,
+                    new List<int> { reqId1 },
+                    new List<int> { reqId2 },
+                    new List<int>(),
                     default);
                 Assert.IsTrue(result);
             }
@@ -1848,10 +1848,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
                 var result = await dut.RequirementWillGetAnyForOtherThanSuppliersUsageAsync(
-                    tag.Id, 
+                    tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForOther1Id}, 
-                    new List<int>(), 
+                    new List<int> { _tagReqForOther1Id },
+                    new List<int>(),
                     default);
                 Assert.IsFalse(result);
             }
@@ -1865,10 +1865,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
                 var result = await dut.RequirementWillGetAnyForOtherThanSuppliersUsageAsync(
-                    tag.Id, 
+                    tag.Id,
                     new List<int>(),
-                    new List<int>{_tagReqForOther1Id}, 
-                    new List<int>{_reqDefForOther2Id}, 
+                    new List<int> { _tagReqForOther1Id },
+                    new List<int> { _reqDefForOther2Id },
                     default);
                 Assert.IsTrue(result);
             }

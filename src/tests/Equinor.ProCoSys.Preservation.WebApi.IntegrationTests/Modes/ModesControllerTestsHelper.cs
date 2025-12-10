@@ -29,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
             var content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<ModeDto>>(content);
         }
-        
+
         public static async Task<ModeDto> GetModeAsync(
             UserType userType,
             string plant,

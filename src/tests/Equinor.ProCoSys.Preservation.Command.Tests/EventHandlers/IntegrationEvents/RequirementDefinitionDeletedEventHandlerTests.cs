@@ -47,16 +47,16 @@ public class RequirementDefinitionDeletedEventHandlerTests
         // Assert
         CollectionAssert.Contains(types, typeof(RequirementDefinitionDeleteEvent));
     }
-    
+
     [TestMethod]
     public async Task Handle_ShouldSendFieldDeleteEvent()
     {
         // Arrange
         var requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
-        
+
         var field = new Field(TestPlant, "Test Label", FieldType.Info, 0);
         requirementDefinition.AddField(field);
-        
+
         var domainEvent = new DeletedEvent<RequirementDefinition>(requirementDefinition);
 
         // Act

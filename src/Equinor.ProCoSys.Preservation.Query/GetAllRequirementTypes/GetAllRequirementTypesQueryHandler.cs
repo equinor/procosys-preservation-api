@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllRequirementTypes
         {
             var requirementTypes = await (from m in _context.QuerySet<RequirementType>()
                     .Include(rt => rt.RequirementDefinitions).ThenInclude(rd => rd.Fields)
-                select m).ToListAsync(cancellationToken);
+                                          select m).ToListAsync(cancellationToken);
 
             var dtos =
                 requirementTypes.Where(rt => !rt.IsVoided || request.IncludeVoided).Select(rt

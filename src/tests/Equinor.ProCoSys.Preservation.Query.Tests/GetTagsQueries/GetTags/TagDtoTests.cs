@@ -37,7 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             true,
             true,
             "PoNo",
-            new List<RequirementDto> {new RequirementDto(0, null, RequirementTypeIcon.Other, default, default, false)},
+            new List<RequirementDto> { new RequirementDto(0, null, RequirementTypeIcon.Other, default, default, false) },
             "Resp",
             "RespDescription",
             PreservationStatus.Active,

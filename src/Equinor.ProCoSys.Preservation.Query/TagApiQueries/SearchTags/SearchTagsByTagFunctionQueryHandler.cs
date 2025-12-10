@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
@@ -29,11 +29,11 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
         public async Task<Result<List<PCSTagDto>>> Handle(SearchTagsByTagFunctionQuery request, CancellationToken cancellationToken)
         {
             var tagFunctionCodeRegisterCodePairs = await (from tagFunction in _context.QuerySet<TagFunction>().Include(tf => tf.Requirements)
-                    where
-                        !tagFunction.IsVoided && tagFunction.Requirements.Any()
-                    select $"{tagFunction.Code}|{tagFunction.RegisterCode}")
+                                                          where
+                                                              !tagFunction.IsVoided && tagFunction.Requirements.Any()
+                                                          select $"{tagFunction.Code}|{tagFunction.RegisterCode}")
                 .ToListAsync(cancellationToken);
-            
+
             if (!tagFunctionCodeRegisterCodePairs.Any())
             {
                 return new NotFoundResult<List<PCSTagDto>>("No TagFunctions with preservation requirements found");
@@ -44,9 +44,9 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
                 ?? new List<PCSTagOverview>();
 
             var presTagNos = await (from tag in _context.QuerySet<Tag>()
-                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
-                where p.Name == request.ProjectName
-                select tag.TagNo).ToListAsync(cancellationToken);
+                                    join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                                    where p.Name == request.ProjectName
+                                    select tag.TagNo).ToListAsync(cancellationToken);
 
             // Join all tags from API with preservation tags on TagNo. If a tag is not in preservation scope, use default value (null).
             var combinedTags = apiTags
@@ -54,7 +54,7 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
                     apiTag => apiTag.TagNo,
                     presTagNo => presTagNo,
                     (x, y) =>
-                        new {ApiTag = x, PresTagNo = y})
+                        new { ApiTag = x, PresTagNo = y })
                 .SelectMany(x => x.PresTagNo.DefaultIfEmpty(),
                     (x, y) =>
                         new PCSTagDto(

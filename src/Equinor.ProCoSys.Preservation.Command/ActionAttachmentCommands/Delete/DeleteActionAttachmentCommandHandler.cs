@@ -39,8 +39,8 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete
 
             var fullBlobPath = attachment.GetFullBlobPath();
             await _azureBlobService.DeleteAsync(
-                _blobStorageOptions.Value.BlobContainer, 
-                fullBlobPath, 
+                _blobStorageOptions.Value.BlobContainer,
+                fullBlobPath,
                 cancellationToken);
 
             action.RemoveAttachment(attachment);

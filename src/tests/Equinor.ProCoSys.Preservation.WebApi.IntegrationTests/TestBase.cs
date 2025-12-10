@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.Validators;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes;
 using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
@@ -17,7 +17,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     public abstract class TestBase
     {
         private readonly RowVersionValidator _rowVersionValidator = new RowVersionValidator();
-        
+
         [AssemblyCleanup]
         public static void AssemblyCleanup() => TestFactory.Instance.Dispose();
 

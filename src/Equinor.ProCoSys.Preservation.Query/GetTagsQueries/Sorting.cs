@@ -8,7 +8,7 @@
             Property = property;
         }
 
-        public SortingDirection Direction { get;  }
-        public SortingProperty Property { get;  }
+        public SortingDirection Direction { get; }
+        public SortingProperty Property { get; }
     }
 }

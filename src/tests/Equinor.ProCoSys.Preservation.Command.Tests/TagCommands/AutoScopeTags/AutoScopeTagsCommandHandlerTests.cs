@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
 
         private PCSTagDetails _mainTagDetails1;
         private PCSTagDetails _mainTagDetails2;
-        
+
         private AutoScopeTagsCommand _command;
         private AutoScopeTagsCommandHandler _dut;
 
@@ -64,15 +64,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             _modeRepositoryMock
                 .Setup(r => r.GetByIdAsync(ModeId))
                 .Returns(Task.FromResult(_modeMock.Object));
-            
+
             // Arrange
             step = new Step(TestPlant, "S", _modeMock.Object, new Responsible(TestPlant, "RC", "RD"));
             step.SetProtectedIdForTesting(StepId);
-            
+
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyRepositoryMock
                 .Setup(x => x.GetStepByStepIdAsync(StepId))
-                .Returns(Task.FromResult(step)); 
+                .Returns(Task.FromResult(step));
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _projectRepositoryMock
@@ -92,10 +92,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             var rdMock2b = new Mock<RequirementDefinition>();
             rdMock2b.SetupGet(x => x.Id).Returns(ReqDefId2b);
             rdMock2b.SetupGet(x => x.Plant).Returns(TestPlant);
-            
+
             _rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2a}))
-                .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2a.Object}));
+                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> { ReqDefId1, ReqDefId2a }))
+                .Returns(Task.FromResult(new List<RequirementDefinition> { rdMock1.Object, rdMock2a.Object }));
 
             var tf1 = new TagFunction(TestPlant, tagFunctionCode1, "TF1", registerCode1);
             tf1.AddRequirement(new TagFunctionRequirement(TestPlant, Interval1, rdMock1.Object));
@@ -112,11 +112,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             tf3.AddRequirement(new TagFunctionRequirement(TestPlant, Interval1, rdMock1.Object));
             tf3.AddRequirement(new TagFunctionRequirement(TestPlant, Interval2, rdMock2a.Object));
             tf3.AddRequirement(new TagFunctionRequirement(TestPlant, 3, rdMock3.Object));
-            
+
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
             _tfRepositoryMock
                 .Setup(x => x.GetAllNonVoidedWithRequirementsAsync())
-                .Returns(Task.FromResult(new List<TagFunction>{tf1, tf2, tf3}));
+                .Returns(Task.FromResult(new List<TagFunction> { tf1, tf2, tf3 }));
 
             _mainTagDetails1 = new PCSTagDetails
             {
@@ -157,19 +157,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 ProjectDescription = TestProjectDescription
             };
 
-            IList<PCSTagDetails> mainTagDetailList = new List<PCSTagDetails> {_mainTagDetails1, _mainTagDetails2};
+            IList<PCSTagDetails> mainTagDetailList = new List<PCSTagDetails> { _mainTagDetails1, _mainTagDetails2 };
             _tagApiServiceMock = new Mock<ITagApiService>();
             _tagApiServiceMock
-                .Setup(x => x.GetTagDetailsAsync(TestPlant, TestProjectName, new List<string>{TestTagNo1, TestTagNo2}, It.IsAny<CancellationToken>(), false))
+                .Setup(x => x.GetTagDetailsAsync(TestPlant, TestProjectName, new List<string> { TestTagNo1, TestTagNo2 }, It.IsAny<CancellationToken>(), false))
                 .Returns(Task.FromResult(mainTagDetailList));
 
             _command = new AutoScopeTagsCommand(
-                new List<string>{TestTagNo1, TestTagNo2}, 
+                new List<string> { TestTagNo1, TestTagNo2 },
                 TestProjectName,
                 step.Id,
                 "Remark",
                 "SA");
-            
+
             _dut = new AutoScopeTagsCommandHandler(
                 _projectRepositoryMock.Object,
                 _journeyRepositoryMock.Object,
@@ -219,7 +219,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(2, result.Data.Count);
-            
+
             var tags = _projectAddedToRepository.Tags;
             Assert.AreEqual(2, tags.Count);
             AssertTagProperties(_command, _mainTagDetails1, tags.First(), ReqDefId1, Interval1);
@@ -234,14 +234,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             _projectRepositoryMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);
-            
+
             // Act
             var result = await _dut.Handle(_command, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(2, result.Data.Count);
-            
+
             var tags = project.Tags;
             Assert.AreEqual(2, tags.Count);
             AssertTagProperties(_command, _mainTagDetails1, tags.First(), ReqDefId1, Interval1);
@@ -253,7 +253,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
@@ -270,7 +270,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             // Assert
             Assert.AreEqual(1, result.Errors.Count);
         }
-        
+
         [TestMethod]
         public async Task HandlingAutoScopeTagsCommand_ShouldReturnNotFound_WhenAddingTagWithOutPoToSupplierStep()
         {

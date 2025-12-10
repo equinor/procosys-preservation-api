@@ -37,10 +37,10 @@ public class TagDeletedEventHandlerTests
             emptyTagDeleteEvent,
             [emptyActionDeleteEvent],
             [emptyTagRequirementDeleteEvents]);
-        
+
         var mockCreateEventHelper = new Mock<ICreateTagDeleteEventHelper>();
         mockCreateEventHelper.Setup(x => x.CreateEvents(It.IsAny<Tag>())).ReturnsAsync(deleteEvents);
-        
+
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))
             .Callback<IIntegrationEvent, CancellationToken>((e, _) => _publishedEvents.Add(e));
@@ -64,7 +64,7 @@ public class TagDeletedEventHandlerTests
         // Assert
         CollectionAssert.Contains(result, typeof(TagDeleteEvent));
     }
-    
+
     [TestMethod]
     public async Task Handle_ShouldSendActionDeleteEvent()
     {
@@ -79,7 +79,7 @@ public class TagDeletedEventHandlerTests
         // Assert
         CollectionAssert.Contains(result, typeof(ActionDeleteEvent));
     }
-    
+
     [TestMethod]
     public async Task Handle_ShouldSendTagRequirementDeleteEvent()
     {
@@ -94,7 +94,7 @@ public class TagDeletedEventHandlerTests
         // Assert
         CollectionAssert.Contains(result, typeof(TagRequirementDeleteEvent));
     }
-    
+
     [TestMethod]
     public async Task Handle_ShouldSendPreservationPeriodDeleteEvent()
     {

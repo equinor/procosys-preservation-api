@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 
             RuleFor(x => x.Remark)
                 .MaximumLength(Tag.RemarkLengthMax);
-            
+
             RuleFor(x => x.StorageArea)
                 .MaximumLength(Tag.StorageAreaLengthMax);
         }

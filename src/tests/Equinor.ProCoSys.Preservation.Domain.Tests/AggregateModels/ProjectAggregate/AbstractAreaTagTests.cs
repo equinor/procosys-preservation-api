@@ -139,7 +139,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual("#SITE-I-A300-XX", dut.GetTagNo());
         }
-        
+
         [TestMethod]
         public void GetTagNo_ShouldReturnPoTagNo_WithDisciplineAndPoCoAndSuffix()
         {

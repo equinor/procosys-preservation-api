@@ -31,8 +31,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetPreservationRecord
                         .ThenInclude(r => r.PreservationPeriods)
                         .ThenInclude(p => p.FieldValues)
                         .ThenInclude(fv => fv.FieldValueAttachment)
-                    where t.Id == request.TagId
-                    select t).SingleOrDefaultAsync(cancellationToken);
+                 where t.Id == request.TagId
+                 select t).SingleOrDefaultAsync(cancellationToken);
 
             if (tag == null)
             {
@@ -50,16 +50,16 @@ namespace Equinor.ProCoSys.Preservation.Query.GetPreservationRecord
             // get needed information about requirementType/Definition for all requirement on tag
             var requirementDto = await
                 (from requirementDefinition in _context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
-                    join requirementType in _context.QuerySet<RequirementType>()
-                        on EF.Property<int>(requirementDefinition, "RequirementTypeId") equals requirementType.Id
-                    where requirementDefinitionId == requirementDefinition.Id
-                    select new
-                    {
-                        RequirementType = requirementType,
-                        RequirementDefinition = requirementDefinition,
-                    }
+                 join requirementType in _context.QuerySet<RequirementType>()
+                     on EF.Property<int>(requirementDefinition, "RequirementTypeId") equals requirementType.Id
+                 where requirementDefinitionId == requirementDefinition.Id
+                 select new
+                 {
+                     RequirementType = requirementType,
+                     RequirementDefinition = requirementDefinition,
+                 }
                 ).SingleOrDefaultAsync(cancellationToken);
-            
+
             if (requirementDto == null)
             {
                 return new NotFoundResult<PreservationRecordDto>(Strings.EntityNotFound(nameof(RequirementDefinition), tagRequirement.RequirementDefinitionId));
@@ -105,12 +105,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetPreservationRecord
                     requirementDto.RequirementType.Id,
                     requirementDto.RequirementType.Code,
                     requirementDto.RequirementType.Icon,
-                    requirementDto.RequirementType.Title), 
+                    requirementDto.RequirementType.Title),
                 new RequirementDefinitionDetailDto(
                     requirementDto.RequirementDefinition.Id,
-                    requirementDto.RequirementDefinition.Title), 
+                    requirementDto.RequirementDefinition.Title),
                 tagRequirement.IntervalWeeks,
-                preservationPeriod.Comment, 
+                preservationPeriod.Comment,
                 fields);
 
             return new SuccessResult<PreservationRecordDto>(preservationRecordDto);

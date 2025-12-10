@@ -37,7 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             var timeProvider = new ManualTimeProvider(utcNow);
             TimeService.SetProvider(timeProvider);
-            
+
             _dutWithNoSteps = new Journey(TestPlant, "TitleA");
             _dutWith3Steps = new Journey(TestPlant, "TitleB");
             _stepAId = 10033;
@@ -55,7 +55,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _stepB.SetProtectedIdForTesting(_stepBId);
             _stepC = new Step(TestPlant, "SC", _mode, _responsible);
             _stepC.SetProtectedIdForTesting(_stepCId);
-            
+
             _dutWith3Steps.AddStep(_stepA);
             _dutWith3Steps.AddStep(_stepB);
             _dutWith3Steps.AddStep(_stepC);
@@ -142,16 +142,16 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(2, _dutWith3Steps.Steps.Count);
             Assert.IsFalse(_dutWith3Steps.Steps.Contains(_stepA));
         }
-        
+
         [TestMethod]
         public void RemoveStep_ShouldAddStepDeletedEvent()
         {
             // Arrange
             _stepA.IsVoided = true;
-            
+
             // Act
             _dutWith3Steps.RemoveStep(_stepA);
-            
+
             // Assert
             var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
             CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Step>));
@@ -202,12 +202,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             // Arrange
             Assert.AreEqual(4, stepD.SortKey);
         }
-        
+
         [TestMethod]
         public void AddStep_ShouldAddChildAddedEvent()
         {
             _dutWithNoSteps.AddStep(_stepA);
-            
+
             var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
             CollectionAssert.Contains(eventTypes, typeof(ChildAddedEvent<Journey, Step>));
         }
@@ -265,7 +265,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(_stepB, steps.ElementAt(0));
             Assert.AreEqual(_stepA, steps.ElementAt(1));
             Assert.AreEqual(_stepC, steps.ElementAt(2));
-            
+
             _dutWith3Steps.SwapSteps(_stepCId, _stepAId);
 
             steps = _dutWith3Steps.OrderedSteps().ToList();
@@ -274,12 +274,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(_stepC, steps.ElementAt(1));
             Assert.AreEqual(_stepA, steps.ElementAt(2));
         }
-        
+
         [TestMethod]
         public void SwapSteps_ShouldAddChildModifiedEvents()
         {
             _dutWith3Steps.SwapSteps(_stepAId, _stepBId);
-            
+
             var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
             var childModifiedEvent = eventTypes.FindAll(e => e == typeof(ChildModifiedEvent<Journey, Step>));
             Assert.AreEqual(2, childModifiedEvent.Count);
@@ -305,14 +305,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
 
             Assert.AreEqual(step, stepToVoid);
         }
-        
+
         [TestMethod]
         public void VoidStep_ShouldAddChildModifiedEvent()
         {
             var stepToVoid = _dutWith3Steps.Steps.First();
 
             _dutWith3Steps.VoidStep(stepToVoid.Id, "AAAAAAAAABA=");
-            
+
             var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
             CollectionAssert.Contains(eventTypes, typeof(ChildModifiedEvent<Journey, Step>));
         }
@@ -340,24 +340,24 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
 
             Assert.AreEqual(step, stepToUnvoid);
         }
-        
+
         [TestMethod]
         public void UnvoidStep_ShouldAddChildModifiedEvent()
         {
             var stepToUnvoid = _dutWith3Steps.Steps.First();
 
             _dutWith3Steps.UnvoidStep(stepToUnvoid.Id, "AAAAAAAAABA=");
-            
+
             var eventTypes = _dutWith3Steps.DomainEvents.Select(e => e.GetType()).ToList();
             CollectionAssert.Contains(eventTypes, typeof(ChildModifiedEvent<Journey, Step>));
         }
-        
+
         [TestMethod]
         public void SetCreated_ShouldAddPlantEntityCreatedEvent()
         {
             // Arrange
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
+
             // Act
             _dutWithNoSteps.SetCreated(person);
             var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();
@@ -365,13 +365,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(CreatedEvent<Journey>));
         }
-        
+
         [TestMethod]
         public void SetModified_ShouldAddPlantEntityModifiedEvent()
         {
             // Arrange
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
+
             // Act
             _dutWithNoSteps.SetModified(person);
             var eventTypes = _dutWithNoSteps.DomainEvents.Select(e => e.GetType()).ToList();

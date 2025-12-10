@@ -12,10 +12,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
         public void Constructor_ShouldSetProperties_WithRequirements()
         {
             var dut = new CreateTagsCommand(
-                new List<string> {"TagNoA"},
+                new List<string> { "TagNoA" },
                 "ProjectNameA",
                 2,
-                new List<RequirementForCommand>{new RequirementForCommand(11, 12)},
+                new List<RequirementForCommand> { new RequirementForCommand(11, 12) },
                 "RemarkA",
                 "SA_A");
 

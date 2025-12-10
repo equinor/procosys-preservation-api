@@ -54,12 +54,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetPreservationRecord
                         requirementWithoutField
                     });
                 context.Tags.Add(tag);
-                
+
                 Assert.IsNull(requirementWithoutField.ActivePeriod);
                 // All TagRequirements get an active Period when starting
                 tag.StartPreservation();
                 Assert.IsNotNull(requirementWithoutField.ActivePeriod);
-                
+
                 context.SaveChangesAsync().Wait();
                 _tagId = tag.Id;
                 _requirementWithoutFieldId = requirementWithoutField.Id;

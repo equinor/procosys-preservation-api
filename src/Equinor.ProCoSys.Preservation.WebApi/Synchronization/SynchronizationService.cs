@@ -2,17 +2,17 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
+using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Misc;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Auth.Caches;
-using Equinor.ProCoSys.Auth.Authorization;
-using Equinor.ProCoSys.Auth.Misc;
-using Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
@@ -84,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     await _claimsTransformation.TransformAsync(currentUser);
 
                     var startTime = TimeService.UtcNow;
-                    
+
                     var result = await _mediator.Send(new FillPCSGuidsCommand(saveChanges?.Value == "true"));
 
                     var endTime = TimeService.UtcNow;

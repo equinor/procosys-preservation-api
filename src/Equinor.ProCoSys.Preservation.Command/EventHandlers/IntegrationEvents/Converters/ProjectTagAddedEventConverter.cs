@@ -25,7 +25,7 @@ public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<
     public async Task<IEnumerable<IIntegrationEvent>> Convert(ChildAddedEvent<Project, Tag> domainAddedEvent)
     {
         var tagRequirementsEvents = await CreateTagRequirementEvents(domainAddedEvent);
-        
+
         var tagEvent = await CreateTagEvent(domainAddedEvent);
 
         return tagRequirementsEvents.Append(tagEvent);
@@ -44,6 +44,6 @@ public class ProjectTagAddedEventConverter : IDomainToIntegrationEventConverter<
 
         return events;
     }
-    
+
     private async Task<TagEvent> CreateTagEvent(ChildAddedEvent<Project, Tag> domainAddedEvent) => await _createTagEventHelper.CreateEvent(domainAddedEvent.Entity, domainAddedEvent.ChildEntity);
 }

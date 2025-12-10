@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -31,9 +31,11 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
                                     join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
                                     join responsible in _context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
                                     let anyActions = (from a in _context.QuerySet<PreservationAction>()
-                                        where EF.Property<int>(a, "TagId") == tag.Id select a.Id).Any()
+                                                      where EF.Property<int>(a, "TagId") == tag.Id
+                                                      select a.Id).Any()
                                     let anyAttachments = (from a in _context.QuerySet<TagAttachment>()
-                                        where EF.Property<int>(a, "TagId") == tag.Id select a.Id).Any()
+                                                          where EF.Property<int>(a, "TagId") == tag.Id
+                                                          select a.Id).Any()
                                     where tag.Id == request.TagId
                                     select new TagDetailsDto(
                                         tag.Id,
@@ -45,14 +47,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
                                         tag.Description,
                                         tag.Status.GetDisplayValue(),
                                         new JourneyDetailsDto(journey.Id, journey.Title),
-                                        new StepDetailsDto(step.Id, step.Title), 
+                                        new StepDetailsDto(step.Id, step.Title),
                                         new ModeDetailsDto(mode.Id, mode.Title),
                                         new ResponsibleDetailsDto(responsible.Id, responsible.Code, responsible.Description),
                                         tag.CommPkgNo,
                                         tag.McPkgNo,
                                         tag.Calloff,
                                         tag.PurchaseOrderNo,
-                                        tag.AreaCode, 
+                                        tag.AreaCode,
                                         tag.DisciplineCode,
                                         tag.TagType,
                                         tag.IsReadyToBePreserved(),

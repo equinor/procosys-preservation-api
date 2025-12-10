@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             var timeProvider = new ManualTimeProvider(utcNow);
             TimeService.SetProvider(timeProvider);
-            
+
             _dut = new RequirementType(TestPlant, "CodeA", "TitleA", RequirementTypeIcon.Other, 10);
             _rd = new RequirementDefinition(TestPlant, "RD1", 4, RequirementUsage.ForAll, 0);
             _dut.AddRequirementDefinition(_rd);
@@ -54,7 +54,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.AreEqual(2, _dut.RequirementDefinitions.Count);
             Assert.IsTrue(_dut.RequirementDefinitions.Contains(rd));
         }
-        
+
         [TestMethod]
         public void AddRequirementDefinition_ShouldAddRequirementTypeRequirementDefinitionAddedEvent()
         {
@@ -82,35 +82,35 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             Assert.AreEqual(0, _dut.RequirementDefinitions.Count);
         }
-        
+
         [TestMethod]
         public void RemoveRequirementDefinition_ShouldAddPlantEntityDeletedEvent()
         {
             _rd.IsVoided = true;
             _dut.RemoveRequirementDefinition(_rd);
-            
+
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
 
             CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<RequirementDefinition>));
         }
-        
+
         [TestMethod]
         public void SetCreated_ShouldAddPlantEntityCreatedEvent()
         {
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
+
             _dut.SetCreated(person);
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
 
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(CreatedEvent<RequirementType>));
         }
-        
+
         [TestMethod]
         public void SetModified_ShouldAddPlantEntityModifiedEvent()
         {
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
+
             _dut.SetModified(person);
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
 

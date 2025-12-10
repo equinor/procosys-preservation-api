@@ -69,7 +69,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

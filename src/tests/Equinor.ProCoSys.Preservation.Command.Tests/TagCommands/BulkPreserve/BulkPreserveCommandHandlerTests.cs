@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -59,11 +59,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
             {
                 _tag1, _tag2
             };
-            var tagIds = new List<int> {TagId1, TagId2};
+            var tagIds = new List<int> { TagId1, TagId2 };
             var projectRepoMock = new Mock<IProjectRepository>();
             projectRepoMock.Setup(r => r.GetTagsWithPreservationHistoryByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(tags));
-            
+
             var personRepoMock = new Mock<IPersonRepository>();
             personRepoMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
@@ -150,7 +150,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
 
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldNotSave_WhenBeforeDueForAnyRequirement()
-        {            
+        {
             await Assert.ThrowsExceptionAsync<Exception>(() =>
                 _dut.Handle(_command, default)
             );

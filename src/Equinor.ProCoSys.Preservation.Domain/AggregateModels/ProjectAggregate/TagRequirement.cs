@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Common;
-using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
-            
+
             if (requirementDefinition.Plant != plant)
             {
                 throw new ArgumentException($"Can't relate item in {requirementDefinition.Plant} to item in {plant}");
@@ -77,7 +77,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             return TimeService.UtcNow.GetWeeksUntil(NextDueTimeUtc.Value);
         }
-        
+
         public bool IsReadyAndDueToBePreserved()
         {
             if (!ReadyToBePreserved)
@@ -110,7 +110,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public PreservationPeriod ActivePeriod
-            => PreservationPeriods.SingleOrDefault(pp => 
+            => PreservationPeriods.SingleOrDefault(pp =>
                 pp.Status == PreservationPeriodStatus.ReadyToBePreserved ||
                 pp.Status == PreservationPeriodStatus.NeedsUserInput);
 
@@ -125,12 +125,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 return null;
             }
-            
+
             var lastPreservedPeriod = PreservationPeriods
                 .Where(pp => pp.Status == PreservationPeriodStatus.Preserved)
                 .OrderByDescending(pp => pp.PreservationRecord.PreservedAtUtc)
                 .FirstOrDefault();
-        
+
             return lastPreservedPeriod?.GetFieldValue(field.Id);
         }
 
@@ -205,7 +205,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             period.UpdateStatus(requirementDefinition);
         }
-        
+
         public FieldValueAttachment GetAlreadyRecordedAttachment(int fieldId, RequirementDefinition requirementDefinition)
         {
             VerifyReadyForRecording(requirementDefinition);
@@ -266,7 +266,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 var preservationPeriod = new PreservationPeriod(Plant, IntervalWeeks, _initialPreservationPeriodStatus);
                 _preservationPeriods.Add(preservationPeriod);
-                
+
                 AddDomainEvent(new ChildAddedEvent<TagRequirement, PreservationPeriod>(this, preservationPeriod));
             }
 

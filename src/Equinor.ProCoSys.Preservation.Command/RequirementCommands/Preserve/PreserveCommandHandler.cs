@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve
             tag.Preserve(currentUser, request.RequirementId);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             return new SuccessResult<Unit>(Unit.Value);
         }
     }

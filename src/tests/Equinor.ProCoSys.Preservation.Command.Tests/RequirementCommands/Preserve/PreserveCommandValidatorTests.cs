@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         public async Task Validate_ShouldFail_WhenTagOrReqNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         public async Task Validate_ShouldFail_WhenTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         public async Task Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -80,7 +80,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         public async Task Validate_ShouldFail_WhenPreservationIsNotActiveForTag()
         {
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -105,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

@@ -36,11 +36,11 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DuplicateJourney
         public async Task<Result<int>> Handle(DuplicateJourneyCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
-            
+
             var responsibleIds = journey.Steps.Select(s => s.ResponsibleId).Distinct();
             var modeIds = journey.Steps.Select(s => s.ModeId).Distinct();
-            
-            var responsibles = await  _responsibleRepository.GetByIdsAsync(responsibleIds);
+
+            var responsibles = await _responsibleRepository.GetByIdsAsync(responsibleIds);
             var modes = await _modeRepository.GetByIdsAsync(modeIds);
 
             var plant = _plantProvider.Plant;

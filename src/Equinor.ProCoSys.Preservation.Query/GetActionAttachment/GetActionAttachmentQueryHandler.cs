@@ -4,8 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Common;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachment
         {
             var attachment = await
                 (from a in context.QuerySet<ActionAttachment>()
-                    // also join action to return null if request.ActionId not exists
+                     // also join action to return null if request.ActionId not exists
                  join action in context.QuerySet<Action>() on request.ActionId equals action.Id
                  join tag in context.QuerySet<Tag>() on request.TagId equals tag.Id
                  where a.Id == request.AttachmentId

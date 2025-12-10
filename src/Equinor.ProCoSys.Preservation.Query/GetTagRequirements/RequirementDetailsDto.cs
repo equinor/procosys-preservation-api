@@ -7,8 +7,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagRequirements
     public class RequirementDetailsDto
     {
         public RequirementDetailsDto(
-            int id, 
-            int intervalWeeks, 
+            int id,
+            int intervalWeeks,
             int? nextDueWeeks,
             RequirementTypeDetailsDto requirementType,
             RequirementDefinitionDetailDto requirementDefinition,
@@ -48,7 +48,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagRequirements
         public bool ReadyToBePreserved { get; }
         public List<FieldDetailsDto> Fields { get; }
         public string Comment { get; }
-        public bool IsVoided { get;  }
+        public bool IsVoided { get; }
         public bool IsInUse { get; set; }
         public string RowVersion { get; }
     }

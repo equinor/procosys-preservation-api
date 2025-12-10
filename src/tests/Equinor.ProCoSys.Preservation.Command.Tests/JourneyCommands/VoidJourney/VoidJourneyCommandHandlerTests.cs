@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.JourneyCommands.VoidJourney;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.VoidJourney;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -51,7 +51,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.VoidJourne
         public async Task HandlingVoidJourneyCommand_ShouldSetAndReturnRowVersion()
         {
             // Act
-            var result =  await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_command, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);

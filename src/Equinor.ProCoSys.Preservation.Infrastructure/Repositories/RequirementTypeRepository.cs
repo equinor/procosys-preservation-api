@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .Where(rt => rt.RequirementDefinitions.Any(rd => rd.Guid == requirementDefinitionGuid))
                 .FirstOrDefaultAsync();
 
-        public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition) 
+        public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition)
             => _context.RequirementDefinitions.Remove(requirementDefinition);
 
         public void RemoveField(Field field)

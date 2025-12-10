@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRe
             Usage = usage;
             Title = title;
             DefaultIntervalWeeks = defaultIntervalWeeks;
-            Fields = fields??new List<FieldsForCommand>();
+            Fields = fields ?? new List<FieldsForCommand>();
         }
 
         public int RequirementTypeId { get; }

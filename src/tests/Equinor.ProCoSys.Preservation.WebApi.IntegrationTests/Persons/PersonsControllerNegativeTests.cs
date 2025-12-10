@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Persons
                 "P",
                 HttpStatusCode.Forbidden);
         #endregion
-        
+
         #region Create
         [TestMethod]
         public async Task CreateSavedFilter_AsAnonymous_ShouldReturnUnauthorized()
@@ -115,7 +115,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Persons
                 false,
                 HttpStatusCode.Forbidden);
         #endregion
-        
+
         #region Update
         [TestMethod]
         public async Task UpdateSavedFilter_AsAnonymous_ShouldReturnUnauthorized()
@@ -190,7 +190,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Persons
                 false,
                 TestFactory.WrongButValidRowVersion,
                 HttpStatusCode.Conflict);
-        
+
         #endregion
 
         #region Delete

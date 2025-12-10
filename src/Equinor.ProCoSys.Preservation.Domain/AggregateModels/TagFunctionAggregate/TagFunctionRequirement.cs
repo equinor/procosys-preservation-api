@@ -1,9 +1,9 @@
 ﻿using System;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Common.Time;
-using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate
 {
@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggreg
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
-            
+
             if (requirementDefinition.Plant != plant)
             {
                 throw new ArgumentException($"Can't relate item in {requirementDefinition.Plant} to item in {plant}");

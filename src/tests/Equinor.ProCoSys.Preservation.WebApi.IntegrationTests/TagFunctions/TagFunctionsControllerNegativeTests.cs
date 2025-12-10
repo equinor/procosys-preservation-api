@@ -73,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.TagFunctions
                 TagFunctionUnderTest.RegisterCode,
                 HttpStatusCode.Forbidden);
         #endregion
-        
+
         #region Update
         [TestMethod]
         public async Task UpdateTagFunction_AsAnonymous_ShouldReturnUnauthorized()
@@ -298,7 +298,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.TagFunctions
         [TestMethod]
         public async Task UnvoidTagFunction_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagFunctionsControllerTestsHelper.UnvoidTagFunctionAsync(
-                UserType.Planner, 
+                UserType.Planner,
                 TestFactory.PlantWithAccess,
                 TagFunctionUnderUnvoidingTest.Code,
                 TagFunctionUnderUnvoidingTest.RegisterCode,

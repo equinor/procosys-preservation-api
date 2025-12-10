@@ -160,7 +160,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 Assert.AreEqual(PreservationStatus.Active.GetDisplayValue(), tagDto.Status);
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldReturnCorrectStatuses_BeforePreservationStarted()
         {
@@ -248,7 +248,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldNotReturnReadyToBeTransferredForStandardTags_WhenTransferredToLastStep()
         {
             StartPreservationOnAllTags();
-            
+
             TransferAllStandardTags();
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -314,7 +314,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var tagNoStartsWith = $"{_testDataSet.StdTagPrefix}-0";
-                var filter = new Filter {TagNoStartsWith = tagNoStartsWith};
+                var filter = new Filter { TagNoStartsWith = tagNoStartsWith };
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
 
@@ -334,7 +334,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var commPkgNoStartsWith = $"{_testDataSet.CommPkgPrefix}-0";
-                var filter = new Filter {CommPkgNoStartsWith = commPkgNoStartsWith};
+                var filter = new Filter { CommPkgNoStartsWith = commPkgNoStartsWith };
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
                 AssertCount(result.Data, 2);
@@ -352,7 +352,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var mcPkgNoStartsWith = $"{_testDataSet.McPkgPrefix}-0";
-                var filter = new Filter {McPkgNoStartsWith = mcPkgNoStartsWith};
+                var filter = new Filter { McPkgNoStartsWith = mcPkgNoStartsWith };
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
                 AssertCount(result.Data, 2);
@@ -370,7 +370,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var purchaseOrderNoStartsWith = $"{_testDataSet.PoPrefix}-0";
-                var filter = new Filter {PurchaseOrderNoStartsWith = purchaseOrderNoStartsWith};
+                var filter = new Filter { PurchaseOrderNoStartsWith = purchaseOrderNoStartsWith };
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
                 AssertCount(result.Data, 2);
@@ -388,7 +388,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var storageAreaStartsWith = $"{_testDataSet.StorageAreaPrefix}-0";
-                var filter = new Filter {StorageAreaStartsWith = storageAreaStartsWith};
+                var filter = new Filter { StorageAreaStartsWith = storageAreaStartsWith };
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
                 AssertCount(result.Data, 2);
@@ -406,7 +406,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var callOffStartsWith = $"{_testDataSet.CallOffPrefix}-0";
-                var filter = new Filter {CallOffStartsWith = callOffStartsWith};
+                var filter = new Filter { CallOffStartsWith = callOffStartsWith };
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
                 AssertCount(result.Data, 2);
@@ -420,7 +420,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnPreservationStatus()
         {
-            var filter = new Filter {PreservationStatus = new List<PreservationStatus>(){PreservationStatus.Active}};
+            var filter = new Filter { PreservationStatus = new List<PreservationStatus>() { PreservationStatus.Active } };
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
@@ -429,7 +429,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
 
                 Assert.AreEqual(0, result.Data.Tags.Count());
             }
-            
+
             StartPreservationOnAllTags();
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -449,7 +449,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnPreservationStatusEqualInService()
         {
-            var filter = new Filter {PreservationStatus = new List<PreservationStatus>(){PreservationStatus.InService}};
+            var filter = new Filter { PreservationStatus = new List<PreservationStatus>() { PreservationStatus.InService } };
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
@@ -489,14 +489,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOpen } }), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasOpen);
-                
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasClosed } }), default);
                 AssertCount(result.Data, 0);
-                
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOverdue } }), default);
                 AssertCount(result.Data, 0);
             }
         }
@@ -517,14 +517,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOpen } }), default);
                 AssertCount(result.Data, 0);
-                
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasClosed } }), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasClosed);
-                
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOverdue } }), default);
                 AssertCount(result.Data, 0);
             }
         }
@@ -545,15 +545,15 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 // when filtering on tag which has Open actions, tags with overdue actions is included
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOpen } }), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasOverdue);
                 var tagIdWithOpenAndOverdueAction = result.Data.Tags.Single().Id;
-                
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasClosed } }), default);
                 AssertCount(result.Data, 0);
-                
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOverdue } }), default);
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasOverdue);
                 Assert.AreEqual(tagIdWithOpenAndOverdueAction, result.Data.Tags.Single().Id);
@@ -563,7 +563,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldNotGetAnyTags_WhenFilterOnDue_WhenPreservationNotStarted()
         {
-            var filter = new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek}};
+            var filter = new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek } };
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
@@ -587,25 +587,25 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldGetTagsDueInThreeWeeks_WhenFilterOnDueWeekPlusThree()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-3);
+            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks - 3);
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusTwo } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusThree } }), default);
                 AssertCount(result.Data, 20);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.NextWeek } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.ThisWeek } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue } }), default);
                 AssertCount(result.Data, 0);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
@@ -624,25 +624,25 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldGetTagsDueInTwoWeeks_WhenFilterOnDueWeekPlusTwo()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-2);
+            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks - 2);
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusTwo } }), default);
                 AssertCount(result.Data, 20);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusThree } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.NextWeek } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.ThisWeek } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue } }), default);
                 AssertCount(result.Data, 0);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
@@ -661,25 +661,25 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldGetTagsDueNextWeek_WhenFilterOnDueNextWeek()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-1);
+            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks - 1);
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusTwo } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusThree } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.NextWeek } }), default);
                 AssertCount(result.Data, 20);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.ThisWeek } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue } }), default);
                 AssertCount(result.Data, 0);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
@@ -704,19 +704,19 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusTwo } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusThree } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.NextWeek } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.ThisWeek } }), default);
                 AssertCount(result.Data, 20);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue } }), default);
                 AssertCount(result.Data, 0);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
@@ -735,25 +735,25 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldGetTagsOverdue_WhenFilterOnOverdue()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks+1);
+            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks + 1);
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusTwo } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.WeekPlusThree } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.NextWeek } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.ThisWeek } }), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue } }), default);
                 AssertCount(result.Data, 20);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
@@ -773,7 +773,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {RequirementTypeIds = new List<int>{_testDataSet.ReqType1.Id}};
+                var filter = new Filter { RequirementTypeIds = new List<int> { _testDataSet.ReqType1.Id } };
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -822,7 +822,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var areaCode = $"{_testDataSet.AreaPrefix}-0";
-                var filter = new Filter {AreaCodes = new List<string>{areaCode}};
+                var filter = new Filter { AreaCodes = new List<string> { areaCode } };
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -840,7 +840,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var diCode = $"{_testDataSet.DisciplinePrefix}-0";
-                var filter = new Filter {DisciplineCodes = new List<string>{diCode}};
+                var filter = new Filter { DisciplineCodes = new List<string> { diCode } };
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -851,13 +851,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 }
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnResponsible()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {ResponsibleIds = new List<int>{_testDataSet.Responsible1.Id}};
+                var filter = new Filter { ResponsibleIds = new List<int> { _testDataSet.Responsible1.Id } };
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -875,7 +875,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tfCode = $"{_testDataSet.TagFunctionPrefix}-0";
-                var filter = new Filter {TagFunctionCodes = new List<string>{tfCode}};
+                var filter = new Filter { TagFunctionCodes = new List<string> { tfCode } };
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -886,13 +886,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 }
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnMode()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {ModeIds = new List<int>{_testDataSet.Mode1.Id}};
+                var filter = new Filter { ModeIds = new List<int> { _testDataSet.Mode1.Id } };
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -903,24 +903,24 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 }
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnJourney()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {JourneyIds = new List<int>{_testDataSet.Journey2With1Step.Id}};
+                var filter = new Filter { JourneyIds = new List<int> { _testDataSet.Journey2With1Step.Id } };
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
                 AssertCount(result.Data, 10);
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnStep()
         {
-            var filter = new Filter {StepIds = new List<int>{_testDataSet.Journey1With2Steps.Steps.First().Id}};
+            var filter = new Filter { StepIds = new List<int> { _testDataSet.Journey1With2Steps.Steps.First().Id } };
             IEnumerable<int> tagIdsToTransfer;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -942,7 +942,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 AssertCount(result.Data, 5);
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldFilterOnVoided()
         {
@@ -957,11 +957,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilter = VoidedFilterType.NotVoided}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { VoidedFilter = VoidedFilterType.NotVoided }), default);
                 AssertCount(result.Data, 19);
                 AssertIsVoided(result.Data, false);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilter = VoidedFilterType.Voided}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter { VoidedFilter = VoidedFilterType.Voided }), default);
                 AssertCount(result.Data, 1);
                 AssertIsVoided(result.Data, true);
             }
@@ -972,15 +972,15 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         {
             var filter = new Filter
             {
-                PreservationStatus = new List<PreservationStatus>(){PreservationStatus.NotStarted},
-                RequirementTypeIds = new List<int> {_testDataSet.ReqType1.Id},
-                AreaCodes = new List<string> {$"{_testDataSet.AreaPrefix}-0"},
-                DisciplineCodes = new List<string> {$"{_testDataSet.DisciplinePrefix}-0"},
-                ResponsibleIds = new List<int> {_testDataSet.Responsible1.Id},
-                TagFunctionCodes = new List<string> {$"{_testDataSet.TagFunctionPrefix}-0"},
-                ModeIds = new List<int> {_testDataSet.Mode1.Id},
-                JourneyIds = new List<int> {_testDataSet.Journey1With2Steps.Id},
-                StepIds = new List<int> {_testDataSet.Journey1With2Steps.Steps.First().Id},
+                PreservationStatus = new List<PreservationStatus>() { PreservationStatus.NotStarted },
+                RequirementTypeIds = new List<int> { _testDataSet.ReqType1.Id },
+                AreaCodes = new List<string> { $"{_testDataSet.AreaPrefix}-0" },
+                DisciplineCodes = new List<string> { $"{_testDataSet.DisciplinePrefix}-0" },
+                ResponsibleIds = new List<int> { _testDataSet.Responsible1.Id },
+                TagFunctionCodes = new List<string> { $"{_testDataSet.TagFunctionPrefix}-0" },
+                ModeIds = new List<int> { _testDataSet.Mode1.Id },
+                JourneyIds = new List<int> { _testDataSet.Journey1With2Steps.Id },
+                StepIds = new List<int> { _testDataSet.Journey1With2Steps.Steps.First().Id },
                 TagNoStartsWith = $"{_testDataSet.StdTagPrefix}-0",
                 CommPkgNoStartsWith = $"{_testDataSet.CommPkgPrefix}-0",
                 McPkgNoStartsWith = $"{_testDataSet.McPkgPrefix}-0",
@@ -996,12 +996,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 AssertCount(result.Data, 1);
             }
         }
-                
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldSortOnTagNo()
         {
             // filter on specific journey. Will get 10 standard tags
-            var filter = new Filter {JourneyIds = new List<int>{_testDataSet.Journey1With2Steps.Id}};
+            var filter = new Filter { JourneyIds = new List<int> { _testDataSet.Journey1With2Steps.Id } };
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -1027,7 +1027,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 Assert.AreEqual($"{_testDataSet.StdTagPrefix}-0", tags.Last().TagNo);
             }
         }
-                
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldSetIsNew_BeforeNewPeriodHasElapsed()
         {
@@ -1038,13 +1038,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 Assert.IsTrue(result.Data.Tags.All(t => t.IsNew));
             }
         }
-                
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldNotSetIsNew_AfterNewPeriodHasElapsed()
         {
-            var timeSpan = new TimeSpan(_tagIsNewHours+1, 0, 0);
+            var timeSpan = new TimeSpan(_tagIsNewHours + 1, 0, 0);
             _timeProvider.Elapse(timeSpan);
- 
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
@@ -1052,7 +1052,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 Assert.IsFalse(result.Data.Tags.Any(t => t.IsNew));
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsQuery_ShouldNotReturnNextModeOrResponsible_WhenTagCantBeTransferred()
         {
@@ -1079,7 +1079,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {TagNoStartsWith = tagTitle};
+                var filter = new Filter { TagNoStartsWith = tagTitle };
 
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);

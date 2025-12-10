@@ -7,5 +7,5 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 public interface IEntityDeleteEvent<TEntity> : IDeleteEventV1
     where TEntity : PlantEntityBase, ICreationAuditable, IModificationAuditable, IHaveGuid
 {
-    
+
 }

@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
     public static class JourneysControllerTestsHelper
     {
         private const string _route = "Journeys";
-        
+
         public static async Task<int> CreateJourneyAsync(
             UserType userType,
             string plant,
@@ -43,7 +43,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
-            var parameters = new ParameterCollection {{"includeVoided", "true"}};
+            var parameters = new ParameterCollection { { "includeVoided", "true" } };
             var url = $"{_route}{parameters}";
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
 
@@ -57,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<JourneyDto>>(jsonString);
         }
-        
+
         public static async Task<JourneyDetailsDto> GetJourneyAsync(
             UserType userType,
             string plant,
@@ -65,7 +65,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
-            var parameters = new ParameterCollection {{"includeVoided", "true"}};
+            var parameters = new ParameterCollection { { "includeVoided", "true" } };
             var url = $"{_route}/{journeyId}{parameters}";
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
 

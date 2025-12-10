@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
         {
             // Arrange
             Assert.IsNull(_historyAdded);
-            
+
             // Act
             var sourceGuid = Guid.NewGuid();
             var plant = "TestPlant";
@@ -49,11 +49,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             // Assert
             Assert.IsNotNull(_historyAdded);
-            Assert.AreEqual(plant,_historyAdded.Plant);
-            Assert.AreEqual(sourceGuid,_historyAdded.SourceGuid);
+            Assert.AreEqual(plant, _historyAdded.Plant);
+            Assert.AreEqual(sourceGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
-            Assert.AreEqual(EventType.TagCreated,_historyAdded.EventType);
-            Assert.AreEqual(ObjectType.Tag,_historyAdded.ObjectType);
+            Assert.AreEqual(EventType.TagCreated, _historyAdded.EventType);
+            Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
             Assert.IsFalse(_historyAdded.PreservationRecordGuid.HasValue);
             Assert.IsFalse(_historyAdded.DueInWeeks.HasValue);
         }

@@ -4,8 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.BlobStorage;
 using Equinor.ProCoSys.Common;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +25,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagAttachment
         {
             var attachment = await
                 (from a in context.QuerySet<TagAttachment>()
-                    // also join tag to return null if request.TagId not exists
-                    join tag in context.QuerySet<Tag>() on request.TagId equals tag.Id
-                    where a.Id == request.AttachmentId
-                    select a).SingleOrDefaultAsync(cancellationToken);
+                     // also join tag to return null if request.TagId not exists
+                 join tag in context.QuerySet<Tag>() on request.TagId equals tag.Id
+                 where a.Id == request.AttachmentId
+                 select a).SingleOrDefaultAsync(cancellationToken);
 
             if (attachment == null)
             {

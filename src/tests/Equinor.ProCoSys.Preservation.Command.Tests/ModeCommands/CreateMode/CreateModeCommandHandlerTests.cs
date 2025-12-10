@@ -36,13 +36,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
                 );
         }
 
-        
+
         [TestMethod]
         public async Task HandlingCreateModeCommand_ShouldAddModeToRepository()
         {
             // Act
             var result = await _dut.Handle(_command, default);
-            
+
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, result.Data);
@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

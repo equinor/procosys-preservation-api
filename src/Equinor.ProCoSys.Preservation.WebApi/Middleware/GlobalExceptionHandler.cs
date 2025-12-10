@@ -39,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
                 {
                     if (!errors.ContainsKey(error.PropertyName))
                     {
-                        errors.Add(error.PropertyName, new[] {error.ErrorMessage});
+                        errors.Add(error.PropertyName, new[] { error.ErrorMessage });
                     }
                     else
                     {
@@ -53,7 +53,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             }
             catch (InValidProjectException ipe)
             {
-                var errors = new Dictionary<string, string[]> {{"ProjectName", new[] {ipe.Message}}};
+                var errors = new Dictionary<string, string[]> { { "ProjectName", new[] { ipe.Message } } };
                 await context.WriteBadRequestAsync(errors, _logger);
             }
             catch (ConcurrencyException)

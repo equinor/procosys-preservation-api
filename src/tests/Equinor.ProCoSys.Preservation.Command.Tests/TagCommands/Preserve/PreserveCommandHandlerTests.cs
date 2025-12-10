@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -69,10 +69,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
             _req1ForAllWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rd1ForAllTwoWeekInterval);
             _req2ForAllWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rd2ForAllTwoWeekInterval);
             _req3ForAllWithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rd3ForAllTwoWeekInterval);
-            
+
             _tagWithForAllRequirements = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", supplierStep, new List<TagRequirement>
             {
-                _req1ForAllWithTwoWeekInterval, 
+                _req1ForAllWithTwoWeekInterval,
                 _req2ForAllWithTwoWeekInterval,
                 _req3ForAllWithFourWeekInterval
             });
@@ -81,7 +81,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
             _reqForOtherInSupplierStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForOtherTwoWeekInterval);
             _tagWithSupplierAndOtherRequirementsInSupplierStep = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", supplierStep, new List<TagRequirement>
             {
-                _reqForSupplierInSupplierStep, 
+                _reqForSupplierInSupplierStep,
                 _reqForOtherInSupplierStep
             });
 
@@ -89,7 +89,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
             _reqForOtherInOtherStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForOtherTwoWeekInterval);
             _tagWithSupplierAndOtherRequirementsInOtherStep = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", otherStep, new List<TagRequirement>
             {
-                _reqForSupplierInOtherStep, 
+                _reqForSupplierInOtherStep,
                 _reqForOtherInOtherStep
             });
 
@@ -100,7 +100,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
                 .Returns(Task.FromResult(_tagWithSupplierAndOtherRequirementsInOtherStep));
             projectRepoMock.Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(TagInSupplierStepId))
                 .Returns(Task.FromResult(_tagWithSupplierAndOtherRequirementsInSupplierStep));
-            
+
             var personRepoMock = new Mock<IPersonRepository>();
             personRepoMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))

@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ProjectCommands.FillPCSGuids
             //    await _unitOfWork.SaveChangesAsync(cancellationToken);
             //    _logger.LogInformation($"FillPCSGuids: {count} project updated");
             //}
-            
+
             return Task.FromResult<Result<Unit>>(new SuccessResult<Unit>(Unit.Value));
         }
     }

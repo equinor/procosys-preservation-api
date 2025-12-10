@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
     {
 
         public ResponsibleRepository(PlantProviderForTest plantProvider, List<Responsible> sourceResponsibles)
-            :base(plantProvider, sourceResponsibles)
+            : base(plantProvider, sourceResponsibles)
         {
         }
 

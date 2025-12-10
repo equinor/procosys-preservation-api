@@ -18,22 +18,22 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinition
 
         public async Task<bool> ExistsAsync(int requirementDefinitionId, CancellationToken token) =>
             await (from rd in _context.QuerySet<RequirementDefinition>()
-                where rd.Id == requirementDefinitionId
-                select rd).AnyAsync(token);
+                   where rd.Id == requirementDefinitionId
+                   select rd).AnyAsync(token);
 
         public async Task<bool> ExistsFieldAsync(int requirementDefinitionId, int fieldId, CancellationToken token) =>
             await (from rd in _context.QuerySet<RequirementDefinition>()
-                join f in _context.QuerySet<Field>() on rd.Id equals EF.Property<int>(f, "RequirementDefinitionId")
-                where rd.Id == requirementDefinitionId && f.Id == fieldId
-                select rd).AnyAsync(token);
+                   join f in _context.QuerySet<Field>() on rd.Id equals EF.Property<int>(f, "RequirementDefinitionId")
+                   where rd.Id == requirementDefinitionId && f.Id == fieldId
+                   select rd).AnyAsync(token);
 
         public async Task<bool> IsVoidedAsync(
             int requirementDefinitionId,
             CancellationToken token)
         {
             var reqDef = await (from rd in _context.QuerySet<RequirementDefinition>()
-                where rd.Id == requirementDefinitionId
-                select rd).SingleOrDefaultAsync(token);
+                                where rd.Id == requirementDefinitionId
+                                select rd).SingleOrDefaultAsync(token);
             return reqDef != null && reqDef.IsVoided;
         }
 
@@ -85,13 +85,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinition
 
         public async Task<bool> TagRequirementsExistAsync(int requirementDefinitionId, CancellationToken token)
              => await (from tr in _context.QuerySet<TagRequirement>()
-                    where tr.RequirementDefinitionId == requirementDefinitionId
-                    select tr).AnyAsync(token);
+                       where tr.RequirementDefinitionId == requirementDefinitionId
+                       select tr).AnyAsync(token);
 
         public async Task<bool> TagFunctionRequirementsExistAsync(int requirementDefinitionId, CancellationToken token)
             => await (from tfr in _context.QuerySet<TagFunctionRequirement>()
-                where tfr.RequirementDefinitionId == requirementDefinitionId
-                select tfr).AnyAsync(token);
+                      where tfr.RequirementDefinitionId == requirementDefinitionId
+                      select tfr).AnyAsync(token);
 
         public async Task<bool> AllExcludedFieldsAreVoidedAsync(int requirementDefinitionId, List<int> updateFieldIds, CancellationToken token)
         {
@@ -122,19 +122,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinition
             }
 
             return await (from fv in _context.QuerySet<FieldValue>()
-                where excludedFieldIds.Contains(fv.FieldId)
-                select fv).AnyAsync(token);
+                          where excludedFieldIds.Contains(fv.FieldId)
+                          select fv).AnyAsync(token);
         }
 
         private async Task<RequirementDefinition> GetRequirementDefinitionWithFieldsAsync(int requirementDefinitionId, CancellationToken token)
             => await (from rd in _context.QuerySet<RequirementDefinition>()
                     .Include(rd => rd.Fields)
-                where rd.Id == requirementDefinitionId
-                select rd).SingleOrDefaultAsync(token);
+                      where rd.Id == requirementDefinitionId
+                      select rd).SingleOrDefaultAsync(token);
 
         private async Task<List<RequirementDefinition>> GetRequirementDefinitionsAsync(List<int> requirementDefinitionIds, CancellationToken token)
             => await (from rd in _context.QuerySet<RequirementDefinition>()
-                where requirementDefinitionIds.Contains(rd.Id)
-                select rd).ToListAsync(token);
+                      where requirementDefinitionIds.Contains(rd.Id)
+                      select rd).ToListAsync(token);
     }
 }

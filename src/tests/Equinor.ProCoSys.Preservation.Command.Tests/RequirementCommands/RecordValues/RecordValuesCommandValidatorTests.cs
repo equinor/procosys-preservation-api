@@ -47,16 +47,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
 
             _recordValuesCommandWithCommentOnly = new RecordValuesCommand(
                 TagId,
-                ReqId, 
-                null, 
+                ReqId,
+                null,
                 null,
                 Comment);
 
             _recordValuesCommand = new RecordValuesCommand(
-                TagId, 
-                ReqId, 
-                new EditableList<NumberFieldValue>{new NumberFieldValue(NumberFieldId, 1282.91, false)}, 
-                new List<CheckBoxFieldValue>{new CheckBoxFieldValue(CheckBoxFieldId, true)}, 
+                TagId,
+                ReqId,
+                new EditableList<NumberFieldValue> { new NumberFieldValue(NumberFieldId, 1282.91, false) },
+                new List<CheckBoxFieldValue> { new CheckBoxFieldValue(CheckBoxFieldId, true) },
                 Comment);
 
             _dut = new RecordValuesCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _fieldValidatorMock.Object);
@@ -74,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
         public async Task Validate_ShouldFail_WhenTagOrReqNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_recordValuesCommand);
 
             Assert.IsFalse(result.IsValid);
@@ -88,7 +88,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
             _tagValidatorMock
                 .Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, CheckBoxFieldId, default))
                 .Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_recordValuesCommand);
 
             Assert.IsFalse(result.IsValid);
@@ -100,7 +100,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
         public async Task Validate_ShouldFail_WhenTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_recordValuesCommandWithCommentOnly);
 
             Assert.IsFalse(result.IsValid);
@@ -112,7 +112,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
         public async Task Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_recordValuesCommandWithCommentOnly);
 
             Assert.IsFalse(result.IsValid);
@@ -124,7 +124,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
         public async Task Validate_ShouldFail_WhenRequirementDontHaveActivePeriod()
         {
             _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_recordValuesCommandWithCommentOnly);
 
             Assert.IsFalse(result.IsValid);
@@ -136,7 +136,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
         public async Task Validate_ShouldFail_WhenNumberFieldNotForRecording()
         {
             _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(NumberFieldId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_recordValuesCommand);
 
             Assert.IsFalse(result.IsValid);
@@ -148,7 +148,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
         public async Task Validate_ShouldFail_WhenCheckBoxFieldNotForRecording()
         {
             _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_recordValuesCommand);
 
             Assert.IsFalse(result.IsValid);
@@ -161,14 +161,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_recordValuesCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
         }
- 
+
         [TestMethod]
         public async Task Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
@@ -179,7 +179,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
                 .Returns(Task.FromResult(false));
 
             var result = await _dut.ValidateAsync(_recordValuesCommand);
-            
+
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
         }

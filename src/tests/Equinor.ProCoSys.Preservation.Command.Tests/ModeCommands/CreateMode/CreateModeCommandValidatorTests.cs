@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
         public async Task Validate_ShouldFail_WhenModeAlreadyExists()
         {
             _modeValidatorMock.Setup(r => r.ExistsWithSameTitleAsync(_title, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

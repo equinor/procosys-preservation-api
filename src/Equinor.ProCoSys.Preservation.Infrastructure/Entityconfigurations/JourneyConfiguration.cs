@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasIndex(x => x.Plant)
                 .HasDatabaseName("IX_Journeys_Plant_ASC")
-                .IncludeProperties(x => new {x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, x.Title});
+                .IncludeProperties(x => new { x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, x.Title });
 
             builder
                 .HasMany(x => x.Steps)

@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionDetails
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var actionDetailDto = result.Data;
 
                 AssertClosedAction(actionDetailDto, _closedAction, _testDataSet.CurrentUser);
@@ -91,7 +91,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionDetails
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var actionDetailDto = result.Data;
 
                 AssertModifiedAction(actionDetailDto, _testDataSet.CurrentUser, modifiedTime);
@@ -110,7 +110,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionDetails
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var actionDetailDto = result.Data;
                 AssertAction(actionDetailDto, _openAction, false);
                 AssertNotModifiedAction(actionDetailDto);

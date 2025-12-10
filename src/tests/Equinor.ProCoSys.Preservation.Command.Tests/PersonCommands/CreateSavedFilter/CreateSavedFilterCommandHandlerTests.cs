@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
         public void Setup()
         {
             // Arrange
-            
+
             _project = new Project(TestPlant, _projectName, "desc", ProjectProCoSysGuid);
             _project.SetProtectedIdForTesting(_projectId);
             _projectRepositoryMock = new Mock<IProjectRepository>();

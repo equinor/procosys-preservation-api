@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagFunctionDetails
                 "D",
                 "RC",
                 true,
-                new List<RequirementDto>{reqDto},
+                new List<RequirementDto> { reqDto },
                 "AAAAAAAAABA=");
 
             Assert.AreEqual(1, dut.Id);

@@ -22,8 +22,8 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep
         private readonly IResponsibleApiService _responsibleApiService;
 
         public UpdateStepCommandHandler(
-            IJourneyRepository journeyRepository, 
-            IModeRepository modeRepository, 
+            IJourneyRepository journeyRepository,
+            IModeRepository modeRepository,
             IResponsibleRepository responsibleRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
@@ -73,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep
                 _plantProvider.Plant,
                 responsibleCode,
                 cancellationToken);
-            
+
             if (mainResponsible == null)
             {
                 return null;

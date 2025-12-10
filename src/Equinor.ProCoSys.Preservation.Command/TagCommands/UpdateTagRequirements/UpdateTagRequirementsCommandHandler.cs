@@ -17,9 +17,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirement
         private readonly IPlantProvider _plantProvider;
 
         public UpdateTagRequirementsCommandHandler(
-            IProjectRepository projectRepository, 
-            IRequirementTypeRepository requirementTypeRepository, 
-            IUnitOfWork unitOfWork, 
+            IProjectRepository projectRepository,
+            IRequirementTypeRepository requirementTypeRepository,
+            IUnitOfWork unitOfWork,
             IPlantProvider plantProvider)
         {
             _projectRepository = projectRepository;

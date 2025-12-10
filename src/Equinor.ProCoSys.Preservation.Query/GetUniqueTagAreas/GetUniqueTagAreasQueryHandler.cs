@@ -21,13 +21,13 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagAreas
         {
             var areas = await
                 (from tag in _context.QuerySet<Tag>()
-                    join project in _context.QuerySet<Project>()
-                        on EF.Property<int>(tag, "ProjectId") equals project.Id
-                    where project.Name == request.ProjectName
-                          && !string.IsNullOrEmpty(tag.AreaCode)
-                    select new AreaDto(
-                        tag.AreaCode,
-                        tag.AreaDescription))
+                 join project in _context.QuerySet<Project>()
+                     on EF.Property<int>(tag, "ProjectId") equals project.Id
+                 where project.Name == request.ProjectName
+                       && !string.IsNullOrEmpty(tag.AreaCode)
+                 select new AreaDto(
+                     tag.AreaCode,
+                     tag.AreaDescription))
                 .Distinct()
                 .ToListAsync(cancellationToken);
 

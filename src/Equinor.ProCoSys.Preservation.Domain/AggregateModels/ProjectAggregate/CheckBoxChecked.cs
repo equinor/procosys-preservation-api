@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public CheckBoxChecked(string plant, Field field)
-            :base(plant, field)
+            : base(plant, field)
         {
         }
     }

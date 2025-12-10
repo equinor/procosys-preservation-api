@@ -23,8 +23,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagFunctions
                 _currentUserProvider))
             {
                 _testDataSet = AddTestDataSet(context);
-                
-                for (int i = 0; i < 10; i++)
+
+                for (var i = 0; i < 10; i++)
                 {
                     var tf = AddTagFunction(context, $"{_testDataSet.TagFunctionPrefix}-{i}", "R");
                     var rt = AddRequirementTypeWith1DefWithoutField(context, _testDataSet.ReqType1.Code, "R", RequirementTypeIcon.Other);

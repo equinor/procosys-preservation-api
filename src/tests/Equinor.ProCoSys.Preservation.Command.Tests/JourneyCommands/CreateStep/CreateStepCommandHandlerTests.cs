@@ -83,7 +83,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
             Assert.AreEqual(0, _journey.Steps.Count);
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             Assert.AreEqual(1, _journey.Steps.Count);
             var stepAdded = _journey.Steps.First();
@@ -116,7 +116,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

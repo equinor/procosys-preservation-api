@@ -15,12 +15,12 @@ public class RequirementTypeDeletedEventHandler(IIntegrationEventPublisher integ
     {
         var requirementTypeDeleteEvents = CreateRequirementTypeDeletedEventHelper.CreateEvents(notification.Entity);
         await integrationEventPublisher.PublishAsync(requirementTypeDeleteEvents.TypeDeleteEvent, cancellationToken);
-        
+
         foreach (var deleteEvent in requirementTypeDeleteEvents.DefinitionDeleteEvents)
         {
             await integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);
         }
-        
+
         foreach (var deleteEvent in requirementTypeDeleteEvents.FieldDeleteEvents)
         {
             await integrationEventPublisher.PublishAsync(deleteEvent, cancellationToken);

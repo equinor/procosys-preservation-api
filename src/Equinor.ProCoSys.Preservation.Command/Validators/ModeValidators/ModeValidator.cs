@@ -15,18 +15,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators
 
         public async Task<bool> ExistsAsync(int modeId, CancellationToken token) =>
             await (from m in _context.QuerySet<Mode>()
-                where m.Id == modeId
-                select m).AnyAsync(token);
+                   where m.Id == modeId
+                   select m).AnyAsync(token);
 
         public async Task<bool> ExistsWithSameTitleAsync(string title, CancellationToken token) =>
             await (from m in _context.QuerySet<Mode>()
-                where m.Title == title
-                select m).AnyAsync(token);
+                   where m.Title == title
+                   select m).AnyAsync(token);
 
         public async Task<bool> ExistsAnotherModeWithSameTitleAsync(int modeId, string title, CancellationToken token) =>
             await (from m in _context.QuerySet<Mode>()
-                where m.Title == title && m.Id != modeId
-                select m).AnyAsync(token);
+                   where m.Title == title && m.Id != modeId
+                   select m).AnyAsync(token);
 
         public async Task<bool> IsVoidedAsync(int modeId, CancellationToken token)
         {
@@ -36,19 +36,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators
 
         public async Task<bool> IsUsedInStepAsync(int modeId, CancellationToken token) =>
             await (from s in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Step>()
-                where s.ModeId == modeId
-                select s).AnyAsync(token);
+                   where s.ModeId == modeId
+                   select s).AnyAsync(token);
 
-        public async Task<bool> ExistsAnotherModeForSupplierAsync(int modeId, CancellationToken token) => 
+        public async Task<bool> ExistsAnotherModeForSupplierAsync(int modeId, CancellationToken token) =>
             await (from m in _context.QuerySet<Mode>()
-                          where m.Id != modeId &&
-                                m.ForSupplier
-                          select m).AnyAsync(token);
+                   where m.Id != modeId &&
+                         m.ForSupplier
+                   select m).AnyAsync(token);
 
         public async Task<bool> ExistsAnyModeWithForSupplierAsync(CancellationToken token) =>
             await (from m in _context.QuerySet<Mode>()
-                where m.ForSupplier
-                select m).AnyAsync(token);
+                   where m.ForSupplier
+                   select m).AnyAsync(token);
 
         public async Task<bool> ExistsWithForSupplierValueAsync(int modeId, bool forSupplier, CancellationToken token)
         {
@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators
 
         private async Task<Mode> GetModeAsync(int modeId, CancellationToken token)
             => await (from m in _context.QuerySet<Mode>()
-                where m.Id == modeId
-                select m).SingleOrDefaultAsync(token);
+                      where m.Id == modeId
+                      select m).SingleOrDefaultAsync(token);
     }
 }

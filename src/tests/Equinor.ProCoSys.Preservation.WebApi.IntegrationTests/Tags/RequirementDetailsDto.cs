@@ -15,7 +15,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public bool ReadyToBePreserved { get; set; }
         public List<FieldDetailsDto> Fields { get; set; }
         public string Comment { get; set; }
-        public bool IsVoided { get;  set; }
+        public bool IsVoided { get; set; }
         public string RowVersion { get; set; }
     }
 }

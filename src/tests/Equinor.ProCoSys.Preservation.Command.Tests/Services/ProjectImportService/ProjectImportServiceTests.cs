@@ -38,7 +38,9 @@ public class ProjectImportServiceTests
         var projectDescription = "TestDescription";
         var mainProject = new ProCoSysProject
         {
-            Name = projectName, Description = projectDescription, ProCoSysGuid = Guid.NewGuid()
+            Name = projectName,
+            Description = projectDescription,
+            ProCoSysGuid = Guid.NewGuid()
         };
         _projectApiServiceMock.Setup(p => p.TryGetProjectAsync(_plant, projectName, It.IsAny<CancellationToken>())).ReturnsAsync(mainProject);
 

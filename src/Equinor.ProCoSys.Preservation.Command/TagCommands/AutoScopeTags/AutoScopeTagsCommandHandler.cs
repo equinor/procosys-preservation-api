@@ -28,8 +28,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
 
         public AutoScopeTagsCommandHandler(
             IProjectRepository projectRepository,
-            IJourneyRepository journeyRepository, 
-            IModeRepository modeRepository, 
+            IJourneyRepository journeyRepository,
+            IModeRepository modeRepository,
             ITagFunctionRepository tagFunctionRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
@@ -54,7 +54,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
                 request.ProjectName,
                 request.TagNos,
                 cancellationToken);
-            
+
             var mode = await _modeRepository.GetByIdAsync(step.ModeId);
 
             var tagFunctionsWithRequirements = await GetNeededTagFunctionsWithRequirementsAsync(tagDetailList);
@@ -69,7 +69,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
 
             var addedTags = new List<Tag>();
             var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-            
+
             foreach (var tagNo in request.TagNos)
             {
                 var tagDetails = tagDetailList.FirstOrDefault(td => td.TagNo == tagNo);
@@ -80,7 +80,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
 
                 var tagFunctionWithRequirement =
                     tagFunctionsWithRequirements.SingleOrDefault(tf => Key(tf) == Key(tagDetails));
-                
+
                 if (tagFunctionWithRequirement == null)
                 {
                     return new NotFoundResult<List<int>>($"TagFunction for {Key(tagDetails)} not found with requirements defined");
@@ -104,7 +104,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
                 project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);
             }
-            
+
             // Todo Remove Migration handling when migration period from old to new preservation in ProCoSys is over
             await _tagApiService.MarkTagsAsMigratedAsync(_plantProvider.Plant, tagDetailList.Select(t => t.Id), cancellationToken);
 
@@ -114,7 +114,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
         }
 
         private string Key(PCSTagDetails details) => $"{details.TagFunctionCode}|{details.RegisterCode}";
-        
+
         private string Key(TagFunction tagFunction) => $"{tagFunction.Code}|{tagFunction.RegisterCode}";
 
         private async Task<List<TagFunction>> GetNeededTagFunctionsWithRequirementsAsync(IList<PCSTagDetails> tagDetailList)
@@ -129,7 +129,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
         }
 
         private Tag CreateTag(
-            AutoScopeTagsCommand request, 
+            AutoScopeTagsCommand request,
             Step step,
             PCSTagDetails tagDetails,
             TagFunction tagFunctionWithRequirements,
@@ -164,7 +164,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
 
             tag.SetArea(tagDetails.AreaCode, tagDetails.AreaDescription);
             tag.SetDiscipline(tagDetails.DisciplineCode, tagDetails.DisciplineDescription);
-            
+
             return tag;
         }
     }

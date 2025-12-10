@@ -15,7 +15,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             string disciplineCode,
             bool isNew,
             bool isVoided,
-            string mcPkgNo, 
+            string mcPkgNo,
             string mode,
             string nextMode,
             string nextResponsibleCode,

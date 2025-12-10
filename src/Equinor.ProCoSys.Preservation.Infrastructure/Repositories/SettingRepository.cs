@@ -9,8 +9,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
         public SettingRepository(PreservationContext context) : base(context, context.Settings)
         {
         }
-        
-        public Task<Setting> GetByCodeAsync(string settingCode) 
+
+        public Task<Setting> GetByCodeAsync(string settingCode)
             => DefaultQuery.SingleOrDefaultAsync(r => r.Code == settingCode);
     }
 }

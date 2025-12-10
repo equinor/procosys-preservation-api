@@ -8,7 +8,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         public AutoScopeTagsDtoValidator()
         {
             RuleFor(x => x).NotNull();
-            
+
             RuleFor(x => x.ProjectName)
                 .NotNull()
                 .NotEmpty()

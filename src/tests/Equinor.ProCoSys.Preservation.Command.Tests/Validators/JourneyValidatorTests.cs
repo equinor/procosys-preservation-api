@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
                 _journey1WithStepId = _journeyWithoutDuplicateId = journey1WithStep.Id;
                 _journeyWithoutStepId = _journeyWithDuplicateId = AddJourney(context, JourneyWithoutStepTitle).Id;
-                
+
                 _journey2WithStepId = AddJourneyWithStep(context, Journey2WithStepTitle, StepTitle1InJourney2, mode, responsible).Id;
 
                 AddJourney(context, $"{JourneyWithoutStepTitle}{Journey.DuplicatePrefix}");
@@ -233,7 +233,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsTrue(result);
             }
         }
-        
+
         [TestMethod]
         public async Task HassAnyStepInJourneyATagAsync_ShouldReturnFalse_WhenNoSteps()
         {
@@ -244,7 +244,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task HassAnyStepInJourneyATagAsync_ShouldReturnFalse_BeforeTagAddedToAStep()
         {
@@ -255,7 +255,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task HassAnyStepInJourneyATagAsync_ShouldReturnTrue_AfterTagAddedToAStep()
         {
@@ -264,7 +264,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var project = AddProject(context, "P", "Project description");
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", RequirementTypeIcon.Other).RequirementDefinitions.First();
                 AddTag(context, project, TagType.Standard, Guid.NewGuid(), "TagNo", "Tag description", _step1InJourney1,
-                    new List<TagRequirement> {new TagRequirement(TestPlant, 2, rd)});
+                    new List<TagRequirement> { new TagRequirement(TestPlant, 2, rd) });
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -307,7 +307,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task HasOtherStepWithAutoTransferMethodAsync_NoSteps_ShouldReturnFalse()
         {
@@ -318,7 +318,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task HasOtherStepWithAutoTransferMethodAsync_NoStepsHasSameAutoTransferMethodSign_ShouldReturnFalse()
         {
@@ -329,7 +329,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task HasOtherStepWithAutoTransferMethodAsync_UnknownJourney_ShouldReturnFalse()
         {
@@ -340,7 +340,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task HasOtherStepWithAutoTransferMethodAsync_ShouldReturnTrue_WhenOtherStepHasSameAutoTransferMethod()
         {
@@ -363,7 +363,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsTrue(result);
             }
         }
-        
+
         [TestMethod]
         public async Task HasOtherStepWithAutoTransferMethodAsync_ShouldReturnFalse_WhenSameStepHasSameAutoTransferMethod()
         {
@@ -389,7 +389,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
-        
+
         [TestMethod]
         public async Task AnyStepExistsWithSameTitleAsync_KnownTitleInJourney_ShouldReturnTrue()
         {

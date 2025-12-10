@@ -161,7 +161,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             // Arrange
             var aNewTag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "Tag1", "", _stepMock.Object,
-                new List<TagRequirement> {_reqMock.Object});
+                new List<TagRequirement> { _reqMock.Object });
 
             // Act
             _dut.AddTag(aNewTag);

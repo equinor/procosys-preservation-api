@@ -10,7 +10,7 @@
             RowVersion = rowVersion;
         }
 
-        public int TagRequirementId { get;  }
+        public int TagRequirementId { get; }
         public int IntervalWeeks { get; }
         public bool IsVoided { get; }
         public string RowVersion { get; set; }

@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.SetInService
             => Tags = tagIds ?? new List<IdAndRowVersion>();
 
         public IEnumerable<IdAndRowVersion> Tags { get; }
-        
+
         public int TagId
         {
             get

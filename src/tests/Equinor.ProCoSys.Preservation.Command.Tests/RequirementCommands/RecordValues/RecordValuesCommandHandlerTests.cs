@@ -27,23 +27,23 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
             var _reqId = 21;
 
             _recordValuesCommandWithCheckedCheckBoxAndNumber = new RecordValuesCommand(
-                _tagId, 
-                _reqId, 
-                new List<NumberFieldValue>{ new NumberFieldValue(_numberFieldId, 21, false)}, 
-                new List<CheckBoxFieldValue>{new CheckBoxFieldValue(_checkBoxFieldId, true)}, 
+                _tagId,
+                _reqId,
+                new List<NumberFieldValue> { new NumberFieldValue(_numberFieldId, 21, false) },
+                new List<CheckBoxFieldValue> { new CheckBoxFieldValue(_checkBoxFieldId, true) },
                 null);
 
             _recordValuesCommandWithNullAsNumber = new RecordValuesCommand(
-                _tagId, 
-                _reqId, 
-                new List<NumberFieldValue>{new NumberFieldValue(_numberFieldId, null, false)}, 
-                null, 
+                _tagId,
+                _reqId,
+                new List<NumberFieldValue> { new NumberFieldValue(_numberFieldId, null, false) },
+                null,
                 null);
 
             var requirementDefinitionWith2FieldsMock = new Mock<RequirementDefinition>();
             requirementDefinitionWith2FieldsMock.SetupGet(r => r.Id).Returns(_reqId);
             requirementDefinitionWith2FieldsMock.SetupGet(r => r.Plant).Returns(TestPlant);
-            
+
             var checkBoxFieldMock = new Mock<Field>(TestPlant, "", FieldType.CheckBox, 0, null, null);
             checkBoxFieldMock.SetupGet(f => f.Id).Returns(_checkBoxFieldId);
             checkBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
@@ -79,7 +79,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
             rtRepositoryMock
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
                 .Returns(Task.FromResult(requirementDefinitionWith2FieldsMock.Object));
-            
+
             _dut = new RecordValuesCommandHandler(
                 projectRepositoryMock.Object,
                 rtRepositoryMock.Object,
@@ -95,7 +95,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
 
             // Act
             await _dut.Handle(_recordValuesCommandWithCheckedCheckBoxAndNumber, default);
-            
+
             // Assert
             Assert.AreEqual(2, _requirement.ActivePeriod.FieldValues.Count);
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, _requirement.ActivePeriod.Status);
@@ -110,7 +110,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
 
             // Act
             await _dut.Handle(_recordValuesCommandWithNullAsNumber, default);
-            
+
             // Assert
             Assert.AreEqual(0, _requirement.ActivePeriod.FieldValues.Count);
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, _requirement.ActivePeriod.Status);
@@ -121,7 +121,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
         {
             // Act
             await _dut.Handle(_recordValuesCommandWithCheckedCheckBoxAndNumber, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

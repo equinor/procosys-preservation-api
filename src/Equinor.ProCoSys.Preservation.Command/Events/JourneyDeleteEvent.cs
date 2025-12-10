@@ -7,5 +7,5 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 [EntityNameJourney]
 public class JourneyDeleteEvent : DeleteEvent<Journey>
 {
-    public JourneyDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
+    public JourneyDeleteEvent(Guid guid, string plant) : base(guid, plant, null) { }
 }

@@ -50,7 +50,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep
 
             async Task<bool> NotBeAVoidedModeAsync(int modeId, CancellationToken token)
                 => !await modeValidator.IsVoidedAsync(modeId, token);
-            
+
             async Task<bool> NotBeAnyStepWithSameAutoTransferMethodInJourneyAsync(int journeyId, AutoTransferMethod autoTransferMethod, CancellationToken token)
                 => autoTransferMethod == AutoTransferMethod.None || !await journeyValidator.HasAnyStepWithAutoTransferMethodAsync(journeyId, autoTransferMethod, token);
         }

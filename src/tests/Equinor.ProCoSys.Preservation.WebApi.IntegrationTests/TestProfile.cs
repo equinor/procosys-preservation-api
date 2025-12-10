@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             };
 
         public override string ToString() => $"{FullName} {Oid}";
-        
+
         /// <summary>
         /// Wraps profile by serializing, encoding and then converting to base 64 string.
         /// "Bearer" is also added, making it ready to be added as Authorization header

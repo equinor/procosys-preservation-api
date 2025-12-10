@@ -23,7 +23,7 @@ public class TagDeletedEventHandler(
         {
             await integrationEventPublisher.PublishAsync(actionDeleteEvent, cancellationToken);
         }
-        
+
         foreach (var tagRequirementDeleteEvent in integrationEvents.TagRequirementDeleteEvents)
         {
             await HandleTagRequirementDeleteEvent(tagRequirementDeleteEvent, cancellationToken);

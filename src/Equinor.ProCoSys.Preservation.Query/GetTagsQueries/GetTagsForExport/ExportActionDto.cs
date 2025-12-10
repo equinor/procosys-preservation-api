@@ -5,11 +5,11 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
     public class ExportActionDto
     {
         public ExportActionDto(
-            int id, 
+            int id,
             string title,
-            string description, 
-            bool isOverDue, 
-            DateTime? dueTimeUtc, 
+            string description,
+            bool isOverDue,
+            DateTime? dueTimeUtc,
             DateTime? closedAtUtc)
         {
             Id = id;

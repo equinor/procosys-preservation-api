@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
                 Code = "CodeA",
                 Description = "Description1",
             };
-           
+
             _dut = new MainApiDisciplineService(_mainApiClient.Object, _mainApiOptions.Object);
         }
 

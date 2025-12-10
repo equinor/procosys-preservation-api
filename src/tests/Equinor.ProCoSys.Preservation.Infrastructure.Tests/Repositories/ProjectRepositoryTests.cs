@@ -65,13 +65,13 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var req2 = new TagRequirement(TestPlant, 2, MockRequirementDefinition(2));
             var req3 = new TagRequirement(TestPlant, 4, MockRequirementDefinition(3));
             _standardTag1With3Reqs = new Tag(
-                TestPlant, 
+                TestPlant,
                 TagType.Standard,
                 _StandardTagGuid1,
-                StandardTagNo1, 
-                "Desc", 
+                StandardTagNo1,
+                "Desc",
                 step,
-                new List<TagRequirement> { _standardTag1Requirement1, req2, req3}) 
+                new List<TagRequirement> { _standardTag1Requirement1, req2, req3 })
             {
                 CommPkgNo = CommPkg1,
                 McPkgNo = McPkg1,
@@ -88,9 +88,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 StandardTagNo2,
                 "Desc2",
                 step,
-                new List<TagRequirement> { reqTag2 }) 
+                new List<TagRequirement> { reqTag2 })
             {
-                CommPkgNo = CommPkg2, 
+                CommPkgNo = CommPkg2,
                 McPkgNo = McPkg2
             };
             _standardTag2.SetProtectedIdForTesting(StandardTagId2);
@@ -118,19 +118,19 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var req5 = new TagRequirement(TestPlant, 2, MockRequirementDefinition(7));
             var req6 = new TagRequirement(TestPlant, 4, MockRequirementDefinition(8));
             var poTag = new Tag(
-                TestPlant, 
-                TagType.PoArea, 
+                TestPlant,
+                TagType.PoArea,
                 Guid.NewGuid(),
-                PoTagNo, 
-                "Desc", 
+                PoTagNo,
+                "Desc",
                 step,
-                new List<TagRequirement> {req4, req5, req6});
+                new List<TagRequirement> { req4, req5, req6 });
             poTag.SetProtectedIdForTesting(PoTagId);
             _project1.AddTag(poTag);
 
             var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2", _projectProCoSysGuidWithoutTags);
 
-            var projects = new List<Project> {_project1, project2};
+            var projects = new List<Project> { _project1, project2 };
             var projectsSetMock = projects.AsQueryable().BuildMockDbSet();
 
             ContextHelper
@@ -138,7 +138,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 .Setup(x => x.Projects)
                 .Returns(projectsSetMock.Object);
 
-            var tags = new List<Tag> {_standardTag1With3Reqs, poTag};
+            var tags = new List<Tag> { _standardTag1With3Reqs, poTag };
             _tagsSetMock = tags.AsQueryable().BuildMockDbSet();
 
             ContextHelper
@@ -243,7 +243,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetTagsOnlyByTagIdsAsync_KnownTag_ShouldReturnTag()
         {
-            var result = await _dut.GetTagsOnlyByTagIdsAsync(new List<int> {StandardTagId1});
+            var result = await _dut.GetTagsOnlyByTagIdsAsync(new List<int> { StandardTagId1 });
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(StandardTagId1, result.First().Id);
@@ -252,7 +252,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetTagsOnlyByTagIdsAsync_UnknownTag_ShouldReturnEmptyList()
         {
-            var result = await _dut.GetTagsOnlyByTagIdsAsync(new List<int> {9187});
+            var result = await _dut.GetTagsOnlyByTagIdsAsync(new List<int> { 9187 });
 
             Assert.AreEqual(0, result.Count);
         }
@@ -260,7 +260,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetTagsWithPreservationHistoryByTagIdsAsync_KnownTag_ShouldReturnTag()
         {
-            var result = await _dut.GetTagsWithPreservationHistoryByTagIdsAsync(new List<int> {StandardTagId1});
+            var result = await _dut.GetTagsWithPreservationHistoryByTagIdsAsync(new List<int> { StandardTagId1 });
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(StandardTagId1, result.First().Id);
@@ -269,7 +269,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetTagsWithPreservationHistoryByTagIdsAsync_UnknownTag_ShouldReturnEmptyList()
         {
-            var result = await _dut.GetTagsWithPreservationHistoryByTagIdsAsync(new List<int> {9187});
+            var result = await _dut.GetTagsWithPreservationHistoryByTagIdsAsync(new List<int> { 9187 });
 
             Assert.AreEqual(0, result.Count);
         }
@@ -278,7 +278,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         public async Task GetStandardTagsInProjectInStepsAsync_ShouldReturnTags()
         {
             var result = await _dut.GetStandardTagsInProjectInStepsAsync(ProjectNameWithTags,
-                new List<string> {StandardTagNo1, PoTagNo}, new List<int> {StepId});
+                new List<string> { StandardTagNo1, PoTagNo }, new List<int> { StepId });
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(StandardTagNo1, result.Single().TagNo);

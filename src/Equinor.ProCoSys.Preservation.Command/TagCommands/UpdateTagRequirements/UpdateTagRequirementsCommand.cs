@@ -7,7 +7,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirement
     public class UpdateTagRequirementsCommand : IRequest<Result<string>>, ITagCommandRequest
     {
         public UpdateTagRequirementsCommand(
-            int tagId, 
+            int tagId,
             string description,
             IList<UpdateRequirementForCommand> updatedRequirements,
             IList<RequirementForCommand> newRequirements,

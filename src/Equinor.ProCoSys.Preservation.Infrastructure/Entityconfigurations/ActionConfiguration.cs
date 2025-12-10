@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.Title)
                 .HasMaxLength(Action.TitleLengthMax)
                 .IsRequired();
-            
+
             builder.Property(x => x.Description)
                 .HasMaxLength(Action.DescriptionLengthMax)
                 .IsRequired();
@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
 
             builder.Property(x => x.DueTimeUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);
-            
+
             builder.Property(x => x.ClosedAtUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);
 

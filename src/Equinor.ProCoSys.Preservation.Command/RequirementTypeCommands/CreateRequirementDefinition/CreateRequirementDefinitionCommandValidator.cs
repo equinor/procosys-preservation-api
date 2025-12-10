@@ -29,14 +29,14 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRe
                 => !await requirementTypeValidator.IsVoidedAsync(reqTypeId, token);
 
             async Task<bool> RequirementDefinitionTitleMustBeUniqueOnType(
-                int reqTypeId, 
-                string title, 
-                IList<FieldsForCommand> fields, 
+                int reqTypeId,
+                string title,
+                IList<FieldsForCommand> fields,
                 CancellationToken token)
                 => !await requirementTypeValidator.AnyRequirementDefinitionExistsWithSameTitleAsync(
-                    reqTypeId, 
-                    title, 
-                    fields.Select(f => f.FieldType).Distinct().ToList(), 
+                    reqTypeId,
+                    title,
+                    fields.Select(f => f.FieldType).Distinct().ToList(),
                     token);
         }
     }

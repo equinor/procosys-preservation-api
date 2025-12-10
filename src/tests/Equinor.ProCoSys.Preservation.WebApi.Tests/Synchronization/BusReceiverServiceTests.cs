@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Telemetry;
+using Equinor.ProCoSys.PcsServiceBus;
+using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -15,8 +17,6 @@ using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Equinor.ProCoSys.Common.Telemetry;
-using Equinor.ProCoSys.Preservation.Domain;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 {
@@ -54,8 +54,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private Tag _tag1;
         private Tag _tag2;
         private Project _newProjectCreated;
-        private string _projectNotInPreservation ="ProjectNotInPres";
-        
+        private string _projectNotInPreservation = "ProjectNotInPres";
+
         private const string TagNo1 = "TagNo1";
         private const string TagNo2 = "TagNo2";
         private const string OldTagDescription1 = "OldTagDescription1";
@@ -74,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _plantSetter = new Mock<IPlantSetter>();
             _unitOfWork = new Mock<IUnitOfWork>();
             _telemetryClient = new Mock<ITelemetryClient>();
-          
+
             _responsibleRepository = new Mock<IResponsibleRepository>();
             _projectRepository = new Mock<IProjectRepository>();
             _tagFunctionRepository = new Mock<ITagFunctionRepository>();
@@ -136,11 +136,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _tagFunctionRepository.Setup(t => t.GetByCodesAsync(TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(_tagFunction));
             var options = new Mock<IOptionsSnapshot<ApplicationOptions>>();
-            options.Setup(s => s.Value).Returns(new ApplicationOptions{ObjectId = Guid.NewGuid()});
+            options.Setup(s => s.Value).Returns(new ApplicationOptions { ObjectId = Guid.NewGuid() });
             _currentUserSetter = new Mock<ICurrentUserSetter>();
             var projectApiService = new Mock<IProjectApiForApplicationService>();
             projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation, It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new ProCoSysProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
+                .Returns(Task.FromResult(new ProCoSysProject { Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation }));
 
             _dut = new BusReceiverService(_plantSetter.Object,
                                           _unitOfWork.Object,
@@ -199,7 +199,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         {
             // Arrange
             var messageWithoutPlant = $"{{\"ProjectName\" : \"{Project1Name}\", \"IsClosed\" : true, \"Description\" : \"{NewDescription}\"}}";
-            
+
             // Act
             await _dut.ProcessMessageAsync(PcsTopicConstants.Project, messageWithoutPlant, default);
         }
@@ -614,7 +614,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             // Assert
             Assert.AreEqual(area, _tag1.AreaCode);
             Assert.AreEqual(areaDescription, _tag1.AreaDescription);
-            Assert.AreEqual(discipline,_tag1.DisciplineCode);
+            Assert.AreEqual(discipline, _tag1.DisciplineCode);
             Assert.AreEqual(disciplineDescription, _tag1.DisciplineDescription);
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
@@ -706,7 +706,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
             Assert.AreEqual(tagFunctionCodeNew, _tag1.TagFunctionCode);
-            Assert.IsTrue( _project2.Tags.Contains(_tag1));
+            Assert.IsTrue(_project2.Tags.Contains(_tag1));
         }
 
         [TestMethod]
@@ -753,7 +753,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandleCertificateTopic_ShouldCall_CertificateEventProcessorService_WithoutBehavior()
         {
             // Arrange
-            var message = 
+            var message =
                 $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project1Name}\", \"CertificateNo\" :\"XX\"}}";
 
             // Act
@@ -833,7 +833,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                     {"Event Delete", topic},
                     {"ProCoSysGuid", guid.ToString()},
                     {"Supported", "False"}
-                }, null),Times.Once());
+                }, null), Times.Once());
 
             // processing message should return before setting plant
             _plantSetter.VerifyNoOtherCalls();

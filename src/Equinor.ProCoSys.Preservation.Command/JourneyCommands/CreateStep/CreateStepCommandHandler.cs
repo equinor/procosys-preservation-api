@@ -71,7 +71,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep
                 _plantProvider.Plant,
                 responsibleCode,
                 cancellationToken);
-            
+
             if (mainResponsible == null)
             {
                 return null;

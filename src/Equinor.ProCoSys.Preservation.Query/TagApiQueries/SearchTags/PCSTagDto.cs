@@ -3,8 +3,8 @@
     public class PCSTagDto
     {
         public PCSTagDto(
-            string tagNo, 
-            string description, 
+            string tagNo,
+            string description,
             string purchaseOrderTitle,
             string commPkgNo,
             string mcPkgNo,

@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
         {
             _dut = new ExcelConverter(new Mock<ILogger<ExcelConverter>>().Object);
             _usedFilterDto = new UsedFilterDto(
-                new List<string> {"presActions"},
+                new List<string> { "presActions" },
                 new List<string> { "ac1", "ac2" },
                 "callOffStartsWith",
                 "commPkgNoStartsWith",
@@ -340,7 +340,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
             AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
             var expectedTagData = _exportTagDtoWithTwoActionsAndTwoHistoryItems;
             AssertHistorySheet(workbook.Worksheets.Worksheet(
-                ExcelConverter.GetSheetName(expectedTagData.TagNo)), 
+                ExcelConverter.GetSheetName(expectedTagData.TagNo)),
                 expectedTagData);
         }
 

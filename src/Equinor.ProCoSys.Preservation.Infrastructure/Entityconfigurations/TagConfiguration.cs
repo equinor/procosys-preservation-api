@@ -86,7 +86,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
                 .HasConversion<string>()
                 .HasDefaultValue(TagType.Standard)
                 .IsRequired();
-            
+
             builder.Property(x => x.NextDueTimeUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);
 
@@ -95,11 +95,11 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
 
             builder.ToTable(t => t.HasCheckConstraint(
                 "constraint_tag_check_valid_tag_type", $"{nameof(Tag.TagType)} in ({GetValidTagTypes()})"));
-            
+
             builder
                 .HasIndex(nameof(Tag.Plant), nameof(Tag.TagNo), "ProjectId") // ProjectId is a shadow property
                 .IsUnique();
-            
+
             builder
                 .HasIndex(x => x.Plant)
                 .HasDatabaseName("IX_Tags_Plant_ASC")
@@ -124,8 +124,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
                     x.StorageArea,
                     x.TagFunctionCode,
                     x.TagType
-                }); 
-            
+                });
+
             builder
                 .HasIndex(x => x.CommPkgNo)
                 .HasDatabaseName("IX_Tags_CommPkgNo_ASC")

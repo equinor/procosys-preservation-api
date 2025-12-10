@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagAttachments
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var attachmentDtos = result.Data;
                 Assert.AreEqual(1, attachmentDtos.Count);
 

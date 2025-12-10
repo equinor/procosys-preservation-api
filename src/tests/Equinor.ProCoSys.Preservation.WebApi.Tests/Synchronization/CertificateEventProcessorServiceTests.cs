@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _dut = new CertificateEventProcessorService(
                 _logger.Object,
                 _telemetryClient.Object,
-                _mediator.Object, 
+                _mediator.Object,
                 _plantSetter.Object);
         }
 

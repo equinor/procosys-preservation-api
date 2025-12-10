@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.Description)
                 .HasMaxLength(Project.DescriptionLengthMax)
                 .IsRequired();
-            
+
             builder
                 .HasMany(x => x.Tags)
                 .WithOne()
@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasIndex(p => p.Plant)
                 .HasDatabaseName("IX_Projects_Plant_ASC")
-                .IncludeProperties(p => new {p.Name, p.IsClosed, p.CreatedAtUtc, p.ModifiedAtUtc});
+                .IncludeProperties(p => new { p.Name, p.IsClosed, p.CreatedAtUtc, p.ModifiedAtUtc });
 
             builder
                .HasIndex(p => p.Name)

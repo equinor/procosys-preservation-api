@@ -10,14 +10,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new UpdateRequirementDefinitionCommand(1, 
-                2, 
-                10, 
-                RequirementUsage.ForAll, 
-                "Title", 
-                4, 
-                "AAAAAAAAABA=", 
-                null, 
+            var dut = new UpdateRequirementDefinitionCommand(1,
+                2,
+                10,
+                RequirementUsage.ForAll,
+                "Title",
+                4,
+                "AAAAAAAAABA=",
+                null,
                 null);
 
             Assert.AreEqual(1, dut.RequirementTypeId);

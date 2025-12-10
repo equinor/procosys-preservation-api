@@ -76,7 +76,7 @@ if (builder.Configuration.GetValue<bool>("Application:UseAzureAppConfiguration")
 if (builder.Environment.IsDevelopment())
 {
     DebugOptions.DebugEntityFrameworkInDevelopment = builder.Configuration.GetValue<bool>("Application:DebugEntityFrameworkInDevelopment");
-    
+
     app.UseDeveloperExceptionPage();
 }
 
@@ -98,7 +98,7 @@ app.UsePersonValidator();
 app.UsePlantValidator();
 app.UseVerifyOidInDb();
 app.UseAuthorization();
-            
+
 app.UseResponseCompression();
 
 app.MapControllers();

@@ -94,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActions
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var actionDtos = result.Data;
                 Assert.AreEqual(2, actionDtos.Count);
 

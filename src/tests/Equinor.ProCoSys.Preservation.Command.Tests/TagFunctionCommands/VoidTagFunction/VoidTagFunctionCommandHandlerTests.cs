@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -17,13 +17,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.VoidTa
 
         [TestInitialize]
         public void Setup()
-        { 
+        {
             // Arrange
             var tagFunctionRepositoryMock = new Mock<ITagFunctionRepository>();
             const string TagFunctionCode = "TFC";
             const string RegisterCode = "RC";
 
-        _tagFunction = new TagFunction(TestPlant, "ReqDefinitionTitle", "TagFunctionDescription", "MAIN_EQUIP");
+            _tagFunction = new TagFunction(TestPlant, "ReqDefinitionTitle", "TagFunctionDescription", "MAIN_EQUIP");
 
             tagFunctionRepositoryMock.Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(_tagFunction));

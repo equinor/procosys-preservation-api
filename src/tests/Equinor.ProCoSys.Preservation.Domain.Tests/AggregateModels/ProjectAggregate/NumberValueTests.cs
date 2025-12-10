@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties_WhenNullValue()
         {
-            
+
             var dut = new NumberValue(TestPlant, _fieldMock.Object, null);
 
             Assert.AreEqual(TestPlant, dut.Plant);

@@ -21,14 +21,14 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
         public async Task<Result<Unit>> Handle(StartPreservationCommand request, CancellationToken cancellationToken)
         {
             var tags = await _projectRepository.GetTagsWithPreservationHistoryByTagIdsAsync(request.TagIds);
-            
+
             foreach (var tag in tags)
             {
                 tag.StartPreservation();
             }
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             return new SuccessResult<Unit>(Unit.Value);
         }
     }

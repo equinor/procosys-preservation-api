@@ -116,12 +116,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             {
                 testUser.Value.HttpClient.Dispose();
             }
-            
+
             foreach (var disposable in _disposables)
             {
                 try { disposable.Dispose(); } catch { /* Ignore */ }
             }
-            
+
             lock (s_padlock)
             {
                 s_instance = null;
@@ -133,11 +133,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public HttpClient GetHttpClient(UserType userType, string plant)
         {
             var testUser = _testUsers[userType];
-            
+
             SetupPermissionMock(plant, testUser);
-            
+
             UpdatePlantInHeader(testUser.HttpClient, plant);
-            
+
             return testUser.HttpClient;
         }
 
@@ -171,7 +171,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             builder.ConfigureServices(services =>
             {
                 CreateSeededTestDatabase(services);
-                
+
                 EnsureTestDatabaseDeletedAtTeardown(services);
 
                 services.AddMassTransitTestHarness();
@@ -216,7 +216,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             {
                 using var sp = services.BuildServiceProvider();
                 using var dbContext = sp.GetRequiredService<PreservationContext>();
-                
+
                 dbContext.Database.EnsureDeleted();
             });
 
@@ -224,16 +224,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         {
             var dbName = "IntegrationTestsPresDB";
             var dbPath = Path.Combine(projectDir, $"{dbName}.mdf");
-            
+
             // Set Initial Catalog to be able to delete database!
             return $"Server=(LocalDB)\\MSSQLLocalDB;Initial Catalog={dbName};Integrated Security=true;AttachDbFileName={dbPath}";
         }
-        
+
         private void SetupPermissionMock(string plant, ITestUser testUser)
         {
             _permissionApiServiceMock.Setup(p => p.GetPermissionsForCurrentUserAsync(plant, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(testUser.Permissions));
-                        
+
             _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsForCurrentUserAsync(plant, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(testUser.AccessableProjects));
 
@@ -267,11 +267,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             SetupPlannerUser(accessablePlants, accessableProjects, restrictions);
 
             SetupPreserverUser(accessablePlants, accessableProjects, restrictions);
-    
+
             SetupHackerUser();
-            
+
             SetupCrossPlantApp();
-            
+
             var webHostBuilder = WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment(_integrationTestEnvironment);
@@ -350,7 +350,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         new TestProfile
                         {
                             FirstName = "Harry",
-                            LastName = "Hacker", 
+                            LastName = "Hacker",
                             Oid = _hackerOid
                         },
                     AccessablePlants = new List<AccessablePlant>
@@ -449,7 +449,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                     AccessableProjects = accessableProjects,
                     Restrictions = commonProCoSysRestrictions
                 });
-        
+
         // Authenticated Application client without any ProCoSys roles. Configured with app role to allow using cross plant endpoints
         private void SetupCrossPlantApp()
             => _testUsers.Add(UserType.CrossPlantApp,
@@ -462,7 +462,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                             LastName = "App",
                             Oid = _crossPlantAppOid,
                             IsAppToken = true,
-                            AppRoles = new[] {AppRoles.CROSSPLANT}
+                            AppRoles = new[] { AppRoles.CROSSPLANT }
                         },
                     AccessablePlants = new List<AccessablePlant>
                     {

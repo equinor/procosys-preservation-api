@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload;
@@ -34,7 +35,6 @@ using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirements;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
-using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Query.CheckAreaTagNo;
 using Equinor.ProCoSys.Preservation.Query.GetActionAttachment;
 using Equinor.ProCoSys.Preservation.Query.GetActionAttachments;
@@ -201,19 +201,19 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int actionId,
             [FromBody] UpdateActionDto dto)
         {
-                var command = new UpdateActionCommand(
-                                  id,
-                                  actionId,
-                                  dto.Title,
-                                  dto.Description,
-                                  dto.DueTimeUtc,
-                                  dto.RowVersion);
+            var command = new UpdateActionCommand(
+                              id,
+                              actionId,
+                              dto.Title,
+                              dto.Description,
+                              dto.DueTimeUtc,
+                              dto.RowVersion);
 
-                var result = await _mediator.Send(command);
+            var result = await _mediator.Send(command);
 
-                return this.FromResult(result);
+            return this.FromResult(result);
         }
-         
+
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Actions/{actionId}/Close")]
         public async Task<ActionResult<string>> CloseAction(
@@ -233,7 +233,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 
             return this.FromResult(result);
         }
-       
+
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Actions/{actionId}/Attachments")]
         public async Task<ActionResult<List<ActionAttachmentDto>>> GetActionAttachments(
@@ -332,7 +332,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
                 dto.Remark,
                 dto.StorageArea,
                 dto.RowVersion);
-            
+
             var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
@@ -402,7 +402,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
                 requirements,
                 dto.Remark,
                 dto.StorageArea);
-            
+
             var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
@@ -531,7 +531,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromRoute] int id)
         {
-            var result = await _mediator.Send(new StartPreservationCommand(new List<int>{id}));
+            var result = await _mediator.Send(new StartPreservationCommand(new List<int> { id }));
             return this.FromResult(result);
         }
 
@@ -751,10 +751,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int requirementId)
         {
             var result = await _mediator.Send(new RequirementPreserveCommand(id, requirementId));
-            
+
             return this.FromResult(result);
         }
-        
+
         [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Attachments")]
         public async Task<ActionResult<List<TagAttachmentDto>>> GetTagAttachments(
@@ -927,10 +927,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             var result = await _mediator.Send(new DeleteTagCommand(id, dto.RowVersion));
             return this.FromResult(result);
         }
-        
+
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("Reschedule")]
-        public async Task<IActionResult> Reschedule (
+        public async Task<IActionResult> Reschedule(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,

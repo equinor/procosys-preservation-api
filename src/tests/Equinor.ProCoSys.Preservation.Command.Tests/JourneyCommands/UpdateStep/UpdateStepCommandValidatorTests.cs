@@ -81,7 +81,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         public async Task Validate_ShouldFail_WhenSameTitleInJourneyExists()
         {
             // Arrange
-            _journeyValidatorMock.Setup(r => r.OtherStepExistsWithSameTitleAsync(_journeyId,_stepId, _title, default))
+            _journeyValidatorMock.Setup(r => r.OtherStepExistsWithSameTitleAsync(_journeyId, _stepId, _title, default))
                 .Returns(Task.FromResult(true));
 
             // Act
@@ -127,7 +127,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode is voided!"));
         }
-        
+
         [TestMethod]
         public async Task Validate_ShouldBeValid_WhenExistingModeIsVoided()
         {
@@ -170,7 +170,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         {
             var autoTransferMethod = AutoTransferMethod.None;
             _journeyValidatorMock.Setup(r => r.HasOtherStepWithAutoTransferMethodAsync(_journeyId, _stepId, autoTransferMethod, default)).Returns(Task.FromResult(true));
-            
+
             _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, autoTransferMethod, _rowVersion);
             var result = await _dut.ValidateAsync(_command);
 

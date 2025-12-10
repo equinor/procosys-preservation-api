@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 Value = _value
             };
 
-            var settings = new List<Setting> {setting};
+            var settings = new List<Setting> { setting };
 
             var dbSetMock = settings.AsQueryable().BuildMockDbSet();
 

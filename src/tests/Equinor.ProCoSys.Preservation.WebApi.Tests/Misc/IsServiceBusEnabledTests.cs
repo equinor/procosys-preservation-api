@@ -25,7 +25,7 @@ public class IsServiceBusEnabledTests
         {
             EnvironmentName = environment
         };
-        
+
         var builder = WebApplication.CreateBuilder(options);
         builder.Configuration.AddInMemoryCollection(new Dictionary<string, string>
         {
@@ -35,7 +35,7 @@ public class IsServiceBusEnabledTests
 
         // Act
         var result = builder.IsServiceBusEnabled();
-        
+
         // Assert
         Assert.AreEqual(expected, result);
     }

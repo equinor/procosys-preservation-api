@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttach
         private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
         public DeleteFieldValueAttachmentCommandHandler(
-            IProjectRepository projectRepository, 
+            IProjectRepository projectRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IAzureBlobService azureBlobService, IOptionsSnapshot<BlobStorageOptions> blobStorageOptions)
@@ -41,13 +41,13 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttach
                 await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirement.RequirementDefinitionId);
 
             var attachment = requirement.GetAlreadyRecordedAttachment(request.FieldId, requirementDefinition);
-            
+
             if (attachment != null)
             {
                 var fullBlobPath = attachment.GetFullBlobPath();
                 await _azureBlobService.DeleteAsync(
                     _blobStorageOptions.Value.BlobContainer,
-                    fullBlobPath, 
+                    fullBlobPath,
                     cancellationToken);
             }
 

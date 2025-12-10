@@ -29,13 +29,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ModeAggrega
             Assert.AreEqual("TitleA", dut.Title);
             Assert.AreEqual(false, dut.ForSupplier);
         }
-        
+
         [TestMethod]
         public void SetCreated_ShouldAddPlantEntityCreatedEvent()
         {
             var dut = new Mode("PlantA", "TitleA", false);
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
+
             // Act
             dut.SetCreated(person);
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
@@ -43,13 +43,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ModeAggrega
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(CreatedEvent<Mode>));
         }
-        
+
         [TestMethod]
         public void SetModified_ShouldAddPlantEntityModifiedEvent()
         {
             var dut = new Mode("PlantA", "TitleA", false);
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
+
             // Act
             dut.SetModified(person);
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();
@@ -57,12 +57,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ModeAggrega
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Mode>));
         }
-        
+
         [TestMethod]
         public void SetRemoved_ShouldAddPlantEntityDeletedEvent()
         {
             var dut = new Mode("PlantA", "TitleA", false);
-            
+
             // Act
             dut.SetRemoved();
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();

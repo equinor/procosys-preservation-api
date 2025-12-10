@@ -39,8 +39,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
                 .Returns(Task.FromResult(true));
 
             _command = new UploadFieldValueAttachmentCommand(
-                TagId, 
-                ReqId, 
+                TagId,
+                ReqId,
                 AttachmentFieldId,
                 "F",
                 new MemoryStream());
@@ -52,7 +52,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
         public async Task Validate_ShouldFail_WhenTagOrReqNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -66,7 +66,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
             _tagValidatorMock
                 .Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, AttachmentFieldId, default))
                 .Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -78,7 +78,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
         public async Task Validate_ShouldFail_WhenTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -90,7 +90,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
         public async Task Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -102,7 +102,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
         public async Task Validate_ShouldFail_WhenRequirementDontHaveActivePeriod()
         {
             _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -114,7 +114,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
         public async Task Validate_ShouldFail_WhenFieldNotForAttachment()
         {
             _fieldValidatorMock.Setup(r => r.IsValidForAttachmentAsync(AttachmentFieldId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -127,7 +127,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

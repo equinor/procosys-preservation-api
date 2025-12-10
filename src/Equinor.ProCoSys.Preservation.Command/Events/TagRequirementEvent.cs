@@ -23,7 +23,7 @@ public class TagRequirementEvent : ITagRequirementEventV1
     public bool ReadyToBePreserved { get; init; }
 
     public DateTime CreatedAtUtc { get; init; }
-    public Guid CreatedByGuid { get; init;  }
+    public Guid CreatedByGuid { get; init; }
     public DateTime? ModifiedAtUtc { get; init; }
-    public Guid? ModifiedByGuid { get; init;  }
+    public Guid? ModifiedByGuid { get; init; }
 }

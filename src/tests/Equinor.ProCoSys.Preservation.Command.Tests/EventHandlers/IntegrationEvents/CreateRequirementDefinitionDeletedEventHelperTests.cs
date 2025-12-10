@@ -17,10 +17,10 @@ public class CreateRequirementDefinitionDeletedEventHelperTests
     {
         // Arrange
         _requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
-        
+
         var field1 = new Field(TestPlant, "Test Label 1", FieldType.Info, 1);
         _requirementDefinition.AddField(field1);
-        
+
         var field2 = new Field(TestPlant, "Test Label 2", FieldType.Info, 2);
         _requirementDefinition.AddField(field2);
     }
@@ -41,13 +41,13 @@ public class CreateRequirementDefinitionDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateRequirementDefinitionDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _requirementDefinition.Guid;
-        
+
         // Act
         var integrationEvents = CreateRequirementDefinitionDeletedEventHelper.CreateEvents(_requirementDefinition);
         var result = integrationEvents.DefinitionDeleteEvent.ProCoSysGuid;
@@ -55,7 +55,7 @@ public class CreateRequirementDefinitionDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateIntegrationEventsForChildRequirementDefinitions()
     {

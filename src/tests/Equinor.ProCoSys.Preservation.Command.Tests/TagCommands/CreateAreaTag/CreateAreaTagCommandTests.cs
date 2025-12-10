@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null,
                 2,
-                new List<RequirementForCommand>{new RequirementForCommand(11, 12)},
+                new List<RequirementForCommand> { new RequirementForCommand(11, 12) },
                 "DescriptionA",
                 "RemarkA",
                 "SA_A");

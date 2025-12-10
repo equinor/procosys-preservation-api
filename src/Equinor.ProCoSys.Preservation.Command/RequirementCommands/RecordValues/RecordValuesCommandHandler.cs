@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using ServiceResult;
 
@@ -43,7 +43,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.RecordValues
             requirement.SetComment(request.Comment);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-             return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<Unit>(Unit.Value);
         }
 
         private static void RecordNumberValues(List<NumberFieldValue> values, TagRequirement requirement, RequirementDefinition requirementDefinition)
@@ -63,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.RecordValues
 
         private static void RecordCheckBoxValues(List<CheckBoxFieldValue> values, TagRequirement requirement, RequirementDefinition requirementDefinition)
         {
-            var checkBoxValues = 
+            var checkBoxValues =
                 values.ToDictionary(keySelector => keySelector.FieldId, elementSelector => elementSelector.IsChecked);
             requirement.RecordCheckBoxValues(checkBoxValues, requirementDefinition);
         }

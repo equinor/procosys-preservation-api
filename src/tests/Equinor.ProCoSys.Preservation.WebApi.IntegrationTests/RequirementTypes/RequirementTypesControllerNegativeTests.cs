@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
 {
     [TestClass]
-    public class RequirementTypesControllerNegativeTests :  RequirementTypesControllerTestsBase
+    public class RequirementTypesControllerNegativeTests : RequirementTypesControllerTestsBase
     {
         #region CreateRequirementType
         [TestMethod]
@@ -217,7 +217,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task GetRequirementType_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypeAsync(
-                UserType.Hacker, 
+                UserType.Hacker,
                 TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 HttpStatusCode.BadRequest,
@@ -515,7 +515,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 UserType.Anonymous, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 Guid.NewGuid().ToString(),
-                expectedStatusCode:HttpStatusCode.Unauthorized);
+                expectedStatusCode: HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task CreateRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -532,8 +532,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 ReqTypeAIdUnderTest,
                 Guid.NewGuid().ToString(),
-                expectedStatusCode:HttpStatusCode.BadRequest,
-                expectedMessageOnBadRequest:"is not a valid plant");
+                expectedStatusCode: HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest: "is not a valid plant");
 
         [TestMethod]
         public async Task CreateRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
@@ -541,7 +541,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 UserType.Hacker, TestFactory.PlantWithoutAccess,
                 ReqTypeAIdUnderTest,
                 Guid.NewGuid().ToString(),
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task CreateRequirementDefinition_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
@@ -549,7 +549,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 ReqTypeAIdUnderTest,
                 Guid.NewGuid().ToString(),
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task CreateRequirementDefinition_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
@@ -557,7 +557,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 UserType.Planner, TestFactory.PlantWithAccess,
                 ReqTypeAIdUnderTest,
                 Guid.NewGuid().ToString(),
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task CreateRequirementDefinition_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
@@ -565,9 +565,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 ReqTypeAIdUnderTest,
                 Guid.NewGuid().ToString(),
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
         #endregion
-       
+
         #region UpdateRequirementDefinition
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsAnonymous_ShouldReturnUnauthorized()
@@ -578,7 +578,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 Guid.NewGuid().ToString(),
                 4,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Unauthorized);
+                expectedStatusCode: HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -601,8 +601,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 Guid.NewGuid().ToString(),
                 4,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.BadRequest,
-                expectedMessageOnBadRequest:"is not a valid plant");
+                expectedStatusCode: HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest: "is not a valid plant");
 
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
@@ -613,53 +613,53 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 Guid.NewGuid().ToString(),
                 4,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                UserType.Planner, TestFactory.PlantWithAccess, 
+                UserType.Planner, TestFactory.PlantWithAccess,
                 ReqTypeAIdUnderTest,
                 ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA,
                 Guid.NewGuid().ToString(),
                 4,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                UserType.Preserver, TestFactory.PlantWithAccess, 
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 ReqTypeAIdUnderTest,
                 ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA,
                 Guid.NewGuid().ToString(),
                 4,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.Forbidden);
+                expectedStatusCode: HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownReqTypeId()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                9999, 
+                9999,
                 ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA,
                 Guid.NewGuid().ToString(),
                 4,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.BadRequest,
-                expectedMessageOnBadRequest:"Requirement type and/or requirement definition doesn't exist!");
+                expectedStatusCode: HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest: "Requirement type and/or requirement definition doesn't exist!");
 
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownReqDefId()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
-                ReqTypeAIdUnderTest, 
+                ReqTypeAIdUnderTest,
                 ReqDefInReqTypeBIdUnderTest,   // known ReqDefId, but under other ReqType
                 Guid.NewGuid().ToString(),
                 4,
                 TestFactory.AValidRowVersion,
-                expectedStatusCode:HttpStatusCode.BadRequest,
-                expectedMessageOnBadRequest:"Requirement type and/or requirement definition doesn't exist!");
+                expectedStatusCode: HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest: "Requirement type and/or requirement definition doesn't exist!");
 
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUpdatingUnknownFieldId()

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.SetInService;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.SetInService;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.SetInService
     {
         private const string _rowVersion1 = "AAAAAAAAABA=";
         private const string _rowVersion2 = "AAAAAAAABBA=";
-        
+
         private SetInServiceCommand _command;
         private Tag _tag1;
         private Tag _tag2;
@@ -64,17 +64,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.SetInService
                 _req1OnTag2, _req2OnTag2
             });
             _tag2.SetProtectedIdForTesting(tagId2);
-            
+
             _tag1.StartPreservation();
             _tag2.StartPreservation();
-            
+
             var tags = new List<Tag>
             {
                 _tag1, _tag2
             };
 
-            var tagIds = new List<int> {tagId1, tagId2};
-            var tagIdsWithRowVersion = new List<IdAndRowVersion> {new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2)};
+            var tagIds = new List<int> { tagId1, tagId2 };
+            var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2) };
             var projectRepoMock = new Mock<IProjectRepository>();
             projectRepoMock.Setup(r => r.GetTagsWithPreservationHistoryByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(tags));

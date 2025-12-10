@@ -14,12 +14,12 @@ public class CreateTagRequirementEventHelper : ICreateEventHelper<TagRequirement
         _projectRepository = projectRepository;
         _createEventHelper = createEventHelper;
     }
-    
+
     public async Task<TagRequirementEvent> CreateEvent(TagRequirement entity)
     {
         var tag = await _projectRepository.GetTagByTagRequirementGuidAsync(entity.Guid);
         var project = await _projectRepository.GetProjectOnlyByTagGuidAsync(tag.Guid);
-        
+
         return await _createEventHelper.CreateEvent(project, entity);
     }
 }

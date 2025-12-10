@@ -43,7 +43,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagResponsibles
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetUniqueTagResponsiblesQueryHandler(context);
-                
+
                 var result = await dut.Handle(_queryForProject1, default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.Responsible1.Code));

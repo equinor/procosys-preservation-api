@@ -61,14 +61,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagAttachment
             _blobStorageMock
                 .Setup(b => b.GetDownloadSasUri(
                     BlobContainer,
-                    fullBlobPath, 
-                    It.IsAny<DateTimeOffset>(), 
+                    fullBlobPath,
+                    It.IsAny<DateTimeOffset>(),
                     It.IsAny<DateTimeOffset>(),
                     It.IsAny<UserDelegationKey>(),
                     It.IsAny<string>(),
                     It.IsAny<string>()))
                 .Returns(_uri);
-            
+
             _userDelegationProviderMock = new Mock<IUserDelegationProvider>();
             _userDelegationProviderMock.Setup(u => u.GetUserDelegationKey()).Returns(new Mock<UserDelegationKey>().Object);
         }
@@ -89,7 +89,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagAttachment
 
             Assert.IsNotNull(result);
             Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
             Assert.AreEqual(result.Data, _uri);
         }
 

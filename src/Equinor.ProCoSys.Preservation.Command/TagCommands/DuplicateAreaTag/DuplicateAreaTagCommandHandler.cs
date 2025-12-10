@@ -30,8 +30,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
             IJourneyRepository journeyRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
-            IPlantProvider plantProvider, 
-            IDisciplineApiService disciplineApiService, 
+            IPlantProvider plantProvider,
+            IDisciplineApiService disciplineApiService,
             IAreaApiService areaApiService)
         {
             _projectRepository = projectRepository;
@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
             {
                 return new NotFoundResult<int>($"Discipline with code {request.DisciplineCode} not found");
             }
-            
+
             var project = await _projectRepository.GetProjectOnlyByTagIdAsync(request.TagId);
             project.AddTag(duplicatedTag);
 

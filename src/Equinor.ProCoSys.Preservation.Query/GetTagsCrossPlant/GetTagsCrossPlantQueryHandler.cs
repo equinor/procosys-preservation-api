@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Caches;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.ProCoSys.Common.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 using PreservationAction = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
-using Equinor.ProCoSys.Auth.Caches;
-using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
 {
@@ -46,24 +46,24 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
                         .ThenInclude(r => r.PreservationPeriods)
                     .Include(p => p.Tags)
                         .ThenInclude(t => t.Actions)
-                    select p)
+                                     select p)
                 .ToListAsync(cancellationToken);
 
             // get Journeys with Steps to be able to fill journey and step titles
             var allJourneys = await (from j in _context.QuerySet<Journey>()
                         .Include(j => j.Steps)
-                    select j)
+                                     select j)
                 .ToListAsync(cancellationToken);
 
             var allModes = await (from m in _context.QuerySet<Mode>()
-                select m).ToListAsync(cancellationToken);
+                                  select m).ToListAsync(cancellationToken);
 
             var allResponsibles = await (from r in _context.QuerySet<Responsible>()
-                select r).ToListAsync(cancellationToken);
-            
+                                         select r).ToListAsync(cancellationToken);
+
             var allRequirementTypes = await (from rt in _context.QuerySet<RequirementType>()
                         .Include(rt => rt.RequirementDefinitions)
-                    select rt)
+                                             select rt)
                 .ToListAsync(cancellationToken);
             _plantSetter.ClearCrossPlantQuery();
 
@@ -105,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
                                 var requirementDefinition =
                                     requirementType.RequirementDefinitions.Single(rd =>
                                         rd.Id == r.RequirementDefinitionId);
-                                
+
                                 return new RequirementDto(
                                     r.Id,
                                     requirementType.Code,
@@ -146,7 +146,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
 
             return tagDtos;
         }
-        
+
         private void FillJourneySpecificData(List<TagDto> tags, List<Journey> journeys, List<Mode> modes, List<Responsible> responsibles)
         {
             var ditinctStepIds = tags.Select(t => t.StepId).Distinct();

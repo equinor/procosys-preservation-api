@@ -69,7 +69,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         public async Task Validate_ShouldFail_WhenRequirementDefinitionNotVoided()
         {
             _requirementDefinitionValidatorMock.Setup(r => r.IsVoidedAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -81,7 +81,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         public async Task Validate_ShouldFail_WhenRequirementDefinitionExistsOnTagRequirement()
         {
             _requirementDefinitionValidatorMock.Setup(r => r.TagRequirementsExistAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

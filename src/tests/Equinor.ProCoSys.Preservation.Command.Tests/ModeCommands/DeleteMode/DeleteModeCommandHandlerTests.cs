@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.DeleteMode
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             _modeRepositoryMock.Verify(r => r.Remove(_mode), Times.Once);
         }
@@ -48,7 +48,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.DeleteMode
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

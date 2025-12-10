@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteStep
             Assert.AreEqual(1, _journey.Steps.Count);
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             Assert.AreEqual(0, _journey.Steps.Count);
         }
@@ -55,7 +55,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteStep
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             _journeyRepositoryMock.Verify(r => r.RemoveStep(_stepMock.Object), Times.Once);
         }
@@ -65,7 +65,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteStep
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

@@ -36,15 +36,15 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 .WithMessage(_ => "Field doesn't exist in requirement!")
                 .MustAsync((_, field, _, token) => BeSameFieldTypeOnExistingFieldsAsync(field, token))
                 .WithMessage((_, field) => $"Cannot change field type on existing fields! Field={field.Id}");
-            
+
             async Task<bool> BeAnExistingRequirementDefinitionAsync(UpdateRequirementDefinitionCommand command, CancellationToken token)
                 => await requirementTypeValidator.RequirementDefinitionExistsAsync(command.RequirementTypeId, command.RequirementDefinitionId, token);
-            
+
             async Task<bool> NotBeAVoidedRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
-            
+
             async Task<bool> RequirementDefinitionTitleMustBeUniqueOnType(
-                UpdateRequirementDefinitionCommand command, 
+                UpdateRequirementDefinitionCommand command,
                 CancellationToken token)
             {
                 var fieldTypesFromUpdated = command.UpdateFields.Select(uf => uf.FieldType).ToList();
@@ -54,7 +54,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRe
                     command.RequirementTypeId,
                     command.RequirementDefinitionId,
                     command.Title,
-                    fieldTypesFromUpdated.Concat(fieldTypesFromNew).Distinct().ToList(), 
+                    fieldTypesFromUpdated.Concat(fieldTypesFromNew).Distinct().ToList(),
                     token);
             }
 

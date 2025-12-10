@@ -27,7 +27,7 @@ public class RequirementTypeDeletedEventHandlerTests
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))
             .Callback<IIntegrationEvent, CancellationToken>((e, _) => _publishedEvents.Add(e));
-        
+
         _publishedEvents = new List<IIntegrationEvent>();
 
         _dut = new RequirementTypeDeletedEventHandler(mockPublisher.Object);
@@ -47,16 +47,16 @@ public class RequirementTypeDeletedEventHandlerTests
         // Assert
         CollectionAssert.Contains(types, typeof(RequirementTypeDeleteEvent));
     }
-    
+
     [TestMethod]
     public async Task Handle_ShouldSendRequirementDefinitionDeleteEvent()
     {
         // Arrange
         var requirementType = new RequirementType(TestPlant, "Code", "Title", RequirementTypeIcon.Other, 10);
-        
+
         var requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
         requirementType.AddRequirementDefinition(requirementDefinition);
-        
+
         var domainEvent = new DeletedEvent<RequirementType>(requirementType);
 
         // Act
@@ -66,19 +66,19 @@ public class RequirementTypeDeletedEventHandlerTests
         // Assert
         CollectionAssert.Contains(types, typeof(RequirementDefinitionDeleteEvent));
     }
-    
+
     [TestMethod]
     public async Task Handle_ShouldSendFieldDeleteEvent()
     {
         // Arrange
         var requirementType = new RequirementType(TestPlant, "Code", "Title", RequirementTypeIcon.Other, 10);
-        
+
         var requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition", 2, RequirementUsage.ForAll, 1);
         requirementType.AddRequirementDefinition(requirementDefinition);
-        
+
         var field = new Field(TestPlant, "Test Label", FieldType.Info, 0);
         requirementDefinition.AddField(field);
-        
+
         var domainEvent = new DeletedEvent<RequirementType>(requirementType);
 
         // Act

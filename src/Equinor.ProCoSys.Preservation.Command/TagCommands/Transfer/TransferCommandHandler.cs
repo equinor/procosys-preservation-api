@@ -39,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer
                 tag.SetRowVersion(request.Tags.Single(x => x.Id == tag.Id).RowVersion);
                 tag.Transfer(journey);
             }
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<IEnumerable<IdAndRowVersion>>(tags.CreateIdAndRowVersionList());

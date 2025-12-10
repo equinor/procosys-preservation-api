@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetProjectDetails
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var dto = result.Data;
                 Assert.AreEqual(_name, dto.Name);
                 Assert.AreEqual(_description, dto.Description);

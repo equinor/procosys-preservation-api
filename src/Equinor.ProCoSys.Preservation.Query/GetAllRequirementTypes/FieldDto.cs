@@ -5,11 +5,11 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllRequirementTypes
     public class FieldDto
     {
         public FieldDto(
-            int id, 
-            string label, 
-            bool isVoided, 
-            FieldType fieldType, 
-            int sortKey, 
+            int id,
+            string label,
+            bool isVoided,
+            FieldType fieldType,
+            int sortKey,
             string unit,
             bool? showPrevious,
             string rowVersion)

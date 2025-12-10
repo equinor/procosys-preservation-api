@@ -106,11 +106,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
             var command = new UpdateTagRequirementsCommand(
                 StandardTagId1,
                 null,
-                null, 
-                newRequirements, 
-                null, 
+                null,
+                newRequirements,
+                null,
                 RowVersion);
-            
+
             // Act
             var result = await _dut.Handle(command, default);
 
@@ -134,7 +134,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
                 null,
                 updatedRequirements,
                 null,
-                null, 
+                null,
                 RowVersion);
 
             // Act
@@ -157,11 +157,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
             var command = new UpdateTagRequirementsCommand(
                 StandardTagId1,
                 null,
-                null, 
-                newRequirements, 
-                null, 
+                null,
+                newRequirements,
+                null,
                 RowVersion);
-            
+
             // Act
             var result = await _dut.Handle(command, default);
 
@@ -187,11 +187,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
             var command = new UpdateTagRequirementsCommand(
                 StandardTagId1,
                 null,
-                null, 
-                newRequirements, 
-                null, 
+                null,
+                newRequirements,
+                null,
                 RowVersion);
-            
+
             // Act
             var result = await _dut.Handle(command, default);
 
@@ -211,7 +211,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
 
             Assert.IsFalse(tagRequirement1.IsVoided);
             Assert.IsFalse(tagRequirement2.IsVoided);
-            
+
             var updatedRequirements = new List<UpdateRequirementForCommand>
             {
                 new UpdateRequirementForCommand(tagRequirement1.Id, ThreeWeekInterval, true, RowVersion)
@@ -287,7 +287,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
                 StandardTagId1,
                 null,
                 null,
-                newRequirements, 
+                newRequirements,
                 null,
                 RowVersion);
 
@@ -379,7 +379,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
             var tagRequirement1 = _standardTagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId1);
 
             Assert.AreEqual(2, _standardTagWithTwoRequirements.Requirements.Count);
-            
+
             var updatedRequirements = new List<UpdateRequirementForCommand>
             {
                 new UpdateRequirementForCommand(tagRequirement1.Id, ThreeWeekInterval, true, RowVersion)
@@ -395,7 +395,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
                 null,
                 updatedRequirements,
                 null,
-                deleteRequirements, 
+                deleteRequirements,
                 RowVersion);
 
             // Act
@@ -425,7 +425,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagRequi
                 null,
                 null,
                 null,
-                deleteRequirements, 
+                deleteRequirements,
                 RowVersion);
 
             // Act

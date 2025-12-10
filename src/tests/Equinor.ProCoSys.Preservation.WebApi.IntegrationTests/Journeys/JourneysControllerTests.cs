@@ -83,10 +83,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 journeyId,
                 newTitle,
                 currentRowVersion);
-            
+
             // Assert
             AssertRowVersionChange(currentRowVersion, newRowVersion);
-            
+
             journey = await JourneysControllerTestsHelper.GetJourneyAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
@@ -364,7 +364,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             // Arrange
             var (journeyIdUnderTest, step) = await CreateStepAsync(Guid.NewGuid().ToString(), OtherModeIdUnderTest);
             var currentRowVersion = await JourneysControllerTestsHelper.VoidStepAsync(
-                UserType.LibraryAdmin, 
+                UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 step.Id,
@@ -382,7 +382,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             step = await GetStepDetailsAsync(journeyIdUnderTest, step.Id);
             Assert.IsNull(step);
         }
-        
+
         [TestMethod]
         public async Task SwapSteps_AsAdmin_ShouldSwapSteps_AndUpdateRowVersions()
         {
@@ -427,7 +427,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             Assert.AreEqual(originalFirstStep.Id, swappedStepB.Id);
             Assert.IsFalse(swappedStepA.Mode.ForSupplier);
             Assert.IsTrue(swappedStepB.Mode.ForSupplier);
-            
+
             var updatedFirstStepRowVersion = updatedJourney.Steps.Single(s => s.Id == originalFirstStep.Id).RowVersion;
             var updatedSecondStepRowVersion = updatedJourney.Steps.Single(s => s.Id == originalSecondStep.Id).RowVersion;
             AssertRowVersionChange(originalFirstStep.RowVersion, updatedFirstStepRowVersion);

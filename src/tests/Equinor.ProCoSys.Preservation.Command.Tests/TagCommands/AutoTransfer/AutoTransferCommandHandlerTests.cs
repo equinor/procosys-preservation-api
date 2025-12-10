@@ -67,15 +67,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             var journeyRepoMock = new Mock<IJourneyRepository>();
             journeyRepoMock
                 .Setup(r => r.GetJourneysWithAutoTransferStepsAsync(AutoTransferMethod.OnRfccSign))
-                .Returns(Task.FromResult(new List<Journey> {_journey}));
+                .Returns(Task.FromResult(new List<Journey> { _journey }));
             journeyRepoMock
                 .Setup(r => r.GetJourneysWithAutoTransferStepsAsync(AutoTransferMethod.OnRfocSign))
-                .Returns(Task.FromResult(new List<Journey> {_journey}));
+                .Returns(Task.FromResult(new List<Journey> { _journey }));
 
             var reqMock = new Mock<TagRequirement>();
             reqMock.SetupGet(r => r.Plant).Returns(TestPlant);
-            
-            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), _testTagNo, "", step1OnJourney, new List<TagRequirement> {reqMock.Object});
+
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), _testTagNo, "", step1OnJourney, new List<TagRequirement> { reqMock.Object });
 
             _tag.StartPreservation();
 
@@ -107,16 +107,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
                 .Setup(r => r.GetProjectOnlyByNameAsync(_testProjectName))
                 .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc", Guid.NewGuid())));
             _projectRepoMock
-                .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> {_testTagNo},
-                    new List<int> {_step1OnJourneyId}))
-                .Returns(Task.FromResult(new List<Tag> {_tag}));
+                .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> { _testTagNo },
+                    new List<int> { _step1OnJourneyId }))
+                .Returns(Task.FromResult(new List<Tag> { _tag }));
             _projectRepoMock
-                .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> {_testTagNo},
-                    new List<int> {_step2OnJourneyId}))
-                .Returns(Task.FromResult(new List<Tag> {_tag}));
-            
+                .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> { _testTagNo },
+                    new List<int> { _step2OnJourneyId }))
+                .Returns(Task.FromResult(new List<Tag> { _tag }));
+
             _loggerMock = new Mock<ILogger<AutoTransferCommandHandler>>();
-            
+
             _dut = new AutoTransferCommandHandler(
                 _projectRepoMock.Object,
                 journeyRepoMock.Object,
@@ -144,16 +144,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             var step3OnJourneyId = 3;
             var step3OnJourney = new Step(
                 TestPlant,
-                "Step3", 
+                "Step3",
                 new Mode(TestPlant, "M3", false),
                 new Responsible(TestPlant, "RC3", "RD3"));
             step3OnJourney.SetProtectedIdForTesting(step3OnJourneyId);
             _journey.AddStep(step3OnJourney);
             await _dut.Handle(_commandForRfcc, default);
             _projectRepoMock
-                .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> {_testTagNo},
-                    new List<int> {_tag.StepId}))
-                .Returns(Task.FromResult(new List<Tag> {_tag}));
+                .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> { _testTagNo },
+                    new List<int> { _tag.StepId }))
+                .Returns(Task.FromResult(new List<Tag> { _tag }));
 
             // Act
             var result = await _dut.Handle(_commandForRfoc, default);
@@ -223,7 +223,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             // Arrange
             _projectRepoMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(_testProjectName))
-                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc",Guid.NewGuid()){IsClosed = true}));
+                .Returns(Task.FromResult(new Project(TestPlant, _testProjectName, "Desc", Guid.NewGuid()) { IsClosed = true }));
 
             // Act
             await _dut.Handle(_commandForRfcc, default);

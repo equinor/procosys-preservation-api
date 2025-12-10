@@ -17,8 +17,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
         private readonly IUnitOfWork _unitOfWork;
 
         public UpdateTagStepCommandHandler(
-            IProjectRepository projectRepository, 
-            IJourneyRepository journeyRepository, 
+            IProjectRepository projectRepository,
+            IJourneyRepository journeyRepository,
             IUnitOfWork unitOfWork)
         {
             _projectRepository = projectRepository;

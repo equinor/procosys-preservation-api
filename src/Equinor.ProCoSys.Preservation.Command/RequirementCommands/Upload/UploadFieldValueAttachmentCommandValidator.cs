@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
                 .WithMessage(command => $"Field values can not be recorded for field type! Field={command.FieldId}")
                 .MustAsync((command, token) => NotBeAVoidedFieldAsync(command.FieldId, token))
                 .WithMessage(command => $"Field is voided! Field={command.FieldId}");
-                        
+
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
 

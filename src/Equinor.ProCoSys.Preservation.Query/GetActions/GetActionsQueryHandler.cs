@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +24,9 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActions
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Actions)
                         .ThenInclude(a => a.Attachments)
-                    where t.Id == request.TagId
-                    select t).SingleOrDefaultAsync(cancellationToken);
-            
+                 where t.Id == request.TagId
+                 select t).SingleOrDefaultAsync(cancellationToken);
+
             if (tag == null)
             {
                 return new NotFoundResult<List<ActionDto>>($"Entity with ID {request.TagId} not found");

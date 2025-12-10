@@ -25,18 +25,18 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
             CancellationToken cancellationToken)
         {
             var journeys = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps).Include(j => j.Project)
-                select j).ToListAsync(cancellationToken);
+                                  select j).ToListAsync(cancellationToken);
 
             var modeIds = journeys.SelectMany(j => j.Steps).Select(x => x.ModeId).Distinct();
             var responsibleIds = journeys.SelectMany(j => j.Steps).Select(x => x.ResponsibleId).Distinct();
 
             var modes = await (from m in _context.QuerySet<Mode>()
-                where modeIds.Contains(m.Id)
-                select m).ToListAsync(cancellationToken);
+                               where modeIds.Contains(m.Id)
+                               select m).ToListAsync(cancellationToken);
 
             var responsibles = await (from r in _context.QuerySet<Responsible>()
-                where responsibleIds.Contains(r.Id)
-                select r).ToListAsync(cancellationToken);
+                                      where responsibleIds.Contains(r.Id)
+                                      select r).ToListAsync(cancellationToken);
 
             var journeyDtos =
                 journeys.Where(j => (!j.IsVoided || request.IncludeVoided))

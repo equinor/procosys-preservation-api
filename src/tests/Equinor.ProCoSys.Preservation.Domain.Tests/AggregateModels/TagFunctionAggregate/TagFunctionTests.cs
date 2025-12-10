@@ -25,13 +25,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.TagFunction
             Assert.IsFalse(_dut.IsVoided);
             Assert.AreEqual(0, _dut.Requirements.Count);
         }
-        
+
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenCodeNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new TagFunction(TestPlant, null, "DescA", "CodeR")
             );
-        
+
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenRegisterCodeNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() =>
@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.TagFunction
             Assert.AreEqual(1, _dut.Requirements.Count);
             Assert.IsTrue(_dut.Requirements.Contains(reqMock.Object));
         }
-        
+
         [TestMethod]
         public void AddRequirement_ShouldThrowException_WhenRequirementNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() => _dut.AddRequirement(null));
@@ -81,7 +81,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.TagFunction
             _dut.RemoveRequirement(reqMock.Object);
             Assert.AreEqual(0, _dut.Requirements.Count);
         }
-        
+
         [TestMethod]
         public void RemoveRequirement_ShouldThrowException_WhenRequirementNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() => _dut.RemoveRequirement(null));

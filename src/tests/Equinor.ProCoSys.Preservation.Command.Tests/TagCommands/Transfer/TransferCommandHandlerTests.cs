@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
@@ -56,34 +56,34 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Transfer
 
             var journeyRepoMock = new Mock<IJourneyRepository>();
             journeyRepoMock
-                .Setup(r => r.GetJourneysByStepIdsAsync(new List<int> {Step1OnJourney1Id, Step1OnJourney2Id}))
-                .Returns(Task.FromResult(new List<Journey> {journey1, journey2}));
+                .Setup(r => r.GetJourneysByStepIdsAsync(new List<int> { Step1OnJourney1Id, Step1OnJourney2Id }))
+                .Returns(Task.FromResult(new List<Journey> { journey1, journey2 }));
 
             var reqMock1 = new Mock<TagRequirement>();
             reqMock1.SetupGet(r => r.Plant).Returns(TestPlant);
-            
+
             var tagId1 = 7;
             var tagId2 = 8;
             _tag1 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", step1OnJourney1Mock.Object,
-                new List<TagRequirement> {reqMock1.Object});
+                new List<TagRequirement> { reqMock1.Object });
             _tag1.SetProtectedIdForTesting(tagId1);
 
             var reqMock2 = new Mock<TagRequirement>();
             reqMock2.SetupGet(r => r.Plant).Returns(TestPlant);
             _tag2 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", step1OnJourney2Mock.Object,
-                new List<TagRequirement> {reqMock2.Object});
+                new List<TagRequirement> { reqMock2.Object });
             _tag2.SetProtectedIdForTesting(tagId2);
 
             _tag1.StartPreservation();
             _tag2.StartPreservation();
 
             var projectRepoMock = new Mock<IProjectRepository>();
-            
-            var tagIds = new List<int> {tagId1, tagId2};
-            var tagIdsWithRowVersion = new List<IdAndRowVersion> {new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2)};
+
+            var tagIds = new List<int> { tagId1, tagId2 };
+            var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2) };
             projectRepoMock
                 .Setup(r => r.GetTagsOnlyByTagIdsAsync(tagIds))
-                .Returns(Task.FromResult(new List<Tag> {_tag1, _tag2}));
+                .Returns(Task.FromResult(new List<Tag> { _tag1, _tag2 }));
 
             _command = new TransferCommand(tagIdsWithRowVersion);
 

@@ -16,23 +16,23 @@ public class GetConfigTests
     [TestInitialize]
     public void Setup()
     {
-        var inMemorySettings = new Dictionary<string, string> { {TestKey, TestValue} };
+        var inMemorySettings = new Dictionary<string, string> { { TestKey, TestValue } };
 
         _configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)
             .Build();
     }
-    
+
     [TestMethod]
     public void GetConfig_ShouldReturnExpectedValue()
     {
         // Act
         var result = _configuration.GetConfig<string>(TestKey);
-        
+
         // Assert
         Assert.AreEqual(TestValue, result);
     }
-    
+
     [TestMethod]
     public void GetConfig_ShouldThrowArgumentException_WhenKeyIsNotFound()
     {

@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Permission;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.ProCoSys.Common;
-using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant;
 using Equinor.ProCoSys.Preservation.Test.Common;
@@ -18,9 +21,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
-using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Auth.Permission;
-using Equinor.ProCoSys.Auth.Caches;
 
 namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
 {
@@ -39,8 +39,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
 
         private readonly int _intervalWeeks1 = 1;
         private readonly int _intervalWeeks2 = 2;
-        private AccessablePlant _plantA = new AccessablePlant {Id = "PCS$A", Title = "A"};
-        private AccessablePlant _plantB = new AccessablePlant {Id = "PCS$B", Title = "B"};
+        private AccessablePlant _plantA = new AccessablePlant { Id = "PCS$A", Title = "A" };
+        private AccessablePlant _plantB = new AccessablePlant { Id = "PCS$B", Title = "B" };
         private int _projectAId;
         private int _projectBId;
         private int _standardTagId;
@@ -57,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         {
             _permissionCacheMock.Setup(p => p.GetPlantTitleForCurrentUserAsync(_plantA.Id, It.IsAny<CancellationToken>())).Returns(Task.FromResult(_plantA.Title));
             _permissionCacheMock.Setup(p => p.GetPlantTitleForCurrentUserAsync(_plantB.Id, It.IsAny<CancellationToken>())).Returns(Task.FromResult(_plantB.Title));
-            
+
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
             currentUserProviderMock.Setup(x => x.GetCurrentUserOid()).Returns(_currentUserOid);
             _currentUserProvider = currentUserProviderMock.Object;
@@ -108,7 +108,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 standardTag.AddAction(new Action(standardTag.Plant, "AcA", "AcA desc", null));
                 siteTag.AddAction(new Action(siteTag.Plant, "AcB", "AcB desc", _timeProvider.UtcNow));
                 context.SaveChangesAsync().Wait();
-            
+
                 _timeProvider.ElapseWeeks(standardTag.Requirements.Single().IntervalWeeks);
             }
 
@@ -268,7 +268,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 "Tag A",
                 "Tag desc",
                 step,
-                new List<TagRequirement> {new TagRequirement(plantId, _intervalWeeks1, requirementDefinition)})
+                new List<TagRequirement> { new TagRequirement(plantId, _intervalWeeks1, requirementDefinition) })
             {
                 Calloff = "C",
                 CommPkgNo = "Cp",

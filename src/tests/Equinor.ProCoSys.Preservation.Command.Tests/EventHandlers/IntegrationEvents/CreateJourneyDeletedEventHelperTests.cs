@@ -19,13 +19,13 @@ public class CreateJourneyDeletedEventHelperTests
     {
         // Arrange
         _journey = new Journey(TestPlant, "Test Title");
-        
+
         var mode = new Mode(TestPlant, "Test Title", true);
         var responsible = new Responsible(TestPlant, "C", "Test Description");
-        
+
         var step1 = new Step(TestPlant, "Test Title 1", mode, responsible);
         _journey.AddStep(step1);
-        
+
         var step2 = new Step(TestPlant, "Test Title 2", mode, responsible);
         _journey.AddStep(step2);
     }
@@ -46,13 +46,13 @@ public class CreateJourneyDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateJourneyDeletedEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _journey.Guid;
-        
+
         // Act
         var deletedEvents = CreateJourneyDeletedEventHelper.CreateEvent(_journey);
         var result = deletedEvents.JourneyDeleteEvent.ProCoSysGuid;
@@ -60,7 +60,7 @@ public class CreateJourneyDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateIntegrationEventsForChildSteps()
     {

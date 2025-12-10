@@ -6,5 +6,5 @@ public class ModifiedEvent<T> : IPlantEntityEvent<T>, IDomainEvent where T : Pla
 {
     public ModifiedEvent(T entity) => Entity = entity;
 
-    public T Entity { get; }    
+    public T Entity { get; }
 }

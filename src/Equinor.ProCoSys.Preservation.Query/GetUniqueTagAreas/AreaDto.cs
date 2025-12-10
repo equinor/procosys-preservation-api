@@ -8,7 +8,7 @@
             Description = description;
         }
 
-        public string Code { get;}
+        public string Code { get; }
         public string Description { get; }
     }
 }

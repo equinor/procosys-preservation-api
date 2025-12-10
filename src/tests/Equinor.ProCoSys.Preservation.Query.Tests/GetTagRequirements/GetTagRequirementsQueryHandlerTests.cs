@@ -69,9 +69,9 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
             {
                 var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
 
-                var requirementType1 = new RequirementType(TestPlant, _requirementType1Code, _requirementType1Title, _requirementType1Icon,0);
+                var requirementType1 = new RequirementType(TestPlant, _requirementType1Code, _requirementType1Title, _requirementType1Icon, 0);
                 context.RequirementTypes.Add(requirementType1);
-                var requirementType2 = new RequirementType(TestPlant, _requirementType2Code, _requirementType2Title, _requirementType2Icon,0);
+                var requirementType2 = new RequirementType(TestPlant, _requirementType2Code, _requirementType2Title, _requirementType2Icon, 0);
                 context.RequirementTypes.Add(requirementType2);
                 context.SaveChangesAsync().Wait();
 
@@ -283,13 +283,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
                     Assert.IsNotNull(requirement.NextDueTimeUtc.Value);
                     Assert.IsNotNull(requirement.NextDueAsYearAndWeek);
                     Assert.AreEqual(_interval, requirement.IntervalWeeks);
-                    Assert.AreEqual(_interval-_requestTimeAfterPreservationStartedInWeeks, requirement.NextDueWeeks);
+                    Assert.AreEqual(_interval - _requestTimeAfterPreservationStartedInWeeks, requirement.NextDueWeeks);
                 }
-            
+
                 AssertRequirements(result.Data);
             }
         }
-        
+
         [TestMethod]
         public async Task Handler_ShouldReturnTagRequirements_IsInUse_AfterPreservationStarted()
         {
@@ -332,7 +332,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
                     .Single(rd => rd.Id == _requirementDefinitionWithTwoCheckBoxesId);
                 var requirement = context.TagRequirements.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
                 requirement.RecordCheckBoxValues(
-                    new Dictionary<int, bool> {{cbFieldId, true}},
+                    new Dictionary<int, bool> { { cbFieldId, true } },
                     requirementDefinition);
                 requirement.SetComment("CommentABC");
                 context.SaveChangesAsync().Wait();
@@ -375,7 +375,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
                 var requirement = context.TagRequirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
-                
+
                 requirement.RecordNumberIsNaValues(
                     new List<int>
                     {
@@ -429,7 +429,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
                 var requirement = context.TagRequirements.Single(r => r.Id == _requirementWithOneAttachmentId);
 
                 requirement.RecordAttachment(
-                    fieldValueAttachment, 
+                    fieldValueAttachment,
                     attachmentField,
                     requirementDefinition);
                 context.SaveChangesAsync().Wait();
@@ -480,7 +480,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
                 Assert.AreEqual(_thirdNumberFieldId, requirementWithThreeNumbers.Fields.ElementAt(2).Id);
             }
         }
-        
+
         [TestMethod]
         public async Task Handler_ShouldReturnPreviousValues_AfterRecordingNumberFieldsAndPreserving()
         {
@@ -495,7 +495,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
                 var requirement = context.TagRequirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
-                
+
                 requirement.RecordNumberValues(
                     new Dictionary<int, double?>
                     {
@@ -560,7 +560,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
             Assert.AreEqual(_requirementType1Code, requirementWithoutField.RequirementType.Code);
             Assert.AreEqual(_requirementType1Icon, requirementWithoutField.RequirementType.Icon);
             Assert.AreEqual(_requirementType1Title, requirementWithoutField.RequirementType.Title);
-            
+
             Assert.AreEqual(1, requirementWithOneInfo.Fields.Count);
             AssertInfoField(requirementWithOneInfo.Fields.ElementAt(0));
             Assert.AreEqual(_requirementDefinitionWithOneInfoTitle, requirementWithOneInfo.RequirementDefinition.Title);

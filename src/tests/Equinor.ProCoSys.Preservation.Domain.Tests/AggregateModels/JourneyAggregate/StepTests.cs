@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             var timeProvider = new ManualTimeProvider(utcNow);
             TimeService.SetProvider(timeProvider);
-            
+
             _mode = new Mode(TestPlant, "SUP", true);
             _mode.SetProtectedIdForTesting(3);
 
@@ -74,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(modeId, _dut.ModeId);
             Assert.AreEqual(mode.ForSupplier, _dut.IsSupplierStep);
         }
-        
+
         [TestMethod]
         public void SetMode_ShouldAddModifiedEvent()
         {
@@ -82,7 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var mode = new Mode(_dut.Plant, "ModeTitle", false);
             mode.SetProtectedIdForTesting(modeId);
             _dut.SetMode(mode);
-            
+
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
             CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Step>));
         }
@@ -97,7 +97,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
 
             Assert.AreEqual(responsibleId, _dut.ResponsibleId);
         }
-        
+
         [TestMethod]
         public void SetResponsible_ShouldAddModifiedEvent()
         {
@@ -105,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var responsible = new Responsible(_dut.Plant, "C", "Desc");
             responsible.SetProtectedIdForTesting(responsibleId);
             _dut.SetResponsible(responsible);
-            
+
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
             CollectionAssert.Contains(eventTypes, typeof(ModifiedEvent<Step>));
         }

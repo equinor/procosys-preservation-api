@@ -2,8 +2,8 @@
 {
     public class UpdateJourneyDto
     {
-       public string Title { get; set; }
-       public string RowVersion { get; set; }
-       public string ProjectName { get; set; }
+        public string Title { get; set; }
+        public string RowVersion { get; set; }
+        public string ProjectName { get; set; }
     }
 }
