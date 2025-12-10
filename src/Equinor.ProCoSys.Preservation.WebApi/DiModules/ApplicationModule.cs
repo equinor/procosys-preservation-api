@@ -64,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
     public static class ApplicationModule
     {
-        public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration, TokenCredential credential)
+        public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
             services.Configure<MainApiAuthenticatorOptions>(configuration.GetSection("MainApi"));
