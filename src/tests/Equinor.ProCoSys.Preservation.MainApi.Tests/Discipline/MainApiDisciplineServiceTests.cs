@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
     [TestClass]
     public class MainApiDisciplineServiceTests
     {
-        private const string _plant = "PCS$TESTPLANT";
+        private const string Plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
         private Mock<IMainApiClientForUser> _mainApiClient;
         private PCSDiscipline _procosysDiscipline;
@@ -48,7 +48,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
                 .Returns(Task.FromResult(_procosysDiscipline));
 
             // Act
-            var result = await _dut.TryGetDisciplineAsync(_plant, _procosysDiscipline.Code, CancellationToken.None);
+            var result = await _dut.TryGetDisciplineAsync(Plant, _procosysDiscipline.Code, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(_procosysDiscipline.Code, result.Code);

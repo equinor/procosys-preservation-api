@@ -11,13 +11,13 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.TagFunction
     [TestClass]
     public class MainApiTagFunctionServiceTests
     {
-        private const string _plant = "PCS$TESTPLANT";
+        private const string Plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
         private Mock<IMainApiClientForUser> _mainApiClient;
         private PCSTagFunction _result;
-        private readonly string TagFunctionCode = "CodeTF";
-        private readonly string RegisterCode = "CodeR";
-        private readonly string Description = "Description1";
+        private readonly string _tagFunctionCode = "CodeTF";
+        private readonly string _registerCode = "CodeR";
+        private readonly string _description = "Description1";
         private MainApiTagFunctionService _dut;
 
         [TestInitialize]
@@ -32,9 +32,9 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.TagFunction
             _result = new PCSTagFunction
             {
                 Id = 1,
-                Code = TagFunctionCode,
-                Description = Description,
-                RegisterCode = RegisterCode
+                Code = _tagFunctionCode,
+                Description = _description,
+                RegisterCode = _registerCode
             };
 
             _dut = new MainApiTagFunctionService(_mainApiClient.Object, _mainApiOptions.Object);
@@ -52,12 +52,12 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.TagFunction
                 .Returns(Task.FromResult(_result));
 
             // Act
-            var result = await _dut.TryGetTagFunctionAsync(_plant, TagFunctionCode, RegisterCode, CancellationToken.None);
+            var result = await _dut.TryGetTagFunctionAsync(Plant, _tagFunctionCode, _registerCode, CancellationToken.None);
 
             // Assert
-            Assert.AreEqual(TagFunctionCode, result.Code);
-            Assert.AreEqual(Description, result.Description);
-            Assert.AreEqual(RegisterCode, result.RegisterCode);
+            Assert.AreEqual(_tagFunctionCode, result.Code);
+            Assert.AreEqual(_description, result.Description);
+            Assert.AreEqual(_registerCode, result.RegisterCode);
         }
     }
 }
