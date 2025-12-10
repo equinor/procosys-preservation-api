@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         private const string StandardTagNo1 = "TagNo1";
         private const string StandardTagNo2 = "TagNo3";
         private const string StandardTagNo3 = "TagNo4";
-        private readonly Guid _StandardTagGuid1 = new Guid("eb3821c2-bda3-8683-e053-2910000a2633");
+        private readonly Guid _standardTagGuid1 = new Guid("eb3821c2-bda3-8683-e053-2910000a2633");
         private const string PoTagNo = "TagNo2";
         private const string CommPkg1 = "CommPkg1";
         private const string McPkg1 = "McPkg1";
@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             _standardTag1With3Reqs = new Tag(
                 TestPlant,
                 TagType.Standard,
-                _StandardTagGuid1,
+                _standardTagGuid1,
                 StandardTagNo1,
                 "Desc",
                 step,
@@ -169,7 +169,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetProjectOnlyByTagGuidAsync_ExistingTag_ShouldReturnProjectWithoutTags()
         {
-            var result = await _dut.GetProjectOnlyByTagGuidAsync(_StandardTagGuid1);
+            var result = await _dut.GetProjectOnlyByTagGuidAsync(_standardTagGuid1);
 
             Assert.AreEqual(ProjectNameWithTags, result.Name);
         }
