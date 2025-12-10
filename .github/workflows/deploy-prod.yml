@@ -1,0 +1,16 @@
+name: 🚀🏭 Deploy to prod
+
+on:
+  push:
+    branches: main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/deploy.yml
+    with:
+      github-environment: prod
+      radix-environment: prod
