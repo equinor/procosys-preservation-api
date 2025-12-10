@@ -27,6 +27,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("RequirementTypes")]
         public async Task<ActionResult<List<RequirementTypeDto>>> GetRequirementTypes(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -39,6 +40,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Responsibles")]
         public async Task<ActionResult<List<ResponsibleDto>>> GetResponsibles(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -51,6 +53,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Journeys")]
         public async Task<ActionResult<List<JourneyDto>>> GetJourneys(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -63,6 +66,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Modes")]
         public async Task<ActionResult<List<ModeDto>>> GetModes(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -75,6 +79,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Areas")]
         public async Task<ActionResult<List<AreaDto>>> GetAreas(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -87,6 +92,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("TagFunctions")]
         public async Task<ActionResult<List<TagFunctionCodeDto>>> GetTagFunctions(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -99,6 +105,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Disciplines")]
         public async Task<ActionResult<List<DisciplineDto>>> GetTagDisciplines(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,

@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.DeleteMode
     public class DeleteModeCommandHandlerTests : CommandHandlerTestsBase
     {
         private const int ModeId = 12;
-        private const string _rowVersion = "AAAAAAAAABA=";
+        private const string RowVersion = "AAAAAAAAABA=";
         private Mock<IModeRepository> _modeRepositoryMock;
         private Mode _mode;
         private DeleteModeCommand _command;
@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.DeleteMode
             _modeRepositoryMock
                 .Setup(x => x.GetByIdAsync(ModeId))
                     .Returns(Task.FromResult(_mode));
-            _command = new DeleteModeCommand(ModeId, _rowVersion);
+            _command = new DeleteModeCommand(ModeId, RowVersion);
 
             _dut = new DeleteModeCommandHandler(
                 _modeRepositoryMock.Object,

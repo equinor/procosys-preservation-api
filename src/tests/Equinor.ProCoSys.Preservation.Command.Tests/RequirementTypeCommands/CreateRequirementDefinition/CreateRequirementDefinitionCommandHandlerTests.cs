@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
     public class CreateRequirementDefinitionCommandHandlerTests : CommandHandlerTestsBase
     {
         private const string RequirementDefinitionTitle = "TestRequirementDefinition Title";
-        private RequirementUsage Usage = RequirementUsage.ForAll;
+        private RequirementUsage _usage = RequirementUsage.ForAll;
         private const int DefaultWeeks = 4;
         private Mock<IRequirementTypeRepository> _reqTypeRepositoryMock;
         private RequirementType _reqTypeAdded;
@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
                 .Setup(r => r.GetByIdAsync(1))
                 .Returns(Task.FromResult(_reqTypeAdded));
 
-            _command = new CreateRequirementDefinitionCommand(1, 10, Usage, RequirementDefinitionTitle, DefaultWeeks);
+            _command = new CreateRequirementDefinitionCommand(1, 10, _usage, RequirementDefinitionTitle, DefaultWeeks);
 
             _dut = new CreateRequirementDefinitionCommandHandler(
                 _reqTypeRepositoryMock.Object,
@@ -51,7 +51,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
             Assert.AreEqual(0, result.Data);
             Assert.AreEqual(RequirementDefinitionTitle, reqDef.Title);
             Assert.AreEqual(DefaultWeeks, reqDef.DefaultIntervalWeeks);
-            Assert.AreEqual(Usage, reqDef.Usage);
+            Assert.AreEqual(_usage, reqDef.Usage);
             Assert.AreEqual(0, reqDef.Fields.Count);
         }
 
@@ -59,7 +59,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         public async Task HandlingCreateReqDefinitionCommand_ShouldAddReqDefinitionToRepositoryWithFields()
         {
             // Arrange
-            _command = new CreateRequirementDefinitionCommand(1, 10, Usage, RequirementDefinitionTitle, DefaultWeeks,
+            _command = new CreateRequirementDefinitionCommand(1, 10, _usage, RequirementDefinitionTitle, DefaultWeeks,
                 new List<FieldsForCommand>
                 {
                     new FieldsForCommand("Label", FieldType.CheckBox, 99, "U", true)

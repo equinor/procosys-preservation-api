@@ -91,11 +91,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
             _commandForSupplierRequirement = new PreserveCommand(TagInSupplierStepId, RequirementForSupplierId);
             _commandForOtherRequirement = new PreserveCommand(TagInOtherStepId, RequirementForOtherId);
 
-            _timeProvider.Elapse(TimeSpan.FromDays(-1));
+            TimeProvider.Elapse(TimeSpan.FromDays(-1));
             _tagInSupplierStep.StartPreservation();
             _tagInOtherStep.StartPreservation();
 
-            _timeProvider.SetTime(_utcNow);
+            TimeProvider.SetTime(UtcNow);
 
             _initialPreservationPeriodForSupplierRequirement = _requirementForSupplier.PreservationPeriods.Single();
             _initialPreservationPeriodForOtherRequirement = _requirementForOther.PreservationPeriods.Single();
@@ -112,7 +112,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         {
             await _dut.Handle(_commandForSupplierRequirement, default);
 
-            var expectedNextDueTimeUtc = _utcNow.AddWeeks(Interval);
+            var expectedNextDueTimeUtc = UtcNow.AddWeeks(Interval);
             Assert.AreEqual(expectedNextDueTimeUtc, _requirementForSupplier.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _tagInSupplierStep.NextDueTimeUtc);
             Assert.IsNotNull(_initialPreservationPeriodForSupplierRequirement.PreservationRecord);
@@ -123,7 +123,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
         {
             await _dut.Handle(_commandForOtherRequirement, default);
 
-            var expectedNextDueTimeUtc = _utcNow.AddWeeks(Interval);
+            var expectedNextDueTimeUtc = UtcNow.AddWeeks(Interval);
             Assert.AreEqual(expectedNextDueTimeUtc, _requirementForOther.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _tagInOtherStep.NextDueTimeUtc);
             Assert.IsNotNull(_initialPreservationPeriodForOtherRequirement.PreservationRecord);

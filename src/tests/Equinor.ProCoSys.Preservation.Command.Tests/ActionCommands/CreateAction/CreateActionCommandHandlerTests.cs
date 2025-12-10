@@ -31,11 +31,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CreateActio
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
-            var _rdMock = new Mock<RequirementDefinition>();
-            _rdMock.SetupGet(rd => rd.Id).Returns(_rdId1);
-            _rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
+            var rdMock = new Mock<RequirementDefinition>();
+            rdMock.SetupGet(rd => rd.Id).Returns(_rdId1);
+            rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            var requirement = new TagRequirement(TestPlant, _intervalWeeks, _rdMock.Object);
+            var requirement = new TagRequirement(TestPlant, _intervalWeeks, rdMock.Object);
             _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement> { requirement });
 
             var projectRepositoryMock = new Mock<IProjectRepository>();

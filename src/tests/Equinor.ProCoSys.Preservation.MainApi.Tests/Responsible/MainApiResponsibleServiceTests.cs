@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Responsible
     [TestClass]
     public class MainApiResponsibleServiceTests
     {
-        private const string _plant = "PCS$TESTPLANT";
+        private const string Plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
         private Mock<IMainApiClientForUser> _mainApiClient;
         private MainApiResponsibleService _dut;
@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Responsible
                     null))
                 .Returns(Task.FromResult(procosysResponsible));
             // Act
-            var result = await _dut.TryGetResponsibleAsync(_plant, procosysResponsible.Code, CancellationToken.None);
+            var result = await _dut.TryGetResponsibleAsync(Plant, procosysResponsible.Code, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(procosysResponsible.Code, result.Code);

@@ -26,6 +26,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.TagFunctions
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{code}")]
         public async Task<ActionResult<TagFunctionDetailsDto>> GetTagFunctionDetails(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -39,6 +40,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.TagFunctions
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut]
         public async Task<ActionResult> UpdateRequirements(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -60,6 +62,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.TagFunctions
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{code}/Void")]
         public async Task<ActionResult<TagFunctionDetailsDto>> VoidTagFunction(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -74,6 +77,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.TagFunctions
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{code}/Unvoid")]
         public async Task<ActionResult<TagFunctionDetailsDto>> UnvoidTagFunction(
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060: Remove unused parameter")]
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]

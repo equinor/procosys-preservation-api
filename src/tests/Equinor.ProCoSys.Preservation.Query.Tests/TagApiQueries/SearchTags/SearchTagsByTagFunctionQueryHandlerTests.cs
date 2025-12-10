@@ -22,9 +22,9 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
         private IList<PCSTagOverview> _apiTags;
         private SearchTagsByTagFunctionQuery _query;
         private TestDataSet _testDataSet;
-        private const string _tagFunctionCode = "TFC1";
-        private const string _registerCode = "RC1";
-        private readonly string _tagFunctionCodeRegisterCodePair = $"{_tagFunctionCode}|{_registerCode}";
+        private const string TagFunctionCode = "TFC1";
+        private const string RegisterCode = "RC1";
+        private readonly string _tagFunctionCodeRegisterCodePair = $"{TagFunctionCode}|{RegisterCode}";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
             {
                 _testDataSet = AddTestDataSet(context);
 
-                var tf = AddTagFunction(context, _tagFunctionCode, _registerCode);
+                var tf = AddTagFunction(context, TagFunctionCode, RegisterCode);
                 var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R", RequirementTypeIcon.Other);
                 tf.AddRequirement(new TagFunctionRequirement(TestPlant, 4, rt.RequirementDefinitions.First()));
 
@@ -49,8 +49,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
                         Id = 1,
                         McPkgNo = "McPkgNo1",
                         PurchaseOrderTitle = "PoNo1",
-                        TagFunctionCode = _tagFunctionCode,
-                        RegisterCode = _registerCode,
+                        TagFunctionCode = TagFunctionCode,
+                        RegisterCode = RegisterCode,
                         MccrResponsibleCodes = "R1"
                     },
                     new PCSTagOverview
@@ -61,8 +61,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
                         Id = 2,
                         McPkgNo = "McPkgNo2",
                         PurchaseOrderTitle = "PoNo1/CallOff1",
-                        TagFunctionCode = _tagFunctionCode,
-                        RegisterCode = _registerCode,
+                        TagFunctionCode = TagFunctionCode,
+                        RegisterCode = RegisterCode,
                         MccrResponsibleCodes = "R2"
                     },
                     new PCSTagOverview
@@ -73,8 +73,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
                         Id = 3,
                         McPkgNo = "McPkgNo3",
                         PurchaseOrderTitle = "PoNo1/CallOff2",
-                        TagFunctionCode = _tagFunctionCode,
-                        RegisterCode = _registerCode,
+                        TagFunctionCode = TagFunctionCode,
+                        RegisterCode = RegisterCode,
                         MccrResponsibleCodes = "R3"
                     }
                 };

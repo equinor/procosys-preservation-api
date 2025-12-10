@@ -16,9 +16,9 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetSavedFiltersInProject
     {
         private GetSavedFiltersInProjectQuery _query;
 
-        private const string _title = "title";
-        private const string _criteria = "criteria in JSON";
-        private const string _projectName = "projectName";
+        private const string Title = "title";
+        private const string Criteria = "criteria in JSON";
+        private const string ProjectName = "projectName";
         private bool _defaultFilter = true;
 
         private SavedFilter _savedFilter;
@@ -30,11 +30,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetSavedFiltersInProject
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                _query = new GetSavedFiltersInProjectQuery(_projectName);
+                _query = new GetSavedFiltersInProjectQuery(ProjectName);
 
-                _project = AddProject(context, _projectName, "", true);
+                _project = AddProject(context, ProjectName, "", true);
 
-                _savedFilter = new SavedFilter(TestPlant, _project, _title, _criteria)
+                _savedFilter = new SavedFilter(TestPlant, _project, Title, Criteria)
                 { DefaultFilter = _defaultFilter };
                 _person = context.Persons.Single(p => p.Guid == _currentUserOid);
                 _person.AddSavedFilter(_savedFilter);

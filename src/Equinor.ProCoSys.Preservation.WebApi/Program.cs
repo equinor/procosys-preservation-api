@@ -60,7 +60,7 @@ builder.Services.AddPcsAuthIntegration();
 
 builder.Services.ConfigureTelemetry(builder.Configuration, credential);
 builder.Services.AddMediatrModules();
-builder.Services.AddApplicationModules(builder.Configuration, credential);
+builder.Services.AddApplicationModules(builder.Configuration);
 
 builder.ConfigureMassTransit(credential);
 builder.ConfigureServiceBus(credential);

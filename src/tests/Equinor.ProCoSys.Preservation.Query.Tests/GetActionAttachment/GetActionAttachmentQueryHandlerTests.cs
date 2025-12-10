@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionAttachment
         private Mock<IUserDelegationProvider> _userDelegationProviderMock;
         private Uri _uri;
         private Mock<IOptionsSnapshot<BlobStorageOptions>> _blobStorageOptionsMock;
-        private string BlobContainer = "bc";
+        private string _blobContainer = "bc";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionAttachment
             _blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
             {
-                BlobContainer = BlobContainer
+                BlobContainer = _blobContainer
             };
 
             _blobStorageOptionsMock
@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionAttachment
             var fullBlobPath = _attachment.GetFullBlobPath();
             _blobStorageMock
                 .Setup(b => b.GetDownloadSasUri(
-                    BlobContainer,
+                    _blobContainer,
                     fullBlobPath,
                     It.IsAny<DateTimeOffset>(),
                     It.IsAny<DateTimeOffset>(),

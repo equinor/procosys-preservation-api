@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
     [TestClass]
     public class ProjectAccessCheckerTests
     {
-        private readonly string ProjectName = "P1";
+        private readonly string _projectName = "P1";
         private ProjectAccessChecker _dut;
 
         [TestInitialize]
@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         {
             var principal = new ClaimsPrincipal();
             var claimsIdentity = new ClaimsIdentity();
-            claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, ClaimsTransformation.GetProjectClaimValue(ProjectName)));
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, ClaimsTransformation.GetProjectClaimValue(_projectName)));
             principal.AddIdentity(claimsIdentity);
             var claimsPrincipalProviderMock = new Mock<IClaimsPrincipalProvider>();
             claimsPrincipalProviderMock.Setup(c => c.GetCurrentClaimsPrincipal()).Returns(principal);
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public void HasCurrentUserAccessToProject_ShouldReturnTrue_WhenProjectClaimExists()
         {
             // Act
-            var result = _dut.HasCurrentUserAccessToProject(ProjectName);
+            var result = _dut.HasCurrentUserAccessToProject(_projectName);
 
             // Assert
             Assert.IsTrue(result);

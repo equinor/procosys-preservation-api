@@ -16,8 +16,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests
         protected const string TestPlant = "TestPlant";
         protected Mock<IUnitOfWork> UnitOfWorkMock;
         protected Mock<IPlantProvider> PlantProviderMock;
-        protected ManualTimeProvider _timeProvider;
-        protected DateTime _utcNow;
+        protected ManualTimeProvider TimeProvider;
+        protected DateTime UtcNow;
         protected readonly Guid ProjectProCoSysGuid = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
 
         [TestInitialize]
@@ -32,9 +32,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests
             PlantProviderMock
                 .Setup(x => x.Plant)
                 .Returns(TestPlant);
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeProvider = new ManualTimeProvider(_utcNow);
-            TimeService.SetProvider(_timeProvider);
+            UtcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            TimeProvider = new ManualTimeProvider(UtcNow);
+            TimeService.SetProvider(TimeProvider);
         }
     }
 }

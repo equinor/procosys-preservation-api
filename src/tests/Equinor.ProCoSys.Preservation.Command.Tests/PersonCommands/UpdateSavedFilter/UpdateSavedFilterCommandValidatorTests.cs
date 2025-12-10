@@ -23,15 +23,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.UpdateSaved
         [TestInitialize]
         public void Setup_OkState()
         {
-            var RowVersion = "AAAAAAAAJ00=";
+            var rowVersion = "AAAAAAAAJ00=";
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion)).Returns(true);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(rowVersion)).Returns(true);
 
             _savedFilterValidatorMock = new Mock<ISavedFilterValidator>();
             _savedFilterValidatorMock.Setup(r => r.ExistsAsync(_savedFilterId, default)).Returns(Task.FromResult(true));
 
-            _command = new UpdateSavedFilterCommand(_savedFilterId, _title, _criteria, false, RowVersion);
+            _command = new UpdateSavedFilterCommand(_savedFilterId, _title, _criteria, false, rowVersion);
 
             _dut = new UpdateSavedFilterCommandValidator(
                 _savedFilterValidatorMock.Object,
@@ -77,11 +77,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.UpdateSaved
         [TestMethod]
         public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
-            const string invalidRowVersion = "String";
+            const string InvalidRowVersion = "String";
 
             _command = new UpdateSavedFilterCommand(_savedFilterId, _title, _criteria,
-                false, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
+                false, InvalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(InvalidRowVersion)).Returns(false);
 
             var result = await _dut.ValidateAsync(_command);
 

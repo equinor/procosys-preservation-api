@@ -153,10 +153,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         [TestMethod]
         public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
-            const string invalidRowVersion = "String";
+            const string InvalidRowVersion = "String";
 
-            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, AutoTransferMethod.None, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, AutoTransferMethod.None, InvalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(InvalidRowVersion)).Returns(false);
 
             var result = await _dut.ValidateAsync(_command);
 

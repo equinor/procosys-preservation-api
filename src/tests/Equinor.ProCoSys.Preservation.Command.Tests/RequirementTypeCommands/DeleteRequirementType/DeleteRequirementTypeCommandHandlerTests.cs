@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
     public class DeleteRequirementTypeCommandHandlerTests : CommandHandlerTestsBase
     {
         private const int RequirementTypeId = 12;
-        private const string _rowVersion = "AAAAAAAAABA=";
+        private const string RowVersion = "AAAAAAAAABA=";
         private Mock<IRequirementTypeRepository> _requirementTypeRepositoryMock;
         private RequirementType _requirementType;
         private DeleteRequirementTypeCommand _command;
@@ -27,7 +27,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
             _requirementTypeRepositoryMock
                 .Setup(x => x.GetByIdAsync(RequirementTypeId))
                     .Returns(Task.FromResult(_requirementType));
-            _command = new DeleteRequirementTypeCommand(RequirementTypeId, _rowVersion);
+            _command = new DeleteRequirementTypeCommand(RequirementTypeId, RowVersion);
 
             _dut = new DeleteRequirementTypeCommandHandler(
                 _requirementTypeRepositoryMock.Object,

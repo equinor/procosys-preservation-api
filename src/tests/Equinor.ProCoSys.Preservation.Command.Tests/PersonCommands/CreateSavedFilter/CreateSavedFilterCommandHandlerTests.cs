@@ -22,9 +22,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
         private CreateSavedFilterCommand _command;
         private CreateSavedFilterCommandHandler _dut;
 
-        private const string _title = "T1";
-        private const string _criteria = "C1";
-        private const string _projectName = "Project";
+        private const string Title = "T1";
+        private const string Criteria = "C1";
+        private const string ProjectName = "Project";
 
         private int _projectId = 1;
         private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
@@ -34,10 +34,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
         {
             // Arrange
 
-            _project = new Project(TestPlant, _projectName, "desc", ProjectProCoSysGuid);
+            _project = new Project(TestPlant, ProjectName, "desc", ProjectProCoSysGuid);
             _project.SetProtectedIdForTesting(_projectId);
             _projectRepositoryMock = new Mock<IProjectRepository>();
-            _projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(_projectName))
+            _projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(ProjectName))
                 .Returns(Task.FromResult(_project));
 
             _person = new Person(_currentUserOid, "Current", "User");
@@ -51,7 +51,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
                 .Setup(x => x.GetCurrentUserOid())
                 .Returns(CurrentUserOid);
 
-            _command = new CreateSavedFilterCommand(_projectName, _title, _criteria, true);
+            _command = new CreateSavedFilterCommand(ProjectName, Title, Criteria, true);
 
             _dut = new CreateSavedFilterCommandHandler(
                 _personRepositoryMock.Object,
@@ -73,8 +73,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
             Assert.AreEqual(0, result.Data);
             Assert.IsTrue(savedFilter.DefaultFilter);
             Assert.AreEqual(_projectId, savedFilter.ProjectId);
-            Assert.AreEqual(_title, savedFilter.Title);
-            Assert.AreEqual(_criteria, savedFilter.Criteria);
+            Assert.AreEqual(Title, savedFilter.Title);
+            Assert.AreEqual(Criteria, savedFilter.Criteria);
         }
 
         [TestMethod]
@@ -84,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSaved
             Assert.AreEqual(1, _person.SavedFilters.Count);
 
             // Act
-            _command = new CreateSavedFilterCommand(_projectName, "T2", "C2", true);
+            _command = new CreateSavedFilterCommand(ProjectName, "T2", "C2", true);
             var result = await _dut.Handle(_command, default);
             var savedFilter = _person.SavedFilters.First();
             var addedSavedFilter = _person.SavedFilters.Last();

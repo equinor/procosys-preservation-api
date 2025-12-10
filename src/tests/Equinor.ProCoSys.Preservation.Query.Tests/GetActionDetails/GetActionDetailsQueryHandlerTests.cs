@@ -21,8 +21,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionDetails
         private int _closedActionId;
         private Action _openAction;
         private Action _closedAction;
-        private static DateTime _utcNow = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private static DateTime _dueUtc = _utcNow.AddDays(30);
+        private static DateTime s_utcNow = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static DateTime s_dueUtc = s_utcNow.AddDays(30);
         private TestDataSet _testDataSet;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -34,12 +34,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionDetails
                 var tag = _testDataSet.Project1.Tags.First();
                 var attachment = new ActionAttachment(TestPlant, Guid.NewGuid(), "FileA");
 
-                _openAction = new Action(TestPlant, "Open", "Desc1", _dueUtc);
+                _openAction = new Action(TestPlant, "Open", "Desc1", s_dueUtc);
                 _openAction.AddAttachment(attachment);
                 tag.AddAction(_openAction);
 
-                _closedAction = new Action(TestPlant, "Closed", "Desc2", _dueUtc);
-                _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
+                _closedAction = new Action(TestPlant, "Closed", "Desc2", s_dueUtc);
+                _closedAction.Close(s_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
                 context.SaveChangesAsync().Wait();
 

@@ -41,13 +41,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public async Task CreateTags_ShouldCreateCorrectCommand()
         {
-            CreateTagsCommand _createdCommand = null;
+            CreateTagsCommand createdCommand = null;
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagsCommand>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int> { 5 }) as Result<List<int>>))
                 .Callback<IRequest<Result<List<int>>>, CancellationToken>((request, cancellationToken) =>
                 {
-                    _createdCommand = request as CreateTagsCommand;
+                    createdCommand = request as CreateTagsCommand;
                 });
 
             _createTagsDto.ProjectName = "ProjectName";
@@ -56,11 +56,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
 
             await _dut.CreateTags("", _createTagsDto);
 
-            Assert.AreEqual(_createTagsDto.ProjectName, _createdCommand.ProjectName);
-            Assert.AreEqual(_createTagsDto.StepId, _createdCommand.StepId);
-            Assert.AreEqual(2, _createdCommand.TagNos.Count());
-            Assert.AreEqual(_createTagsDto.TagNos.First(), _createdCommand.TagNos.First());
-            Assert.AreEqual(_createTagsDto.TagNos.Last(), _createdCommand.TagNos.Last());
+            Assert.AreEqual(_createTagsDto.ProjectName, createdCommand.ProjectName);
+            Assert.AreEqual(_createTagsDto.StepId, createdCommand.StepId);
+            Assert.AreEqual(2, createdCommand.TagNos.Count());
+            Assert.AreEqual(_createTagsDto.TagNos.First(), createdCommand.TagNos.First());
+            Assert.AreEqual(_createTagsDto.TagNos.Last(), createdCommand.TagNos.Last());
         }
 
         [TestMethod]

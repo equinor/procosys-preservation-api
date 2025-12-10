@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
     {
         private const string ProjectName = "P";
         private const string TagNo = "PA-13";
-        private const string _tagDescription = "Tag description";
+        private const string TagDescription = "Tag description";
         private int _tagWithOneReqsId;
         private int _tagWithTwoReqsId;
         private int _tagWithAllReqsId;
@@ -93,7 +93,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 _firstSupplierStepId = supplierStep1.Id;
 
                 var standardTagNotStartedInFirstStep = AddTag(context, project, TagType.Standard, Guid.NewGuid(), TagNo,
-                    _tagDescription, supplierStep1, new List<TagRequirement>
+                    TagDescription, supplierStep1, new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1),
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier),
@@ -141,7 +141,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.PreArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     supplierStep1,
                     new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 _tagWithSingleReqForAllUsageId = preAreaTagNotStartedInFirstSupplierStep.Id;
@@ -150,7 +150,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.PreArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     supplierStep1,
                     new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier) });
                 _tagWithSingleReqForSupplierUsageId = preAreaTagSupplierOnlyRequirementInFirstSupplierStep.Id;
@@ -160,7 +160,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.PreArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     otherStep2,
                     new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1) });
                 _tagWithSingleReqForOtherUsageId = preAreaTagOtherRequirementOnlyInFirstOtherStep.Id;
@@ -170,7 +170,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.PreArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     otherStep2,
                     new List<TagRequirement>
                     {
@@ -184,7 +184,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.PreArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     supplierStep1,
                     new List<TagRequirement> {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)
@@ -196,7 +196,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.SiteArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     supplierStep1,
                     new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 var siteAreaTagStarted = AddTag(
@@ -205,7 +205,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.SiteArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     supplierStep1,
                     new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 siteAreaTagStarted.StartPreservation();
@@ -215,7 +215,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.PoArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     supplierStep1,
                     new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 _tagRequirementForPoAreaTag = new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1);
@@ -225,7 +225,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.PoArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     supplierStep1,
                     new List<TagRequirement> { _tagRequirementForPoAreaTag });
                 poAreaTagStarted.StartPreservation();
@@ -235,7 +235,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.PoArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     supplierStep1,
                     new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 poAreaTagCompleted.StartPreservation();
@@ -246,7 +246,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     TagType.PoArea,
                     Guid.NewGuid(),
                     Guid.NewGuid().ToString("N"),
-                    _tagDescription,
+                    TagDescription,
                     supplierStep1,
                     new List<TagRequirement>
                     {
@@ -2034,7 +2034,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, null);
-                var result = await dut.VerifyTagDescriptionAsync(_standardTagNotStartedInFirstStepId, $"Changed {_tagDescription}", default);
+                var result = await dut.VerifyTagDescriptionAsync(_standardTagNotStartedInFirstStepId, $"Changed {TagDescription}", default);
                 Assert.IsFalse(result);
             }
         }
@@ -2045,7 +2045,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, null);
-                var result = await dut.VerifyTagDescriptionAsync(_standardTagNotStartedInFirstStepId, _tagDescription, default);
+                var result = await dut.VerifyTagDescriptionAsync(_standardTagNotStartedInFirstStepId, TagDescription, default);
                 Assert.IsTrue(result);
             }
         }

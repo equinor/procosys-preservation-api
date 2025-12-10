@@ -21,34 +21,26 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.TagFunctions
             var registerCodeForUnvoidingTest = "RegC";
             var newReqDefId = await CreateRequirementDefinitionAsync(TestFactory.PlantWithAccess);
 
-            TagFunctionUnderTest = await UpdateAndGetTagFunctionAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
+            TagFunctionUnderTest = await UpdateAndGetTagFunctionAsync(TestFactory.PlantWithAccess,
                 tagFunctionCodeUnderTest,
                 registerCodeUnderTest,
                 newReqDefId,
                 4);
 
-            TagFunctionUnderVoidingTest = await UpdateAndGetTagFunctionAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
+            TagFunctionUnderVoidingTest = await UpdateAndGetTagFunctionAsync(TestFactory.PlantWithAccess,
                 tagFunctionCodeUnderTest,
                 registerCodeForVoidingTest,
                 newReqDefId,
                 4);
 
-            TagFunctionUnderUnvoidingTest = await UpdateAndGetTagFunctionAsync(
-                UserType.LibraryAdmin,
-                TestFactory.PlantWithAccess,
+            TagFunctionUnderUnvoidingTest = await UpdateAndGetTagFunctionAsync(TestFactory.PlantWithAccess,
                 tagFunctionCodeUnderTest,
                 registerCodeForUnvoidingTest,
                 newReqDefId,
                 4);
         }
 
-        protected async Task<TagFunctionDetailsDto> UpdateAndGetTagFunctionAsync(
-            UserType userType,
-            string plant,
+        protected async Task<TagFunctionDetailsDto> UpdateAndGetTagFunctionAsync(string plant,
             string tagFunctionCode,
             string registerCode,
             int reqDefId,

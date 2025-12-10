@@ -21,41 +21,41 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
         [TestInitialize]
         public void Setup()
         {
-            var _tagId = 1;
-            var _checkBoxFieldId = 11;
-            var _numberFieldId = 12;
-            var _reqId = 21;
+            var tagId = 1;
+            var checkBoxFieldId = 11;
+            var numberFieldId = 12;
+            var reqId = 21;
 
             _recordValuesCommandWithCheckedCheckBoxAndNumber = new RecordValuesCommand(
-                _tagId,
-                _reqId,
-                new List<NumberFieldValue> { new NumberFieldValue(_numberFieldId, 21, false) },
-                new List<CheckBoxFieldValue> { new CheckBoxFieldValue(_checkBoxFieldId, true) },
+                tagId,
+                reqId,
+                new List<NumberFieldValue> { new NumberFieldValue(numberFieldId, 21, false) },
+                new List<CheckBoxFieldValue> { new CheckBoxFieldValue(checkBoxFieldId, true) },
                 null);
 
             _recordValuesCommandWithNullAsNumber = new RecordValuesCommand(
-                _tagId,
-                _reqId,
-                new List<NumberFieldValue> { new NumberFieldValue(_numberFieldId, null, false) },
+                tagId,
+                reqId,
+                new List<NumberFieldValue> { new NumberFieldValue(numberFieldId, null, false) },
                 null,
                 null);
 
             var requirementDefinitionWith2FieldsMock = new Mock<RequirementDefinition>();
-            requirementDefinitionWith2FieldsMock.SetupGet(r => r.Id).Returns(_reqId);
+            requirementDefinitionWith2FieldsMock.SetupGet(r => r.Id).Returns(reqId);
             requirementDefinitionWith2FieldsMock.SetupGet(r => r.Plant).Returns(TestPlant);
 
             var checkBoxFieldMock = new Mock<Field>(TestPlant, "", FieldType.CheckBox, 0, null, null);
-            checkBoxFieldMock.SetupGet(f => f.Id).Returns(_checkBoxFieldId);
+            checkBoxFieldMock.SetupGet(f => f.Id).Returns(checkBoxFieldId);
             checkBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             requirementDefinitionWith2FieldsMock.Object.AddField(checkBoxFieldMock.Object);
 
             var numberFieldMock = new Mock<Field>(TestPlant, "", FieldType.Number, 0, "mm", false);
-            numberFieldMock.SetupGet(f => f.Id).Returns(_numberFieldId);
+            numberFieldMock.SetupGet(f => f.Id).Returns(numberFieldId);
             numberFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             requirementDefinitionWith2FieldsMock.Object.AddField(numberFieldMock.Object);
 
             var requirementMock = new Mock<TagRequirement>(TestPlant, 2, requirementDefinitionWith2FieldsMock.Object);
-            requirementMock.SetupGet(r => r.Id).Returns(_reqId);
+            requirementMock.SetupGet(r => r.Id).Returns(reqId);
             requirementMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
@@ -72,12 +72,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Record
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock
-                .Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(_tagId))
+                .Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(tagId))
                 .Returns(Task.FromResult(tag));
 
             var rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
+                .Setup(r => r.GetRequirementDefinitionByIdAsync(reqId))
                 .Returns(Task.FromResult(requirementDefinitionWith2FieldsMock.Object));
 
             _dut = new RecordValuesCommandHandler(

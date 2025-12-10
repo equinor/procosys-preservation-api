@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
     [TestClass]
     public class MainApiAreaServiceTests
     {
-        private const string _plant = "PCS$TESTPLANT";
+        private const string Plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
         private Mock<IMainApiClientForUser> _mainApiClient;
         private MainApiAreaService _dut;
@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
                     null))
                 .Returns(Task.FromResult(_procosysArea));
             // Act
-            var result = await _dut.TryGetAreaAsync(_plant, _procosysArea.Code, CancellationToken.None);
+            var result = await _dut.TryGetAreaAsync(Plant, _procosysArea.Code, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(_procosysArea.Code, result.Code);

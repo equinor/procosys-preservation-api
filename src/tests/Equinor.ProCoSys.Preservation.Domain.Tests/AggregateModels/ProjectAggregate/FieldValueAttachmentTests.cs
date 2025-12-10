@@ -7,14 +7,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class FieldValueAttachmentTests
     {
-        private readonly string TestPlant = "PCS$PlantA";
-        private readonly Guid BlobStorageId = new Guid("{6DB281E2-B667-4DCE-B74C-B9A9FBC94964}");
+        private readonly string _testPlant = "PCS$PlantA";
+        private readonly Guid _blobStorageId = new Guid("{6DB281E2-B667-4DCE-B74C-B9A9FBC94964}");
 
         [TestMethod]
         public void Constructor_ShouldSetFieldAttachmentSpecificProperties()
         {
-            var dut = new FieldValueAttachment(TestPlant, BlobStorageId, "FileA");
-            Assert.AreEqual($"PlantA/FieldValue/{BlobStorageId.ToString()}", dut.BlobPath);
+            var dut = new FieldValueAttachment(_testPlant, _blobStorageId, "FileA");
+            Assert.AreEqual($"PlantA/FieldValue/{_blobStorageId.ToString()}", dut.BlobPath);
             // Other properties are tested in base class
         }
 
@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void SetFileName_ShouldSetFileName()
         {
             // Assert
-            var dut = new FieldValueAttachment(TestPlant, BlobStorageId, "FileA");
+            var dut = new FieldValueAttachment(_testPlant, _blobStorageId, "FileA");
 
             // Act
             dut.SetFileName("FileB");

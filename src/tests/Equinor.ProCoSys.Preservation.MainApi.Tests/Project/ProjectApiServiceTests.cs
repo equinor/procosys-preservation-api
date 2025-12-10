@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
     [TestClass]
     public class ProjectApiServiceTests
     {
-        private const string _plant = "PCS$TESTPLANT";
+        private const string Plant = "PCS$TESTPLANT";
         private Mock<IOptionsSnapshot<MainApiOptions>> _mainApiOptions;
         private Mock<IMainApiClientForUser> _mainApiClient;
         private ProCoSysProject _result;
@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Project
                 .Returns(Task.FromResult(_result));
 
             // Act
-            var result = await _dut.TryGetProjectAsync(_plant, _name, CancellationToken.None);
+            var result = await _dut.TryGetProjectAsync(Plant, _name, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(_name, result.Name);

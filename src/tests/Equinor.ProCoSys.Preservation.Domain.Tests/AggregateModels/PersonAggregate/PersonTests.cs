@@ -9,14 +9,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.PersonAggre
     public class PersonTests
     {
         private const string TestPlant = "PCS$PlantA";
-        private Guid Oid = Guid.NewGuid();
+        private Guid _oid = Guid.NewGuid();
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new Person(Oid, "Espen", "Askeladd");
+            var dut = new Person(_oid, "Espen", "Askeladd");
 
-            Assert.AreEqual(Oid, dut.Guid);
+            Assert.AreEqual(_oid, dut.Guid);
             Assert.AreEqual("Espen", dut.FirstName);
             Assert.AreEqual("Askeladd", dut.LastName);
         }
@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.PersonAggre
         [TestMethod]
         public void GetDefaultFilter_ShouldGetDefaultFilterWhenExists()
         {
-            var dut = new Person(Oid, "firstName", "lastName");
+            var dut = new Person(_oid, "firstName", "lastName");
 
             var project = new Project(TestPlant, "Project", "", new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8"));
             var savedFilter = new SavedFilter(TestPlant, project, "title", "criteria")

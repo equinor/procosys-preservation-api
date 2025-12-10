@@ -14,7 +14,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         private SwapStepsCommand _command;
         private SwapStepsCommandValidator _dut;
         private Mock<IJourneyValidator> _journeyValidatorMock;
-        private Mock<IStepValidator> _stepValidatorMock;
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
 
         private int _journeyId = 1;
@@ -37,11 +36,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             _rowVersionValidatorMock.Setup(r => r.IsValid(_stepARowVersion)).Returns(true);
             _rowVersionValidatorMock.Setup(r => r.IsValid(_stepBRowVersion)).Returns(true);
 
-            _stepValidatorMock = new Mock<IStepValidator>();
-
             _command = new SwapStepsCommand(_journeyId, _stepAId, _stepARowVersion, _stepBId, _stepBRowVersion);
 
-            _dut = new SwapStepsCommandValidator(_journeyValidatorMock.Object, _stepValidatorMock.Object, _rowVersionValidatorMock.Object);
+            _dut = new SwapStepsCommandValidator(_journeyValidatorMock.Object, _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]

@@ -15,8 +15,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
     [TestClass]
     public class RequirementAddedEventHandlerTests
     {
-        private const int _requirementDefinitionId = 3;
-        private const string _plant = "TestPlant";
+        private const int RequirementDefinitionId = 3;
+        private const string Plant = "TestPlant";
 
         private Mock<IRequirementTypeRepository> _requirementTypeRepositoryMock;
         private Mock<IHistoryRepository> _historyRepositoryMock;
@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             var mockTag = new Mock<Tag>().Object;
             mockTag.Guid = _tagGuid;
 
-            _requirementDefinition = new RequirementDefinition(_plant, "Rotate 2 turns", 2, RequirementUsage.ForAll, 1);
+            _requirementDefinition = new RequirementDefinition(Plant, "Rotate 2 turns", 2, RequirementUsage.ForAll, 1);
 
             _historyRepositoryMock = new Mock<IHistoryRepository>();
             _historyRepositoryMock
@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             _requirementTypeRepositoryMock = new Mock<IRequirementTypeRepository>();
             _requirementTypeRepositoryMock
-                .Setup(repo => repo.GetRequirementDefinitionByIdAsync(_requirementDefinitionId))
+                .Setup(repo => repo.GetRequirementDefinitionByIdAsync(RequirementDefinitionId))
                 .Returns(Task.FromResult(_requirementDefinition));
 
             _projectRepository = new Mock<IProjectRepository>();
@@ -70,15 +70,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             // Act
             var tagRequirement = new Mock<TagRequirement>().Object;
-            tagRequirement.RequirementDefinitionId = _requirementDefinitionId;
+            tagRequirement.RequirementDefinitionId = RequirementDefinitionId;
 
-            _dut.Handle(new TagRequirementAddedEvent(_plant, _tagGuid, tagRequirement), default);
+            _dut.Handle(new TagRequirementAddedEvent(Plant, _tagGuid, tagRequirement), default);
 
             // Assert
             var expectedDescription = $"{EventType.RequirementAdded.GetDescription()} - '{_requirementDefinition.Title}'";
 
             Assert.IsNotNull(_historyAdded);
-            Assert.AreEqual(_plant, _historyAdded.Plant);
+            Assert.AreEqual(Plant, _historyAdded.Plant);
             Assert.AreEqual(_tagGuid, _historyAdded.SourceGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.RequirementAdded, _historyAdded.EventType);

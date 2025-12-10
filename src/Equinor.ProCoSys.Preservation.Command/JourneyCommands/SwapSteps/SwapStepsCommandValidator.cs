@@ -11,7 +11,6 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps
     {
         public SwapStepsCommandValidator(
             IJourneyValidator journeyValidator,
-            IStepValidator stepValidator,
             IRowVersionValidator rowVersionValidator)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
