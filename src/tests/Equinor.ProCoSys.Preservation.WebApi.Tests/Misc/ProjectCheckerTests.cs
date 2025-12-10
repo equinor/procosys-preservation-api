@@ -15,8 +15,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc
     public class ProjectCheckerTests
     {
         private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
-        private readonly string Plant = "Plant";
-        private readonly string Project = "Project";
+        private readonly string _plant = "Plant";
+        private readonly string _project = "Project";
 
         private Mock<IPlantProvider> _plantProviderMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
@@ -28,14 +28,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc
         public void Setup()
         {
             _plantProviderMock = new Mock<IPlantProvider>();
-            _plantProviderMock.SetupGet(p => p.Plant).Returns(Plant);
+            _plantProviderMock.SetupGet(p => p.Plant).Returns(_plant);
 
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
             _currentUserProviderMock.Setup(c => c.GetCurrentUserOid()).Returns(_currentUserOid);
 
             _permissionCacheMock = new Mock<IPermissionCache>();
 
-            _testRequest = new TestRequest(Project);
+            _testRequest = new TestRequest(_project);
             _dut = new ProjectChecker(_plantProviderMock.Object, _currentUserProviderMock.Object, _permissionCacheMock.Object);
         }
 
@@ -44,9 +44,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc
         {
             // Arrange
             _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(
-                Plant,
+                _plant,
                 _currentUserOid,
-                Project,
+                _project,
                 It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(true));
 
@@ -59,9 +59,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc
         {
             // Arrange
             _permissionCacheMock.Setup(p => p.IsAValidProjectForUserAsync(
-                Plant,
+                _plant,
                 _currentUserOid,
-                Project,
+                _project,
                 It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(false));
 

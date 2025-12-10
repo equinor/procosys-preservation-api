@@ -43,8 +43,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private const string NewDescription = "Odfjeld Drilling Instalation";
         private const string Project1Name = "Project 1";
         private const string Project2Name = "Project 2";
-        private readonly Guid ProjectProCoSysGuid1 = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
-        private readonly Guid ProjectProCoSysGuid2 = new Guid("6afabbbf-cf21-4533-93ff-73fe6fdfd27a");
+        private readonly Guid _projectProCoSysGuid1 = new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8");
+        private readonly Guid _projectProCoSysGuid2 = new Guid("6afabbbf-cf21-4533-93ff-73fe6fdfd27a");
         private const string Project1Description = "Description 1";
         private const string Project2Description = "Description 2";
         private const string TagFunctionCode = "Code9";
@@ -108,7 +108,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _responsible = new Responsible(Plant, Code, Description);
             _responsibleRepository.Setup(r => r.GetByCodeAsync(Code)).Returns(Task.FromResult(_responsible));
 
-            _project1 = new Project(Plant, Project1Name, Project1Description, ProjectProCoSysGuid1);
+            _project1 = new Project(Plant, Project1Name, Project1Description, _projectProCoSysGuid1);
             _project1.AddTag(_tag1);
             _project1.AddTag(_tag2);
             _projectRepository.Setup(p => p.GetStandardTagsInProjectOnlyAsync(Project1Name))
@@ -120,7 +120,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             _projectRepository.Setup(p => p.GetProjectOnlyByTagGuidAsync(Guid.Parse(ProCoSysTagGuid)))
                 .Returns(Task.FromResult(_project1));
-            _project2 = new Project(Plant, Project2Name, Project2Description, ProjectProCoSysGuid2);
+            _project2 = new Project(Plant, Project2Name, Project2Description, _projectProCoSysGuid2);
             _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(Project2Name))
                 .Returns(Task.FromResult(_project2));
             _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project2Name))

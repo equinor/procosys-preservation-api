@@ -46,13 +46,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public async Task GetExcelDocument_ShouldCreateCorrectQuery()
         {
-            GetTagsForExportQuery _createdQuery = null;
+            GetTagsForExportQuery createdQuery = null;
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<GetTagsForExportQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<ExportDto>(_exportDto) as Result<ExportDto>))
                 .Callback<IRequest<Result<ExportDto>>, CancellationToken>((request, cancellationToken) =>
                 {
-                    _createdQuery = request as GetTagsForExportQuery;
+                    createdQuery = request as GetTagsForExportQuery;
                 });
 
             _filterDto.ProjectName = "ProjectName";
@@ -80,39 +80,39 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
 
             await _dut.ExportTagsWithHistoryToExcel("", true, _filterDto, _sortingDto);
 
-            Assert.AreEqual(_filterDto.ProjectName, _createdQuery.ProjectName);
-            Assert.IsNotNull(_createdQuery.Filter);
-            Assert.IsNotNull(_createdQuery.Sorting);
-            Assert.AreEqual(_filterDto.ActionStatus.ElementAt(0), _createdQuery.Filter.ActionStatus.ElementAt(0));
-            Assert.AreEqual(1, _createdQuery.Filter.AreaCodes.Count);
-            Assert.AreEqual(_filterDto.AreaCodes.ElementAt(0), _createdQuery.Filter.AreaCodes.ElementAt(0));
-            Assert.AreEqual(_filterDto.CallOffStartsWith, _createdQuery.Filter.CallOffStartsWith);
-            Assert.AreEqual(_filterDto.CommPkgNoStartsWith, _createdQuery.Filter.CommPkgNoStartsWith);
-            Assert.AreEqual(1, _createdQuery.Filter.DisciplineCodes.Count);
-            Assert.AreEqual(_filterDto.DisciplineCodes.ElementAt(0), _createdQuery.Filter.DisciplineCodes.ElementAt(0));
-            Assert.AreEqual(1, _createdQuery.Filter.DueFilters.Count);
-            Assert.AreEqual(_filterDto.DueFilters.ElementAt(0), _createdQuery.Filter.DueFilters.ElementAt(0));
-            Assert.AreEqual(1, _createdQuery.Filter.JourneyIds.Count);
-            Assert.AreEqual(_filterDto.JourneyIds.ElementAt(0), _createdQuery.Filter.JourneyIds.ElementAt(0));
-            Assert.AreEqual(_filterDto.McPkgNoStartsWith, _createdQuery.Filter.McPkgNoStartsWith);
-            Assert.AreEqual(1, _createdQuery.Filter.ModeIds.Count);
-            Assert.AreEqual(_filterDto.ModeIds.ElementAt(0), _createdQuery.Filter.ModeIds.ElementAt(0));
-            Assert.AreEqual(_filterDto.PreservationStatus.ElementAt(0), _createdQuery.Filter.PreservationStatus.ElementAt(0));
-            Assert.AreEqual(_filterDto.PurchaseOrderNoStartsWith, _createdQuery.Filter.PurchaseOrderNoStartsWith);
-            Assert.AreEqual(1, _createdQuery.Filter.RequirementTypeIds.Count);
-            Assert.AreEqual(_filterDto.RequirementTypeIds.ElementAt(0), _createdQuery.Filter.RequirementTypeIds.ElementAt(0));
-            Assert.AreEqual(1, _createdQuery.Filter.ResponsibleIds.Count);
-            Assert.AreEqual(_filterDto.ResponsibleIds.ElementAt(0), _createdQuery.Filter.ResponsibleIds.ElementAt(0));
-            Assert.AreEqual(1, _createdQuery.Filter.StepIds.Count);
-            Assert.AreEqual(_filterDto.StepIds.ElementAt(0), _createdQuery.Filter.StepIds.ElementAt(0));
-            Assert.AreEqual(_filterDto.StorageAreaStartsWith, _createdQuery.Filter.StorageAreaStartsWith);
-            Assert.AreEqual(1, _createdQuery.Filter.TagFunctionCodes.Count);
-            Assert.AreEqual(_filterDto.TagFunctionCodes.ElementAt(0), _createdQuery.Filter.TagFunctionCodes.ElementAt(0));
-            Assert.AreEqual(_filterDto.TagNoStartsWith, _createdQuery.Filter.TagNoStartsWith);
-            Assert.AreEqual(_filterDto.VoidedFilter, _createdQuery.Filter.VoidedFilter);
+            Assert.AreEqual(_filterDto.ProjectName, createdQuery.ProjectName);
+            Assert.IsNotNull(createdQuery.Filter);
+            Assert.IsNotNull(createdQuery.Sorting);
+            Assert.AreEqual(_filterDto.ActionStatus.ElementAt(0), createdQuery.Filter.ActionStatus.ElementAt(0));
+            Assert.AreEqual(1, createdQuery.Filter.AreaCodes.Count);
+            Assert.AreEqual(_filterDto.AreaCodes.ElementAt(0), createdQuery.Filter.AreaCodes.ElementAt(0));
+            Assert.AreEqual(_filterDto.CallOffStartsWith, createdQuery.Filter.CallOffStartsWith);
+            Assert.AreEqual(_filterDto.CommPkgNoStartsWith, createdQuery.Filter.CommPkgNoStartsWith);
+            Assert.AreEqual(1, createdQuery.Filter.DisciplineCodes.Count);
+            Assert.AreEqual(_filterDto.DisciplineCodes.ElementAt(0), createdQuery.Filter.DisciplineCodes.ElementAt(0));
+            Assert.AreEqual(1, createdQuery.Filter.DueFilters.Count);
+            Assert.AreEqual(_filterDto.DueFilters.ElementAt(0), createdQuery.Filter.DueFilters.ElementAt(0));
+            Assert.AreEqual(1, createdQuery.Filter.JourneyIds.Count);
+            Assert.AreEqual(_filterDto.JourneyIds.ElementAt(0), createdQuery.Filter.JourneyIds.ElementAt(0));
+            Assert.AreEqual(_filterDto.McPkgNoStartsWith, createdQuery.Filter.McPkgNoStartsWith);
+            Assert.AreEqual(1, createdQuery.Filter.ModeIds.Count);
+            Assert.AreEqual(_filterDto.ModeIds.ElementAt(0), createdQuery.Filter.ModeIds.ElementAt(0));
+            Assert.AreEqual(_filterDto.PreservationStatus.ElementAt(0), createdQuery.Filter.PreservationStatus.ElementAt(0));
+            Assert.AreEqual(_filterDto.PurchaseOrderNoStartsWith, createdQuery.Filter.PurchaseOrderNoStartsWith);
+            Assert.AreEqual(1, createdQuery.Filter.RequirementTypeIds.Count);
+            Assert.AreEqual(_filterDto.RequirementTypeIds.ElementAt(0), createdQuery.Filter.RequirementTypeIds.ElementAt(0));
+            Assert.AreEqual(1, createdQuery.Filter.ResponsibleIds.Count);
+            Assert.AreEqual(_filterDto.ResponsibleIds.ElementAt(0), createdQuery.Filter.ResponsibleIds.ElementAt(0));
+            Assert.AreEqual(1, createdQuery.Filter.StepIds.Count);
+            Assert.AreEqual(_filterDto.StepIds.ElementAt(0), createdQuery.Filter.StepIds.ElementAt(0));
+            Assert.AreEqual(_filterDto.StorageAreaStartsWith, createdQuery.Filter.StorageAreaStartsWith);
+            Assert.AreEqual(1, createdQuery.Filter.TagFunctionCodes.Count);
+            Assert.AreEqual(_filterDto.TagFunctionCodes.ElementAt(0), createdQuery.Filter.TagFunctionCodes.ElementAt(0));
+            Assert.AreEqual(_filterDto.TagNoStartsWith, createdQuery.Filter.TagNoStartsWith);
+            Assert.AreEqual(_filterDto.VoidedFilter, createdQuery.Filter.VoidedFilter);
 
-            Assert.AreEqual(_sortingDto.Direction, _createdQuery.Sorting.Direction);
-            Assert.AreEqual(_sortingDto.Property, _createdQuery.Sorting.Property);
+            Assert.AreEqual(_sortingDto.Direction, createdQuery.Sorting.Direction);
+            Assert.AreEqual(_sortingDto.Property, createdQuery.Sorting.Property);
         }
     }
 }
