@@ -1,73 +1,30 @@
 # pcs-preservation-api
 REST API for the preservation module in Project Completion System (ProCoSys (PCS)) using ASP.NET and Entity Framework.
 
-## Notes
+## CI/CD Workflow
+> [!IMPORTANT]  
+> Changes merged with main will be built and deployed to test & production without any additional approval steps.
 
-### Secrets
-Before running the application, some settings need to be set. These are defined in appsettings.json. To avoid the possibility to commit secrets, move parts of the configuration to the secrets.json file on your computer.
-Typical settings that should be moved to secrets.json are:
-* AD IDs
-* Keys
-* Local URLs
-* Other secrets
+We continuously build, test, verify, and deploy changes to production. 
 
-### Environment
-Set the runtime environment by setting the environment variable ASPNETCORE_ENVIRONMENT on your machine to one of the following:
-* Development
-* Test
-* Production
+Changes that are ready for verification are entered into a pull request to the main branch and will be automatically deployed to the Test environment for verification. Once verified and the PR is merged, the changes will automatically be deployed to test and production environments.
 
-If this variable is not set, it will default to Production.
+For further details check out our development workflow [here](./CONTRIBUTING.md)
 
-### Migration
-When running in development environment, the database is auto-migrated on application startup. This can be changed using the setting in appsettings.development.json.
+### Pull Requests
+Pull requests to main branch are automatically deployed to Dev and require verification there.
 
-### Seeding
-The datebase can be seeded with test data. To do this, enable the feature in appsettings.development.json and start the application.
->Note: This will run every time the application starts. To avoid multiple seedings, disable the feature after the application has started.
+### Test
+Merging into main branch triggers an automatic deployment to Test.
 
-## Visual Studio
-### Set secrets
- To open secrets.json, right-click on the startup project and select 'Manage User Secrets'.
-### Run
+### Production
+Merging into main branch triggers an automatic deployment to Production.
 
-Choose to run as *Equinor.ProcoSys.Preservation.WebApi* in the dropdown menu and hit F5.
+### Manual deployment to environments
+Dev, Test & Production deployment pipelines can be manually invoked.
 
-## Command line
-### Set secrets
-In folder
-```
-src\Equinor.ProCoSys.Preservation.WebApi
-```
-Set secrets using
-```console
-dotnet user-secrets "<key>" "<value>"
-```
-### Run
-In folder
-```
-src\Equinor.ProCoSys.Preservation.WebApi
-```
-run
-```console
-dotnet run
-```
-
-## Docker
-### Set secrets
-Use either Visual Studio or Command line. Docker-compose is set up to mount the secrets file into the container.
-### Run
-In folder
-```
-src\
-```
-run
-```console
-docker-compose -f .\Docker-compose.yml -f .\Docker-compose.development.yml up
-```
-
-## Environment variables
-These need to exists in the docker container to be able to authenticate as service priciple
-- AZURE_CLIENT_ID
-- AZURE_TENANT_ID
-- AZURE_CLIENT_SECRET
+To run manual GitHub deployment actions 
+1. Select workflow on the left side
+2. Click `Run workflow`
+3. Select branch
+4. Click `Run workflow`
