@@ -59,7 +59,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         public async Task HandlingCreateReqDefinitionCommand_ShouldAddReqDefinitionToRepositoryWithFields()
         {
             // Arrange
-            _command = new CreateRequirementDefinitionCommand(1, 10, Usage, RequirementDefinitionTitle, DefaultWeeks, 
+            _command = new CreateRequirementDefinitionCommand(1, 10, Usage, RequirementDefinitionTitle, DefaultWeeks,
                 new List<FieldsForCommand>
                 {
                     new FieldsForCommand("Label", FieldType.CheckBox, 99, "U", true)

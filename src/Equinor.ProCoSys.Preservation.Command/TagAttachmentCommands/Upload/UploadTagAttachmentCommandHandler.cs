@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.BlobStorage;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
@@ -55,10 +55,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Upload
             var fullBlobPath = attachment.GetFullBlobPath();
             await _azureBlobService.UploadAsync(
                 _blobStorageOptions.Value.BlobContainer,
-                fullBlobPath, 
+                fullBlobPath,
                 request.Content,
                 "application/octet-stream",
-                request.OverwriteIfExists, 
+                request.OverwriteIfExists,
                 cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

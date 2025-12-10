@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttach
                 .WithMessage(command => $"Attachment can not be uploaded for field! Field={command.FieldId}")
                 .MustAsync((command, token) => NotBeAVoidedFieldAsync(command.FieldId, token))
                 .WithMessage(command => $"Field is voided! Field={command.FieldId}");
-                        
+
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
 

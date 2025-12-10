@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             _requirementTypeRepositoryMock.Verify(r => r.Remove(_requirementType), Times.Once);
         }
@@ -50,18 +50,18 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.De
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
-        
+
         [TestMethod]
         public async Task HandlingDeleteRequirementTypeCommand_ShouldAddDeletionEvent()
         {
             // Act
             await _dut.Handle(_command, default);
             var eventTypes = _requirementType.DomainEvents.Select(e => e.GetType()).ToList();
-            
+
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<RequirementType>));
         }

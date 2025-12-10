@@ -2,7 +2,7 @@
 
 public interface IFieldEventV1 : IIntegrationEvent
 {
-    Guid RequirementDefinitionGuid { get;}
+    Guid RequirementDefinitionGuid { get; }
 
     string Label { get; }
     string Unit { get; }

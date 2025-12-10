@@ -14,7 +14,7 @@ public class JourneyEvent : IJourneyEventV1
 
     [JsonIgnore]
     public string ProjectName { get; } = null;
-    
+
     public string Title { get; init; }
     public bool IsVoided { get; init; }
 

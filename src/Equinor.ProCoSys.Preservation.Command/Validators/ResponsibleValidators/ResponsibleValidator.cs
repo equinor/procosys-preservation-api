@@ -16,8 +16,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ResponsibleValidators
         public async Task<bool> ExistsAndIsVoidedAsync(string responsibleCode, CancellationToken cancellationToken)
         {
             var responsible = await (from r in _context.QuerySet<Responsible>()
-                where r.Code == responsibleCode
-                select r).SingleOrDefaultAsync(cancellationToken);
+                                     where r.Code == responsibleCode
+                                     select r).SingleOrDefaultAsync(cancellationToken);
 
             return responsible != null && responsible.IsVoided;
         }

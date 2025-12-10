@@ -16,9 +16,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators
 
         public async Task<bool> ExistsAsync(int journeyId, CancellationToken token) =>
             await (from j in _context.QuerySet<Journey>()
-                where j.Id == journeyId
-                select j).AnyAsync(token);
-        
+                   where j.Id == journeyId
+                   select j).AnyAsync(token);
+
         public async Task<bool> ExistsStepAsync(int journeyId, int stepId, CancellationToken token)
         {
             var journey = await GetJourneyWithStepsAsync(journeyId, token);
@@ -28,15 +28,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators
 
         public async Task<bool> ExistsWithSameTitleAsync(string journeyTitle, CancellationToken token) =>
             await (from j in _context.QuerySet<Journey>()
-                where j.Title == journeyTitle
-                select j).AnyAsync(token);
+                   where j.Title == journeyTitle
+                   select j).AnyAsync(token);
 
         public async Task<bool> ExistsWithSameTitleInAnotherJourneyAsync(int journeyId, string journeyTitle, CancellationToken token) =>
             await (from j in _context.QuerySet<Journey>()
-                where j.Id != journeyId && j.Title == journeyTitle
-                select j).AnyAsync(token);
+                   where j.Id != journeyId && j.Title == journeyTitle
+                   select j).AnyAsync(token);
 
-        
+
         public async Task<bool> AnyStepExistsWithSameTitleAsync(int journeyId, string stepTitle, CancellationToken token)
         {
             var journey = await GetJourneyWithStepsAsync(journeyId, token);
@@ -54,8 +54,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators
         public async Task<bool> IsVoidedAsync(int journeyId, CancellationToken token)
         {
             var journey = await (from j in _context.QuerySet<Journey>()
-                where j.Id == journeyId
-                select j).SingleOrDefaultAsync(token);
+                                 where j.Id == journeyId
+                                 select j).SingleOrDefaultAsync(token);
             return journey != null && journey.IsVoided;
         }
 
@@ -83,24 +83,24 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators
 
             var stepIds = journey.Steps.Select(s => s.Id);
             var inUse = await (from tag in _context.QuerySet<Tag>()
-                where stepIds.Contains(tag.StepId)
-                select tag).AnyAsync(token);
+                               where stepIds.Contains(tag.StepId)
+                               select tag).AnyAsync(token);
             return inUse;
         }
 
         public async Task<bool> ExistsWithDuplicateTitleAsync(int journeyId, CancellationToken token)
         {
             var journey = await (from j in _context.QuerySet<Journey>()
-                where j.Id == journeyId
-                select j).SingleOrDefaultAsync(token);
+                                 where j.Id == journeyId
+                                 select j).SingleOrDefaultAsync(token);
             if (journey == null)
             {
                 return false;
             }
-            
+
             return await (from j in _context.QuerySet<Journey>()
-                where j.Title == $"{journey.Title}{Journey.DuplicatePrefix}"
-                select j).AnyAsync(token);
+                          where j.Title == $"{journey.Title}{Journey.DuplicatePrefix}"
+                          select j).AnyAsync(token);
         }
 
         public async Task<bool> HasAnyStepWithAutoTransferMethodAsync(int journeyId, AutoTransferMethod autoTransferMethod, CancellationToken token)

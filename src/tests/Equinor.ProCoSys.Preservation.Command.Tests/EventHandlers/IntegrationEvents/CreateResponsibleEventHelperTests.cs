@@ -29,14 +29,14 @@ public class CreateResponsibleEventHelperTests
         // Arrange
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
-        
+
         _responsible = new Responsible(TestPlant, "Test Code", "Test description");
-        
+
         _person = new Person(TestGuid, "Test", "Person");
 
         var personRepositoryMock = new Mock<IPersonRepository>();
         personRepositoryMock.Setup(x => x.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
-        
+
         _dut = new CreateResponsibleEventHelper(personRepositoryMock.Object);
     }
 
@@ -55,13 +55,13 @@ public class CreateResponsibleEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateActionEventExpectedProCoSysGuidValue()
     {
         // Arrange
         var expected = _responsible.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_responsible);
         var result = integrationEvent.ProCoSysGuid;
@@ -69,13 +69,13 @@ public class CreateResponsibleEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateActionEventExpectedCreatedByGuidValue()
     {
         // Arrange
         _responsible.SetCreated(_person);
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_responsible);
         var result = integrationEvent.CreatedByGuid;
@@ -96,13 +96,13 @@ public class CreateResponsibleEventHelperTests
         // Assert
         Assert.AreEqual(TestTime, integrationEvent.CreatedAtUtc);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateActionEventWithModifiedByGuid()
     {
         // Arrange
         _responsible.SetModified(_person);
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_responsible);
         var result = integrationEvent.ModifiedByGuid;

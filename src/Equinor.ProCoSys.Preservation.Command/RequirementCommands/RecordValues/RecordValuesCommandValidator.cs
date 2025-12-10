@@ -50,7 +50,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.RecordValues
                     .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field is voided! Field={fv.FieldId}");
             });
-                        
+
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
 

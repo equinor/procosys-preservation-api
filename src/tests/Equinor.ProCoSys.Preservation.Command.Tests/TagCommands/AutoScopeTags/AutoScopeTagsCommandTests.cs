@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public void Constructor_ShouldSetProperties_WithRequirements()
         {
             var dut = new AutoScopeTagsCommand(
-                new List<string> {"TagNoA"},
+                new List<string> { "TagNoA" },
                 "ProjectNameA",
                 2,
                 "RemarkA",

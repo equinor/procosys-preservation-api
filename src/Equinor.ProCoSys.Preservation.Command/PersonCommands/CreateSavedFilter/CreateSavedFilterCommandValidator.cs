@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.CreateSavedFilter
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingProject(command.ProjectName, token))
                 .WithMessage(command => $"Project doesn't exist! Project={command.ProjectName}");
-            
+
             async Task<bool> NotExistsASavedFilterWithSameTitleForPerson(string title, string projectName, CancellationToken token)
                 => !await savedFilterValidator.ExistsWithSameTitleForPersonInProjectAsync(title, projectName, token);
             async Task<bool> BeAnExistingProject(string projectName, CancellationToken token)

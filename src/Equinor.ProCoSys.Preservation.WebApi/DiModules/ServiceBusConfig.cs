@@ -17,7 +17,7 @@ public static class ServiceBusConfig
         }
 
         var serviceBusNamespace = builder.GetConfig<string>("ServiceBus:Namespace");
-        
+
         builder.Services.AddPcsServiceBusIntegration(options => options
             .UseCredentialAuthentication($"{serviceBusNamespace}.servicebus.windows.net", credential)
             .WithLeaderElector(builder.GetLeaderElectorUri())

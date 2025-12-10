@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Authorization;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command;
-using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Query;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using MediatR;
@@ -28,10 +28,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
         private readonly ILogger<AccessValidator> _logger;
 
         public AccessValidator(
-            ICurrentUserProvider currentUserProvider, 
+            ICurrentUserProvider currentUserProvider,
             IProjectAccessChecker projectAccessChecker,
             IRestrictionRolesChecker restrictionRolesChecker,
-            ITagHelper tagHelper, 
+            ITagHelper tagHelper,
             ILogger<AccessValidator> logger)
         {
             _currentUserProvider = currentUserProvider;

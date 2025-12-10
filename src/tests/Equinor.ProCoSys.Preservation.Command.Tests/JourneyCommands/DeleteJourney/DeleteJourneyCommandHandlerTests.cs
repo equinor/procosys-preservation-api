@@ -40,11 +40,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             _journeyRepositoryMock.Verify(r => r.Remove(_journey), Times.Once);
         }
-        
+
         [TestMethod]
         public async Task HandlingDeleteJourneyCommand_ShouldAddDeletedJourneyEvent()
         {
@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

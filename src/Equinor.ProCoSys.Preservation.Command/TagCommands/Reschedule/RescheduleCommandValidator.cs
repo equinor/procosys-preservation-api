@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule
                 .WithMessage("At least 1 tag must be given!")
                 .Must(BeUniqueTags)
                 .WithMessage("Tags must be unique!");
-            
+
             RuleFor(command => command.Weeks)
                 .InclusiveBetween(1, MaxRescheduleWeeks)
                 .WithMessage($"Rescheduling must be in range of 1 to {MaxRescheduleWeeks} week(s)!");
@@ -57,10 +57,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule
                 var ids = tags.Select(x => x.Id).ToList();
                 return ids.Distinct().Count() == ids.Count;
             }
-                        
+
             async Task<bool> BeInSameProjectAsync(IEnumerable<IdAndRowVersion> tags, CancellationToken token)
                 => await projectValidator.AllTagsInSameProjectAsync(tags.Select(t => t.Id), token);
-            
+
             async Task<bool> NotBeAClosedProjectForTagAsync(IEnumerable<IdAndRowVersion> tags, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tags.First().Id, token);
 
@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule
                 => await tagValidator.ExistsAsync(tagId, token);
 
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
-                => ! await tagValidator.IsVoidedAsync(tagId, token);
+                => !await tagValidator.IsVoidedAsync(tagId, token);
 
             async Task<bool> IsReadyToBeRescheduledAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsReadyToBeRescheduledAsync(tagId, token);

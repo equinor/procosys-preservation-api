@@ -37,7 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
                 tag.StartPreservation();
                 context.SaveChangesAsync().Wait();
             }
-            
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
@@ -49,7 +49,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var dto = result.Data;
                 var step = context.Steps.Single(s => s.Id == tag.StepId);
                 var mode = context.Modes.Single(m => m.Id == step.ModeId);
@@ -94,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var dto = result.Data;
                 Assert.IsFalse(dto.IsInUse);
             }
@@ -118,7 +118,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var dto = result.Data;
                 Assert.IsTrue(dto.IsInUse);
             }
@@ -142,7 +142,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var dto = result.Data;
                 Assert.IsTrue(dto.IsInUse);
             }

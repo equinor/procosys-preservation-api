@@ -17,10 +17,10 @@ public class CreateRequirementTypeDeletedEventHelperTests
     {
         // Arrange
         _requirementType = new RequirementType(TestPlant, "Test Code", "Test Type Title", RequirementTypeIcon.Other, 10);
-        
+
         var requirementDefinition1 = new RequirementDefinition(TestPlant, "Test Definition Title 1", 2, RequirementUsage.ForSuppliersOnly, 1);
         _requirementType.AddRequirementDefinition(requirementDefinition1);
-        
+
         var requirementDefinition2 = new RequirementDefinition(TestPlant, "Test Definition Title 2", 2, RequirementUsage.ForSuppliersOnly, 2);
         _requirementType.AddRequirementDefinition(requirementDefinition2);
     }
@@ -42,13 +42,13 @@ public class CreateRequirementTypeDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateRequirementTypeDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _requirementType.Guid;
-        
+
         // Act
         var integrationEvents = CreateRequirementTypeDeletedEventHelper.CreateEvents(_requirementType);
         var deletionEvent = integrationEvents.TypeDeleteEvent;
@@ -57,7 +57,7 @@ public class CreateRequirementTypeDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateIntegrationEventsForChildRequirementDefinitions()
     {

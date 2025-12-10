@@ -69,13 +69,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
                 .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeA, _regCodeA, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSTagFunction
                 {
-                    Code = _tfCodeA, RegisterCode = _regCodeA
+                    Code = _tfCodeA,
+                    RegisterCode = _regCodeA
                 }));
             _tagFunctionApiServiceMock
                 .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeB, _regCodeB, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSTagFunction
                 {
-                    Code = _tfCodeB, RegisterCode = _regCodeB
+                    Code = _tfCodeB,
+                    RegisterCode = _regCodeB
                 }));
 
             _command = new CloneCommand(_sourcePlant, TestPlant);
@@ -155,7 +157,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Exactly(2));
         }
-        
+
         [TestMethod]
         public async Task HandlingCloneCommandTwice_ShouldCloneOnce()
         {

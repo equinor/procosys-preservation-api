@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
-using Microsoft.EntityFrameworkCore;
-using Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations.Extensions;
-using System;
+﻿using System;
 using System.Linq;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations.Extensions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
 {

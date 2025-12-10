@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
 
             _project = new Project(TestPlant, _projectName, "", ProjectProCoSysGuid);
             _project.AddTag(_tag);
-            
+
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock
                 .Setup(x => x.GetProjectAndTagWithPreservationHistoryByTagIdAsync(_tag.Id))
@@ -74,14 +74,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DeleteTag
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
-        
+
         [TestMethod]
         public async Task HandlingDeleteTagCommand_ShouldAddDeletionEvent()
         {
             // Act
             await _dut.Handle(_command, default);
             var eventTypes = _tag.DomainEvents.Select(e => e.GetType()).ToList();
-            
+
             // Assert
             CollectionAssert.Contains(eventTypes, typeof(DeletedEvent<Tag>));
         }

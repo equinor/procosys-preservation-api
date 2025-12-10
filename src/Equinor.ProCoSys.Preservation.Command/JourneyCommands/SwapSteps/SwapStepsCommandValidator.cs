@@ -27,10 +27,10 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps
                 .WithMessage(command => $"Not a valid row version! Row version{command.StepARowVersion}")
                 .Must(command => HaveAValidRowVersion(command.StepBRowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.StepBRowVersion}");
-            
+
             async Task<bool> BeAnExistingStepAsync(int journeyId, int stepId, CancellationToken token)
                 => await journeyValidator.ExistsStepAsync(journeyId, stepId, token);
-            
+
             async Task<bool> BeAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
                 => await journeyValidator.AreAdjacentStepsInAJourneyAsync(journeyId, stepAId, stepBId, token);
 

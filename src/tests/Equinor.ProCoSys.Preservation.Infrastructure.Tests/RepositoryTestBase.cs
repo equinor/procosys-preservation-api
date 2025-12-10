@@ -7,7 +7,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests
     {
         protected const string TestPlant = "PCS$TESTPLANT";
         protected ContextHelper ContextHelper;
-        
+
         [TestInitialize]
         public void RepositorySetup() => ContextHelper = new ContextHelper();
     }

@@ -28,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             RuleFor(x => x.TagNoSuffix)
                 .Must(NotContainWhiteSpace)
                 .WithMessage("Tag number suffix can not contain whitespace");
-            
+
             RuleFor(x => x.Requirements)
                 .Must(BeUniqueRequirements)
                 .WithMessage("Requirement definitions must be unique!");
@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 
             RuleFor(x => x.StorageArea)
                 .MaximumLength(Tag.StorageAreaLengthMax);
-                        
+
             RuleFor(x => x.PurchaseOrderCalloffCode)
                 .NotNull()
                 .NotEmpty()
@@ -62,7 +62,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             }
 
             bool RequirementMustHavePositiveInterval(TagRequirementDto dto) => dto.IntervalWeeks > 0;
-                        
+
             bool BeUniqueRequirements(IEnumerable<TagRequirementDto> requirements)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();

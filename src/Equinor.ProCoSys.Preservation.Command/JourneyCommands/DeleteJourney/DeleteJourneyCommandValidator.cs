@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteJourney
             IRowVersionValidator rowVersionValidator)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
-            
+
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")

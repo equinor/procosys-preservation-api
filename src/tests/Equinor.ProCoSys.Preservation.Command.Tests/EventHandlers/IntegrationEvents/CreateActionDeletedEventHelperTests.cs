@@ -38,13 +38,13 @@ public class CreateActionDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateActionDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _action.Guid;
-        
+
         // Act
         var deletionEvent = CreateActionDeletedEventHelper.CreateEvent(_action, _project);
         var result = deletionEvent.ProCoSysGuid;

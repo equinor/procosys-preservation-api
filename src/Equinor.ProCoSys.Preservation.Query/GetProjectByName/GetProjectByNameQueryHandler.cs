@@ -18,9 +18,9 @@ namespace Equinor.ProCoSys.Preservation.Query.GetProjectByName
         public async Task<Result<ProjectDetailsDto>> Handle(GetProjectByNameQuery request, CancellationToken cancellationToken)
         {
             var project = await (from p in _context.QuerySet<Project>()
-                where p.Name == request.ProjectName
-                select p).SingleOrDefaultAsync(cancellationToken);
-            
+                                 where p.Name == request.ProjectName
+                                 select p).SingleOrDefaultAsync(cancellationToken);
+
             if (project == null)
             {
                 return new NotFoundResult<ProjectDetailsDto>(Strings.EntityNotFound(nameof(Project), request.ProjectName));

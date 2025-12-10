@@ -22,12 +22,12 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteJourney
         public async Task<Result<Unit>> Handle(DeleteJourneyCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
-            
+
             journey.SetRowVersion(request.RowVersion);
             _journeyRepository.Remove(journey);
-            
+
             journey.AddDomainEvent(new DeletedEvent<Journey>(journey));
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<Unit>(Unit.Value);
         }

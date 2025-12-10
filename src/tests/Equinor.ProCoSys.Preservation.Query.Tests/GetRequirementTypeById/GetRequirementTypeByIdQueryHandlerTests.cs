@@ -38,16 +38,16 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetRequirementTypeById
 
                 _requirementType = AddRequirementTypeWith1DefWithoutField(context, "T0", "D0", RequirementTypeIcon.Other, 999);
                 _requirementDefWithoutField = _requirementType.RequirementDefinitions.Single();
-                
+
                 _requirementDefWithInfo = new RequirementDefinition(TestPlant, "D1", 2, RequirementUsage.ForAll, 1);
                 _requirementType.AddRequirementDefinition(_requirementDefWithInfo);
 
                 _requirementDefWithNumber = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForAll, 1);
                 _requirementType.AddRequirementDefinition(_requirementDefWithNumber);
-                
+
                 _requirementDefWithCheckbox = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForAll, 1);
                 _requirementType.AddRequirementDefinition(_requirementDefWithCheckbox);
-                
+
                 _requirementDefWithAttachment = new RequirementDefinition(TestPlant, "D4", 2, RequirementUsage.ForAll, 1);
                 _requirementType.AddRequirementDefinition(_requirementDefWithAttachment);
 
@@ -121,7 +121,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetRequirementTypeById
                 var project = AddProject(context, "P", "Project description");
                 var journey = AddJourneyWithStep(context, "J", "S1", AddMode(context, "M1", false), AddResponsible(context, "R1"));
                 AddTag(context, project, TagType.Standard, Guid.NewGuid(), "TagNo", "Tag description", journey.Steps.First(),
-                    new List<TagRequirement> {new TagRequirement(TestPlant, 2, _requirementDefWithoutField)});
+                    new List<TagRequirement> { new TagRequirement(TestPlant, 2, _requirementDefWithoutField) });
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -191,7 +191,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetRequirementTypeById
                     new Dictionary<int, bool>
                     {
                         {_checkboxField.Id, true}
-                    }, 
+                    },
                     _requirementDefWithCheckbox);
                 context.SaveChangesAsync().Wait();
             }

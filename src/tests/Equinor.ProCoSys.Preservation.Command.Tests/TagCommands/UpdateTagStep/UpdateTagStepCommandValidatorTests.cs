@@ -201,8 +201,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
         public async Task Validate_ShouldFail_WhenTagsNotUnique()
         {
             var command = new UpdateTagStepCommand(
-                new List<IdAndRowVersion> { 
-                    new IdAndRowVersion(1, null), 
+                new List<IdAndRowVersion> {
+                    new IdAndRowVersion(1, null),
                     new IdAndRowVersion(1, null) }, StepId);
 
             var result = await _dut.ValidateAsync(command);
@@ -283,7 +283,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
         }
-        
+
         [TestMethod]
         public async Task Validate_ShouldFail_WhenChangeToAVoidedStep()
         {

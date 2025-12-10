@@ -2,9 +2,9 @@
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -15,11 +15,11 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Microsoft.EntityFrameworkCore;
-using IDomainMarker = Equinor.ProCoSys.Preservation.Domain.IDomainMarker;
 using MassTransit;
+using Microsoft.EntityFrameworkCore;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 using ConcurrencyException = Equinor.ProCoSys.Common.Misc.ConcurrencyException;
+using IDomainMarker = Equinor.ProCoSys.Preservation.Domain.IDomainMarker;
 
 
 namespace Equinor.ProCoSys.Preservation.Infrastructure

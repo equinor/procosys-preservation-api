@@ -8,7 +8,7 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
 {
     public class CloneCommandValidator : AbstractValidator<CloneCommand>
     {
-        private static string[] BasisPlants = {"PCS$STATOIL_BASIS", "PCS$SUN_BASIS", "PCS$WIND_BASIS"};
+        private static string[] BasisPlants = { "PCS$STATOIL_BASIS", "PCS$SUN_BASIS", "PCS$WIND_BASIS" };
 
         public CloneCommandValidator(IPermissionCache permissionCache)
         {
@@ -27,7 +27,7 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
 
             async Task<bool> UserHaveAccessToPlantAsync(string plantId)
                 => await permissionCache.HasCurrentUserAccessToPlantAsync(plantId, CancellationToken.None);
-            
+
             bool NotBeABasisPlant(string plantId) => !BasisPlants.Contains(plantId);
         }
     }

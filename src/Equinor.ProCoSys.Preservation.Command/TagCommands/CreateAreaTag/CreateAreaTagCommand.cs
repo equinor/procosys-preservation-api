@@ -16,7 +16,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag
             string purchaseOrderCalloffCode,
             string tagNoSuffix,
             int stepId,
-            IEnumerable<RequirementForCommand> requirements, 
+            IEnumerable<RequirementForCommand> requirements,
             string description,
             string remark,
             string storageArea)

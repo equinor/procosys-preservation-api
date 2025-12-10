@@ -29,13 +29,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DeleteTag
 
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
-            
+
             async Task<bool> BeAVoidedTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsVoidedAsync(tagId, token);
-            
+
             async Task<bool> NotBeInUse(int tagId, CancellationToken token)
                 => !await tagValidator.IsInUseAsync(tagId, token);
-            
+
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);
         }

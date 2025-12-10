@@ -80,7 +80,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         public async Task Validate_ShouldFail_WhenInvalidRowVersion()
         {
             const string invalidRowVersion = "String";
-            
+
             var command = new UpdateJourneyCommand(_id, _title, invalidRowVersion, null);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 

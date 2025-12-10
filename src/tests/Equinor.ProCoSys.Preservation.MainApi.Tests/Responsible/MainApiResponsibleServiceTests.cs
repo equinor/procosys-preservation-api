@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Equinor.ProCoSys.Auth.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

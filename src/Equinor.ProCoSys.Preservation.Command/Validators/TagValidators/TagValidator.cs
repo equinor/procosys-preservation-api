@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -23,21 +23,21 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> ExistsAsync(int tagId, CancellationToken token) =>
             await (from t in _context.QuerySet<Tag>()
-                where t.Id == tagId
-                select t).AnyAsync(token);
+                   where t.Id == tagId
+                   select t).AnyAsync(token);
 
         public async Task<bool> ExistsRequirementAsync(int tagId, int requirementId, CancellationToken token) =>
             await (from t in _context.QuerySet<Tag>()
-                join tr in _context.QuerySet<TagRequirement>() on t.Id equals EF.Property<int>(tr, "TagId")
-                where t.Id == tagId && tr.Id == requirementId
-                select tr).AnyAsync(token);
+                   join tr in _context.QuerySet<TagRequirement>() on t.Id equals EF.Property<int>(tr, "TagId")
+                   where t.Id == tagId && tr.Id == requirementId
+                   select tr).AnyAsync(token);
 
         public async Task<bool> ExistsFieldForRequirementAsync(int tagId, int requirementId, int fieldId, CancellationToken token)
         {
             var tagRequirement = await (from t in _context.QuerySet<Tag>()
-                join tr in _context.QuerySet<TagRequirement>() on t.Id equals EF.Property<int>(tr, "TagId")
-                where t.Id == tagId && tr.Id == requirementId
-                select tr).SingleOrDefaultAsync(token);
+                                        join tr in _context.QuerySet<TagRequirement>() on t.Id equals EF.Property<int>(tr, "TagId")
+                                        where t.Id == tagId && tr.Id == requirementId
+                                        select tr).SingleOrDefaultAsync(token);
 
             if (tagRequirement == null)
             {
@@ -49,22 +49,22 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> ExistsActionAsync(int tagId, int actionId, CancellationToken token) =>
             await (from t in _context.QuerySet<Tag>()
-                join action in _context.QuerySet<Action>() on t.Id equals EF.Property<int>(action, "TagId")
-                where t.Id == tagId && action.Id == actionId
-                select action).AnyAsync(token);
+                   join action in _context.QuerySet<Action>() on t.Id equals EF.Property<int>(action, "TagId")
+                   where t.Id == tagId && action.Id == actionId
+                   select action).AnyAsync(token);
 
         public async Task<bool> ExistsTagAttachmentAsync(int tagId, int attachmentId, CancellationToken token) =>
             await (from t in _context.QuerySet<Tag>()
-                join att in _context.QuerySet<TagAttachment>() on t.Id equals EF.Property<int>(att, "TagId")
-                where t.Id == tagId && att.Id == attachmentId
-                select att).AnyAsync(token);
+                   join att in _context.QuerySet<TagAttachment>() on t.Id equals EF.Property<int>(att, "TagId")
+                   where t.Id == tagId && att.Id == attachmentId
+                   select att).AnyAsync(token);
 
         public async Task<bool> ExistsActionAttachmentAsync(int tagId, int actionId, int attachmentId, CancellationToken token) =>
             await (from t in _context.QuerySet<Tag>()
-                join action in _context.QuerySet<Action>() on t.Id equals EF.Property<int>(action, "TagId")
-                join att in _context.QuerySet<ActionAttachment>() on action.Id equals EF.Property<int>(att, "ActionId")
-                where t.Id == tagId && action.Id == actionId && att.Id == attachmentId
-                select att).AnyAsync(token);
+                   join action in _context.QuerySet<Action>() on t.Id equals EF.Property<int>(action, "TagId")
+                   join att in _context.QuerySet<ActionAttachment>() on action.Id equals EF.Property<int>(att, "ActionId")
+                   where t.Id == tagId && action.Id == actionId && att.Id == attachmentId
+                   select att).AnyAsync(token);
 
         public async Task<bool> ExistsAsync(string tagNo, string projectName, CancellationToken token) =>
             await (from tag in _context.QuerySet<Tag>()
@@ -75,9 +75,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
         public async Task<bool> ExistsAsync(string tagNo, int tagId, CancellationToken token)
         {
             var project = await (from p in _context.QuerySet<Project>()
-                           join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
-                           where tag.Id == tagId
-                           select p).SingleOrDefaultAsync(token);
+                                 join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
+                                 where tag.Id == tagId
+                                 select p).SingleOrDefaultAsync(token);
             if (project == null)
             {
                 return false;
@@ -198,10 +198,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             {
                 return false;
             }
-                        
+
             var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
-                where j.Steps.Any(s => s.Id == tag.StepId)
-                select j).SingleOrDefaultAsync(token);
+                                 where j.Steps.Any(s => s.Id == tag.StepId)
+                                 select j).SingleOrDefaultAsync(token);
 
             return tag.IsReadyToBeCompleted(journey);
         }
@@ -213,7 +213,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             {
                 return false;
             }
-                        
+
             return tag.IsReadyToBeDuplicated();
         }
 
@@ -224,14 +224,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             {
                 return false;
             }
-                        
+
             var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
-                where j.Steps.Any(s => s.Id == tag.StepId)
-                select j).SingleOrDefaultAsync(token);
+                                 where j.Steps.Any(s => s.Id == tag.StepId)
+                                 select j).SingleOrDefaultAsync(token);
 
             return tag.IsReadyToBeTransferred(journey);
         }
-        
+
         public async Task<bool> IsReadyToBeRescheduledAsync(int tagId, CancellationToken token)
         {
             var tag = await GetTagWithoutIncludesAsync(tagId, token);
@@ -458,10 +458,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
                 tag.Requirements
                     .Where(r => !r.IsVoided)
                     .Select(r => r.RequirementDefinitionId).ToList();
-                                    
+
             var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
-                where j.Steps.Any(s => s.Id == tag.StepId)
-                select j).SingleOrDefaultAsync(token);
+                                 where j.Steps.Any(s => s.Id == tag.StepId)
+                                 select j).SingleOrDefaultAsync(token);
 
             if (journey == null)
             {
@@ -479,7 +479,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             {
                 return await _requirementDefinitionValidator.UsageCoversForSuppliersAsync(nonVoidedTagRequirementIds, token);
             }
-            
+
             return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(nonVoidedTagRequirementIds, token);
         }
 
@@ -488,9 +488,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             var inUse = await (from t in _context.QuerySet<Tag>()
                     .Include(t => t.Attachments)
                     .Include(t => t.Actions)
-                where t.Id == tagId &&
-                      (t.Status != PreservationStatus.NotStarted || t.Attachments.Any() || t.Actions.Any())
-                select t.Id).AnyAsync(token);
+                               where t.Id == tagId &&
+                                     (t.Status != PreservationStatus.NotStarted || t.Attachments.Any() || t.Actions.Any())
+                               select t.Id).AnyAsync(token);
 
             return inUse;
         }
@@ -525,16 +525,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
         private async Task<Tag> GetTagWithoutIncludesAsync(int tagId, CancellationToken token)
         {
             var tag = await (from t in _context.QuerySet<Tag>()
-                where t.Id == tagId
-                select t).SingleOrDefaultAsync(token);
+                             where t.Id == tagId
+                             select t).SingleOrDefaultAsync(token);
             return tag;
         }
 
         private async Task<Tag> GetTagWithRequirementsAsync(int tagId, CancellationToken token)
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
-                where t.Id == tagId
-                select t).SingleOrDefaultAsync(token);
+                             where t.Id == tagId
+                             select t).SingleOrDefaultAsync(token);
             return tag;
         }
 
@@ -542,16 +542,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
                     .ThenInclude(r => r.PreservationPeriods)
-                where t.Id == tagId
-                select t).SingleOrDefaultAsync(token);
+                             where t.Id == tagId
+                             select t).SingleOrDefaultAsync(token);
             return tag;
         }
 
         private async Task<Tag> GetTagWithAttachmentsAsync(int tagId, CancellationToken token)
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Attachments)
-                where t.Id == tagId
-                select t).SingleOrDefaultAsync(token);
+                             where t.Id == tagId
+                             select t).SingleOrDefaultAsync(token);
             return tag;
         }
 
@@ -568,14 +568,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
                 return (null, new List<int>());
             }
 
-            var nonVoidedTagRequirementIds = 
+            var nonVoidedTagRequirementIds =
                 tag.Requirements
-                    .Where(r => !r.IsVoided || 
+                    .Where(r => !r.IsVoided ||
                                 (r.IsVoided && tagRequirementIdsToBeUnvoided.Contains(r.Id)))
                     .Select(r => r.Id)
                     .Except(tagRequirementIdsToBeVoided).ToList();
-            
-            var nonVoidedRequirementDefinitionIds = 
+
+            var nonVoidedRequirementDefinitionIds =
                 tag.Requirements
                     .Where(r => nonVoidedTagRequirementIds.Contains(r.Id))
                     .Select(r => r.RequirementDefinitionId).ToList();

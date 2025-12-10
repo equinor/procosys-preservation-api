@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.RequirementTypes
 
             RuleFor(x => x.Code)
                 .MaximumLength(RequirementType.CodeLengthMax);
-            
+
             RuleFor(x => x.SortKey)
                 .Must(BePositive)
                 .WithMessage("Sort key must be positive");

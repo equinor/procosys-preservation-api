@@ -22,16 +22,16 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagJourneys
         {
             var journeys = await
                 (from journey in _context.QuerySet<Journey>()
-                    join step in _context.QuerySet<Step>()
-                        on journey.Id equals EF.Property<int>(step, "JourneyId")
-                    join tag in _context.QuerySet<Tag>()
-                        on step.Id equals tag.StepId
-                    join project in _context.QuerySet<Project>()
-                        on EF.Property<int>(tag, "ProjectId") equals project.Id
-                    where project.Name == request.ProjectName
-                    select new JourneyDto(
-                        journey.Id,
-                        journey.Title))
+                 join step in _context.QuerySet<Step>()
+                     on journey.Id equals EF.Property<int>(step, "JourneyId")
+                 join tag in _context.QuerySet<Tag>()
+                     on step.Id equals tag.StepId
+                 join project in _context.QuerySet<Project>()
+                     on EF.Property<int>(tag, "ProjectId") equals project.Id
+                 where project.Name == request.ProjectName
+                 select new JourneyDto(
+                     journey.Id,
+                     journey.Title))
                 .Distinct()
                 .ToListAsync(cancellationToken);
 

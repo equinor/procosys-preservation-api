@@ -37,7 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 true,
                 true,
                 "PoNo",
-                new List<RequirementDto> {new RequirementDto(0, null, RequirementTypeIcon.Other, default, default, false)},
+                new List<RequirementDto> { new RequirementDto(0, null, RequirementTypeIcon.Other, default, default, false) },
                 "Resp",
                 "RespDescription",
                 PreservationStatus.Active,
@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 "TagNo",
                 TagType.Standard,
                 "AAAAAAAAABA=");
-            var dut = new TagsResult(10, new List<TagDto> {tagDto});
+            var dut = new TagsResult(10, new List<TagDto> { tagDto });
             Assert.AreEqual(10, dut.MaxAvailable);
             Assert.IsNotNull(dut.Tags);
             Assert.AreEqual(1, dut.Tags.Count());

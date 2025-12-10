@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
     {
         private readonly Mock<IMediator> _mediatorMock = new Mock<IMediator>();
         private Mock<IExcelConverter> _excelConverterMock;
-        private readonly FilterDto _filterDto = new FilterDto{ProjectName = "PX"};
+        private readonly FilterDto _filterDto = new FilterDto { ProjectName = "PX" };
         private readonly SortingDto _sortingDto = new SortingDto();
         private readonly ExportDto _exportDto = new ExportDto(null, null);
         private TagsController _dut;
@@ -56,22 +56,22 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
                 });
 
             _filterDto.ProjectName = "ProjectName";
-            _filterDto.ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed};
-            _filterDto.AreaCodes = new List<string>{"A"};
+            _filterDto.ActionStatus = new List<ActionStatus> { ActionStatus.HasClosed };
+            _filterDto.AreaCodes = new List<string> { "A" };
             _filterDto.CallOffStartsWith = "B";
             _filterDto.CommPkgNoStartsWith = "C";
-            _filterDto.DisciplineCodes = new List<string>{"D"};
-            _filterDto.DueFilters = new List<DueFilterType>{DueFilterType.NextWeek};
-            _filterDto.JourneyIds = new List<int>{1};
+            _filterDto.DisciplineCodes = new List<string> { "D" };
+            _filterDto.DueFilters = new List<DueFilterType> { DueFilterType.NextWeek };
+            _filterDto.JourneyIds = new List<int> { 1 };
             _filterDto.McPkgNoStartsWith = "E";
-            _filterDto.ModeIds = new List<int>{2};
-            _filterDto.PreservationStatus = new List<PreservationStatus>{PreservationStatus.Active};
+            _filterDto.ModeIds = new List<int> { 2 };
+            _filterDto.PreservationStatus = new List<PreservationStatus> { PreservationStatus.Active };
             _filterDto.PurchaseOrderNoStartsWith = "F";
-            _filterDto.RequirementTypeIds = new List<int>{3};
-            _filterDto.ResponsibleIds = new List<int>{4};
-            _filterDto.StepIds = new List<int>{5};
+            _filterDto.RequirementTypeIds = new List<int> { 3 };
+            _filterDto.ResponsibleIds = new List<int> { 4 };
+            _filterDto.StepIds = new List<int> { 5 };
             _filterDto.StorageAreaStartsWith = "G";
-            _filterDto.TagFunctionCodes = new List<string>{"H"};
+            _filterDto.TagFunctionCodes = new List<string> { "H" };
             _filterDto.TagNoStartsWith = "I";
             _filterDto.VoidedFilter = VoidedFilterType.Voided;
 
@@ -110,7 +110,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             Assert.AreEqual(_filterDto.TagFunctionCodes.ElementAt(0), _createdQuery.Filter.TagFunctionCodes.ElementAt(0));
             Assert.AreEqual(_filterDto.TagNoStartsWith, _createdQuery.Filter.TagNoStartsWith);
             Assert.AreEqual(_filterDto.VoidedFilter, _createdQuery.Filter.VoidedFilter);
-            
+
             Assert.AreEqual(_sortingDto.Direction, _createdQuery.Sorting.Direction);
             Assert.AreEqual(_sortingDto.Property, _createdQuery.Sorting.Property);
         }

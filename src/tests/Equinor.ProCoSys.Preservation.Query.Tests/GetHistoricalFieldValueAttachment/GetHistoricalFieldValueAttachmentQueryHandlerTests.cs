@@ -72,8 +72,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
                 "TagNo",
                 "Description",
                 journey.Steps.ElementAt(0),
-                new List<TagRequirement> {requirement, requirement2});
-                
+                new List<TagRequirement> { requirement, requirement2 });
+
             context.Tags.Add(tag);
             Assert.IsNull(requirement.ActivePeriod);
             Assert.IsNull(requirement2.ActivePeriod);
@@ -90,7 +90,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
 
             Assert.IsNull(activePeriodForRequirementWithAttachmentField.PreservationRecord);
             Assert.IsNull(activePeriodForRequirementWithCheckboxField.PreservationRecord);
-            
+
             _checkboxFieldId = checkboxField.Id;
             requirement2.RecordCheckBoxValues(
                 new Dictionary<int, bool>
@@ -118,14 +118,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             _blobStorageMock
                 .Setup(b => b.GetDownloadSasUri(
                     BlobContainer,
-                    fullBlobPath, 
-                    It.IsAny<DateTimeOffset>(), 
+                    fullBlobPath,
+                    It.IsAny<DateTimeOffset>(),
                     It.IsAny<DateTimeOffset>(),
                     It.IsAny<UserDelegationKey>(),
                     It.IsAny<string>(),
                     It.IsAny<string>()))
                 .Returns(_uri);
-            
+
             _userDelegationProviderMock = new Mock<IUserDelegationProvider>();
             _userDelegationProviderMock.Setup(u => u.GetUserDelegationKey()).Returns(new Mock<UserDelegationKey>().Object);
 

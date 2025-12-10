@@ -17,25 +17,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         [TestMethod]
         public async Task GetTags_AsHacker_ShouldReturnForbidden()
             => await CrossPlantControllerTestsHelper.GetTagsAsync(
-                UserType.Hacker, 
+                UserType.Hacker,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetTags_AsAdmin_ShouldReturnForbidden()
             => await CrossPlantControllerTestsHelper.GetTagsAsync(
-                UserType.LibraryAdmin, 
+                UserType.LibraryAdmin,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetTags_AsPreserver_ShouldReturnForbidden()
             => await CrossPlantControllerTestsHelper.GetTagsAsync(
-                UserType.Preserver, 
+                UserType.Preserver,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetTags_AsPlanner_ShouldReturnForbidden()
             => await CrossPlantControllerTestsHelper.GetTagsAsync(
-                UserType.Planner, 
+                UserType.Planner,
                 HttpStatusCode.Forbidden);
 
         #endregion
@@ -50,25 +50,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         [TestMethod]
         public async Task GetActions_AsHacker_ShouldReturnForbidden()
             => await CrossPlantControllerTestsHelper.GetActionsAsync(
-                UserType.Hacker, 
+                UserType.Hacker,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetActions_AsAdmin_ShouldReturnForbidden()
             => await CrossPlantControllerTestsHelper.GetActionsAsync(
-                UserType.LibraryAdmin, 
+                UserType.LibraryAdmin,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetActions_AsPreserver_ShouldReturnForbidden()
             => await CrossPlantControllerTestsHelper.GetActionsAsync(
-                UserType.Preserver, 
+                UserType.Preserver,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetActions_AsPlanner_ShouldReturnForbidden()
             => await CrossPlantControllerTestsHelper.GetActionsAsync(
-                UserType.Planner, 
+                UserType.Planner,
                 HttpStatusCode.Forbidden);
 
         #endregion

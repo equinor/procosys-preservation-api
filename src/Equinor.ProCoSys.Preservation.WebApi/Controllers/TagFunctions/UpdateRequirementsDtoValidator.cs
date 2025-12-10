@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.TagFunctions
                 .WithMessage($"{nameof(TagFunctionRequirementDto.IntervalWeeks)} must be positive");
 
             bool RequirementMustHavePositiveInterval(TagFunctionRequirementDto dto) => dto.IntervalWeeks > 0;
-                        
+
             bool BeUniqueRequirements(IEnumerable<TagFunctionRequirementDto> requirements)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();

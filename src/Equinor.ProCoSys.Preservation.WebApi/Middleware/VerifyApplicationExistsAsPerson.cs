@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
 
         public VerifyApplicationExistsAsPerson(
             IServiceScopeFactory serviceProvider,
-            IOptionsMonitor<ApplicationOptions> options, 
+            IOptionsMonitor<ApplicationOptions> options,
             ILogger<VerifyApplicationExistsAsPerson> logger)
         {
             _serviceProvider = serviceProvider;

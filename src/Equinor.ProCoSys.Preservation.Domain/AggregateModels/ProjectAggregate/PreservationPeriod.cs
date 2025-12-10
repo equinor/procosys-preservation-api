@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Common;
-using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             : base(null)
         {
         }
-        
+
         public PreservationPeriod(string plant, int intervalWeeks, PreservationPeriodStatus status)
             : base(plant)
         {
@@ -105,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 Status = PreservationPeriodStatus.NeedsUserInput;
             }
         }
-        
+
         public void SetComment(string comment)
         {
             if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
@@ -153,10 +153,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"Can't record a NA {nameof(FieldType.Number)} value for a {field.FieldType} field");
             }
             ValidateAndPrepareForNewRecording(field);
-            
+
             AddFieldValue(new NumberValue(Plant, field, null));
         }
-        
+
         public FieldValueAttachment GetAlreadyRecordedAttachmentValueForField(Field field)
         {
             if (field.FieldType != FieldType.Attachment)
@@ -189,7 +189,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public FieldValue GetFieldValue(int fieldId)
             => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
-        
+
         public DateTime SetDueTimeUtc(int intervalWeeks)
         {
             DueTimeUtc = TimeService.UtcNow.AddWeeks(intervalWeeks);

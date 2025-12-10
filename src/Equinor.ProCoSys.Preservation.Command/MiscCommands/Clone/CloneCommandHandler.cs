@@ -53,7 +53,7 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
 
             await CloneModes(request.SourcePlant, targetPlant);
             await CloneRequirementTypes(request.SourcePlant, targetPlant);
-            
+
             // Need to save RequirementDefinitions to let EF Core set ID's on new Items
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -116,9 +116,9 @@ namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
                     targetRD = new RequirementDefinition(
                         targetRT.Plant,
                         sourceRD.Title,
-                        sourceRD.DefaultIntervalWeeks, 
+                        sourceRD.DefaultIntervalWeeks,
                         sourceRD.Usage,
-                        sourceRD.SortKey); 
+                        sourceRD.SortKey);
                     targetRT.AddRequirementDefinition(targetRD);
                 }
 

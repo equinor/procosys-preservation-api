@@ -24,11 +24,11 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DeleteTag
         {
             var project = await _projectRepository.GetProjectAndTagWithPreservationHistoryByTagIdAsync(request.TagId);
             var tag = project.Tags.Single(t => t.Id == request.TagId);
-            
+
             tag.SetRowVersion(request.RowVersion);
             project.RemoveTag(tag);
             _projectRepository.RemoveTag(tag);
-            
+
             tag.AddDomainEvent(new DeletedEvent<Tag>(tag));
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

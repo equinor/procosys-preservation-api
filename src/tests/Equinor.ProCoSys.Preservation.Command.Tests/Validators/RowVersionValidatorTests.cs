@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 
         [TestMethod]
         public void IsValid_ValidRowVersion_ShouldReturnTrue()
-        { 
+        {
             const string validRowVersion = "AAAAAAAAABA=";
 
             var result = _dut.IsValid(validRowVersion);

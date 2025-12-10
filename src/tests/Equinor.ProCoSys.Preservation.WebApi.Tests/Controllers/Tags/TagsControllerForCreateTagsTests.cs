@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
         {
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagsCommand>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int>{5}) as Result<List<int>>));
+                .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int> { 5 }) as Result<List<int>>));
             _excelConverterMock = new Mock<IExcelConverter>();
             _dut = new TagsController(_mediatorMock.Object, _excelConverterMock.Object);
         }
@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             CreateTagsCommand _createdCommand = null;
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagsCommand>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int>{5}) as Result<List<int>>))
+                .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int> { 5 }) as Result<List<int>>))
                 .Callback<IRequest<Result<List<int>>>, CancellationToken>((request, cancellationToken) =>
                 {
                     _createdCommand = request as CreateTagsCommand;
@@ -52,7 +52,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
 
             _createTagsDto.ProjectName = "ProjectName";
             _createTagsDto.StepId = 2;
-            _createTagsDto.TagNos = new List<string> {"TagNo1", "TagNo2"};
+            _createTagsDto.TagNos = new List<string> { "TagNo1", "TagNo2" };
 
             await _dut.CreateTags("", _createTagsDto);
 

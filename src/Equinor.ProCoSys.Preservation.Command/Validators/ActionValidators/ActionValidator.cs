@@ -16,16 +16,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ActionValidators
         public async Task<bool> IsClosedAsync(int actionId, CancellationToken token)
         {
             var action = await (from a in _context.QuerySet<Action>()
-                          where a.Id == actionId
-                          select a).SingleOrDefaultAsync(token);
+                                where a.Id == actionId
+                                select a).SingleOrDefaultAsync(token);
             return action != null && action.IsClosed;
         }
 
         public async Task<bool> AttachmentWithFilenameExistsAsync(int actionId, string fileName, CancellationToken token)
         {
             var action = await (from a in _context.QuerySet<Action>().Include(a => a.Attachments)
-                where a.Id == actionId
-                select a).SingleOrDefaultAsync(token);
+                                where a.Id == actionId
+                                select a).SingleOrDefaultAsync(token);
 
             return action?.GetAttachmentByFileName(fileName) != null;
         }

@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.DeleteMode
             IRowVersionValidator rowVersionValidator)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
-            
+
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingMode(command.ModeId, token))
                 .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")

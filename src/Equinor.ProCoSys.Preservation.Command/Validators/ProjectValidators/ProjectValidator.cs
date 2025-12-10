@@ -16,14 +16,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators
 
         public async Task<bool> ExistsAsync(string projectName, CancellationToken cancellationToken) =>
             await (from p in _context.QuerySet<Project>()
-                where p.Name == projectName
-                select p).AnyAsync(cancellationToken);
+                   where p.Name == projectName
+                   select p).AnyAsync(cancellationToken);
 
         public async Task<bool> IsExistingAndClosedAsync(string projectName, CancellationToken cancellationToken)
         {
             var project = await (from p in _context.QuerySet<Project>()
-                where p.Name == projectName
-                select p).SingleOrDefaultAsync(cancellationToken);
+                                 where p.Name == projectName
+                                 select p).SingleOrDefaultAsync(cancellationToken);
 
             return project != null && project.IsClosed;
         }
@@ -31,9 +31,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators
         public async Task<bool> IsClosedForTagAsync(int tagId, CancellationToken cancellationToken)
         {
             var project = await (from tag in _context.QuerySet<Tag>()
-                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
-                where tag.Id == tagId
-                select p).SingleOrDefaultAsync(cancellationToken);
+                                 join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                                 where tag.Id == tagId
+                                 select p).SingleOrDefaultAsync(cancellationToken);
 
             return project != null && project.IsClosed;
         }
@@ -41,9 +41,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators
         public async Task<bool> AllTagsInSameProjectAsync(IEnumerable<int> tagIds, CancellationToken cancellationToken)
         {
             var projectIds = await (from tag in _context.QuerySet<Tag>()
-                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
-                where tagIds.Contains(tag.Id)
-                select p.Id).ToListAsync(cancellationToken);
+                                    join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                                    where tagIds.Contains(tag.Id)
+                                    select p.Id).ToListAsync(cancellationToken);
 
             return projectIds != null && projectIds.Distinct().Count() == 1 && projectIds.Count == tagIds.Distinct().Count();
         }

@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         {
             var responsible = new Responsible(TestPlant, ResponsibleCode, "Desc");
 
-            var responsibles = new List<Responsible> { responsible};
+            var responsibles = new List<Responsible> { responsible };
 
             var dbSetMock = responsibles.AsQueryable().BuildMockDbSet();
 

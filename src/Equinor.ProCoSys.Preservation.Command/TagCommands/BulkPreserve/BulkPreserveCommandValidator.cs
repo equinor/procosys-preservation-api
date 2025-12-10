@@ -50,10 +50,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
                 var ids = tagIds.ToList();
                 return ids.Distinct().Count() == ids.Count;
             }
-            
+
             async Task<bool> BeInSameProjectAsync(IEnumerable<int> tagIds, CancellationToken token)
                 => await projectValidator.AllTagsInSameProjectAsync(tagIds, token);
-            
+
             async Task<bool> NotBeAClosedProjectForTagAsync(IEnumerable<int> tagIds, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagIds.First(), token);
 
@@ -65,7 +65,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
 
             async Task<bool> PreservationIsStartedAsync(int tagId, CancellationToken token)
                 => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
-            
+
             async Task<bool> BeReadyToBePreservedAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsReadyToBePreservedAsync(tagId, token);
         }

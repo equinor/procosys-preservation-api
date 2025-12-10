@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
                     logger.LogError(e, $"Exception handling {nameof(CreatePersonCommand)}");
                 }
             }
-            
+
             logger.LogInformation($"----- {GetType().Name} complete");
             // Call the next delegate/middleware in the pipeline
             await _next(context);

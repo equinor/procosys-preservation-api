@@ -22,12 +22,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagResponsibles
         {
             var responsibleCodes = await
                 (from responsible in _context.QuerySet<Responsible>()
-                        join step in _context.QuerySet<Step>()
-                            on responsible.Id equals step.ResponsibleId
-                        join tag in _context.QuerySet<Tag>()
-                            on step.Id equals tag.StepId
-                        join project in _context.QuerySet<Project>()
-                            on EF.Property<int>(tag, "ProjectId") equals project.Id
+                 join step in _context.QuerySet<Step>()
+                     on responsible.Id equals step.ResponsibleId
+                 join tag in _context.QuerySet<Tag>()
+                     on step.Id equals tag.StepId
+                 join project in _context.QuerySet<Project>()
+                     on EF.Property<int>(tag, "ProjectId") equals project.Id
                  where project.Name == request.ProjectName
                  select new ResponsibleDto(
                      responsible.Id,
@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagResponsibles
                      responsible.Description))
                 .Distinct()
                 .ToListAsync(cancellationToken);
-            
+
             return new SuccessResult<List<ResponsibleDto>>(responsibleCodes);
         }
     }

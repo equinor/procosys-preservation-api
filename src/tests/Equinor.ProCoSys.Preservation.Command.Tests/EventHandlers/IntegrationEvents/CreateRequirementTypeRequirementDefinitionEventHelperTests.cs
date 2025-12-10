@@ -29,7 +29,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
         // Arrange
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
-        
+
         _requirementType = new RequirementType(TestPlant, "Test Code", "Test Type Title", RequirementTypeIcon.Other, 10);
         _requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition Title", 2, RequirementUsage.ForSuppliersOnly, 1);
 
@@ -70,7 +70,7 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
         // Arrange
         _requirementDefinition.SetCreated(_person);
         _requirementDefinition.SetModified(_person);
-        
+
         // Act
         var tagRequirementEvent = await _dut.CreateEvent(_requirementType, _requirementDefinition);
         var result = tagRequirementEvent.GetType()
@@ -81,13 +81,13 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
         // Assert
         Assert.AreEqual(result, TestGuid);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _requirementDefinition.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_requirementType, _requirementDefinition);
         var result = integrationEvent.ProCoSysGuid;
@@ -95,13 +95,13 @@ public class CreateRequirementTypeRequirementDefinitionEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateRequirementDefinitionEventWithExpectedRequirementTypeGuid()
     {
         // Arrange
         var expected = _requirementType.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_requirementType, _requirementDefinition);
         var result = integrationEvent.RequirementTypeGuid;

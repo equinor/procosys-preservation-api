@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Common.Time;
-using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
     public class RequirementDefinition : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable, IHaveGuid
     {
         private readonly List<Field> _fields = new();
-        
+
         public const int TitleLengthMax = 64;
         public const int UsageMax = 32; // must be at least length of longest RequirementUsage enum
 
@@ -53,14 +53,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             {
                 throw new ArgumentNullException(nameof(field));
             }
-            
+
             if (field.Plant != Plant)
             {
                 throw new ArgumentException($"Can't relate item in {field.Plant} to item in {Plant}");
             }
 
             _fields.Add(field);
-            
+
             AddDomainEvent(new ChildAddedEvent<RequirementDefinition, Field>(this, field));
         }
 
@@ -75,14 +75,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             {
                 throw new Exception($"{nameof(field)} must be voided before delete");
             }
-            
+
             if (field.Plant != Plant)
             {
                 throw new ArgumentException($"Can't remove item in {field.Plant} from item in {Plant}");
             }
 
             _fields.Remove(field);
-            
+
             AddDomainEvent(new DeletedEvent<Field>(field));
         }
 

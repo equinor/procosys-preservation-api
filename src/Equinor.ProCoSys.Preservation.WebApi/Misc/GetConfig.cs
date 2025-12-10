@@ -11,7 +11,7 @@ public static class GetConfigExtension
     public static T GetConfig<T>(this IConfiguration configuration, string configKey)
     {
         var value = configuration.GetValue<T>(configKey);
-        if(value is null)
+        if (value is null)
         {
             throw new ArgumentException($"Missing configuration for {configKey}");
         }

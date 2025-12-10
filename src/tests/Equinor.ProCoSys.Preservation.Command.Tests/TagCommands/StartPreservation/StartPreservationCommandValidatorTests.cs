@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         [TestInitialize]
         public void Setup_OkState()
         {
-            _tagIds = new List<int> {TagId1, TagId2};
+            _tagIds = new List<int> { TagId1, TagId2 };
             _projectValidatorMock = new Mock<IProjectValidator>();
             _projectValidatorMock.Setup(p => p.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(true));
             _tagValidatorMock = new Mock<ITagValidator>();
@@ -46,12 +46,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
 
             Assert.IsTrue(result.IsValid);
         }
-        
+
         [TestMethod]
         public async Task Validate_ShouldFail_WhenNoTagsGiven()
         {
             var command = new StartPreservationCommand(new List<int>());
-            
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
@@ -62,8 +62,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         [TestMethod]
         public async Task Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new StartPreservationCommand(new List<int>{1, 1});
-            
+            var command = new StartPreservationCommand(new List<int> { 1, 1 });
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
@@ -75,7 +75,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         public async Task Validate_ShouldFail_WhenAnyTagNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -87,7 +87,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         public async Task Validate_ShouldFail_WhenAnyTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId1, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -99,7 +99,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         public async Task Validate_ShouldFail_WhenProjectForFirstTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(_tagIds.First(), default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -111,7 +111,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         public async Task Validate_ShouldFail_WhenTagsInDifferentProjects()
         {
             _projectValidatorMock.Setup(r => r.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -123,7 +123,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         public async Task Validate_ShouldFail_WhenAnyTagMissesNonVoidedRequirement()
         {
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId1, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -135,7 +135,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         public async Task Validate_ShouldFail_WhenNotReadyToBeStarted()
         {
             _tagValidatorMock.Setup(r => r.IsReadyToBeStartedAsync(TagId1, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -148,7 +148,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         {
             _projectValidatorMock.Setup(p => p.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(false));
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -161,7 +161,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservat
         {
             var command = new StartPreservationCommand(new List<int> { 1, 1 });
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);

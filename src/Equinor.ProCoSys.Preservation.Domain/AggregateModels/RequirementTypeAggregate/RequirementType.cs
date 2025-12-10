@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Common.Time;
-using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
@@ -52,17 +52,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
-            
+
             if (requirementDefinition.Plant != Plant)
             {
                 throw new ArgumentException($"Can't relate item in {requirementDefinition.Plant} to item in {Plant}");
             }
 
             _requirementDefinitions.Add(requirementDefinition);
-            
+
             AddDomainEvent(new ChildAddedEvent<RequirementType, RequirementDefinition>(this, requirementDefinition));
         }
-        
+
         public override string ToString() => Title;
 
         public void SetCreated(Person createdBy)
@@ -95,7 +95,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAg
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
-            
+
             if (!requirementDefinition.IsVoided)
             {
                 throw new Exception($"{nameof(requirementDefinition)} must be voided before delete");

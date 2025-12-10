@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
             var field = new Field(_testPlant, "", FieldType.CheckBox, 0);
 
             var dut = new FieldDetailsDto(
-                field, 
+                field,
                 new CheckBoxChecked(_testPlant, field),
                 null);
 
@@ -52,8 +52,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
             var field = new Field(_testPlant, "", FieldType.Number, 0, "mm", false);
 
             var dut = new FieldDetailsDto(
-                field, 
-                new NumberValue(_testPlant, field, _number), 
+                field,
+                new NumberValue(_testPlant, field, _number),
                 new NumberValue(_testPlant, field, _number));
 
             Assert.IsFalse(dut.ShowPrevious);
@@ -68,8 +68,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
             var field = new Field(_testPlant, "", FieldType.Number, 0, "mm", true);
 
             var dut = new FieldDetailsDto(
-                field, 
-                new NumberValue(_testPlant, field, _number), 
+                field,
+                new NumberValue(_testPlant, field, _number),
                 new NumberValue(_testPlant, field, _number));
 
             Assert.IsTrue(dut.ShowPrevious);
@@ -89,8 +89,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
             attachment.SetProtectedIdForTesting(11);
 
             var dut = new FieldDetailsDto(
-                field, 
-                new AttachmentValue(_testPlant, field, attachment), 
+                field,
+                new AttachmentValue(_testPlant, field, attachment),
                 null);
 
             var dto = dut.CurrentValue as AttachmentDetailsDto;

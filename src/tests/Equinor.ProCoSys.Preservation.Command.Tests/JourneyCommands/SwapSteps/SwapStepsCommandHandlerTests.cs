@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
@@ -46,7 +46,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
 
             _stepA = new Step(TestPlant, _stepATitle, modeMock.Object, responsibleMock.Object);
             _stepA.SetProtectedIdForTesting(stepAId);
- 
+
             journey.AddStep(_stepA);
             _sortKeyA = _stepA.SortKey;
 
@@ -81,7 +81,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             Assert.AreEqual(_sortKeyB, _stepA.SortKey);
             Assert.AreEqual(_sortKeyA, _stepB.SortKey);
         }
-        
+
         [TestMethod]
         public async Task HandlingSwapStepsCommand_ShouldSetAndReturnRowVersion()
         {

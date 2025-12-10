@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
 using Equinor.ProCoSys.PcsServiceBus.Topics;
@@ -13,8 +15,6 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Microsoft.Extensions.Options;
-using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Common.Telemetry;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {

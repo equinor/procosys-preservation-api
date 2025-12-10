@@ -8,7 +8,7 @@
             RowVersion = rowVersion;
         }
 
-        public int TagRequirementId { get;  }
+        public int TagRequirementId { get; }
         public string RowVersion { get; set; }
     }
 }

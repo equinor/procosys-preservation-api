@@ -39,7 +39,7 @@ public class CreateTagTagRequirementEventHelperTests
 
         _requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
         _tagRequirement = new TagRequirement(TestPlant, 2, _requirementDefinition);
-        
+
         var supplierMode = new Mode(TestPlant, "SUP", true);
         var responsible = new Responsible(TestPlant, "C", "D");
         var step = new Step(TestPlant, "SUP", supplierMode, responsible);
@@ -50,8 +50,8 @@ public class CreateTagTagRequirementEventHelperTests
             "",
             "Test Description",
             step,
-            new List<TagRequirement> {_tagRequirement});
-        
+            new List<TagRequirement> { _tagRequirement });
+
         _project = new Project(TestPlant, TestProjectName, "Test Project Description", TestGuid);
         _project.AddTag(tag);
 
@@ -97,7 +97,7 @@ public class CreateTagTagRequirementEventHelperTests
         // Arrange
         _tagRequirement.SetCreated(_person);
         _tagRequirement.SetModified(_person);
-        
+
         // Act
         var tagRequirementEvent = await _dut.CreateEvent(_project, _tagRequirement);
         var result = tagRequirementEvent.GetType()
@@ -108,13 +108,13 @@ public class CreateTagTagRequirementEventHelperTests
         // Assert
         Assert.AreEqual(TestGuid, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _tagRequirement.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_project, _tagRequirement);
         var result = integrationEvent.ProCoSysGuid;
@@ -122,13 +122,13 @@ public class CreateTagTagRequirementEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedRequirementDefinitionGuid()
     {
         // Arrange
         var expected = _requirementDefinition.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_project, _tagRequirement);
         var result = integrationEvent.RequirementDefinitionGuid;

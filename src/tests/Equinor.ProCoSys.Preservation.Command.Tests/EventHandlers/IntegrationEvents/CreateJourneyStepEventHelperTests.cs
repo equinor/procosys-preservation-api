@@ -45,14 +45,14 @@ public class CreateJourneyStepEventHelperTests
         mockPersonRepository.Setup(r => r.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
 
         _responsible = new Responsible(TestPlant, "C", "Test Description");
-        
+
         var responsibleRepositoryMock = new Mock<IResponsibleRepository>();
         responsibleRepositoryMock.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(_responsible);
-        
+
         _step = new Step(TestPlant, "Test Title", _mode, _responsible);
-        
+
         _dut = new CreateJourneyStepEventHelper(mockModeRepository.Object, mockPersonRepository.Object, responsibleRepositoryMock.Object);
-        
+
         _journey = new Journey(TestPlant, "Test Title");
         _journey.AddStep(_step);
     }
@@ -85,7 +85,7 @@ public class CreateJourneyStepEventHelperTests
         // Arrange
         _step.SetCreated(_person);
         _step.SetModified(_person);
-        
+
         // Act
         var tagRequirementEvent = await _dut.CreateEvent(_journey, _step);
         var result = tagRequirementEvent.GetType()
@@ -96,13 +96,13 @@ public class CreateJourneyStepEventHelperTests
         // Assert
         Assert.AreEqual(TestGuid, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateStepEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _step.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_journey, _step);
         var result = integrationEvent.ProCoSysGuid;
@@ -110,13 +110,13 @@ public class CreateJourneyStepEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateStepEventWithExpectedJourneyGuid()
     {
         // Arrange
         var expected = _journey.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_journey, _step);
         var result = integrationEvent.JourneyGuid;
@@ -124,13 +124,13 @@ public class CreateJourneyStepEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateStepEventWithExpectedModeGuid()
     {
         // Arrange
         var expected = _mode.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_journey, _step);
         var result = integrationEvent.ModeGuid;
@@ -138,13 +138,13 @@ public class CreateJourneyStepEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateStepEventWithExpectedResponsibleGuid()
     {
         // Arrange
         var expected = _responsible.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_journey, _step);
         var result = integrationEvent.ResponsibleGuid;

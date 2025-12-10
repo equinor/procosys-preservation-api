@@ -113,7 +113,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirement
                     command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                     token))
                 .WithMessage((_, req) => $"Requirement is not voided! Requirement={req.TagRequirementId}");
-            
+
             RuleForEach(command => command.NewRequirements)
                 .MustAsync((_, req, _, token) => BeAnExistingRequirementDefinitionAsync(req.RequirementDefinitionId, token))
                 .WithMessage((_, req) =>
@@ -130,89 +130,89 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagRequirement
                 CancellationToken token)
                 => requirementDefinitionIdsToBeAdded.Count == 0 ||
                    await tagValidator.AllRequirementsWillBeUniqueAsync(tagId, requirementDefinitionIdsToBeAdded, token);
-            
+
             async Task<bool> WillNotGetAnyRequirementForOtherThanSuppliersUsageAsync(
-                int tagId, 
+                int tagId,
                 List<int> tagRequirementIdsToBeUnvoided,
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
                 => !await tagValidator.RequirementWillGetAnyForOtherThanSuppliersUsageAsync(
-                    tagId, 
-                    tagRequirementIdsToBeUnvoided, 
-                    tagRequirementIdsToBeVoided, 
-                    requirementDefinitionIdsToBeAdded, 
+                    tagId,
+                    tagRequirementIdsToBeUnvoided,
+                    tagRequirementIdsToBeVoided,
+                    requirementDefinitionIdsToBeAdded,
                     token);
-            
+
             async Task<bool> RequirementUsageWillCoverForSuppliersAsync(
-                int tagId, 
+                int tagId,
                 List<int> tagRequirementIdsToBeUnvoided,
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
                 => await tagValidator.RequirementUsageWillCoverForSuppliersAsync(
-                    tagId, 
-                    tagRequirementIdsToBeUnvoided, 
-                    tagRequirementIdsToBeVoided, 
-                    requirementDefinitionIdsToBeAdded, 
+                    tagId,
+                    tagRequirementIdsToBeUnvoided,
+                    tagRequirementIdsToBeVoided,
+                    requirementDefinitionIdsToBeAdded,
                     token);
-            
+
             async Task<bool> RequirementUsageWillCoverBothForSupplierAndOtherAsync(
-                int tagId, 
+                int tagId,
                 List<int> tagRequirementIdsToBeUnvoided,
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
                 => await tagValidator.RequirementUsageWillCoverBothForSupplierAndOtherAsync(
-                    tagId, 
-                    tagRequirementIdsToBeUnvoided, 
-                    tagRequirementIdsToBeVoided, 
-                    requirementDefinitionIdsToBeAdded, 
+                    tagId,
+                    tagRequirementIdsToBeUnvoided,
+                    tagRequirementIdsToBeVoided,
+                    requirementDefinitionIdsToBeAdded,
                     token);
-            
+
             async Task<bool> RequirementUsageWillCoverForOtherThanSuppliersAsync(
-                int tagId, 
+                int tagId,
                 List<int> tagRequirementIdsToBeUnvoided,
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
                 => await tagValidator.RequirementUsageWillCoverForOtherThanSuppliersAsync(
-                    tagId, 
-                    tagRequirementIdsToBeUnvoided, 
-                    tagRequirementIdsToBeVoided, 
-                    requirementDefinitionIdsToBeAdded, 
+                    tagId,
+                    tagRequirementIdsToBeUnvoided,
+                    tagRequirementIdsToBeVoided,
+                    requirementDefinitionIdsToBeAdded,
                     token);
 
             async Task<bool> TagIsInASupplierStepAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsInASupplierStepAsync(tagId, token);
-            
+
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
-            
+
             async Task<bool> IsAnAreaTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.VerifyTagIsAreaTagAsync(tagId, token);
-            
+
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
-            
+
             async Task<bool> BeReadyForEditingAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsReadyToBeEditedAsync(tagId, token);
 
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
-            
+
             async Task<bool> NotBeAPoAreaTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.VerifyTagTypeAsync(tagId, TagType.PoArea, token);
-            
+
             async Task<bool> BeAnExistingRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
                 => await requirementDefinitionValidator.ExistsAsync(requirementDefinitionId, token);
-            
+
             async Task<bool> NotBeAVoidedRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
-            
+
             async Task<bool> BeAnExistingTagRequirementAsync(int tagId, int tagRequirementId, CancellationToken token)
                 => await tagValidator.HasRequirementAsync(tagId, tagRequirementId, token);
-            
+
             async Task<bool> BeAVoidedTagRequirementAsync(
                 int tagId,
                 int tagRequirementId,

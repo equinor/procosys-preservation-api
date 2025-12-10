@@ -2,11 +2,11 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using MediatR;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Common.Misc;
+using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 {
@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 
         public Task Handle(StepChangedEvent notification, CancellationToken cancellationToken)
         {
-            var journeys = 
+            var journeys =
                 _journeyRepository.GetJourneysByStepIdsAsync(new List<int>
                 {
                     notification.FromStepId, notification.ToStepId
@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
             var toJourney = journeys.First(j => j.Steps.Any(s => s.Id == notification.ToStepId));
             var fromStep = fromJourney.Steps.Single(s => s.Id == notification.FromStepId);
             var toStep = toJourney.Steps.Single(s => s.Id == notification.ToStepId);
-            
+
             EventType eventType;
             string description;
             if (fromJourney.Id == toJourney.Id)
@@ -46,7 +46,7 @@ namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
                 eventType = EventType.JourneyChanged;
                 description = $"{eventType.GetDescription()} - From journey '{fromJourney.Title}' / step '{fromStep.Title}' to journey '{toJourney.Title}' / step '{toStep.Title}'";
             }
-            
+
             var history = new History(notification.Plant, description, notification.SourceGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
             return Task.CompletedTask;

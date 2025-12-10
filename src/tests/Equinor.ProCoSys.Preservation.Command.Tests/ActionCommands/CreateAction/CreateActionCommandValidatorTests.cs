@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CreateActio
         [TestMethod]
         public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = await _dut.ValidateAsync(_command); 
+            var result = await _dut.ValidateAsync(_command);
 
             Assert.IsTrue(result.IsValid);
         }

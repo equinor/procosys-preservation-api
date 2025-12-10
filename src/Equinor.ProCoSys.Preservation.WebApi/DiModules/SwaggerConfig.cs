@@ -58,7 +58,7 @@ public static class SwaggerConfig
 
         builder.Services.AddFluentValidationRulesToSwagger();
     }
-    
+
     public static void UseCompletionSwagger(this IApplicationBuilder app, IConfiguration configuration)
     {
         app.UseSwagger();
@@ -74,7 +74,7 @@ public static class SwaggerConfig
             c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", configuration["Swagger:Audience"] } });
         });
     }
-    
+
     private static Dictionary<string, string> GetSwaggerScopes(this WebApplicationBuilder builder)
     {
         var scopes = builder.Configuration.GetSection("Swagger:Scopes").Get<Dictionary<string, string>>();

@@ -15,7 +15,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             {
                 ProjectName = "P",
                 DisciplineCode = "I",
-                Requirements = new List<TagRequirementDto> {new TagRequirementDto {IntervalWeeks = 2}},
+                Requirements = new List<TagRequirementDto> { new TagRequirementDto { IntervalWeeks = 2 } },
                 TagNoSuffix = "10"
             };
 
@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             {
                 ProjectName = "P",
                 DisciplineCode = "I",
-                Requirements = new List<TagRequirementDto> {new TagRequirementDto {IntervalWeeks = 2}},
+                Requirements = new List<TagRequirementDto> { new TagRequirementDto { IntervalWeeks = 2 } },
                 TagNoSuffix = "10 A"
             };
 
@@ -52,7 +52,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
                 AreaTagType = AreaTagType.PoArea,
                 ProjectName = "P",
                 DisciplineCode = "I",
-                Requirements = new List<TagRequirementDto> {new TagRequirementDto {IntervalWeeks = 2}}
+                Requirements = new List<TagRequirementDto> { new TagRequirementDto { IntervalWeeks = 2 } }
             };
 
             var result = dut.Validate(inValidCreateAreaTagDto);
@@ -70,7 +70,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
                 AreaTagType = AreaTagType.PoArea,
                 ProjectName = "P",
                 DisciplineCode = "I",
-                Requirements = new List<TagRequirementDto> {new TagRequirementDto {IntervalWeeks = 2}},
+                Requirements = new List<TagRequirementDto> { new TagRequirementDto { IntervalWeeks = 2 } },
                 PurchaseOrderCalloffCode = "X"
             };
 

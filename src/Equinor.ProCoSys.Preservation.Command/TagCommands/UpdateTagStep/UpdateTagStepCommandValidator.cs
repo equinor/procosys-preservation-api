@@ -99,16 +99,16 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
 
             async Task<bool> NotHaveRequirementsForOtherThanSupplierAsync(int tagId, CancellationToken token)
                 => !await tagValidator.RequirementHasAnyForOtherThanSuppliersUsageAsync(tagId, token);
-            
+
             async Task<bool> RequirementUsageCoversForSuppliersAsync(int tagId, CancellationToken token)
                 => await tagValidator.RequirementUsageCoversForSuppliersAsync(tagId, token);
-            
+
             async Task<bool> RequirementUsageCoversBothForSupplierAndOtherAsync(int tagId, CancellationToken token)
                 => await tagValidator.RequirementUsageCoversBothForSupplierAndOtherAsync(tagId, token);
-            
+
             async Task<bool> RequirementUsageCoversForOtherThanSuppliersAsync(int tagId, CancellationToken token)
                 => await tagValidator.RequirementUsageCoversForOtherThanSuppliersAsync(tagId, token);
-            
+
             async Task<bool> IsASupplierStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsForSupplierAsync(stepId, token);
 
@@ -120,7 +120,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep
 
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
-            
+
             async Task<bool> NotBeAPoAreaTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.VerifyTagTypeAsync(tagId, TagType.PoArea, token);
 

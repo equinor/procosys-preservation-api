@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
             _rdValidatorMock = new Mock<IRequirementDefinitionValidator>();
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd1Id, default)).Returns(Task.FromResult(true));
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(true));
-            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int> { _rd1Id, _rd2Id }, default)).Returns(Task.FromResult(true));
 
             _command = new UpdateRequirementsCommand("", "",
                 new List<RequirementForCommand>
@@ -55,7 +55,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         public async Task Validate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
         {
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -67,9 +67,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         [TestMethod]
         public async Task Validate_ShouldFail_WhenRequirementUsageForSupplierNotGiven()
         {
-            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(false));
-            _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
-            
+            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int> { _rd1Id, _rd2Id }, default)).Returns(Task.FromResult(false));
+            _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int> { _rd1Id, _rd2Id }, default)).Returns(Task.FromResult(true));
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -81,7 +81,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         public async Task Validate_ShouldFail_WhenAnyRequirementDefinitionIsVoided()
         {
             _rdValidatorMock.Setup(r => r.IsVoidedAsync(_rd2Id, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -99,7 +99,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
                     new RequirementForCommand(_rd1Id, 1),
                     new RequirementForCommand(_rd1Id, 1)
                 });
-            
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
@@ -112,7 +112,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         {
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(false));
             _rdValidatorMock.Setup(r => r.IsVoidedAsync(_rd2Id, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

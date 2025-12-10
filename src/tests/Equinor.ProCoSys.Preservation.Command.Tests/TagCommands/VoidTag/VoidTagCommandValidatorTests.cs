@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.ProCoSys.Preservation.Command.Validators;
-using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

@@ -3,10 +3,10 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
-using Newtonsoft.Json;
 using ClosedXML.Excel;
 using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Newtonsoft.Json;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {
@@ -197,7 +197,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         public static async Task<string> UpdateTagAsync(
-            UserType userType, 
+            UserType userType,
             string plant,
             int tagId,
             string remark,
@@ -494,7 +494,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var bodyPayload = new
             {
                 comment,
-                checkBoxValues = new []
+                checkBoxValues = new[]
                 {
                     new {
                         fieldId,
@@ -533,7 +533,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/Transfer", content);
-            
+
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (response.StatusCode != HttpStatusCode.OK)
@@ -556,7 +556,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/CompletePreservation", content);
-            
+
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (response.StatusCode != HttpStatusCode.OK)
@@ -579,7 +579,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/StartPreservation", content);
-            
+
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
         }
 
@@ -704,7 +704,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                return new List<int> {-1};
+                return new List<int> { -1 };
             }
 
             var jsonString = await response.Content.ReadAsStringAsync();
@@ -750,7 +750,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/Reschedule", content);
-            
+
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (response.StatusCode != HttpStatusCode.OK)
@@ -763,7 +763,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         public static async Task<string> VoidTagAsync(
-            UserType userType, 
+            UserType userType,
             string plant,
             int tagId,
             string rowVersion,
@@ -789,7 +789,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         public static async Task<string> UnvoidTagAsync(
-            UserType userType, 
+            UserType userType,
             string plant,
             int tagId,
             string rowVersion,

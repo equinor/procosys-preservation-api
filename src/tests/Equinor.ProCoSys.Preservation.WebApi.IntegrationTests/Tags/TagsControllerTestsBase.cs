@@ -68,7 +68,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 .Setup(service => service.TryGetDisciplineAsync(TestFactory.PlantWithAccess, KnownDisciplineCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSDiscipline
                 {
-                    Code = KnownDisciplineCode, Description = $"{KnownDisciplineCode} - Description"
+                    Code = KnownDisciplineCode,
+                    Description = $"{KnownDisciplineCode} - Description"
                 }));
 
             TestFactory.Instance
@@ -76,7 +77,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 .Setup(service => service.TryGetAreaAsync(TestFactory.PlantWithAccess, KnownAreaCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSArea
                 {
-                    Code = KnownAreaCode, Description = $"{KnownAreaCode} - Description"
+                    Code = KnownAreaCode,
+                    Description = $"{KnownAreaCode} - Description"
                 }));
         }
 
@@ -92,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 stepId,
                 purchaseOrderCalloffCode,
                 startPreservation);
-            
+
             return await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
         }
 

@@ -16,8 +16,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValida
 
         public async Task<bool> ExistsAsync(int requirementTypeId, CancellationToken token) =>
             await (from rt in _context.QuerySet<RequirementType>()
-                where rt.Id == requirementTypeId
-                select rt).AnyAsync(token);
+                   where rt.Id == requirementTypeId
+                   select rt).AnyAsync(token);
 
         public async Task<bool> AnyRequirementDefinitionExistsAsync(int requirementTypeId, CancellationToken token)
         {
@@ -51,30 +51,30 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValida
         public async Task<bool> IsVoidedAsync(int requirementTypeId, CancellationToken token)
         {
             var reqType = await (from rt in _context.QuerySet<RequirementType>()
-                where rt.Id == requirementTypeId
-                select rt).SingleOrDefaultAsync(token);
+                                 where rt.Id == requirementTypeId
+                                 select rt).SingleOrDefaultAsync(token);
             return reqType != null && reqType.IsVoided;
         }
 
         public async Task<bool> ExistsWithSameCodeAsync(string code, CancellationToken token) =>
             await (from rt in _context.QuerySet<RequirementType>()
-                where rt.Code == code
-                select rt).AnyAsync(token);
+                   where rt.Code == code
+                   select rt).AnyAsync(token);
 
         public async Task<bool> ExistsWithSameTitleAsync(string title, CancellationToken token) =>
             await (from rt in _context.QuerySet<RequirementType>()
-                where rt.Title == title
-                select rt).AnyAsync(token);
+                   where rt.Title == title
+                   select rt).AnyAsync(token);
 
         public async Task<bool> ExistsWithSameCodeInAnotherTypeAsync(int requirementTypeId, string code, CancellationToken token) =>
             await (from rt in _context.QuerySet<RequirementType>()
-                where rt.Code == code && rt.Id != requirementTypeId
-                select rt).AnyAsync(token);
+                   where rt.Code == code && rt.Id != requirementTypeId
+                   select rt).AnyAsync(token);
 
         public async Task<bool> ExistsWithSameTitleInAnotherTypeAsync(int requirementTypeId, string title, CancellationToken token) =>
             await (from rt in _context.QuerySet<RequirementType>()
-                where rt.Title == title && rt.Id != requirementTypeId
-                select rt).AnyAsync(token);
+                   where rt.Title == title && rt.Id != requirementTypeId
+                   select rt).AnyAsync(token);
 
         public async Task<bool> AnyRequirementDefinitionExistsWithSameTitleAsync(
             int requirementTypeId,

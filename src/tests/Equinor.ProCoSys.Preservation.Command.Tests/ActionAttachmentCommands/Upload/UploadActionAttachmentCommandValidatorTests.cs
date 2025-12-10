@@ -1,9 +1,9 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload;
+using Equinor.ProCoSys.Preservation.Command.Validators.ActionValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
-using Equinor.ProCoSys.Preservation.Command.Validators.ActionValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.U
         [TestMethod]
         public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = await _dut.ValidateAsync(_commandWithoutOverwrite); 
+            var result = await _dut.ValidateAsync(_commandWithoutOverwrite);
 
             Assert.IsTrue(result.IsValid);
         }

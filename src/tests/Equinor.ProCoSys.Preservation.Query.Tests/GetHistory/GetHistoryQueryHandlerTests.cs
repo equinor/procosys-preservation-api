@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistory
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
-            { 
+            {
                 var dut = new GetHistoryQueryHandler(context);
                 var result = await dut.Handle(_query, default);
 
@@ -91,7 +91,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistory
                 Assert.AreEqual(0, result.Data.Count);
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetHistoryQuery_ShouldReturnNotFound_WhenTagNotFound()
         {

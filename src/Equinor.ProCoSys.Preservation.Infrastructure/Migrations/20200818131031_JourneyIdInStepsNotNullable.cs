@@ -7,7 +7,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.Sql("delete from Steps where JourneyId is NULL");
-            
+
             migrationBuilder.DropForeignKey(
                 name: "FK_Steps_Journeys_JourneyId",
                 table: "Steps");

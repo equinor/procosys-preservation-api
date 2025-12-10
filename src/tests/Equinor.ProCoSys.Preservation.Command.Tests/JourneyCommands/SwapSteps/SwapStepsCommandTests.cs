@@ -9,8 +9,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var stepA = new StepIdAndRowVersion ( 2, "AAAAAAAAABA=");
-            var stepB = new StepIdAndRowVersion (3, "AAAAAAAACBA=");
+            var stepA = new StepIdAndRowVersion(2, "AAAAAAAAABA=");
+            var stepB = new StepIdAndRowVersion(3, "AAAAAAAACBA=");
             var dut = new SwapStepsCommand(1, stepA.Id, stepA.RowVersion, stepB.Id, stepB.RowVersion);
 
             Assert.AreEqual(1, dut.JourneyId);

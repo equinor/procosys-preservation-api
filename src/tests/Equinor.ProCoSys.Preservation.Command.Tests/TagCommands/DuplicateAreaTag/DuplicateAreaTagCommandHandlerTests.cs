@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             stepMock.SetupGet(s => s.Id).Returns(_stepId);
-                        
+
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
             journeyRepositoryMock
                 .Setup(x => x.GetStepByStepIdAsync(_stepId))
@@ -56,16 +56,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             _rd2Mock = new Mock<RequirementDefinition>();
             _rd2Mock.SetupGet(rd => rd.Id).Returns(_rdId2);
             _rd2Mock.SetupGet(rd => rd.Plant).Returns(TestPlant);
-            
+
             var rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {_rdId1, _rdId2}))
-                .Returns(Task.FromResult(new List<RequirementDefinition> {_rd1Mock.Object, _rd2Mock.Object}));
+                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> { _rdId1, _rdId2 }))
+                .Returns(Task.FromResult(new List<RequirementDefinition> { _rd1Mock.Object, _rd2Mock.Object }));
 
             _req1 = new TagRequirement(TestPlant, _interval1, _rd1Mock.Object);
             _req2 = new TagRequirement(TestPlant, _interval2, _rd2Mock.Object);
-            
-            _project = new Project(TestPlant, "TestProjectName", "" ,ProjectProCoSysGuid );
+
+            _project = new Project(TestPlant, "TestProjectName", "", ProjectProCoSysGuid);
             _sourceTag = new Tag(
                 TestPlant,
                 TagType.SiteArea,
@@ -73,7 +73,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
                 "TagNo",
                 "Desc",
                 stepMock.Object,
-                new List<TagRequirement> {_req1, _req2});
+                new List<TagRequirement> { _req1, _req2 });
             _sourceTag.SetArea("AC", "AD");
             _sourceTag.SetDiscipline("DC", "DD");
 
@@ -84,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             projectRepoMock.Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(_sourceTagId)).Returns(Task.FromResult(_sourceTag));
             projectRepoMock
                 .Setup(r => r.GetProjectOnlyByTagIdAsync(_sourceTagId)).Returns(Task.FromResult(_project));
-            
+
             var disciplineCode = "D";
             var disciplineApiServiceMock = new Mock<IDisciplineApiService>();
             disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode, It.IsAny<CancellationToken>()))
@@ -103,7 +103,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
                     Description = _areaDescription
                 }));
 
-            _command = new DuplicateAreaTagCommand(_sourceTagId,TagType.SiteArea, disciplineCode, areaCode, "-01", "Desc", "Rem", "SA");
+            _command = new DuplicateAreaTagCommand(_sourceTagId, TagType.SiteArea, disciplineCode, areaCode, "-01", "Desc", "Rem", "SA");
 
             _dut = new DuplicateAreaTagCommandHandler(
                 projectRepoMock.Object,
@@ -114,7 +114,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
                 disciplineApiServiceMock.Object,
                 areaApiServiceMock.Object);
         }
-        
+
         [TestMethod]
         public async Task HandlingDuplicateAreaTagCommand_ShouldAddTagToExistingProject()
         {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -68,10 +68,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyRepositoryMock
-                .Setup(repo => repo.GetJourneysByStepIdsAsync(new List<int>{FromStepId, ToStepIdInJourney1}))
+                .Setup(repo => repo.GetJourneysByStepIdsAsync(new List<int> { FromStepId, ToStepIdInJourney1 }))
                 .Returns(Task.FromResult(new List<Journey> { journey1, journey1 }));
             _journeyRepositoryMock
-                .Setup(repo => repo.GetJourneysByStepIdsAsync(new List<int>{FromStepId, ToStepIdInJourney2}))
+                .Setup(repo => repo.GetJourneysByStepIdsAsync(new List<int> { FromStepId, ToStepIdInJourney2 }))
                 .Returns(Task.FromResult(new List<Journey> { journey1, journey2 }));
             _dut = new StepChangedEventHandler(_historyRepositoryMock.Object, _journeyRepositoryMock.Object);
         }

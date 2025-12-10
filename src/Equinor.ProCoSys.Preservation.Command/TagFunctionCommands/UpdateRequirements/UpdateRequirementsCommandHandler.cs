@@ -69,7 +69,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequir
                 tagFunctionCode,
                 registerCode,
                 cancellationToken);
-            
+
             if (pcsTagFunction == null)
             {
                 return null;

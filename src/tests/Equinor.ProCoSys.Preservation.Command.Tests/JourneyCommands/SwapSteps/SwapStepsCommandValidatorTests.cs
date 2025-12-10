@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
 {
     [TestClass]
     public class SwapStepsCommandValidatorTests
-    { 
+    {
         private SwapStepsCommand _command;
         private SwapStepsCommandValidator _dut;
         private Mock<IJourneyValidator> _journeyValidatorMock;
@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         public async Task Validate_ShouldFail_WhenStepANotExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepAId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         public async Task Validate_ShouldFail_WhenStepBNotExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

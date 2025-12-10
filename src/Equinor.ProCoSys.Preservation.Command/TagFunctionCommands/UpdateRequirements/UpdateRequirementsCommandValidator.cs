@@ -36,13 +36,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequir
 
             async Task<bool> NotBeAVoidedRequirementDefinitionAsync(RequirementForCommand requirement, CancellationToken token)
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirement.RequirementDefinitionId, token);
-                        
+
             bool BeUniqueRequirements(IEnumerable<RequirementForCommand> requirements)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return reqIds.Distinct().Count() == reqIds.Count;
             }
-            
+
             async Task<bool> RequirementUsageIsForAllJourneysAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();

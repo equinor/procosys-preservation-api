@@ -40,7 +40,7 @@ public class ProjectTagAddedEventHandlerTests
         _dut = new ProjectTagAddedEventHandler(mockConverter.Object, mockPublisher.Object);
 
         var requirementDefinition = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
-        var tagRequirement= new TagRequirement(TestPlant, 2, requirementDefinition);
+        var tagRequirement = new TagRequirement(TestPlant, 2, requirementDefinition);
 
         var stepMock = new Mock<Step>();
         stepMock.SetupGet(s => s.Plant).Returns(TestPlant);

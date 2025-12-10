@@ -36,5 +36,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public string TagFunctionCode { get; set; }
         public string TagNo { get; set; }
         public TagType TagType { get; set; }
-        public string RowVersion { get; set; }    }
+        public string RowVersion { get; set; }
+    }
 }

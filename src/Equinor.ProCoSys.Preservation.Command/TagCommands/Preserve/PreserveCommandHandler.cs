@@ -34,9 +34,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve
             var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
 
             tag.Preserve(currentUser);
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             return new SuccessResult<Unit>(Unit.Value);
         }
     }

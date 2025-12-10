@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
             {
                 MaxSizeMb = 2,
                 BlobContainer = BlobContainer,
-                BlockedFileSuffixes = new[] {".exe", ".zip"}
+                BlockedFileSuffixes = new[] { ".exe", ".zip" }
             };
             blobStorageOptionsMock
                 .Setup(x => x.Value)
@@ -104,7 +104,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
             await _dut.Handle(_command, default);
 
             // Assert
-            _blobStorageMock.Verify(b  => b.DeleteAsync(BlobContainer, p, default), Times.Once);
+            _blobStorageMock.Verify(b => b.DeleteAsync(BlobContainer, p, default), Times.Once);
         }
     }
 }

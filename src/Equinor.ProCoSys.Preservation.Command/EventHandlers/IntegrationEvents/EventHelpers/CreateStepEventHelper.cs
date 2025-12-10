@@ -13,7 +13,7 @@ public class CreateStepEventHelper(
     public async Task<StepEvent> CreateEvent(Step entity)
     {
         var journeys = await journeyRepository.GetJourneysByStepIdsAsync([entity.Id]);
-        
+
         return await createActionEventHelper.CreateEvent(journeys.First(), entity);
     }
 }

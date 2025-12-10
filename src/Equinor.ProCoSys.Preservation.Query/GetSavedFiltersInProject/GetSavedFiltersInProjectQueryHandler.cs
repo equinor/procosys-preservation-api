@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
@@ -29,18 +29,18 @@ namespace Equinor.ProCoSys.Preservation.Query.GetSavedFiltersInProject
             CancellationToken cancellationToken)
         {
             var project = await (from p in _context.QuerySet<Project>()
-                where p.Name == request.ProjectName
-                select p).SingleOrDefaultAsync(cancellationToken);
+                                 where p.Name == request.ProjectName
+                                 select p).SingleOrDefaultAsync(cancellationToken);
 
             if (project == null)
             {
                 return new SuccessResult<List<SavedFilterDto>>(new List<SavedFilterDto>());
             }
-            
+
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var person = await (from p in _context.QuerySet<Person>().Include(p => p.SavedFilters)
-                where p.Guid == currentUserOid
-                select p).SingleAsync(cancellationToken);
+                                where p.Guid == currentUserOid
+                                select p).SingleAsync(cancellationToken);
 
             var savedFilterDtos = person.SavedFilters.Where(sf => sf.ProjectId == project.Id)
                     .Select(savedFilter => new SavedFilterDto(

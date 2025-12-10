@@ -8,7 +8,7 @@
             IntervalWeeks = intervalWeeks;
         }
 
-        public int RequirementDefinitionId { get;  }
+        public int RequirementDefinitionId { get; }
         public int IntervalWeeks { get; }
     }
 }

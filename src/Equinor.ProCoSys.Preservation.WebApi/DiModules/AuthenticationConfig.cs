@@ -12,8 +12,8 @@ public static class AuthenticationConfig
     public static void ConfigureAuthentication(this WebApplicationBuilder builder, out TokenCredential credential)
     {
         var devOnLocalhost = builder.Configuration.IsDevOnLocalhost();
-        
-        credential = new DefaultAzureCredential(includeInteractiveCredentials:devOnLocalhost);
+
+        credential = new DefaultAzureCredential(includeInteractiveCredentials: devOnLocalhost);
 
         builder.Services.AddSingleton(credential);
 

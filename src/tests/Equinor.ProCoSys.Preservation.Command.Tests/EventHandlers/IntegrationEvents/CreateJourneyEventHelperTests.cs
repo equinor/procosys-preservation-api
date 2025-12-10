@@ -32,16 +32,16 @@ public class CreateJourneyEventHelperTests
         // Arrange
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
-        
+
         _project = new Project(TestPlant, TestProject, "Test Description", Guid.NewGuid());
-        
+
         _journey = new Journey(TestPlant, "Test Title", _project);
-        
+
         _person = new Person(TestGuid, "Test", "Person");
 
         var personRepositoryMock = new Mock<IPersonRepository>();
         personRepositoryMock.Setup(x => x.GetReadOnlyByIdAsync(It.IsAny<int>())).ReturnsAsync(_person);
-        
+
         _dut = new CreateJourneyEventHelper(personRepositoryMock.Object);
     }
 
@@ -61,7 +61,7 @@ public class CreateJourneyEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateActionEventExpectedProjectValue()
     {
@@ -72,13 +72,13 @@ public class CreateJourneyEventHelperTests
         // Assert
         Assert.AreEqual(_project, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateActionEventExpectedProCoSysGuidValue()
     {
         // Arrange
         var expected = _journey.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_journey);
         var result = integrationEvent.ProCoSysGuid;
@@ -86,13 +86,13 @@ public class CreateJourneyEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateActionEventExpectedCreatedByGuidValue()
     {
         // Arrange
         _journey.SetCreated(_person);
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_journey);
         var result = integrationEvent.CreatedByGuid;
@@ -113,13 +113,13 @@ public class CreateJourneyEventHelperTests
         // Assert
         Assert.AreEqual(TestTime, integrationEvent.CreatedAtUtc);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateActionEventWithModifiedByGuid()
     {
         // Arrange
         _journey.SetModified(_person);
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_journey);
         var result = integrationEvent.ModifiedByGuid;

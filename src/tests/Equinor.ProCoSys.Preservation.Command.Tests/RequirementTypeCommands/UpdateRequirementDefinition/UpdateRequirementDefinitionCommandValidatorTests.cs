@@ -52,24 +52,24 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
 
             _reqDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
             _reqDefinitionValidatorMock
-                .Setup(r => r.AllExcludedFieldsAreVoidedAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
+                .Setup(r => r.AllExcludedFieldsAreVoidedAsync(_requirementDefinitionId, new List<int> { _updateFieldId }, default))
                 .Returns(Task.FromResult(true));
 
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(f => f.VerifyFieldTypeAsync(_updateFieldId, _fieldType, default)).Returns(Task.FromResult(true));
 
             _command = new UpdateRequirementDefinitionCommand(
-                _requirementTypeId, 
-                _requirementDefinitionId, 
-                _sortKey, 
-                _usage, 
-                _title, 
-                _defaultIntervalWeeks, 
-                _rowVersion, 
-                _updatedFields, 
+                _requirementTypeId,
+                _requirementDefinitionId,
+                _sortKey,
+                _usage,
+                _title,
+                _defaultIntervalWeeks,
+                _rowVersion,
+                _updatedFields,
                 _newFields);
             _dut = new UpdateRequirementDefinitionCommandValidator(
-                _reqTypeValidatorMock.Object, 
+                _reqTypeValidatorMock.Object,
                 _reqDefinitionValidatorMock.Object,
                 _fieldValidatorMock.Object);
         }
@@ -133,7 +133,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
                 .Setup(r => r.OtherRequirementDefinitionExistsWithSameTitleAsync(
                     _requirementTypeId,
                     _requirementDefinitionId,
-                    _title, 
+                    _title,
                     fieldTypesConcatenated,
                     default)).Returns(Task.FromResult(true));
 
@@ -160,7 +160,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         public async Task Validate_ShouldFail_WhenFieldToDeleteIsNotVoided()
         {
             _reqDefinitionValidatorMock
-                .Setup(r => r.AllExcludedFieldsAreVoidedAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
+                .Setup(r => r.AllExcludedFieldsAreVoidedAsync(_requirementDefinitionId, new List<int> { _updateFieldId }, default))
                 .Returns(Task.FromResult(false));
 
             var result = await _dut.ValidateAsync(_command);
@@ -174,7 +174,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
         public async Task Validate_ShouldFail_WhenFieldToDeleteIsInUse()
         {
             _reqDefinitionValidatorMock
-                .Setup(r => r.AnyExcludedFieldsIsInUseAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
+                .Setup(r => r.AnyExcludedFieldsIsInUseAsync(_requirementDefinitionId, new List<int> { _updateFieldId }, default))
                 .Returns(Task.FromResult(true));
 
             var result = await _dut.ValidateAsync(_command);

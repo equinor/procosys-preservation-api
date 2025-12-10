@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         public void Constructor_ShouldSetProperties_WithRequirements()
         {
             var req = new RequirementForCommand(1, 2);
-            var dut = new UpdateRequirementsCommand("TFC", "RC", new List<RequirementForCommand> {req});
+            var dut = new UpdateRequirementsCommand("TFC", "RC", new List<RequirementForCommand> { req });
 
             Assert.AreEqual("TFC", dut.TagFunctionCode);
             Assert.AreEqual("RC", dut.RegisterCode);

@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
@@ -23,14 +23,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionDetails
             var dto = await
                 (from a in _context.QuerySet<Action>().Include(a => a.Attachments)
                      // also join tag to return null if request.TagId not exists
-                     join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
+                 join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
                  join createdUser in _context.QuerySet<Person>()
                      on EF.Property<int>(a, "CreatedById") equals createdUser.Id
                  from modifiedUser in _context.QuerySet<Person>()
                      .Where(p => p.Id == EF.Property<int>(a, "ModifiedById")).DefaultIfEmpty() //left join
                  from closedUser in _context.QuerySet<Person>()
                      .Where(p => p.Id == EF.Property<int>(a, "ClosedById")).DefaultIfEmpty() // left join
-                     where tag.Id == request.TagId && a.Id == request.ActionId
+                 where tag.Id == request.TagId && a.Id == request.ActionId
                  select new
                  {
                      Action = a,

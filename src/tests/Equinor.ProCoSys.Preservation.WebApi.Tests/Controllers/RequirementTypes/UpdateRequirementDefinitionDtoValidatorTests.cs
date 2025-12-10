@@ -17,16 +17,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
         [TestInitialize]
         public void Setup()
         {
-            _newField = new FieldDto {Label = "New", Unit = "U"};
-            _updateField = new UpdateFieldDto {Label = "Upd", Id = 2, Unit = "U"};
+            _newField = new FieldDto { Label = "New", Unit = "U" };
+            _updateField = new UpdateFieldDto { Label = "Upd", Id = 2, Unit = "U" };
             _dut = new UpdateRequirementDefinitionDtoValidator();
             _dto = new UpdateRequirementDefinitionDto
             {
                 DefaultIntervalWeeks = 1,
-                NewFields = new List<FieldDto>{_newField},
+                NewFields = new List<FieldDto> { _newField },
                 Title = "T",
                 SortKey = 2,
-                UpdatedFields = new List<UpdateFieldDto>{_updateField}
+                UpdatedFields = new List<UpdateFieldDto> { _updateField }
             };
         }
 
@@ -51,7 +51,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
         [TestMethod]
         public void Fail_WhenTitleIsTooLong()
         {
-            _dto.Title = new string('x', RequirementDefinition.TitleLengthMax + 1); 
+            _dto.Title = new string('x', RequirementDefinition.TitleLengthMax + 1);
 
             var result = _dut.Validate(_dto);
 
@@ -91,7 +91,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
             Assert.IsFalse(result.IsValid);
             Assert.IsTrue(result.Errors.Single().ErrorMessage == $"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
         }
-        
+
         [TestMethod]
         public void Fail_WhenUpdateFieldLabelIsNull()
         {
@@ -133,7 +133,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
                 Label = _newField.Label
             };
             _dto.NewFields.Add(secondField);
-            
+
             var result = _dut.Validate(_dto);
 
             Assert.IsFalse(result.IsValid);
@@ -148,7 +148,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
                 Label = _updateField.Label
             };
             _dto.UpdatedFields.Add(secondField);
-            
+
             var result = _dut.Validate(_dto);
 
             Assert.IsFalse(result.IsValid);
@@ -159,7 +159,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
         public void Fail_WhenUpdateFieldLabelMatchNewFieldLabel()
         {
             _updateField.Label = _newField.Label;
-            
+
             var result = _dut.Validate(_dto);
 
             Assert.IsFalse(result.IsValid);
@@ -170,7 +170,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
         public void Fail_WhenNewFieldLabelMatchUpdateFieldLabel()
         {
             _newField.Label = _updateField.Label;
-            
+
             var result = _dut.Validate(_dto);
 
             Assert.IsFalse(result.IsValid);
@@ -186,7 +186,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
                 Id = _updateField.Id
             };
             _dto.UpdatedFields.Add(secondField);
-            
+
             var result = _dut.Validate(_dto);
 
             Assert.IsFalse(result.IsValid);
@@ -196,7 +196,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
         [TestMethod]
         public void Fail_SortKeyIsZero()
         {
-            _dto.SortKey = 0; 
+            _dto.SortKey = 0;
 
             var result = _dut.Validate(_dto);
 
@@ -207,7 +207,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementType
         [TestMethod]
         public void Fail_DefaultIntervalWeeksIsZero()
         {
-            _dto.DefaultIntervalWeeks = 0; 
+            _dto.DefaultIntervalWeeks = 0;
 
             var result = _dut.Validate(_dto);
 

@@ -49,18 +49,18 @@ public class JourneyDeletedEventHandlerTests
         // Assert
         CollectionAssert.Contains(types, typeof(JourneyDeleteEvent));
     }
-    
+
     [TestMethod]
     public async Task Handle_ShouldSendStepDeleteEvent()
     {
         // Arrange
         var journey = new Journey(TestPlant, "Test Title");
-        
+
         var mode = new Mode(TestPlant, "Test Title", true);
         var responsible = new Responsible(TestPlant, "C", "Test Description");
         var step = new Step(TestPlant, "Test Title 1", mode, responsible);
         journey.AddStep(step);
-        
+
         var domainEvent = new DeletedEvent<Journey>(journey);
 
         // Act

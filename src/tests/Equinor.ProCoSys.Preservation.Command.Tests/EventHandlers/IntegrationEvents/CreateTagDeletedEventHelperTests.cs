@@ -26,17 +26,17 @@ public class CreateTagDeletedEventHelperTests
         // Arrange
         var stepMock = new Mock<Step>();
         stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
-        
+
         var requirementDefinition1Mock = new Mock<RequirementDefinition>();
         requirementDefinition1Mock.SetupGet(r => r.Plant).Returns(TestPlant);
         requirementDefinition1Mock.SetupGet(r => r.Id).Returns(1);
         var requirement1 = new TagRequirement(TestPlant, 1, requirementDefinition1Mock.Object);
-        
+
         var requirementDefinition2Mock = new Mock<RequirementDefinition>();
         requirementDefinition2Mock.SetupGet(r => r.Plant).Returns(TestPlant);
         requirementDefinition2Mock.SetupGet(r => r.Id).Returns(2);
         var requirement2 = new TagRequirement(TestPlant, 2, requirementDefinition2Mock.Object);
-        
+
         _tag = new Tag(
             TestPlant,
             TagType.Standard,
@@ -45,10 +45,10 @@ public class CreateTagDeletedEventHelperTests
             "",
             stepMock.Object,
             [requirement1, requirement2]);
-        
+
         var action1 = new Action(TestPlant, "Test Action 1", "Test Action Description", null);
         _tag.AddAction(action1);
-        
+
         var action2 = new Action(TestPlant, "Test Action 2", "Test Action Description", null);
         _tag.AddAction(action2);
 
@@ -57,7 +57,7 @@ public class CreateTagDeletedEventHelperTests
 
         var mockProjectRepository = new Mock<IProjectRepository>();
         mockProjectRepository.Setup(x => x.GetProjectOnlyByTagGuidAsync(It.IsAny<Guid>())).ReturnsAsync(project);
-        
+
         _dut = new CreateTagDeleteEventHelper(mockProjectRepository.Object);
     }
 
@@ -78,13 +78,13 @@ public class CreateTagDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvents_ShouldCreateTagDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _tag.Guid;
-        
+
         // Act
         var deletionEvent = await _dut.CreateEvents(_tag);
         var result = deletionEvent.TagDeleteEvent.ProCoSysGuid;
@@ -92,7 +92,7 @@ public class CreateTagDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvents_ShouldCreateIntegrationEventsForChildActions()
     {
@@ -102,7 +102,7 @@ public class CreateTagDeletedEventHelperTests
         // Assert
         Assert.AreEqual(2, integrationEvents.ActionDeleteEvents.Count());
     }
-    
+
     [TestMethod]
     public async Task CreateEvents_ShouldCreateIntegrationEventsForChildTagRequirements()
     {

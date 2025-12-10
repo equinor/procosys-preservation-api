@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Common.Time;
-using Equinor.ProCoSys.Common;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate
 {
@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggreg
             {
                 throw new ArgumentNullException(nameof(requirement));
             }
-            
+
             if (requirement.Plant != Plant)
             {
                 throw new ArgumentException($"Can't relate item in {requirement.Plant} to item in {Plant}");
@@ -76,7 +76,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggreg
             {
                 throw new ArgumentNullException(nameof(requirement));
             }
-            
+
             if (requirement.Plant != Plant)
             {
                 throw new ArgumentException($"Can't remove item in {requirement.Plant} from item in {Plant}");

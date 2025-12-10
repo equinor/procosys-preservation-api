@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             {
                 MaxSizeMb = 2,
                 BlobContainer = "bc",
-                BlockedFileSuffixes = new[] {".exe", ".zip"}
+                BlockedFileSuffixes = new[] { ".exe", ".zip" }
             };
             blobStorageOptionsMock
                 .Setup(x => x.Value)
@@ -57,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual(result.Errors[0].ErrorMessage, "'File' must not be empty.");
         }
-        
+
         [TestMethod]
         public void Fail_WhenFileNameNotExists()
         {
@@ -72,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual(result.Errors[0].ErrorMessage, "Filename not given!");
         }
-        
+
         [TestMethod]
         public void Fail_WhenFileNameIsTooLong()
         {

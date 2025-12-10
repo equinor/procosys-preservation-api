@@ -21,9 +21,9 @@ namespace Equinor.ProCoSys.Preservation.Query.CheckAreaTagNo
             var areaTagDto = new AreaTagDto(tagNo)
             {
                 Exists = await (from tag in _context.QuerySet<Tag>()
-                    join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
-                    where tag.TagNo == tagNo && p.Name == request.ProjectName
-                    select p).AnyAsync(cancellationToken)
+                                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                                where tag.TagNo == tagNo && p.Name == request.ProjectName
+                                select p).AnyAsync(cancellationToken)
             };
             return new SuccessResult<AreaTagDto>(areaTagDto);
         }

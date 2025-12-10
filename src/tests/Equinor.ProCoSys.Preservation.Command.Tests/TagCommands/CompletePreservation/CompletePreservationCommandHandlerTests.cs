@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
             var step1Mock = new Mock<Step>();
             step1Mock.SetupGet(s => s.Plant).Returns(TestPlant);
             step1Mock.SetupGet(s => s.Id).Returns(stepId1);
-            
+
             var step2Mock = new Mock<Step>();
             step2Mock.SetupGet(s => s.Plant).Returns(TestPlant);
             step2Mock.SetupGet(s => s.Id).Returns(stepId2);
@@ -82,7 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
             {
                 _tag1, _tag2
             };
-            
+
             var tagIds = new List<int> { tagId1, tagId2 };
             var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2) };
 
@@ -94,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
             journeyRepoMock
                 .Setup(r => r.GetJourneysByStepIdsAsync(new List<int> { stepId2 }))
                 .Returns(Task.FromResult(new List<Journey> { journey }));
-            
+
             _command = new CompletePreservationCommand(tagIdsWithRowVersion);
 
             _dut = new CompletePreservationCommandHandler(projectRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
@@ -110,7 +110,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CompletePreser
 
             Assert.AreEqual(PreservationStatus.Completed, _tag1.Status);
             Assert.AreEqual(PreservationStatus.Completed, _tag2.Status);
-            
+
             Assert.IsNull(_tag1.NextDueTimeUtc);
             Assert.IsNull(_tag2.NextDueTimeUtc);
         }

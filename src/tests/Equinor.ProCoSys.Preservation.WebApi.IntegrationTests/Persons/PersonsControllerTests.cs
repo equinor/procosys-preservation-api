@@ -15,7 +15,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Persons
 
             // Act
             var filter = await PersonsControllerTestsHelper.CreateAndGetFilterAsync(
-                UserType.Preserver, 
+                UserType.Preserver,
                 TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess,
                 title);
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Persons
                 TestFactory.PlantWithAccess,
                 filter.Id,
                 newTitle,
-                Guid.NewGuid().ToString(), 
+                Guid.NewGuid().ToString(),
                 false,
                 filter.RowVersion);
 

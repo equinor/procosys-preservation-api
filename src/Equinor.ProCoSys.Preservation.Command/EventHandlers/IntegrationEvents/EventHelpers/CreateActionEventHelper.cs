@@ -21,7 +21,7 @@ public class CreateActionEventHelper : ICreateEventHelper<Action, ActionEvent>
     public async Task<ActionEvent> CreateEvent(Action entity)
     {
         var tag = await _projectRepository.GetTagByActionGuidAsync(entity.Guid);
-        
+
         return await _createActionEventHelper.CreateEvent(tag, entity);
     }
 }

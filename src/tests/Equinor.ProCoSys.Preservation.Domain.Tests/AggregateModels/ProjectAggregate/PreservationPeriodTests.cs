@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {
@@ -261,14 +261,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual(expectedNextDueTimeUtc, dut.DueTimeUtc);
         }
-        
+
         [TestMethod]
         public void SetModified_ShouldAddPlantEntityModifiedEvent()
         {
             // Arrange
             var dut = new PreservationPeriod(TestPlant, 1, PreservationPeriodStatus.ReadyToBePreserved);
             var person = new Person(Guid.Empty, "Espen", "Askeladd");
-            
+
             // Act
             dut.SetModified(person);
             var eventTypes = dut.DomainEvents.Select(e => e.GetType()).ToList();

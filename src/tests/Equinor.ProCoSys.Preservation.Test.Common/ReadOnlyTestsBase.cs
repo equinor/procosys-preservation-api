@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
         protected const string TestPlant = "PCS$PlantA";
         protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
 
-        
+
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IPlantProvider> _plantProviderMock;
         protected IPlantProvider _plantProvider;
@@ -123,7 +123,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
 
         protected Project AddProject(PreservationContext context, string name, string description, bool isClosed = false)
         {
-            var project = new Project(TestPlant, name, description,Guid.NewGuid());
+            var project = new Project(TestPlant, name, description, Guid.NewGuid());
             if (isClosed)
             {
                 project.Close();
@@ -134,13 +134,13 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
         }
 
         protected Tag AddTag(
-            PreservationContext context, 
-            Project parentProject, 
+            PreservationContext context,
+            Project parentProject,
             TagType tagType,
             Guid proCoSysGuid,
-            string tagNo, 
-            string description, 
-            Step step, 
+            string tagNo,
+            string description,
+            Step step,
             IEnumerable<TagRequirement> requirements)
         {
             var tag = new Tag(TestPlant, tagType, proCoSysGuid, tagNo, description, step, requirements);
@@ -305,14 +305,14 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
 
                 testDataSet.Project2.AddTag(tag);
             }
-            
+
             context.SaveChangesAsync().Wait();
-            
+
             foreach (var tag in context.Tags)
             {
                 context.History.Add(new History(TestPlant, $"Description-{Guid.NewGuid()}", tag.Guid, ObjectType.Tag, EventType.TagCreated));
             }
-            
+
             context.SaveChangesAsync().Wait();
 
             return testDataSet;

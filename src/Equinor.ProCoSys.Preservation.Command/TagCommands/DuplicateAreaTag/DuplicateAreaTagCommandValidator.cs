@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
-        
+
             async Task<bool> BeAnExistingSourceTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
 

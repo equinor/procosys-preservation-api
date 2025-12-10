@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTag
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
             _requirement = new TagRequirement(TestPlant, _intervalWeeks, rdMock.Object);
-            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement> {_requirement})
+            _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object, new List<TagRequirement> { _requirement })
             {
                 StorageArea = _oldStorageArea,
                 Remark = _oldRemark
@@ -71,7 +71,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTag
             Assert.AreEqual(_newStorageArea, _tag.StorageArea);
             Assert.AreEqual(_newRemark, _tag.Remark);
         }
-                        
+
         [TestMethod]
         public async Task HandlingUpdateModeCommand_ShouldSetAndReturnRowVersion()
         {

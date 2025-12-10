@@ -20,7 +20,7 @@ public class RequirementTypeEvent : IRequirementTypeEventV1
     public int SortKey { get; init; }
 
     public DateTime CreatedAtUtc { get; init; }
-    public Guid CreatedByGuid { get; init;  }
+    public Guid CreatedByGuid { get; init; }
     public DateTime? ModifiedAtUtc { get; init; }
     public Guid? ModifiedByGuid { get; init; }
 }

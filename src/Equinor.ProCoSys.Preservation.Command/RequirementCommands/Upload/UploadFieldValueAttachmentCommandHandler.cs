@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.BlobStorage;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
         private readonly IOptionsSnapshot<BlobStorageOptions> _blobStorageOptions;
 
         public UploadFieldValueAttachmentCommandHandler(
-            IProjectRepository projectRepository, 
+            IProjectRepository projectRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
                 await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirement.RequirementDefinitionId);
 
             var attachment = requirement.GetAlreadyRecordedAttachment(request.FieldId, requirementDefinition);
-            
+
             string fullBlobPath;
             if (attachment == null)
             {
@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
                 fullBlobPath = attachment.GetFullBlobPath();
                 await _azureBlobService.DeleteAsync(
                     _blobStorageOptions.Value.BlobContainer,
-                    fullBlobPath, 
+                    fullBlobPath,
                     cancellationToken);
                 attachment.SetFileName(request.FileName);
             }
@@ -66,10 +66,10 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
             fullBlobPath = attachment.GetFullBlobPath();
             await _azureBlobService.UploadAsync(
                 _blobStorageOptions.Value.BlobContainer,
-                fullBlobPath, 
+                fullBlobPath,
                 request.Content,
                 "application/octet-stream",
-                true, 
+                true,
                 cancellationToken);
 
             requirement.RecordAttachment(attachment, request.FieldId, requirementDefinition);

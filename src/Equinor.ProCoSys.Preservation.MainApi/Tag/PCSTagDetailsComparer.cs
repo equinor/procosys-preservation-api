@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             {
                 return true;
             }
-                
+
             return false;
         }
 

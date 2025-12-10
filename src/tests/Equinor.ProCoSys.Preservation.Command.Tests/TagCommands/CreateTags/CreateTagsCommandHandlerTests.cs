@@ -41,7 +41,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
 
         private PCSTagDetails _mainTagDetails1;
         private PCSTagDetails _mainTagDetails2;
-        
+
         private CreateTagsCommand _command;
         private CreateTagsCommandHandler _dut;
 
@@ -55,7 +55,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
             _modeRepositoryMock
                 .Setup(r => r.GetByIdAsync(ModeId))
                 .Returns(Task.FromResult(_modeMock.Object));
-            
+
             // Arrange
             _step = new Step(TestPlant, "S", _modeMock.Object, new Responsible(TestPlant, "RC", "RD"));
             _step.SetProtectedIdForTesting(StepId);
@@ -81,8 +81,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
             rdMock2.SetupGet(x => x.Id).Returns(ReqDefId2);
             rdMock2.SetupGet(x => x.Plant).Returns(TestPlant);
             _rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2}))
-                .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
+                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> { ReqDefId1, ReqDefId2 }))
+                .Returns(Task.FromResult(new List<RequirementDefinition> { rdMock1.Object, rdMock2.Object }));
 
             _mainTagDetails1 = new PCSTagDetails
             {
@@ -121,19 +121,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
                 ProjectDescription = TestProjectDescription
             };
 
-            IList<PCSTagDetails> mainTagDetailList = new List<PCSTagDetails> {_mainTagDetails1, _mainTagDetails2};
+            IList<PCSTagDetails> mainTagDetailList = new List<PCSTagDetails> { _mainTagDetails1, _mainTagDetails2 };
             _tagApiServiceMock = new Mock<ITagApiService>();
             _tagApiServiceMock
                 .Setup(x => x.GetTagDetailsAsync(
                     TestPlant,
                     TestProjectName,
-                    new List<string>{TestTagNo1, TestTagNo2},
+                    new List<string> { TestTagNo1, TestTagNo2 },
                     It.IsAny<CancellationToken>(),
                     false))
                 .Returns(Task.FromResult(mainTagDetailList));
 
             _command = new CreateTagsCommand(
-                new List<string>{TestTagNo1, TestTagNo2}, 
+                new List<string> { TestTagNo1, TestTagNo2 },
                 TestProjectName,
                 _step.Id,
                 new List<RequirementForCommand>
@@ -143,7 +143,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
                 },
                 "Remark",
                 "SA");
-            
+
             _dut = new CreateTagsCommandHandler(
                 _projectRepositoryMock.Object,
                 _journeyRepositoryMock.Object,
@@ -191,7 +191,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(2, result.Data.Count);
-            
+
             var tags = _projectAddedToRepository.Tags;
             Assert.AreEqual(2, tags.Count);
             AssertTagProperties(_command, _mainTagDetails1, tags.First());
@@ -205,14 +205,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
             var project = new Project(TestPlant, TestProjectName, "", Guid.NewGuid());
             _projectRepositoryMock.Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);
-            
+
             // Act
             var result = await _dut.Handle(_command, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(2, result.Data.Count);
-            
+
             var tags = project.Tags;
             Assert.AreEqual(2, tags.Count);
             AssertTagProperties(_command, _mainTagDetails1, tags.First());
@@ -224,7 +224,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateTags
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

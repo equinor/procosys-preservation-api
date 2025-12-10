@@ -26,8 +26,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             {
                 throw new Exception("Could not determine request headers");
             }
-            
-            if (headers.TryGetValue(PlantHeader, out var header)) 
+
+            if (headers.TryGetValue(PlantHeader, out var header))
             {
                 var plant = header.ToString().ToUpperInvariant();
                 plantSetter.SetPlant(plant);

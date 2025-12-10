@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
             var _reqId = 21;
 
             _command = new DeleteFieldValueAttachmentCommand(
-                _tagId, 
+                _tagId,
                 _reqId,
                 _attachmentFieldId);
 
@@ -70,15 +70,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
             rtRepositoryMock
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
                 .Returns(Task.FromResult(_requirementDefinition.Object));
-            
+
             _blobStorageMock = new Mock<IAzureBlobService>();
-            
+
             var blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
             {
                 MaxSizeMb = 2,
                 BlobContainer = _blobContainer,
-                BlockedFileSuffixes = new[] {".exe", ".zip"}
+                BlockedFileSuffixes = new[] { ".exe", ".zip" }
             };
             blobStorageOptionsMock
                 .Setup(x => x.Value)
@@ -102,7 +102,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
 
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             Assert.AreEqual(0, _requirement.ActivePeriod.FieldValues.Count);
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, _requirement.ActivePeriod.Status);
@@ -138,7 +138,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

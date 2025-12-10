@@ -16,7 +16,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.VoidStep
         private Mock<IJourneyValidator> _journeyValidatorMock;
         private Mock<IStepValidator> _stepValidatorMock;
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
-        
+
         private int _journeyId = 2;
         private int _stepId = 1;
         private readonly string _rowVersion = "AAAAAAAAJ00=";
@@ -43,12 +43,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.VoidStep
 
             Assert.IsTrue(result.IsValid);
         }
-        
+
         [TestMethod]
         public async Task Validate_ShouldFail_WhenStepNotExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

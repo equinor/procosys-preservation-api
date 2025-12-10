@@ -37,7 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
             {
                 MaxSizeMb = 2,
                 BlobContainer = BlobContainer,
-                BlockedFileSuffixes = new[] {".exe", ".zip"}
+                BlockedFileSuffixes = new[] { ".exe", ".zip" }
             };
             blobStorageOptionsMock
                 .Setup(x => x.Value)

@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve
             ITagValidator tagValidator)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
-            
+
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag='{GetTagDetails(command.TagId)}'")

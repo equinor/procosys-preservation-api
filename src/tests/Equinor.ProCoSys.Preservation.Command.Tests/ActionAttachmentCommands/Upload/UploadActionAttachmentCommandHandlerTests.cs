@@ -39,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.U
             {
                 MaxSizeMb = 2,
                 BlobContainer = _blobContainer,
-                BlockedFileSuffixes = new[] {".exe", ".zip"}
+                BlockedFileSuffixes = new[] { ".exe", ".zip" }
             };
             blobStorageOptionsMock
                 .Setup(x => x.Value)
@@ -130,13 +130,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.U
             // Assert
             var attachment = _action.Attachments.Single();
             var p = attachment.GetFullBlobPath();
-            _blobStorageMock.Verify(b 
+            _blobStorageMock.Verify(b
                 => b.UploadAsync(
-                    _blobContainer, 
-                    p, 
+                    _blobContainer,
+                    p,
                     It.IsAny<Stream>(),
                     "application/octet-stream",
-                    _commandWithoutOverwrite.OverwriteIfExists, 
+                    _commandWithoutOverwrite.OverwriteIfExists,
                     default), Times.Once);
         }
     }

@@ -18,7 +18,7 @@ public class PreservationPeriodsEvent : IPreservationPeriodEventV1
     public DateTime DueTimeUtc { get; init; }
     public string Comment { get; init; }
     public DateTime? PreservedAtUtc { get; init; }
-    public Guid? PreservedByGuid { get; init;}
+    public Guid? PreservedByGuid { get; init; }
     public bool? BulkPreserved { get; init; }
 
     public DateTime CreatedAtUtc { get; init; }

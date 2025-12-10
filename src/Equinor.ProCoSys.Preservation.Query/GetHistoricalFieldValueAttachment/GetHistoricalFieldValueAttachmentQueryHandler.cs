@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.BlobStorage;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Common;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Query.UserDelegationProvider;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -33,8 +33,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetHistoricalFieldValueAttachment
                         .ThenInclude(r => r.PreservationPeriods)
                         .ThenInclude(p => p.FieldValues)
                         .ThenInclude(fv => fv.FieldValueAttachment)
-                    where t.Id == request.TagId
-                    select t).SingleOrDefaultAsync(cancellationToken);
+                 where t.Id == request.TagId
+                 select t).SingleOrDefaultAsync(cancellationToken);
 
             if (tag == null)
             {

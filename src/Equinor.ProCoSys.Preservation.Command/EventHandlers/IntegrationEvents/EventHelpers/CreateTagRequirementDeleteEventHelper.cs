@@ -11,7 +11,7 @@ public static class CreateTagRequirementDeleteEventHelper
     {
         var tagRequirementDeleteEvent = new TagRequirementDeleteEvent(entity.Guid, entity.Plant, project.Name);
         var preservationPeriodDeleteEvents = entity.PreservationPeriods.Select(p => new PreservationPeriodDeleteEvent(p.Guid, entity.Plant, project.Name));
-        
+
         return new EventCollectionDeleteTagRequirement(tagRequirementDeleteEvent, preservationPeriodDeleteEvents);
     }
 }

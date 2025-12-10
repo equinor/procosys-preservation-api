@@ -17,7 +17,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValida
         Task<bool> ExistsWithSameCodeInAnotherTypeAsync(int requirementTypeId, string code, CancellationToken token);
         Task<bool> ExistsWithSameTitleInAnotherTypeAsync(int requirementTypeId, string title, CancellationToken token);
         Task<bool> AnyRequirementDefinitionExistsWithSameTitleAsync(
-            int requirementTypeId, 
+            int requirementTypeId,
             string reqDefTitle,
             IList<FieldType> fieldTypes,
             CancellationToken token);

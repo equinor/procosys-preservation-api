@@ -22,13 +22,13 @@ namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagFunctions
         {
             var tagFunctions = await
                 (from tag in _context.QuerySet<Tag>()
-                    join project in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals project.Id
-                    join tagFunction in _context.QuerySet<TagFunction>() on tag.TagFunctionCode equals tagFunction.Code
-                    where project.Name == request.ProjectName
-                          && _context.QuerySet<TagFunctionRequirement>().Any(tfr => EF.Property<int>(tfr, "TagFunctionId") == tagFunction.Id)
-                    select new TagFunctionCodeDto(
-                        tagFunction.Code,
-                        tagFunction.Description)
+                 join project in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals project.Id
+                 join tagFunction in _context.QuerySet<TagFunction>() on tag.TagFunctionCode equals tagFunction.Code
+                 where project.Name == request.ProjectName
+                       && _context.QuerySet<TagFunctionRequirement>().Any(tfr => EF.Property<int>(tfr, "TagFunctionId") == tagFunction.Id)
+                 select new TagFunctionCodeDto(
+                     tagFunction.Code,
+                     tagFunction.Description)
                     )
                 .Distinct()
                 .ToListAsync(cancellationToken);

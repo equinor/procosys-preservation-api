@@ -29,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
         [TestInitialize]
         public void Setup_OkState()
         {
-            _tagIds = new List<int> {TagId1, TagId2};
+            _tagIds = new List<int> { TagId1, TagId2 };
             _tagIdsWithRowVersion = new List<IdAndRowVersion>
             {
                 new IdAndRowVersion(TagId1, RowVersion1),
@@ -60,36 +60,36 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
 
             Assert.IsTrue(result.IsValid);
         }
-        
+
         [TestMethod]
         public async Task Validate_ShouldFail_WhenWeeksToLow()
         {
             var command = new RescheduleCommand(_tagIdsWithRowVersion, 0, RescheduledDirection.Later, "Comment");
-            
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Rescheduling must be in range of 1 to {RescheduleCommandValidator.MaxRescheduleWeeks} week(s)!"));
         }
-        
+
         [TestMethod]
         public async Task Validate_ShouldFail_WhenWeeksToHigh()
         {
             var command = new RescheduleCommand(_tagIdsWithRowVersion, RescheduleCommandValidator.MaxRescheduleWeeks + 1, RescheduledDirection.Later, "Comment");
-            
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Rescheduling must be in range of 1 to {RescheduleCommandValidator.MaxRescheduleWeeks} week(s)!"));
         }
-        
+
         [TestMethod]
         public async Task Validate_ShouldFail_WhenNoTagsGiven()
         {
             var command = new RescheduleCommand(new List<IdAndRowVersion>(), 1, RescheduledDirection.Later, "Comment");
-            
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
@@ -104,8 +104,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
                 new List<IdAndRowVersion>
                 {
                     new IdAndRowVersion(1, null), new IdAndRowVersion(1, null)
-                },1, RescheduledDirection.Later, "Comment");
-            
+                }, 1, RescheduledDirection.Later, "Comment");
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
@@ -117,7 +117,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
         public async Task Validate_ShouldFail_WhenAnyTagNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -129,7 +129,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
         public async Task Validate_ShouldFail_WhenAnyTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId1, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -141,7 +141,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
         public async Task Validate_ShouldFail_WhenProjectForAnyTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -153,7 +153,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
         public async Task Validate_ShouldFail_WhenNotReadyToBeRescheduled()
         {
             _tagValidatorMock.Setup(r => r.IsReadyToBeRescheduledAsync(TagId1, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -166,7 +166,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
         {
             _projectValidatorMock.Setup(p => p.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(false));
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -181,7 +181,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
             {
                 new IdAndRowVersion(1, RowVersion1),
                 new IdAndRowVersion(1, RowVersion2)
-            }, 
+            },
             1, RescheduledDirection.Later, "Comment");
             new RescheduleCommand(_tagIdsWithRowVersion, 1, RescheduledDirection.Later, "Comment");
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));

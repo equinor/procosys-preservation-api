@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
 using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         private Mock<ITagFunctionRepository> _tfRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
         private Mock<ITagFunctionApiService> _tagFunctionApiServiceMock;
-        
+
         private UpdateRequirementsCommand _commandWithTwoRequirements;
         private UpdateRequirementsCommand _commandWithoutRequirements;
         private UpdateRequirementsCommandHandler _dut;
@@ -48,10 +48,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
             rdMock2.SetupGet(x => x.Id).Returns(ReqDefId2);
             rdMock2.SetupGet(x => x.Plant).Returns(TestPlant);
             _reqDef2 = rdMock2.Object;
-            
+
             _rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2}))
-                .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
+                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> { ReqDefId1, ReqDefId2 }))
+                .Returns(Task.FromResult(new List<RequirementDefinition> { rdMock1.Object, rdMock2.Object }));
 
             _tagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
             _tagFunctionApiServiceMock.Setup(t => t.TryGetTagFunctionAsync(TestPlant, TagFunctionCode, RegisterCode, It.IsAny<CancellationToken>()))
@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
                     new RequirementForCommand(ReqDefId2, Interval2),
                 });
             _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null);
-            
+
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
             _tfRepositoryMock
                 .Setup(x => x.Add(It.IsAny<TagFunction>()))
@@ -201,7 +201,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
         {
             // Act
             await _dut.Handle(_commandWithTwoRequirements, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

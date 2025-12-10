@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
@@ -170,7 +170,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
             Assert.AreEqual(_newShowPrevious1, field.ShowPrevious);
             Assert.IsTrue(field.IsVoided);
         }
-        
+
         [TestMethod]
         public async Task HandlingUpdateRequirementDefinitionCommand_ShouldAddChildModifiedFieldEvent()
         {

@@ -51,7 +51,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteStep
         public async Task Validate_ShouldFail_WhenStepNotExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -63,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteStep
         public async Task Validate_ShouldFail_WhenStepNotVoided()
         {
             _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -75,7 +75,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.DeleteStep
         public async Task Validate_ShouldFail_WhenAnyStepInJourneyIsInUse()
         {
             _journeyValidatorMock.Setup(r => r.HasAnyStepInJourneyATagAsync(_journeyId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

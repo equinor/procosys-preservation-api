@@ -35,7 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 var tf = AddTagFunction(context, _tagFunctionCode, _registerCode);
                 var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R", RequirementTypeIcon.Other);
                 tf.AddRequirement(new TagFunctionRequirement(TestPlant, 4, rt.RequirementDefinitions.First()));
-                
+
                 context.SaveChangesAsync().Wait();
 
                 _tagApiServiceMock = new Mock<ITagApiService>();
@@ -79,7 +79,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     }
                 };
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, _testDataSet.Project1.Name, new List<string>{_tagFunctionCodeRegisterCodePair}, It.IsAny<CancellationToken>()))
+                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, _testDataSet.Project1.Name, new List<string> { _tagFunctionCodeRegisterCodePair }, It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(_apiTags));
                 _query = new SearchTagsByTagFunctionQuery(_testDataSet.Project1.Name);
             }
@@ -116,7 +116,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 Assert.AreEqual(ResultType.NotFound, result.ResultType);
             }
         }
-        
+
         [TestMethod]
         public async Task Handle_ShouldReturnNotFound_WhenNoTagFunctionWithRequirement_BecauseOfVoidedTagFunction()
         {
@@ -174,7 +174,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, _testDataSet.Project1.Name, new List<string>{_tagFunctionCodeRegisterCodePair}, It.IsAny<CancellationToken>()))
+                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, _testDataSet.Project1.Name, new List<string> { _tagFunctionCodeRegisterCodePair }, It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult<IList<PCSTagOverview>>(null));
 
                 var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
@@ -191,7 +191,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, "Project XYZ", new List<string>{_tagFunctionCodeRegisterCodePair}, It.IsAny<CancellationToken>()))
+                    .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, "Project XYZ", new List<string> { _tagFunctionCodeRegisterCodePair }, It.IsAny<CancellationToken>()))
                     .Returns(Task.FromResult(_apiTags));
 
                 var query = new SearchTagsByTagFunctionQuery("Project XYZ");

@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
         public BulkPreserveCommand(IEnumerable<int> tagIds) => TagIds = tagIds ?? new List<int>();
 
         public IEnumerable<int> TagIds { get; }
-        
+
         public int TagId
         {
             get

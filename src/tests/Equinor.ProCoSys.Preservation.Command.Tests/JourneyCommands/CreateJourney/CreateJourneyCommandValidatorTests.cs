@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJour
         public async Task Validate_ShouldFail_WhenJourneyWithSameTitleAlreadyExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsWithSameTitleAsync(_title, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

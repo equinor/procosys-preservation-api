@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve
         public PreserveCommandValidator(IProjectValidator projectValidator, ITagValidator tagValidator)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
-            
+
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
@@ -23,9 +23,9 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve
                 .MustAsync((command, token) => PreservationIsStartedAsync(command.TagId, token))
                 .WithMessage(command => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={command.TagId}")
                 .MustAsync((command, token) => RequirementIsReadyToBePreservedAsync(command.TagId, command.RequirementId, token))
-                .WithMessage(command  =>
+                .WithMessage(command =>
                     $"Tag doesn't have this requirement ready to be preserved! Tag={command.TagId}. Requirement={command.RequirementId}");
-            
+
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
@@ -39,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve
                 => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
 
             async Task<bool> RequirementIsReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken token)
-                =>  await tagValidator.RequirementIsReadyToBePreservedAsync(tagId, requirementId, token);
+                => await tagValidator.RequirementIsReadyToBePreservedAsync(tagId, requirementId, token);
         }
     }
 }

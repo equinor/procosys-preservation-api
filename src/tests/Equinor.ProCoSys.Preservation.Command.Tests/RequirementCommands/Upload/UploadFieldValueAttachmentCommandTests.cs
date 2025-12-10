@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
             var _reqId = 21;
 
             _command = new UploadFieldValueAttachmentCommand(
-                _tagId, 
+                _tagId,
                 _reqId,
                 _attachmentFieldId,
                 _fileName,
@@ -73,15 +73,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
             rtRepositoryMock
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
                 .Returns(Task.FromResult(_requirementDefinition.Object));
-            
+
             _blobStorageMock = new Mock<IAzureBlobService>();
-            
+
             var blobStorageOptionsMock = new Mock<IOptionsSnapshot<BlobStorageOptions>>();
             var options = new BlobStorageOptions
             {
                 MaxSizeMb = 2,
                 BlobContainer = _blobContainer,
-                BlockedFileSuffixes = new[] {".exe", ".zip"}
+                BlockedFileSuffixes = new[] { ".exe", ".zip" }
             };
             blobStorageOptionsMock
                 .Setup(x => x.Value)
@@ -105,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
 
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             Assert.AreEqual(1, _requirement.ActivePeriod.FieldValues.Count);
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, _requirement.ActivePeriod.Status);
@@ -134,10 +134,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
             var p = attachmentValue.FieldValueAttachment.GetFullBlobPath();
             _blobStorageMock.Verify(b => b.UploadAsync(
                 _blobContainer,
-                p, 
+                p,
                 It.IsAny<Stream>(),
                 "application/octet-stream",
-                true, 
+                true,
                 default), Times.Once);
         }
 
@@ -178,7 +178,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
         {
             // Act
             await _dut.Handle(_command, default);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }

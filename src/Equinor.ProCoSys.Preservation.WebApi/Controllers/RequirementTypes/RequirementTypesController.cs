@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
@@ -13,7 +14,6 @@ using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequir
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
-using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Query.GetAllRequirementTypes;
 using Equinor.ProCoSys.Preservation.Query.GetRequirementTypeById;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
@@ -208,20 +208,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.RequirementTypes
         {
             var updatedFields = dto.UpdatedFields?.Select(f =>
                 new UpdateFieldsForCommand(
-                    f.Id, 
-                    f.Label, 
-                    f.FieldType, 
-                    f.SortKey, 
+                    f.Id,
+                    f.Label,
+                    f.FieldType,
+                    f.SortKey,
                     f.IsVoided,
-                    f.RowVersion, 
-                    f.Unit, 
+                    f.RowVersion,
+                    f.Unit,
                     f.ShowPrevious)).ToList();
             var newFields = dto.NewFields?.Select(f =>
                 new FieldsForCommand(
-                    f.Label, 
-                    f.FieldType, 
-                    f.SortKey, 
-                    f.Unit, 
+                    f.Label,
+                    f.FieldType,
+                    f.SortKey,
+                    f.Unit,
                     f.ShowPrevious)).ToList();
 
             var command = new UpdateRequirementDefinitionCommand(

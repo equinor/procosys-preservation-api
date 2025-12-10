@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStep;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
@@ -64,11 +64,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             var tagIds = new List<int> { tagId1, tagId2 };
-            var tagIdsWithRowVersion = new List<IdAndRowVersion> { 
-                new IdAndRowVersion(tagId1, RowVersion1), 
-                new IdAndRowVersion(tagId2, RowVersion2) 
+            var tagIdsWithRowVersion = new List<IdAndRowVersion> {
+                new IdAndRowVersion(tagId1, RowVersion1),
+                new IdAndRowVersion(tagId2, RowVersion2)
             };
-            
+
             projectRepositoryMock
                 .Setup(r => r.GetTagsOnlyByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(new List<Tag> { _stdTag, _poAreaTag }));
@@ -99,7 +99,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTagStep
         public async Task HandlingUpdateTagStepCommand_ShouldThrowException_WhenUpdatePoTagToNonSupplierStep()
         {
             _toStepMock.SetupGet(s => s.IsSupplierStep).Returns(false);
-            
+
             await Assert.ThrowsExceptionAsync<Exception>(() =>
                 _dut.Handle(_command, default)
             );

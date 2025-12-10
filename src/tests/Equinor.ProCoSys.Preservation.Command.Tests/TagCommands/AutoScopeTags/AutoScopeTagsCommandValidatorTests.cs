@@ -34,15 +34,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             _projectValidatorMock = new Mock<IProjectValidator>();
 
             _command = new AutoScopeTagsCommand(
-                new List<string>{_tagNo1, _tagNo2}, 
+                new List<string> { _tagNo1, _tagNo2 },
                 _projectName,
                 _stepId,
                 null,
                 null);
 
             _dut = new AutoScopeTagsCommandValidator(
-                _tagValidatorMock.Object, 
-                _stepValidatorMock.Object, 
+                _tagValidatorMock.Object,
+                _stepValidatorMock.Object,
                 _projectValidatorMock.Object);
         }
 
@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public async Task Validate_ShouldFail_WhenAnyTagAlreadyExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagNo2, _projectName, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -70,7 +70,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public async Task Validate_ShouldFail_WhenProjectExistsButClosed()
         {
             _projectValidatorMock.Setup(r => r.IsExistingAndClosedAsync(_projectName, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -82,7 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public async Task Validate_ShouldFail_WhenStepNotExists()
         {
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -94,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public async Task Validate_ShouldFail_WhenStepIsVoided()
         {
             _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -106,12 +106,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public async Task Validate_ShouldFail_WhenNoTagNosGiven()
         {
             var command = new AutoScopeTagsCommand(
-                new List<string>(), 
+                new List<string>(),
                 _projectName,
                 _stepId,
                 null,
                 null);
-            
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
@@ -123,12 +123,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public async Task Validate_ShouldFail_WhenNoTagNosNotUnique()
         {
             var command = new AutoScopeTagsCommand(
-                new List<string>{"X","x"}, 
+                new List<string> { "X", "x" },
                 _projectName,
                 _stepId,
                 null,
                 null);
-            
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);
@@ -141,7 +141,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         {
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(false));
             _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -152,14 +152,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         public async Task Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagNo2, _projectName, default)).Returns(Task.FromResult(true));
-            
+
             var command = new AutoScopeTagsCommand(
-                new List<string>{_tagNo1, _tagNo1, _tagNo2}, 
+                new List<string> { _tagNo1, _tagNo1, _tagNo2 },
                 _projectName,
                 _stepId,
                 null,
                 null);
-            
+
             var result = await _dut.ValidateAsync(command);
 
             Assert.IsFalse(result.IsValid);

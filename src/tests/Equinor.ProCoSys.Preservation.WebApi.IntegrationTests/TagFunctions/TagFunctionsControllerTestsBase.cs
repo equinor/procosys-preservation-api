@@ -116,7 +116,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.TagFunctions
                     registerCode,
                     tagFunction.RowVersion);
             }
-            
+
             return tagFunction.RowVersion;
         }
 

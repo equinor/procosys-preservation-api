@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
                 .WithMessage(command => $"Step doesn't exist! Step={command.StepId}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step is voided! Step={command.StepId}");
-                        
+
             bool BeUniqueTagNos(IEnumerable<string> tagNos)
             {
                 var lowerTagNos = tagNos.Select(t => t.ToLower()).ToList();

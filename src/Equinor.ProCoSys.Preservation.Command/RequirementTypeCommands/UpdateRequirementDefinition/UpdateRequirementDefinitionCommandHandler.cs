@@ -17,7 +17,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRe
         private readonly IPlantProvider _plantProvider;
 
         public UpdateRequirementDefinitionCommandHandler(
-            IRequirementTypeRepository requirementTypeRepository, 
+            IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider)
         {
@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 fieldToUpdate.ShowPrevious = f.ShowPrevious;
                 fieldToUpdate.SortKey = f.SortKey;
                 fieldToUpdate.SetRowVersion(f.RowVersion);
-                
+
                 requirementDefinition.AddDomainEvent(new ChildModifiedEvent<RequirementDefinition, Field>(requirementDefinition, fieldToUpdate));
             }
 

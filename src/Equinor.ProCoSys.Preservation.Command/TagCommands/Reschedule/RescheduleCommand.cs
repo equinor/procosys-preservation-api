@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule
         }
 
         public IEnumerable<IdAndRowVersion> Tags { get; }
-        
+
         public int TagId
         {
             get

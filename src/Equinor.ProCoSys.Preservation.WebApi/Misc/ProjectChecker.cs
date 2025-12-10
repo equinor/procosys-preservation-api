@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Caches;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using MediatR;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Misc

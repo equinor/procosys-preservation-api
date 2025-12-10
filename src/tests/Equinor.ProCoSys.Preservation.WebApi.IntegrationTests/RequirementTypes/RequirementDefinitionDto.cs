@@ -13,6 +13,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
         public int SortKey { get; set; }
         public bool NeedsUserInput { get; set; }
         public IEnumerable<FieldDetailsDto> Fields { get; set; }
-        public string RowVersion { get; set;  }
+        public string RowVersion { get; set; }
     }
 }

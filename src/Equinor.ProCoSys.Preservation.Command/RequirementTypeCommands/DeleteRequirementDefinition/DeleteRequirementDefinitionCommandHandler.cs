@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.DeleteRe
         {
             var requirementType = await _requirementTypeRepository.GetByIdAsync(request.RequirementTypeId);
             var requirementDefinition = requirementType.RequirementDefinitions.Single(rd => rd.Id == request.RequirementDefinitionId);
-            
+
             requirementDefinition.SetRowVersion(request.RowVersion);
             requirementType.RemoveRequirementDefinition(requirementDefinition);
             _requirementTypeRepository.RemoveRequirementDefinition(requirementDefinition);

@@ -49,13 +49,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
                 _personRepositoryMock.Object,
                 UnitOfWorkMock.Object);
         }
-        
+
         [TestMethod]
         public async Task HandlingCreatePersonCommand_ShouldAddPersonToRepository()
         {
             // Act
             var result = await _dut.Handle(_command, default);
-            
+
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(Unit.Value, result.Data);
@@ -69,7 +69,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
         {
             // Act
             await _dut.Handle(_command, CancellationToken.None);
-            
+
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(CancellationToken.None), Times.Once);
         }

@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Auth.Caches;
+using Equinor.ProCoSys.Auth.Permission;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.ProCoSys.Common;
-using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant;
 using Equinor.ProCoSys.Preservation.Test.Common;
@@ -19,9 +22,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
-using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Auth.Caches;
-using Equinor.ProCoSys.Auth.Permission;
 
 namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
 {
@@ -38,8 +38,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
         private readonly PlantProviderForTest _plantProvider = new PlantProviderForTest(null);
         private readonly Mock<IPermissionCache> _permissionCacheMock = new Mock<IPermissionCache>();
 
-        private readonly AccessablePlant _plantA = new AccessablePlant {Id = "PCS$A", Title = "A"};
-        private readonly AccessablePlant _plantB = new AccessablePlant {Id = "PCS$B", Title = "B"};
+        private readonly AccessablePlant _plantA = new AccessablePlant { Id = "PCS$A", Title = "A" };
+        private readonly AccessablePlant _plantB = new AccessablePlant { Id = "PCS$B", Title = "B" };
         private Project _projectA;
         private Project _projectB;
         private Action _openAction;
@@ -53,7 +53,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
         {
             _permissionCacheMock.Setup(p => p.GetPlantTitleForCurrentUserAsync(_plantA.Id, It.IsAny<CancellationToken>())).Returns(Task.FromResult(_plantA.Title));
             _permissionCacheMock.Setup(p => p.GetPlantTitleForCurrentUserAsync(_plantB.Id, It.IsAny<CancellationToken>())).Returns(Task.FromResult(_plantB.Title));
-            
+
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
             currentUserProviderMock.Setup(x => x.GetCurrentUserOid()).Returns(_currentUserOid);
             _currentUserProvider = currentUserProviderMock.Object;
@@ -94,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             var plantId = _plantProvider.Plant;
             var mode = new Mode(plantId, "M1", false);
             context.Modes.Add(mode);
-                
+
             var responsible = new Responsible(plantId, "Resp1", "Resp1-Desc");
             context.Responsibles.Add(responsible);
             context.SaveChangesAsync().Wait();
@@ -112,17 +112,17 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             requirementType.AddRequirementDefinition(requirementDefinition);
             context.SaveChangesAsync().Wait();
 
-            var project = new Project(plantId, projectName, $"{projectName} Desc", new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8")) {IsClosed = closeProject};
+            var project = new Project(plantId, projectName, $"{projectName} Desc", new Guid("aec8297b-b010-4c5d-91e0-7b1c8664ced8")) { IsClosed = closeProject };
             context.Projects.Add(project);
 
             var tag = new Tag(
-                plantId, 
-                TagType.Standard, 
+                plantId,
+                TagType.Standard,
                 Guid.NewGuid(),
-                $"Tag in {projectName}", 
-                "Tag desc", 
+                $"Tag in {projectName}",
+                "Tag desc",
                 step,
-                new List<TagRequirement> {new TagRequirement(plantId, 2, requirementDefinition)});
+                new List<TagRequirement> { new TagRequirement(plantId, 2, requirementDefinition) });
             project.AddTag(tag);
             if (voidTag)
             {
@@ -157,7 +157,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 Assert.AreEqual(1, result.Data.Count);
             }
         }
@@ -174,7 +174,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
+
                 var actionDtos = result.Data;
                 Assert.AreEqual(2, actionDtos.Count);
 

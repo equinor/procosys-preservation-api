@@ -56,7 +56,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             var baseUrl = $"{_baseAddress}Tag/ByTagNos" +
                 $"?plantId={plant}" +
                 $"&projectName={WebUtility.UrlEncode(projectName)}" +
-                $"&includeVoidedTags={includeVoidedTags.ToString().ToLower()}" + 
+                $"&includeVoidedTags={includeVoidedTags.ToString().ToLower()}" +
                 $"&api-version={_apiVersion}";
 
             var tagDetails = new List<PCSTagDetails>();

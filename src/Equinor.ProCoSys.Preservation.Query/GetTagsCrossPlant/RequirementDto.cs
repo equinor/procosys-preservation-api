@@ -17,7 +17,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
             RequirementTypeCode = requirementTypeCode;
             RequirementDefinitionTitle = requirementDefinitionTitle;
             NextDueTimeUtc = nextDueTimeUtc;
-            NextDueWeeks = nextDueWeeks;            
+            NextDueWeeks = nextDueWeeks;
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
             ReadyToBePreserved = readyToBePreserved;
         }

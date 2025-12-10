@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -67,7 +67,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.UpdateActio
             Assert.AreEqual(_newDescription, _action.Description);
             Assert.AreEqual(_newDueTimeUtc, _action.DueTimeUtc);
         }
-                        
+
         [TestMethod]
         public async Task HandlingUpdateActionCommand_ShouldSetAndReturnRowVersion()
         {

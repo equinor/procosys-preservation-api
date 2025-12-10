@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         [TestMethod]
         public async Task Validate_ShouldBeValid_WhenOkState()
         {
-            var result = await _dut.ValidateAsync(_commandWithoutOverwrite); 
+            var result = await _dut.ValidateAsync(_commandWithoutOverwrite);
 
             Assert.IsTrue(result.IsValid);
         }

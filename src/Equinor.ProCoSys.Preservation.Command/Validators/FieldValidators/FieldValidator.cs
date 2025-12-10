@@ -16,32 +16,32 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.FieldValidators
         public async Task<bool> IsVoidedAsync(int fieldId, CancellationToken token)
         {
             var field = await (from f in _context.QuerySet<Field>()
-                where f.Id == fieldId
-                select f).SingleOrDefaultAsync(token);
+                               where f.Id == fieldId
+                               select f).SingleOrDefaultAsync(token);
             return field != null && field.IsVoided;
         }
 
         public async Task<bool> IsValidForRecordingAsync(int fieldId, CancellationToken token)
         {
             var field = await (from f in _context.QuerySet<Field>()
-                where f.Id == fieldId
-                select f).SingleOrDefaultAsync(token);
+                               where f.Id == fieldId
+                               select f).SingleOrDefaultAsync(token);
             return field != null && (field.FieldType == FieldType.Number || field.FieldType == FieldType.CheckBox);
         }
 
         public async Task<bool> IsValidForAttachmentAsync(int fieldId, CancellationToken token)
         {
             var field = await (from f in _context.QuerySet<Field>()
-                where f.Id == fieldId
-                select f).SingleOrDefaultAsync(token);
+                               where f.Id == fieldId
+                               select f).SingleOrDefaultAsync(token);
             return field != null && (field.FieldType == FieldType.Attachment);
         }
 
         public async Task<bool> VerifyFieldTypeAsync(int fieldId, FieldType fieldType, CancellationToken token)
         {
             var field = await (from f in _context.QuerySet<Field>()
-                where f.Id == fieldId
-                select f).SingleOrDefaultAsync(token);
+                               where f.Id == fieldId
+                               select f).SingleOrDefaultAsync(token);
 
             return field != null && field.FieldType == fieldType;
         }

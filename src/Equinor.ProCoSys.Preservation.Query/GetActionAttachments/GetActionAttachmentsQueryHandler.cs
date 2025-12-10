@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,11 +23,11 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachments
             var action = await
                 (from a in _context.QuerySet<Action>()
                         .Include(t => t.Attachments)
-                    // also join tag to return null if request.TagId not exists
-                    join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
-                    where tag.Id == request.TagId && a.Id == request.ActionId
-                    select a).SingleOrDefaultAsync(cancellationToken);
-            
+                     // also join tag to return null if request.TagId not exists
+                 join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
+                 where tag.Id == request.TagId && a.Id == request.ActionId
+                 select a).SingleOrDefaultAsync(cancellationToken);
+
             if (action == null)
             {
                 return new NotFoundResult<List<ActionAttachmentDto>>($"Action with ID {request.ActionId} not found in Tag {request.TagId}");
@@ -39,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachments
                     attachment.Id,
                     attachment.FileName,
                     attachment.RowVersion.ConvertToString())).ToList();
-            
+
             return new SuccessResult<List<ActionAttachmentDto>>(attachments);
         }
     }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.VoidTag
 
             var requirement = new TagRequirement(TestPlant, 2, rdMock.Object);
             _tag = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object,
-                new List<TagRequirement> {requirement});
+                new List<TagRequirement> { requirement });
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock

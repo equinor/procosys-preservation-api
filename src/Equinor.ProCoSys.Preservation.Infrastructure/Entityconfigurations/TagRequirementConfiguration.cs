@@ -41,7 +41,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder.ToTable(t => t.HasCheckConstraint(
                 "constraint_requirement_check_valid_initial_status",
                 $"{InitialPreservationPeriodStatusPropertyName} in ('{PreservationPeriodStatus.NeedsUserInput}','{PreservationPeriodStatus.ReadyToBePreserved}')"));
-     
+
             builder.Property(x => x.Usage)
                 .HasConversion<string>()
                 .HasDefaultValue(RequirementUsage.ForAll)

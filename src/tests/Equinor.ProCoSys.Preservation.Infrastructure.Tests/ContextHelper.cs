@@ -1,5 +1,5 @@
-﻿using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Common;
+﻿using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 

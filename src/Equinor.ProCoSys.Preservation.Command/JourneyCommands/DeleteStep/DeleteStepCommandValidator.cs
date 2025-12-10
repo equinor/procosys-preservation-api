@@ -15,7 +15,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteStep
             IRowVersionValidator rowVersionValidator)
         {
             RuleLevelCascadeMode = CascadeMode.Stop;
-            
+
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.JourneyId, command.StepId, token))
                 .WithMessage(_ => "Journey and/or step doesn't exist!")
@@ -25,13 +25,13 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteStep
                 .WithMessage(command => $"No steps can be deleted from journey when preservation tags exists in journey! Journey={command.JourneyId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
-            
+
             async Task<bool> BeAnExistingStepAsync(int journeyId, int stepId, CancellationToken token)
                 => await journeyValidator.ExistsStepAsync(journeyId, stepId, token);
-            
+
             async Task<bool> BeAVoidedStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsVoidedAsync(stepId, token);
-            
+
             async Task<bool> NoStepHasTagAsync(int journeyId, CancellationToken token)
                 => !await journeyValidator.HasAnyStepInJourneyATagAsync(journeyId, token);
 

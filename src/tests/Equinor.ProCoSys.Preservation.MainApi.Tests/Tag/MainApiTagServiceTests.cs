@@ -53,8 +53,8 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
             };
 
             _searchPage1WithThreeItems = new PCSTagSearchResult
-                {
-                    Items = new List<PCSTagOverview>
+            {
+                Items = new List<PCSTagOverview>
                         {
                             new PCSTagOverview
                             {
@@ -75,8 +75,8 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
                                 TagNo = "TagNo3"
                             },
                         },
-                    MaxAvailable = 4
-                };
+                MaxAvailable = 4
+            };
 
             _tagDetails = new List<PCSTagDetails>
             {
@@ -152,7 +152,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
         public async Task SearchTagsByTagFunctions_ShouldGetAllPagesAndReturnsCorrectNumberOfTags()
         {
             // Act
-            var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"M"}, CancellationToken.None);
+            var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string> { "M" }, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(4, result.Count);
@@ -168,7 +168,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
                     null))
                 .Returns(Task.FromResult<PCSTagSearchResult>(null));
 
-            var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"M"}, CancellationToken.None);
+            var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string> { "M" }, CancellationToken.None);
 
             Assert.AreEqual(0, result.Count);
         }
@@ -177,7 +177,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
         public async Task SearchTagsByTagFunctions_ShouldReturnCorrectProperties()
         {
             // Act
-            var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"M"}, CancellationToken.None);
+            var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string> { "M" }, CancellationToken.None);
 
             // Assert
             var tag = result.First();
@@ -198,7 +198,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
                 .Returns(Task.FromResult(new List<PCSTagDetails>()));
 
             // Act
-            var result = await _dut.GetTagDetailsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"TagNo1"}, CancellationToken.None);
+            var result = await _dut.GetTagDetailsAsync("PCS$TESTPLANT", "TestProject", new List<string> { "TagNo1" }, CancellationToken.None);
 
             // Assert
             Assert.AreEqual(0, result.Count);
@@ -216,7 +216,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
                 .Returns(Task.FromResult(_tagDetails));
 
             // Act
-            var result = await _dut.GetTagDetailsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"111111111"}, CancellationToken.None);
+            var result = await _dut.GetTagDetailsAsync("PCS$TESTPLANT", "TestProject", new List<string> { "111111111" }, CancellationToken.None);
 
             // Assert
             Assert.IsNotNull(result);

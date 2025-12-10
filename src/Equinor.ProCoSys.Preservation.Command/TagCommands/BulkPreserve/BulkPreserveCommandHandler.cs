@@ -37,9 +37,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
             {
                 tag.BulkPreserve(currentUser);
             }
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             return new SuccessResult<Unit>(Unit.Value);
         }
     }

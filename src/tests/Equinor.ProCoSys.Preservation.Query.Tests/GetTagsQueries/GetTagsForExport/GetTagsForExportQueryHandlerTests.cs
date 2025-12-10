@@ -155,7 +155,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
                 var tagNoStartsWith = $"{_testDataSet.StdTagPrefix}-0";
-                var filter = new Filter {TagNoStartsWith = tagNoStartsWith};
+                var filter = new Filter { TagNoStartsWith = tagNoStartsWith };
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
 
@@ -165,11 +165,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 {
                     Assert.IsTrue(tag.TagNo.StartsWith(tagNoStartsWith));
                 }
-          
+
                 Assert.AreEqual(tagNoStartsWith, result.Data.UsedFilter.TagNoStartsWith);
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldGetHistoryForManyTags_WhenLessThenMax()
         {
@@ -194,7 +194,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
 
             _apiOptionsMock
                 .Setup(x => x.Value)
-                .Returns(new TagOptions { MaxHistoryExport = _testDataSet.Project1.Tags.Count-1 });
+                .Returns(new TagOptions { MaxHistoryExport = _testDataSet.Project1.Tags.Count - 1 });
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -246,7 +246,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 reqDef.AddField(infoField);
                 context.RequirementTypes.First().AddRequirementDefinition(reqDef);
                 context.SaveChangesAsync().Wait();
-                tag.AddRequirement(new TagRequirement(TestPlant,4, reqDef));
+                tag.AddRequirement(new TagRequirement(TestPlant, 4, reqDef));
                 tag.StartPreservation();
                 var tagRequirement = tag.Requirements.Last();
                 tagRequirement.SetComment(comment);
@@ -260,10 +260,10 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                         {cbField1.Id, true},
                     },
                     reqDef);
-                tagRequirement.RecordAttachment(new FieldValueAttachment(TestPlant, Guid.NewGuid(), fileName), 
+                tagRequirement.RecordAttachment(new FieldValueAttachment(TestPlant, Guid.NewGuid(), fileName),
                     attField1.Id,
                     reqDef);
-                tagRequirement.RecordNumberIsNaValues(new List<int>{numberField2.Id}, reqDef);
+                tagRequirement.RecordNumberIsNaValues(new List<int> { numberField2.Id }, reqDef);
                 var activePeriodBeforePreservation = tagRequirement.ActivePeriod;
                 tagRequirement.Preserve(_testDataSet.CurrentUser, false);
                 history = new History(
@@ -289,11 +289,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 reqDef.AddField(attField2);
                 context.SaveChangesAsync().Wait();
             }
-            
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
-                var filter = new Filter {TagNoStartsWith = tagNoStartsWith};
+                var filter = new Filter { TagNoStartsWith = tagNoStartsWith };
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, HistoryExportMode.ExportMax, filter: filter), default);
 
@@ -323,7 +323,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
                 var commPkgNoStartsWith = $"{_testDataSet.CommPkgPrefix}-0";
-                var filter = new Filter {CommPkgNoStartsWith = commPkgNoStartsWith};
+                var filter = new Filter { CommPkgNoStartsWith = commPkgNoStartsWith };
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 2);
@@ -338,7 +338,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
                 var mcPkgNoStartsWith = $"{_testDataSet.McPkgPrefix}-0";
-                var filter = new Filter {McPkgNoStartsWith = mcPkgNoStartsWith};
+                var filter = new Filter { McPkgNoStartsWith = mcPkgNoStartsWith };
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
                 Assert.AreEqual(2, result.Data.Tags.Count());
@@ -353,7 +353,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
                 var purchaseOrderNoStartsWith = $"{_testDataSet.PoPrefix}-0";
-                var filter = new Filter {PurchaseOrderNoStartsWith = purchaseOrderNoStartsWith};
+                var filter = new Filter { PurchaseOrderNoStartsWith = purchaseOrderNoStartsWith };
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
                 var tags = result.Data.Tags.ToList();
@@ -373,7 +373,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
                 var storageAreaStartsWith = $"{_testDataSet.StorageAreaPrefix}-0";
-                var filter = new Filter {StorageAreaStartsWith = storageAreaStartsWith};
+                var filter = new Filter { StorageAreaStartsWith = storageAreaStartsWith };
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 2);
@@ -388,7 +388,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
                 var callOffStartsWith = $"{_testDataSet.CallOffPrefix}-0";
-                var filter = new Filter {CallOffStartsWith = callOffStartsWith};
+                var filter = new Filter { CallOffStartsWith = callOffStartsWith };
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
                 var tags = result.Data.Tags.ToList();
@@ -404,7 +404,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldFilterOnPreservationStatus()
         {
-            var filter = new Filter {PreservationStatus = new List<PreservationStatus>(){PreservationStatus.Active}};
+            var filter = new Filter { PreservationStatus = new List<PreservationStatus>() { PreservationStatus.Active } };
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
@@ -413,7 +413,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
 
                 Assert.AreEqual(0, result.Data.Tags.Count());
             }
-            
+
             StartPreservationOnAllTags();
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -446,16 +446,16 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOpen } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 1);
                 AssertActionStatus(result.Data.Tags, ActionStatus.HasOpen);
                 Assert.AreEqual(ActionStatus.HasOpen.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasClosed } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(ActionStatus.HasClosed.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
-                
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
+
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOverdue } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(ActionStatus.HasOverdue.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
             }
@@ -477,17 +477,17 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOpen } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(ActionStatus.HasOpen.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasClosed } }), default);
                 var tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 1);
                 AssertActionStatus(tags, ActionStatus.HasClosed);
                 Assert.AreEqual(ActionStatus.HasClosed.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOverdue } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(ActionStatus.HasOverdue.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
             }
@@ -509,19 +509,19 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
                 // when filtering on tag which has Open actions, tags with overdue actions is included
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOpen}}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOpen } }), default);
                 var tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 1);
                 AssertActionStatus(tags, ActionStatus.HasOverdue);
                 Assert.AreEqual(ActionStatus.HasOpen.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
                 var tagWithOpenAndOverdueAction = tags.Single().TagNo;
-                
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasClosed}}), default);
+
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasClosed } }), default);
                 tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 0);
                 Assert.AreEqual(ActionStatus.HasClosed.GetDisplayValue(), result.Data.UsedFilter.ActionStatus.Single());
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = new List<ActionStatus>{ActionStatus.HasOverdue}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { ActionStatus = new List<ActionStatus> { ActionStatus.HasOverdue } }), default);
                 tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 1);
                 AssertActionStatus(tags, ActionStatus.HasOverdue);
@@ -533,7 +533,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldNotGetAnyTags_WhenFilterOnDue_WhenPreservationNotStarted()
         {
-            var filter = new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek}};
+            var filter = new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek } };
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
@@ -561,21 +561,21 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         public async Task HandleGetTagsForExportQuery_ShouldGetTagsDueNextWeek_WhenFilterOnDueNextWeek()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-1);
+            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks - 1);
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.NextWeek } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 20);
                 Assert.AreEqual(DueFilterType.NextWeek.GetDisplayValue(), result.Data.UsedFilter.DueFilters.ElementAt(0));
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.ThisWeek } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(DueFilterType.ThisWeek.GetDisplayValue(), result.Data.UsedFilter.DueFilters.ElementAt(0));
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(DueFilterType.Overdue.GetDisplayValue(), result.Data.UsedFilter.DueFilters.ElementAt(0));
 
@@ -601,15 +601,15 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.NextWeek } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(DueFilterType.NextWeek.GetDisplayValue(), result.Data.UsedFilter.DueFilters.ElementAt(0));
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.ThisWeek } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 20);
                 Assert.AreEqual(DueFilterType.ThisWeek.GetDisplayValue(), result.Data.UsedFilter.DueFilters.ElementAt(0));
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(DueFilterType.Overdue.GetDisplayValue(), result.Data.UsedFilter.DueFilters.ElementAt(0));
 
@@ -629,21 +629,21 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         public async Task HandleGetTagsForExportQuery_ShouldGetTagsOverdue_WhenFilterOnOverdue()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks+1);
+            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks + 1);
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.NextWeek } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(DueFilterType.NextWeek.GetDisplayValue(), result.Data.UsedFilter.DueFilters.ElementAt(0));
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.ThisWeek } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 0);
                 Assert.AreEqual(DueFilterType.ThisWeek.GetDisplayValue(), result.Data.UsedFilter.DueFilters.ElementAt(0));
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { DueFilters = new List<DueFilterType> { DueFilterType.Overdue } }), default);
                 Assert.AreEqual(result.Data.Tags.Count(), 20);
                 Assert.AreEqual(DueFilterType.Overdue.GetDisplayValue(), result.Data.UsedFilter.DueFilters.ElementAt(0));
 
@@ -664,7 +664,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {RequirementTypeIds = new List<int>{_testDataSet.ReqType1.Id}};
+                var filter = new Filter { RequirementTypeIds = new List<int> { _testDataSet.ReqType1.Id } };
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -685,7 +685,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var areaCode = $"{_testDataSet.AreaPrefix}-0";
-                var filter = new Filter {AreaCodes = new List<string>{areaCode}};
+                var filter = new Filter { AreaCodes = new List<string> { areaCode } };
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -706,7 +706,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var diCode = $"{_testDataSet.DisciplinePrefix}-0";
-                var filter = new Filter {DisciplineCodes = new List<string>{diCode}};
+                var filter = new Filter { DisciplineCodes = new List<string> { diCode } };
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -720,13 +720,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual(diCode, result.Data.UsedFilter.DisciplineCodes.ElementAt(0));
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldFilterOnResponsible()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {ResponsibleIds = new List<int>{_testDataSet.Responsible1.Id}};
+                var filter = new Filter { ResponsibleIds = new List<int> { _testDataSet.Responsible1.Id } };
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -747,7 +747,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tfCode = $"{_testDataSet.TagFunctionPrefix}-0";
-                var filter = new Filter {TagFunctionCodes = new List<string>{tfCode}};
+                var filter = new Filter { TagFunctionCodes = new List<string> { tfCode } };
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -756,13 +756,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual(tfCode, result.Data.UsedFilter.TagFunctionCodes.ElementAt(0));
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldFilterOnMode()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {ModeIds = new List<int>{_testDataSet.Mode1.Id}};
+                var filter = new Filter { ModeIds = new List<int> { _testDataSet.Mode1.Id } };
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -776,13 +776,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual(_testDataSet.Mode1.Title, result.Data.UsedFilter.ModeTitles.ElementAt(0));
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldFilterOnJourney()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {JourneyIds = new List<int>{_testDataSet.Journey2With1Step.Id}};
+                var filter = new Filter { JourneyIds = new List<int> { _testDataSet.Journey2With1Step.Id } };
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
                 var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
@@ -791,7 +791,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual(_testDataSet.Journey2With1Step.Title, result.Data.UsedFilter.JourneyTitles.ElementAt(0));
             }
         }
-        
+
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldFilterOnVoided()
         {
@@ -806,13 +806,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 var dut = new GetTagsForExportQueryHandler(context, _apiOptionsMock.Object, _plantProvider, _loggerMock.Object);
 
-                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilter = VoidedFilterType.NotVoided}), default);
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { VoidedFilter = VoidedFilterType.NotVoided }), default);
                 var tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 19);
                 Assert.AreEqual(VoidedFilterType.NotVoided.GetDisplayValue(), result.Data.UsedFilter.VoidedFilter);
                 AssertIsVoided(tags, false);
 
-                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilter = VoidedFilterType.Voided}), default);
+                result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: new Filter { VoidedFilter = VoidedFilterType.Voided }), default);
                 tags = result.Data.Tags.ToList();
                 Assert.AreEqual(tags.Count, 1);
                 Assert.AreEqual(VoidedFilterType.Voided.GetDisplayValue(), result.Data.UsedFilter.VoidedFilter);
@@ -825,14 +825,14 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         {
             var filter = new Filter
             {
-                PreservationStatus = new List<PreservationStatus>(){PreservationStatus.NotStarted},
-                RequirementTypeIds = new List<int> {_testDataSet.ReqType1.Id},
-                AreaCodes = new List<string> {$"{_testDataSet.AreaPrefix}-0"},
-                DisciplineCodes = new List<string> {$"{_testDataSet.DisciplinePrefix}-0"},
-                ResponsibleIds = new List<int> {_testDataSet.Responsible1.Id},
-                TagFunctionCodes = new List<string> {$"{_testDataSet.TagFunctionPrefix}-0"},
-                ModeIds = new List<int> {_testDataSet.Mode1.Id},
-                JourneyIds = new List<int> {_testDataSet.Journey1With2Steps.Id},
+                PreservationStatus = new List<PreservationStatus>() { PreservationStatus.NotStarted },
+                RequirementTypeIds = new List<int> { _testDataSet.ReqType1.Id },
+                AreaCodes = new List<string> { $"{_testDataSet.AreaPrefix}-0" },
+                DisciplineCodes = new List<string> { $"{_testDataSet.DisciplinePrefix}-0" },
+                ResponsibleIds = new List<int> { _testDataSet.Responsible1.Id },
+                TagFunctionCodes = new List<string> { $"{_testDataSet.TagFunctionPrefix}-0" },
+                ModeIds = new List<int> { _testDataSet.Mode1.Id },
+                JourneyIds = new List<int> { _testDataSet.Journey1With2Steps.Id },
                 TagNoStartsWith = $"{_testDataSet.StdTagPrefix}-0",
                 CommPkgNoStartsWith = $"{_testDataSet.CommPkgPrefix}-0",
                 McPkgNoStartsWith = $"{_testDataSet.McPkgPrefix}-0",
@@ -863,12 +863,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual(filter.VoidedFilter.GetDisplayValue(), result.Data.UsedFilter.VoidedFilter);
             }
         }
-                
+
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldSortOnTagNo()
         {
             // filter on specific journey. Will get 10 standard tags
-            var filter = new Filter {JourneyIds = new List<int>{_testDataSet.Journey1With2Steps.Id}};
+            var filter = new Filter { JourneyIds = new List<int> { _testDataSet.Journey1With2Steps.Id } };
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

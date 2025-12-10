@@ -38,29 +38,29 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep
                 .WithMessage(command => $"Same auto transfer method can not be set on multiple steps in a journey! Method={command.AutoTransferMethod}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
-            
+
             async Task<bool> BeAnExistingStepAsync(int journeyId, int stepId, CancellationToken token)
                 => await journeyValidator.ExistsStepAsync(journeyId, stepId, token);
-            
+
             async Task<bool> HaveUniqueStepTitleInJourneyAsync(int journeyId, int stepId, string stepTitle, CancellationToken token) =>
                 !await journeyValidator.OtherStepExistsWithSameTitleAsync(journeyId, stepId, stepTitle, token);
-            
+
             async Task<bool> NotBeAVoidedStepAsync(int stepId, CancellationToken token)
                 => !await stepValidator.IsVoidedAsync(stepId, token);
-            
+
             async Task<bool> BeAnExistingModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.ExistsAsync(modeId, token);
 
             async Task<bool> NotChangedToAVoidedModeAsync(int modeId, int stepId, CancellationToken token)
                 => await stepValidator.HasModeAsync(modeId, stepId, token) ||
                    !await modeValidator.IsVoidedAsync(modeId, token);
-            
+
             async Task<bool> NotBeAnExistingAndVoidedResponsibleAsync(string responsibleCode, CancellationToken token)
                 => !await responsibleValidator.ExistsAndIsVoidedAsync(responsibleCode, token);
 
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);
-            
+
             async Task<bool> NotHaveOtherStepsWithSameAutoTransferMethodInJourneyAsync(int journeyId, int stepId, AutoTransferMethod autoTransferMethod, CancellationToken token)
                 => autoTransferMethod == AutoTransferMethod.None || !await journeyValidator.HasOtherStepWithAutoTransferMethodAsync(journeyId, stepId, autoTransferMethod, token);
         }

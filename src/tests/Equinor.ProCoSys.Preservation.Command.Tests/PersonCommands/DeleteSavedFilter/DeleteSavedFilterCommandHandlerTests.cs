@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.DeleteSaved
     public class DeleteSavedFilterCommandHandlerTests : CommandHandlerTestsBase
     {
         private int _savedFilterId = 1;
-        
+
         private Mock<IPersonRepository> _personRepositoryMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
         private DeleteSavedFilterCommand _command;

@@ -1,12 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Common.Time;
 using MediatR;
 using ServiceResult;
-using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction
 {
@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction
         private readonly ICurrentUserProvider _currentUserProvider;
 
         public CloseActionCommandHandler(
-            IProjectRepository projectRepository, 
+            IProjectRepository projectRepository,
             IUnitOfWork unitOfWork,
             IPersonRepository personRepository,
             ICurrentUserProvider currentUserProvider

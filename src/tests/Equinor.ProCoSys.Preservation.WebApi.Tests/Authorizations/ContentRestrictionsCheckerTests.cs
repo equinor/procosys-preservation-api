@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             principal.AddIdentity(_claimsIdentity);
             var claimsPrincipalProviderMock = new Mock<IClaimsPrincipalProvider>();
             claimsPrincipalProviderMock.Setup(u => u.GetCurrentClaimsPrincipal()).Returns(principal);
-            
+
             _dut = new RestrictionRolesChecker(claimsPrincipalProviderMock.Object);
         }
 

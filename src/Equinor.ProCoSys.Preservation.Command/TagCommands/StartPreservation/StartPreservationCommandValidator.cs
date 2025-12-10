@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
 namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
@@ -49,10 +49,10 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
                 var ids = tagIds.ToList();
                 return ids.Distinct().Count() == ids.Count;
             }
-            
+
             async Task<bool> BeInSameProjectAsync(IEnumerable<int> tagIds, CancellationToken token)
                 => await projectValidator.AllTagsInSameProjectAsync(tagIds, token);
-            
+
             async Task<bool> NotBeAClosedProjectForTagAsync(IEnumerable<int> tagIds, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagIds.First(), token);
 

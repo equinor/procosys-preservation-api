@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

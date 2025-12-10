@@ -24,10 +24,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.DeleteMode
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
             _modeValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(true));
-            
+
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
-            
+
             _command = new DeleteModeCommand(_id, _rowVersion);
 
             _dut = new DeleteModeCommandValidator(_modeValidatorMock.Object, _rowVersionValidatorMock.Object);
@@ -45,7 +45,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.DeleteMode
         public async Task Validate_ShouldFail_WhenModeNotExists()
         {
             _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -57,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.DeleteMode
         public async Task Validate_ShouldFail_WhenModeNotVoided()
         {
             _modeValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -69,7 +69,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.DeleteMode
         public async Task Validate_ShouldFail_WhenModeIsUsedInAStep()
         {
             _modeValidatorMock.Setup(r => r.IsUsedInStepAsync(_id, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

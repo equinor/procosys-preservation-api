@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
@@ -43,14 +43,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagRequirements
             // get needed information about requirementType/Definition for all requirement on tag
             var requirementDtos = await
                 (from requirementDefinition in _context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
-                    join requirementType in _context.QuerySet<RequirementType>()
-                        on EF.Property<int>(requirementDefinition, "RequirementTypeId") equals requirementType.Id
-                    where requirementDefinitionIds.Contains(requirementDefinition.Id)
-                    select new
-                    {
-                        RequirementType = requirementType,
-                        RequirementDefinition = requirementDefinition
-                    }
+                 join requirementType in _context.QuerySet<RequirementType>()
+                     on EF.Property<int>(requirementDefinition, "RequirementTypeId") equals requirementType.Id
+                 where requirementDefinitionIds.Contains(requirementDefinition.Id)
+                 select new
+                 {
+                     RequirementType = requirementType,
+                     RequirementDefinition = requirementDefinition
+                 }
                 ).ToListAsync(cancellationToken);
 
             var requirements = tag
@@ -80,10 +80,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagRequirements
                             requirementDto.RequirementType.Id,
                             requirementDto.RequirementType.Code,
                             requirementDto.RequirementType.Icon,
-                            requirementDto.RequirementType.Title), 
+                            requirementDto.RequirementType.Title),
                         new RequirementDefinitionDetailDto(
                             requirementDto.RequirementDefinition.Id,
-                            requirementDto.RequirementDefinition.Title), 
+                            requirementDto.RequirementDefinition.Title),
                         requirement.NextDueTimeUtc,
                         requirement.ReadyToBePreserved,
                         fields,

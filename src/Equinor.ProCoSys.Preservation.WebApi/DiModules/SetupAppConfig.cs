@@ -19,7 +19,7 @@ public static class SetupAzureAppConfig
         builder.Configuration.AddAzureAppConfiguration(options =>
         {
             var appConfigUrl = builder.Configuration["Application:AppConfigurationUrl"]!;
-            
+
             options.Connect(new Uri(appConfigUrl), credential)
                 .ConfigureKeyVault(kv =>
                 {

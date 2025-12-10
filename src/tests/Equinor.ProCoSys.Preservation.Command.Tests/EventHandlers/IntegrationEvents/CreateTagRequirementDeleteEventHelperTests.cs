@@ -24,7 +24,7 @@ public class CreateTagRequirementDeleteEventHelperTests
         // Arrange
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
-        
+
         var requirementDefinition = new RequirementDefinition(TestPlant, "Requirement Definition", 1, RequirementUsage.ForSuppliersOnly, 1);
         _tagRequirement = new TagRequirement(TestPlant, 1, requirementDefinition);
         _project = new Project(TestPlant, "Test Project", "Test Project Description", Guid.NewGuid());
@@ -46,13 +46,13 @@ public class CreateTagRequirementDeleteEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateActionDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _tagRequirement.Guid;
-        
+
         // Act
         var deletionEvents = CreateTagRequirementDeleteEventHelper.CreateEvents(_tagRequirement, _project);
         var result = deletionEvents.TagRequirementDeleteEvent.ProCoSysGuid;
@@ -60,13 +60,13 @@ public class CreateTagRequirementDeleteEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvents_ShouldCreateIntegrationEventsForChildPreservationPeriods()
     {
         // Arrange
         _tagRequirement.StartPreservation();
-        
+
         // Act
         var integrationEvents = CreateTagRequirementDeleteEventHelper.CreateEvents(_tagRequirement, _project);
         var result = integrationEvents.PreservationPeriodDeleteEvents;

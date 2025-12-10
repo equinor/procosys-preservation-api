@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Common.Time;
-using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
@@ -43,14 +43,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-        
+
         public void AddAttachment(ActionAttachment attachment)
         {
             if (attachment == null)
             {
                 throw new ArgumentNullException(nameof(attachment));
             }
-            
+
             if (attachment.Plant != Plant)
             {
                 throw new ArgumentException($"Can't relate item in {attachment.Plant} to item in {Plant}");

@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
                 .HasConversion<string>()
                 .HasDefaultValue(PreservationPeriodStatus.NeedsUserInput)
                 .IsRequired();
-                        
+
             builder
                 .HasMany(x => x.FieldValues)
                 .WithOne()
@@ -41,7 +41,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasIndex(x => x.Plant)
                 .HasDatabaseName("IX_PreservationPeriods_Plant_ASC")
-                .IncludeProperties(x => new {x.Comment, x.CreatedAtUtc, x.DueTimeUtc, x.ModifiedAtUtc, x.Status});
+                .IncludeProperties(x => new { x.Comment, x.CreatedAtUtc, x.DueTimeUtc, x.ModifiedAtUtc, x.Status });
         }
 
         private string GetValidStatuses()

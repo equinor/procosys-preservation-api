@@ -52,7 +52,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
 
             // Assert
             Assert.IsTrue(id > 0);
-            return await GetRequirementTypeAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, id); 
+            return await GetRequirementTypeAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, id);
         }
 
         public static async Task<string> UpdateRequirementTypeAsync(
@@ -94,7 +94,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
-            var parameters = new ParameterCollection {{"includeVoided", "true"}};
+            var parameters = new ParameterCollection { { "includeVoided", "true" } };
             var url = $"{_route}{parameters}";
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
 
@@ -312,7 +312,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).SendAsync(request);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
         }
-        
+
         public static async Task<RequirementDefinitionDto> GetRequirementDefinitionDetailsAsync(UserType userType, string plant, int reqTypeId, int reqDefId)
         {
             var reqType = await GetRequirementTypesAsync(userType, plant);

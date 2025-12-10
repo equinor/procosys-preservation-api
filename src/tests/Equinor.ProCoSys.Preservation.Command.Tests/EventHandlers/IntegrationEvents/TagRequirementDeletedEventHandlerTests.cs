@@ -31,16 +31,16 @@ public class TagRequirementDeletedEventHandlerTests
         // Arrange
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
-        
+
         var mockPublisher = new Mock<IIntegrationEventPublisher>();
         mockPublisher.Setup(x => x.PublishAsync(It.IsAny<IIntegrationEvent>(), default))
             .Callback<IIntegrationEvent, CancellationToken>((e, _) => _publishedEvents.Add(e));
-        
+
         var mockProjectRepository = new Mock<IProjectRepository>();
         mockProjectRepository.Setup(p => p.GetProjectOnlyByTagGuidAsync(It.IsAny<Guid>())).ReturnsAsync(new Mock<Project>().Object);
-        
+
         _dut = new TagRequirementDeletedEventHandler(mockPublisher.Object, mockProjectRepository.Object);
-        
+
         _publishedEvents = [];
     }
 
@@ -58,7 +58,7 @@ public class TagRequirementDeletedEventHandlerTests
         // Assert
         CollectionAssert.Contains(result, typeof(TagRequirementDeleteEvent));
     }
-    
+
     [TestMethod]
     public async Task Handle_ShouldSendPreservationPeriodDeleteEvent()
     {
@@ -66,7 +66,7 @@ public class TagRequirementDeletedEventHandlerTests
         var requirementDefinition = new RequirementDefinition(TestPlant, "Requirement Definition", 1, RequirementUsage.ForSuppliersOnly, 1);
         var tagRequirement = new TagRequirement(TestPlant, 1, requirementDefinition);
         tagRequirement.StartPreservation();
-        
+
         var domainEvent = new TagRequirementDeletedEvent(string.Empty, Guid.Empty, tagRequirement);
 
         // Act

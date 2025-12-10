@@ -48,7 +48,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UnvoidStep
         public async Task Validate_ShouldFail_WhenStepNotExists()
         {
             _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

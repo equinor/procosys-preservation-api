@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.Up
             _requirementType = new RequirementType(TestPlant, _oldCode, _oldTitle, _oldIcon, _oldSortKey);
             requirementTypeRepositoryMock.Setup(j => j.GetByIdAsync(testRequirementTypeId))
                 .Returns(Task.FromResult(_requirementType));
-            _command = new UpdateRequirementTypeCommand(testRequirementTypeId, _rowVersion, _newSortKey ,_newTitle, _newCode, _newIcon);
+            _command = new UpdateRequirementTypeCommand(testRequirementTypeId, _rowVersion, _newSortKey, _newTitle, _newCode, _newIcon);
 
             _dut = new UpdateRequirementTypeCommandHandler(
                 requirementTypeRepositoryMock.Object,

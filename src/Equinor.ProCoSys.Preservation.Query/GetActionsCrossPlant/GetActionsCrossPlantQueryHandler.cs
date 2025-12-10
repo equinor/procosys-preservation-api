@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Auth.Caches;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
                         .Include(t => t.Tags)
                         .ThenInclude(t => t.Actions)
                         .ThenInclude(a => a.Attachments)
-                    select p).ToListAsync(cancellationToken);
+                 select p).ToListAsync(cancellationToken);
             _plantSetter.ClearCrossPlantQuery();
 
             var actions = new List<ActionDto>();

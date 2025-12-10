@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Time;
+using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.ProCoSys.Common.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ServiceResult;
 using RequirementType = Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType;
-using Equinor.ProCoSys.Common.Misc;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
 {
@@ -41,7 +41,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             var maxAvailable = await queryable
                 .TagWith("GetTagsQueryHandler: maxAvailable")
                 .CountAsync(cancellationToken);
-            
+
             queryable = AddSorting(request.Sorting, queryable);
             queryable = AddPaging(request.Paging, queryable);
 
@@ -61,16 +61,16 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>()
                         .Include(t => t.Requirements)
                         .ThenInclude(r => r.PreservationPeriods)
-                    where tagsIds.Contains(tag.Id)
-                    select tag)
+                                              where tagsIds.Contains(tag.Id)
+                                              select tag)
                 .TagWith("GetTagsQueryHandler: tagsWithRequirements")
                 .ToListAsync(cancellationToken);
 
             // get Journeys with Steps to be able to calculate ReadyToBeTransferred + NextMode + NextResponsible
             var journeysWithSteps = await (from j in _context.QuerySet<Journey>()
                         .Include(j => j.Steps)
-                    where journeyIds.Contains(j.Id)
-                    select j)
+                                           where journeyIds.Contains(j.Id)
+                                           select j)
                 .TagWith("GetTagsQueryHandler: journeysWithSteps")
                 .ToListAsync(cancellationToken);
 
@@ -86,26 +86,26 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             var requirementDefinitionIds = tagsWithRequirements.SelectMany(t => t.Requirements).Select(r => r.RequirementDefinitionId).Distinct();
 
             var nextModes = await (from m in _context.QuerySet<Mode>()
-                    where nextModeIds.Contains(m.Id)
-                select m)
+                                   where nextModeIds.Contains(m.Id)
+                                   select m)
                 .TagWith("GetTagsQueryHandler: nextModes")
                 .ToListAsync(cancellationToken);
 
             var nextResponsibles = await (from r in _context.QuerySet<Responsible>()
-                where nextResponsibleIds.Contains(r.Id)
-                select r)
+                                          where nextResponsibleIds.Contains(r.Id)
+                                          select r)
                 .TagWith("GetTagsQueryHandler: nextResponsibles")
                 .ToListAsync(cancellationToken);
-            
+
             var reqTypes = await (from rd in _context.QuerySet<RequirementDefinition>()
                                   join rt in _context.QuerySet<RequirementType>() on EF.Property<int>(rd, "RequirementTypeId") equals rt.Id
-                    where requirementDefinitionIds.Contains(rd.Id)
-                    select new ReqTypeDto
-                    {
-                        RequirementDefinitionId = rd.Id,
-                        RequirementTypeCode = rt.Code,
-                        RequirementTypeIcon = rt.Icon
-                    }
+                                  where requirementDefinitionIds.Contains(rd.Id)
+                                  select new ReqTypeDto
+                                  {
+                                      RequirementDefinitionId = rd.Id,
+                                      RequirementTypeCode = rt.Code,
+                                      RequirementTypeIcon = rt.Icon
+                                  }
                 )
                 .TagWith("GetTagsQueryHandler: reqTypes")
                 .ToListAsync(cancellationToken);
@@ -114,7 +114,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
                 maxAvailable,
                 orderedDtos,
                 tagsWithRequirements,
-                reqTypes, 
+                reqTypes,
                 nextModes,
                 nextResponsibles);
 
@@ -159,10 +159,10 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
                 var isReadyToUndoStarted = tagWithRequirements.IsReadyToUndoStarted();
                 var isReadyToBeSetInService = tagWithRequirements.IsReadyToBeSetInService();
 
-                var nextMode = tagWithRequirements.FollowsAJourney && dto.NextStep != null 
+                var nextMode = tagWithRequirements.FollowsAJourney && dto.NextStep != null
                     ? nextModes.Single(m => m.Id == dto.NextStep.ModeId)
                     : null;
-                
+
                 var nextResponsible = tagWithRequirements.FollowsAJourney && dto.NextStep != null
                     ? nextResponsibles.Single(m => m.Id == dto.NextStep.ResponsibleId)
                     : null;

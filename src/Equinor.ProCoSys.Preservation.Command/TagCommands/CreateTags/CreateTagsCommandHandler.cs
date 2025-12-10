@@ -27,7 +27,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
         public CreateTagsCommandHandler(
             IProjectRepository projectRepository,
             IJourneyRepository journeyRepository,
-            IModeRepository modeRepository, 
+            IModeRepository modeRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
@@ -51,13 +51,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
 
             var addedTags = new List<Tag>();
             var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-            
+
             var tagDetailList = await _tagApiService.GetTagDetailsAsync(
                 _plantProvider.Plant,
                 request.ProjectName,
                 request.TagNos,
                 cancellationToken);
-            
+
             foreach (var tagNo in request.TagNos)
             {
                 var tagDetails = tagDetailList.FirstOrDefault(td => td.TagNo == tagNo);
@@ -90,14 +90,14 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
                 _plantProvider.Plant,
                 tagDetailList.Select(t => t.Id),
                 cancellationToken);
-            
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<List<int>>(addedTags.Select(t => t.Id).ToList());
         }
 
         private Tag CreateTag(
-            CreateTagsCommand request, 
+            CreateTagsCommand request,
             Step step,
             PCSTagDetails tagDetails,
             IList<RequirementDefinition> reqDefs)
@@ -131,7 +131,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
 
             tag.SetArea(tagDetails.AreaCode, tagDetails.AreaDescription);
             tag.SetDiscipline(tagDetails.DisciplineCode, tagDetails.DisciplineDescription);
-            
+
             return tag;
         }
     }

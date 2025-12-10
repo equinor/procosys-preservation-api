@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule;
 using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.Reschedule;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -53,25 +53,25 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
             _req2OnTag1 = new TagRequirement(TestPlant, 2, _rd2Mock.Object);
             _req1OnTag2 = new TagRequirement(TestPlant, 3, _rd1Mock.Object);
             _req2OnTag2 = new TagRequirement(TestPlant, 4, _rd2Mock.Object);
-            
+
             _tag1 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object,
-                new List<TagRequirement> {_req1OnTag1, _req2OnTag1});
+                new List<TagRequirement> { _req1OnTag1, _req2OnTag1 });
             _tag1.StartPreservation();
             _tag1.SetProtectedIdForTesting(_tagId1);
 
             _tag2 = new Tag(TestPlant, TagType.Standard, Guid.NewGuid(), "", "", stepMock.Object,
-                new List<TagRequirement> {_req1OnTag2, _req2OnTag2});
+                new List<TagRequirement> { _req1OnTag2, _req2OnTag2 });
             _tag2.StartPreservation();
             _tag2.SetProtectedIdForTesting(_tagId2);
 
-            var tags = new List<Tag> {_tag1, _tag2};
+            var tags = new List<Tag> { _tag1, _tag2 };
 
-            var tagIds = new List<int> {_tagId1, _tagId2};
+            var tagIds = new List<int> { _tagId1, _tagId2 };
             var tagIdsWithRowVersion = new List<IdAndRowVersion>
             {
                 new IdAndRowVersion(_tagId1, _rowVersion1), new IdAndRowVersion(_tagId2, _rowVersion2)
             };
-            
+
             var projectRepoMock = new Mock<IProjectRepository>();
             projectRepoMock.Setup(r => r.GetTagsWithPreservationHistoryByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(tags));
@@ -88,7 +88,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
             var expectedNextDueTimeUtcReq2OnTag1 = _req2OnTag1.ActivePeriod.DueTimeUtc.AddWeeks(1);
             var expectedNextDueTimeUtcReq1OnTag2 = _req1OnTag2.ActivePeriod.DueTimeUtc.AddWeeks(1);
             var expectedNextDueTimeUtcReq2OnTag2 = _req2OnTag2.ActivePeriod.DueTimeUtc.AddWeeks(1);
-            
+
             await _dut.Handle(_rescheduleOneWeekLaterCommand, default);
 
             Assert.AreEqual(expectedNextDueTimeUtcReq1OnTag1, _req1OnTag1.NextDueTimeUtc);
@@ -107,7 +107,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
             var expectedNextDueTimeUtcReq2OnTag1 = _req2OnTag1.ActivePeriod.DueTimeUtc.AddWeeks(-4);
             var expectedNextDueTimeUtcReq1OnTag2 = _req1OnTag2.ActivePeriod.DueTimeUtc.AddWeeks(-4);
             var expectedNextDueTimeUtcReq2OnTag2 = _req2OnTag2.ActivePeriod.DueTimeUtc.AddWeeks(-4);
-            
+
             await _dut.Handle(_rescheduleFourWeeksEarlierCommand, default);
 
             Assert.AreEqual(expectedNextDueTimeUtcReq1OnTag1, _req1OnTag1.NextDueTimeUtc);
@@ -126,7 +126,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Reschedule
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
         }
-    
+
         [TestMethod]
         public async Task HandlingRescheduleCommand_ShouldSetAndReturnRowVersion()
         {

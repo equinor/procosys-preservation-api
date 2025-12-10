@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Common.Misc;
+using Equinor.ProCoSys.Common.Telemetry;
 using Equinor.ProCoSys.PcsServiceBus;
+using Equinor.ProCoSys.PcsServiceBus.Enums;
 using Equinor.ProCoSys.PcsServiceBus.Topics;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ServiceResult;
-using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Common.Telemetry;
-using Equinor.ProCoSys.PcsServiceBus.Enums;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {

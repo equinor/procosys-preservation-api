@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.ModeAggregate
                 var result = await dut.Handle(new GetModeByIdQuery(_mode.Id), default);
 
                 var mode = result.Data;
-            
+
                 Assert.AreEqual(_mode.Id, mode.Id);
                 Assert.AreEqual(_mode.Title, mode.Title);
             }

@@ -11,7 +11,7 @@ public class CreateTagDeleteEventHelper(IProjectRepository projectRepository) : 
     public async Task<EventCollectionDeleteTag> CreateEvents(Tag entity)
     {
         var project = await projectRepository.GetProjectOnlyByTagGuidAsync(entity.Guid);
-        
+
         var tagDeleteEvent = new TagDeleteEvent(entity.Guid, entity.Plant, project.Name);
         var actionDeleteEvents = entity.Actions.Select(a => CreateActionDeletedEventHelper.CreateEvent(a, project));
         var tagRequirementEvents = entity.Requirements.Select(r => CreateTagRequirementDeleteEventHelper.CreateEvents(r, project));

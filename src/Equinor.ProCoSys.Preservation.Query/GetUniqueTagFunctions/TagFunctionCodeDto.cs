@@ -2,7 +2,7 @@
 {
     public class TagFunctionCodeDto
     {
-        
+
         public TagFunctionCodeDto(string code, string description)
         {
             Code = code;

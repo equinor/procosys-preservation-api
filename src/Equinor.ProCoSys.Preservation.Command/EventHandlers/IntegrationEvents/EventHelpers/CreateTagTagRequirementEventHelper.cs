@@ -24,7 +24,7 @@ public class CreateTagTagRequirementEventHelper : ICreateChildEventHelper<Projec
     public async Task<TagRequirementEvent> CreateEvent(Project parentEntity, TagRequirement entity)
     {
         var parentTag = GetProjectParentTag(parentEntity, entity);
-        
+
         var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(entity.RequirementDefinitionId);
         var createdBy = await _personRepository.GetReadOnlyByIdAsync(entity.CreatedById);
 
@@ -65,6 +65,6 @@ public class CreateTagTagRequirementEventHelper : ICreateChildEventHelper<Projec
 
         return modifiedBy.Guid;
     }
-    
+
     private Tag GetProjectParentTag(Project parentEntity, TagRequirement entity) => parentEntity.Tags.First(t => t.Requirements.Any(r => r.Id == entity.Id));
 }

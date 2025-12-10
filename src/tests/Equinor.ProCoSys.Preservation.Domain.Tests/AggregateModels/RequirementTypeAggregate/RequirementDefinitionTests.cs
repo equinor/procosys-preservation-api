@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
         public void Setup()
         {
             _dut = new RequirementDefinition(TestPlant, "TitleA", 4, RequirementUsage.ForAll, 10);
-            
+
             var timeProvider = new ManualTimeProvider(new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc));
             TimeService.SetProvider(timeProvider);
         }
@@ -57,12 +57,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.AreEqual(1, _dut.Fields.Count);
             Assert.IsTrue(_dut.Fields.Contains(f));
         }
-        
+
         [TestMethod]
         public void AddField_ShouldAddEntityAddedChildEntityEvent()
         {
             var f = new Field(TestPlant, "", FieldType.Info, 1);
-            
+
             _dut.AddField(f);
 
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();
@@ -81,7 +81,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             // Act
             _dut.RemoveField(f);
-       
+
             // Assert
             Assert.AreEqual(0, _dut.Fields.Count);
         }
@@ -99,13 +99,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.ThrowsException<Exception>(() => _dut.RemoveField(f));
             Assert.AreEqual(1, _dut.Fields.Count);
         }
-        
+
         [TestMethod]
         public void RemoveField_ShouldAddPlantEntityDeletedEvent()
         {
             var f = new Field(TestPlant, "", FieldType.Info, 1);
             _dut.AddField(f);
-            
+
             f.IsVoided = true;
             _dut.RemoveField(f);
 
@@ -118,7 +118,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
         {
             var f = new Field(TestPlant, "", FieldType.Info, 1);
             Assert.IsFalse(_dut.NeedsUserInput);
-            
+
             _dut.AddField(f);
             Assert.IsFalse(_dut.NeedsUserInput);
         }
@@ -129,7 +129,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             var f = new Field(TestPlant, "", FieldType.Number, 1, "u", false);
 
             Assert.IsFalse(_dut.NeedsUserInput);
-            
+
             _dut.AddField(f);
 
             Assert.IsTrue(_dut.NeedsUserInput);
@@ -141,7 +141,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             var f = new Field(TestPlant, "", FieldType.CheckBox, 1);
 
             Assert.IsFalse(_dut.NeedsUserInput);
-            
+
             _dut.AddField(f);
 
             Assert.IsTrue(_dut.NeedsUserInput);
@@ -153,7 +153,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
             var f = new Field(TestPlant, "", FieldType.Attachment, 1);
 
             Assert.IsFalse(_dut.NeedsUserInput);
-            
+
             _dut.AddField(f);
 
             Assert.IsTrue(_dut.NeedsUserInput);
@@ -198,12 +198,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             Assert.AreEqual(_dut.Fields.Count, _dut.OrderedFields(true).Count());
         }
-        
+
         [TestMethod]
         public void SetModified_ShouldAddPlantEntityModifiedEvent()
         {
             var person = new Person(Guid.NewGuid(), "Test", "Person");
-            
+
             _dut.SetModified(person);
 
             var eventTypes = _dut.DomainEvents.Select(e => e.GetType()).ToList();

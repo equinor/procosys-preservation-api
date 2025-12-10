@@ -38,7 +38,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 .Setup(service => service.TryGetResponsibleAsync(TestFactory.PlantWithAccess, KnownTestData.ResponsibleCode, It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new PCSResponsible
                 {
-                    Code = KnownTestData.ResponsibleCode, Description = KnownTestData.ResponsibleDescription
+                    Code = KnownTestData.ResponsibleCode,
+                    Description = KnownTestData.ResponsibleDescription
                 }));
         }
 

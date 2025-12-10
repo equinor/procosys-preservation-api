@@ -13,10 +13,10 @@ public class ResponsibleEvent : IResponsibleEventV1
 
     [JsonIgnore] //ProjectName isnt needed for Responsible but is required for IIntegrationEvent
     public string ProjectName { get; init; } = null;
-    
+
     public string Code { get; init; }
     public bool IsVoided { get; init; }
-    
+
     public DateTime CreatedAtUtc { get; init; }
     public Guid CreatedByGuid { get; init; }
     public DateTime? ModifiedAtUtc { get; init; }

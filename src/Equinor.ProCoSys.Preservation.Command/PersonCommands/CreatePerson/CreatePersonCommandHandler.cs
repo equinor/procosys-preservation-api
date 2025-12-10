@@ -41,7 +41,7 @@ namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson
                 _personRepository.Add(person);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
-            
+
             return new SuccessResult<Unit>(Unit.Value);
         }
     }

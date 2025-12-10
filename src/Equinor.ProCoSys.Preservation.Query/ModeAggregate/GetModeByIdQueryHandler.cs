@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using MediatR;
@@ -20,8 +20,8 @@ namespace Equinor.ProCoSys.Preservation.Query.ModeAggregate
         public async Task<Result<ModeDto>> Handle(GetModeByIdQuery request, CancellationToken cancellationToken)
         {
             var mode = await (from m in _context.QuerySet<Mode>()
-                where m.Id == request.Id
-                select m).SingleOrDefaultAsync(cancellationToken);
+                              where m.Id == request.Id
+                              select m).SingleOrDefaultAsync(cancellationToken);
 
             if (mode == null)
             {
@@ -29,8 +29,8 @@ namespace Equinor.ProCoSys.Preservation.Query.ModeAggregate
             }
 
             var inUse = await (from s in _context.QuerySet<Step>()
-                where s.ModeId == mode.Id
-                select s).AnyAsync(cancellationToken);
+                               where s.ModeId == mode.Id
+                               select s).AnyAsync(cancellationToken);
 
             return new SuccessResult<ModeDto>(new ModeDto(
                 mode.Id,

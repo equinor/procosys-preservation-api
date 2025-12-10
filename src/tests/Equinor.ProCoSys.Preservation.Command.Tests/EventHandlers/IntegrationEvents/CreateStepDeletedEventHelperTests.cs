@@ -38,13 +38,13 @@ public class CreateStepDeletedEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public void CreateEvent_ShouldCreateStepDeleteEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _step.Guid;
-        
+
         // Act
         var deletionEvent = CreateStepDeletedEventHelper.CreateEvent(_step);
         var result = deletionEvent.ProCoSysGuid;

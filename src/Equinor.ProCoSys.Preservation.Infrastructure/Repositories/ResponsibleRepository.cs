@@ -9,8 +9,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
         public ResponsibleRepository(PreservationContext context) : base(context, context.Responsibles)
         {
         }
-        
-        public Task<Responsible> GetByCodeAsync(string responsibleCode) 
+
+        public Task<Responsible> GetByCodeAsync(string responsibleCode)
             => DefaultQuery.SingleOrDefaultAsync(r => r.Code == responsibleCode);
 
         public override void Remove(Responsible entity)

@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         {
             var modeMock = new Mock<Mode>();
             modeMock.SetupGet(m => m.Plant).Returns(TestPlant);
-            
+
             var responsibleMock = new Mock<Responsible>();
             responsibleMock.SetupGet(x => x.Plant).Returns(TestPlant);
 
@@ -62,7 +62,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 .Setup(x => x.Journeys)
                 .Returns(_journeySetMock.Object);
 
-            var steps = new List<Step> {_step1, _step2};
+            var steps = new List<Step> { _step1, _step2 };
             _stepSetMock = steps.AsQueryable().BuildMockDbSet();
 
             ContextHelper
@@ -92,7 +92,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetJourneysByStepIdsAsync_KnownId_ShouldReturnStep()
         {
-            var result = await _dut.GetJourneysByStepIdsAsync(new List<int>{StepId1});
+            var result = await _dut.GetJourneysByStepIdsAsync(new List<int> { StepId1 });
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(JourneyId, result.Single().Id);
@@ -101,7 +101,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetJourneysByStepIdsAsync_UnknownId_ShouldReturnEmptyList()
         {
-            var result = await _dut.GetJourneysByStepIdsAsync(new List<int> {6355});
+            var result = await _dut.GetJourneysByStepIdsAsync(new List<int> { 6355 });
 
             Assert.AreEqual(0, result.Count);
         }

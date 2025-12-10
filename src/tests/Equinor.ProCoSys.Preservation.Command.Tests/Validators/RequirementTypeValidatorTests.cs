@@ -281,7 +281,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var fieldTypes = new List<FieldType>{ FieldType.Attachment };
+                var fieldTypes = new List<FieldType> { FieldType.Attachment };
                 var dut = new RequirementTypeValidator(context);
                 var result = await dut.AnyRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId1, _reqDefTitle1_1, fieldTypes, default);
                 Assert.IsFalse(result);
@@ -317,7 +317,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var fieldTypes = new List<FieldType>{ FieldType.Attachment };
+                var fieldTypes = new List<FieldType> { FieldType.Attachment };
                 var dut = new RequirementTypeValidator(context);
                 var result = await dut.OtherRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId1, _reqDefId1_2, _reqDefTitle1_1, fieldTypes, default);
                 Assert.IsFalse(result);

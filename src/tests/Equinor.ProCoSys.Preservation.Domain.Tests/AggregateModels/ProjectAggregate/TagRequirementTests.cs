@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common.Time;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Equinor.ProCoSys.Preservation.Test.Common;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
-using Equinor.ProCoSys.Common.Misc;
-using Equinor.ProCoSys.Preservation.Domain.Events;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {
@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region Setup
 
         private const string TestPlant = "PlantA";
-    
+
         private const int InfoFieldId = 5;
         private const int AttachmentFieldId = 7;
         private const int CheckBoxFieldId = 11;
@@ -68,28 +68,28 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _numberField3Mock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
             _numberField3Mock.SetupGet(f => f.Id).Returns(NumberField3Id);
             _numberField3Mock.SetupGet(f => f.Plant).Returns(TestPlant);
-            
+
             _reqDefWithInfoFieldMock = new Mock<RequirementDefinition>();
             _reqDefWithInfoFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithInfoFieldMock.Object.AddField(_infoFieldMock.Object);
-            
+
             _reqDefWithAttachmentFieldMock = new Mock<RequirementDefinition>();
             _reqDefWithAttachmentFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithAttachmentFieldMock.Object.AddField(_attachmentFieldMock.Object);
-            
+
             _reqDefWithCheckBoxFieldMock = new Mock<RequirementDefinition>();
             _reqDefWithCheckBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithCheckBoxFieldMock.Object.AddField(_checkBoxFieldMock.Object);
-            
+
             _reqDefWithOneNumberFieldMock = new Mock<RequirementDefinition>();
             _reqDefWithOneNumberFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithOneNumberFieldMock.Object.AddField(_numberField1Mock.Object);
-            
+
             _reqDefWithTwoNumberFieldsMock = new Mock<RequirementDefinition>();
             _reqDefWithTwoNumberFieldsMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithTwoNumberFieldsMock.Object.AddField(_numberField2Mock.Object);
             _reqDefWithTwoNumberFieldsMock.Object.AddField(_numberField3Mock.Object);
-            
+
             _reqDefWithNumberAndCheckBoxFieldMock = new Mock<RequirementDefinition>();
             _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithNumberAndCheckBoxFieldMock.Object.AddField(_numberField1Mock.Object);
@@ -101,7 +101,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _reqDefWithOneNumberFieldMock.SetupGet(rd => rd.Id).Returns(40);
             _reqDefWithTwoNumberFieldsMock.SetupGet(rd => rd.Id).Returns(50);
             _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(60);
-            
+
             var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeProvider = new ManualTimeProvider(utcNow);
             TimeService.SetProvider(_timeProvider);
@@ -264,7 +264,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             dut.UndoStartPreservation();
             _timeProvider.Elapse(TimeSpan.FromDays(2));
-            
+
             dut.StartPreservation();
 
             var expectedUpdatedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
@@ -290,7 +290,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(expectedUpdatedNextDueTimeUtc, dut.PreservationPeriods.Single().DueTimeUtc);
             Assert.AreNotEqual(expectedUpdatedNextDueTimeUtc, expectedNextDueTimeUtc);
         }
-        
+
         [TestMethod]
         public void StartPreservation_InactiveTag_ShouldAddChildEntityAddedEvent()
         {
@@ -423,7 +423,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 dut.Preserve(null, false)
             );
         }
-                
+
         [TestMethod]
         public void Preserve_ShouldUpdateCorrectNextDueDate()
         {
@@ -433,7 +433,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             _timeProvider.Elapse(TimeSpan.FromDays(5));
             dut.Preserve(new Mock<Person>().Object, false);
-            
+
             var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
         }
@@ -494,7 +494,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             _timeProvider.Elapse(TimeSpan.FromDays(5));
             dut.Preserve(new Mock<Person>().Object, false);
-            
+
             var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(intervalWeeks);
             Assert.AreEqual(2, dut.PreservationPeriods.Count);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Last().DueTimeUtc);
@@ -511,8 +511,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             {
                 dut.Preserve(new Mock<Person>().Object, false);
             }
-            
-            Assert.AreEqual(preserveCount+1, dut.PreservationPeriods.Count);
+
+            Assert.AreEqual(preserveCount + 1, dut.PreservationPeriods.Count);
         }
 
         #endregion
@@ -530,7 +530,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 dut.Reschedule(1, RescheduledDirection.Earlier)
             );
         }
-                
+
         [TestMethod]
         public void Reschedule_ShouldUpdateEarlierNextDueDate()
         {
@@ -541,11 +541,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Act
             dut.Reschedule(1, RescheduledDirection.Earlier);
-            
+
             // Arrange
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
         }
-                
+
         [TestMethod]
         public void Reschedule_ShouldUpdateEarlierNextDueDate_OnActivePeriod()
         {
@@ -556,7 +556,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Act
             dut.Reschedule(1, RescheduledDirection.Earlier);
-            
+
             // Arrange
             Assert.AreEqual(expectedNextDueTimeUtc, dut.ActivePeriod.DueTimeUtc);
         }
@@ -571,11 +571,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Act
             dut.Reschedule(6, RescheduledDirection.Later);
-            
+
             // Arrange
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
         }
-                
+
         [TestMethod]
         public void Reschedule_ShouldUpdateLaterNextDueDate_OnActivePeriod()
         {
@@ -586,7 +586,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Act
             dut.Reschedule(6, RescheduledDirection.Later);
-            
+
             // Arrange
             Assert.AreEqual(expectedNextDueTimeUtc, dut.ActivePeriod.DueTimeUtc);
         }
@@ -594,7 +594,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #endregion
 
         #region SetComment
-        
+
         [TestMethod]
         public void SetComment_ShouldThrowException_WhenPreservationNotStarted()
         {
@@ -602,7 +602,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.ThrowsException<Exception>(() => dut.SetComment("Abc"));
         }
-        
+
         [TestMethod]
         public void SetComment_ShouldUpdateCommentOnActivePeriod()
         {
@@ -625,7 +625,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
             Assert.ThrowsException<Exception>(() =>
-                dut.RecordCheckBoxValues(new Dictionary<int, bool>{{1, true}}, _reqDefWithCheckBoxFieldMock.Object)
+                dut.RecordCheckBoxValues(new Dictionary<int, bool> { { 1, true } }, _reqDefWithCheckBoxFieldMock.Object)
             );
         }
 
@@ -636,7 +636,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                dut.RecordCheckBoxValues(new Dictionary<int, bool>{{1, true}}, null)
+                dut.RecordCheckBoxValues(new Dictionary<int, bool> { { 1, true } }, null)
             );
         }
 
@@ -658,7 +658,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() =>
-                dut.RecordCheckBoxValues(new Dictionary<int, bool>{{1, true}}, _reqDefWithCheckBoxFieldMock.Object)
+                dut.RecordCheckBoxValues(new Dictionary<int, bool> { { 1, true } }, _reqDefWithCheckBoxFieldMock.Object)
             );
         }
 
@@ -669,10 +669,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() =>
-                dut.RecordCheckBoxValues(new Dictionary<int, bool>{{InfoFieldId, true}}, _reqDefWithInfoFieldMock.Object)
+                dut.RecordCheckBoxValues(new Dictionary<int, bool> { { InfoFieldId, true } }, _reqDefWithInfoFieldMock.Object)
             );
         }
-        
+
         [TestMethod]
         public void RecordCheckBoxValues_WithCheckBoxChecked_ShouldCreateNewCheckBoxChecked_WhenValueIsTrue()
         {
@@ -683,7 +683,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, true}
-                }, 
+                },
                 _reqDefWithCheckBoxFieldMock.Object);
 
             // Assert
@@ -693,7 +693,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsInstanceOfType(fv, typeof(CheckBoxChecked));
             Assert.AreEqual(CheckBoxFieldId, fv.FieldId);
         }
-        
+
         [TestMethod]
         public void RecordCheckBoxValues_WithCheckBoxUnchecked_ShouldDoNothing_WhenNoValueExistsInAdvance()
         {
@@ -704,7 +704,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, false}
-                }, 
+                },
                 _reqDefWithCheckBoxFieldMock.Object);
 
             // Assert
@@ -721,7 +721,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, true}
-                }, 
+                },
                 _reqDefWithCheckBoxFieldMock.Object);
 
             // Assert
@@ -731,12 +731,12 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, false}
-                }, 
+                },
                 _reqDefWithCheckBoxFieldMock.Object);
 
             Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
         }
-        
+
         [TestMethod]
         public void RecordNumberIsNaValues_WithNaAsNumber_ShouldCreateNumberValueWithNullValue()
         {
@@ -747,7 +747,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new List<int>
                 {
                     NumberField1Id
-                }, 
+                },
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -770,7 +770,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, number}
-                }, 
+                },
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -780,7 +780,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsInstanceOfType(fv, typeof(NumberValue));
             Assert.AreEqual(NumberField1Id, fv.FieldId);
             var numberValue = (NumberValue)fv;
-            Assert.IsTrue( numberValue.Value.HasValue);
+            Assert.IsTrue(numberValue.Value.HasValue);
             Assert.AreEqual(number, numberValue.Value.Value);
         }
 
@@ -794,7 +794,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, null}
-                }, 
+                },
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -811,7 +811,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, 1}
-                }, 
+                },
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -821,13 +821,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, null}
-                }, 
+                },
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
         }
-        
+
         [TestMethod]
         public void RecordCheckBoxValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordCheckBoxValues_OneByOne()
         {
@@ -838,7 +838,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, true}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -848,13 +848,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, 1}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
         }
-        
+
         [TestMethod]
         public void RecordNumberIsNaValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordNaForSingleNumber_TogetherWithCheckBox()
         {
@@ -865,7 +865,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, true}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -875,7 +875,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new List<int>
                 {
                     NumberField1Id
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -912,7 +912,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 {
                     NumberField2Id,
                     NumberField3Id
-                }, 
+                },
                 _reqDefWithTwoNumberFieldsMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -929,14 +929,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new List<int>
                 {
                     NumberField3Id
-                }, 
+                },
                 _reqDefWithTwoNumberFieldsMock.Object);
-            
+
             dut.RecordNumberValues(
                 new Dictionary<int, double?>
                 {
                     {NumberField2Id, 1}
-                }, 
+                },
                 _reqDefWithTwoNumberFieldsMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
@@ -953,14 +953,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, true}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             dut.RecordNumberValues(
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, 1}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
@@ -970,7 +970,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, false}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -987,7 +987,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, true}
-                }, 
+                },
                 _reqDefWithCheckBoxFieldMock.Object);
 
             // Assert
@@ -998,7 +998,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, false}
-                }, 
+                },
                 _reqDefWithCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -1015,7 +1015,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, 1}
-                }, 
+                },
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -1026,7 +1026,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, null}
-                }, 
+                },
                 _reqDefWithOneNumberFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -1043,7 +1043,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new List<int>
                 {
                     NumberField1Id
-                }, 
+                },
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -1083,7 +1083,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, true}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -1103,7 +1103,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, true}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -1113,7 +1113,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, bool>
                 {
                     {CheckBoxFieldId, false}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -1130,7 +1130,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, 123}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -1150,7 +1150,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, 123}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -1160,7 +1160,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, double?>
                 {
                     {NumberField1Id, null}
-                }, 
+                },
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -1274,7 +1274,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 dut.RecordAttachment(null, InfoFieldId, _reqDefWithInfoFieldMock.Object)
             );
         }
-        
+
         [TestMethod]
         public void RecordAttachment_ShouldCreateNewAttachmentValue()
         {
@@ -1282,10 +1282,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
             dut.StartPreservation();
             var attachment = new FieldValueAttachment(TestPlant, Guid.Empty, "F");
-            
+
             // Act
             dut.RecordAttachment(
-                attachment, 
+                attachment,
                 AttachmentFieldId,
                 _reqDefWithAttachmentFieldMock.Object);
 
@@ -1305,7 +1305,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
 
             // Act
-            dut.RecordAttachment(null, 
+            dut.RecordAttachment(null,
                 AttachmentFieldId,
                 _reqDefWithAttachmentFieldMock.Object);
 
@@ -1321,13 +1321,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
 
             dut.RecordAttachment(
-                new FieldValueAttachment(TestPlant, Guid.Empty, "F"), 
+                new FieldValueAttachment(TestPlant, Guid.Empty, "F"),
                 AttachmentFieldId,
                 _reqDefWithAttachmentFieldMock.Object);
             Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
 
             // Act
-            dut.RecordAttachment(null, 
+            dut.RecordAttachment(null,
                 AttachmentFieldId,
                 _reqDefWithAttachmentFieldMock.Object);
 
@@ -1345,16 +1345,16 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Act
             dut.RecordAttachment(
-                attachment, 
+                attachment,
                 AttachmentFieldId,
                 _reqDefWithAttachmentFieldMock.Object);
-            
+
             // Assert
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
 
             // Act
-            dut.RecordAttachment(null, 
+            dut.RecordAttachment(null,
                 AttachmentFieldId,
                 _reqDefWithAttachmentFieldMock.Object);
 
@@ -1366,7 +1366,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #endregion
 
         #region GetAlreadyRecordedAttachment
-        
+
         [TestMethod]
         public void GetAlreadyRecordedAttachment_ShouldReturnNull_WhenNoValueExistsInAdvance()
         {
@@ -1383,7 +1383,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsNull(attachment);
         }
 
-                
+
         [TestMethod]
         public void GetAlreadyRecordedAttachment_ShouldReturnAttachmentFromAttachmentValue()
         {
@@ -1391,9 +1391,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
             dut.StartPreservation();
             var attachment = new FieldValueAttachment(TestPlant, Guid.Empty, "F");
-            
+
             dut.RecordAttachment(
-                attachment, 
+                attachment,
                 AttachmentFieldId,
                 _reqDefWithAttachmentFieldMock.Object);
 

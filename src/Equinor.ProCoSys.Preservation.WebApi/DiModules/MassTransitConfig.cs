@@ -25,14 +25,14 @@ public static class MassTransitConfig
                 {
                     cfg.ConfigureEndpoints(context);
                 });
-                
+
                 return;
             }
 
             x.UsingAzureServiceBus((_, cfg) =>
             {
                 var serviceBusNamespace = builder.GetConfig<string>("ServiceBus:Namespace");
-                    
+
                 var serviceUri = new Uri($"sb://{serviceBusNamespace}.servicebus.windows.net/");
                 cfg.Host(serviceUri, host =>
                 {

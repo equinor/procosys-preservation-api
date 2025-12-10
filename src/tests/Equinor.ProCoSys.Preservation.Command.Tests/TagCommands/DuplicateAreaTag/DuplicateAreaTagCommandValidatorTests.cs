@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeDuplicatedAsync(TagId, default)).Returns(Task.FromResult(true));
 
-            _command = new DuplicateAreaTagCommand(TagId,TagType.SiteArea, "D", "A", "-01", "Desc", "Rem", "SA");
+            _command = new DuplicateAreaTagCommand(TagId, TagType.SiteArea, "D", "A", "-01", "Desc", "Rem", "SA");
 
             _dut = new DuplicateAreaTagCommandValidator(_tagValidatorMock.Object, _projectValidatorMock.Object);
         }
@@ -42,19 +42,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
         public async Task Validate_ShouldFail_WhenSourceTagNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Source tag doesn't exist!"));
         }
-        
+
         [TestMethod]
         public async Task Validate_ShouldFail_WhenTargetTagAlreadyExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(_command.GetTagNo(), TagId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -66,7 +66,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
         public async Task Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -78,7 +78,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.DuplicateAreaT
         public async Task Validate_ShouldFail_WhenNotReadyToBeDuplicated()
         {
             _tagValidatorMock.Setup(r => r.IsReadyToBeDuplicatedAsync(TagId, default)).Returns(Task.FromResult(false));
-            
+
             var result = await _dut.ValidateAsync(_command);
 
             Assert.IsFalse(result.IsValid);

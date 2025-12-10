@@ -29,7 +29,7 @@ public class CreateRequirementDefinitionFieldEventHelperTests
         // Arrange
         var timeProvider = new ManualTimeProvider(TestTime);
         TimeService.SetProvider(timeProvider);
-        
+
         _requirementDefinition = new RequirementDefinition(TestPlant, "Test Definition Title", 2, RequirementUsage.ForSuppliersOnly, 1);
         _field = new Field("PCS$PlantA", "F1", FieldType.Number, 1, "UnitA", true);
 
@@ -68,7 +68,7 @@ public class CreateRequirementDefinitionFieldEventHelperTests
         // Arrange
         _field.SetCreated(_person);
         _field.SetModified(_person);
-        
+
         // Act
         var tagRequirementEvent = await _dut.CreateEvent(_requirementDefinition, _field);
         var result = tagRequirementEvent.GetType()
@@ -79,13 +79,13 @@ public class CreateRequirementDefinitionFieldEventHelperTests
         // Assert
         Assert.AreEqual(result, TestGuid);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedProCoSysGuid()
     {
         // Arrange
         var expected = _field.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_requirementDefinition, _field);
         var result = integrationEvent.ProCoSysGuid;
@@ -93,13 +93,13 @@ public class CreateRequirementDefinitionFieldEventHelperTests
         // Assert
         Assert.AreEqual(expected, result);
     }
-    
+
     [TestMethod]
     public async Task CreateEvent_ShouldCreateTagRequirementEventWithExpectedRequirementDefinitionGuid()
     {
         // Arrange
         var expected = _requirementDefinition.Guid;
-        
+
         // Act
         var integrationEvent = await _dut.CreateEvent(_requirementDefinition, _field);
         var result = integrationEvent.RequirementDefinitionGuid;

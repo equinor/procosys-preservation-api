@@ -18,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
             RequirementTypeCode = requirementTypeCode;
             RequirementTypeIcon = requirementTypeIcon;
             NextDueTimeUtc = nextDueTimeUtc;
-            NextDueWeeks = nextDueWeeks;            
+            NextDueWeeks = nextDueWeeks;
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
             ReadyToBePreserved = readyToBePreserved;
         }

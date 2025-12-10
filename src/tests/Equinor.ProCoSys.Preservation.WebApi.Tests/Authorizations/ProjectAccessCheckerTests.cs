@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             principal.AddIdentity(claimsIdentity);
             var claimsPrincipalProviderMock = new Mock<IClaimsPrincipalProvider>();
             claimsPrincipalProviderMock.Setup(c => c.GetCurrentClaimsPrincipal()).Returns(principal);
-            
+
             _dut = new ProjectAccessChecker(claimsPrincipalProviderMock.Object);
         }
 

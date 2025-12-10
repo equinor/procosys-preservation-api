@@ -48,7 +48,7 @@ public class UserDelegationProvider : IUserDelegationProvider
         {
             return;
         }
-        
+
         _expirationTime = _userDelegationKeyCached.SignedExpiresOn;
     }
 }

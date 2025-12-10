@@ -1,10 +1,10 @@
 ﻿using System;
+using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Time;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Common.Time;
-using Equinor.ProCoSys.Common;
 using Equinor.ProCoSys.Preservation.Domain.Events;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
@@ -71,7 +71,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-        
+
         public override string ToString() => $"{Title} ({SortKey})";
 
         public void SetCreated(Person createdBy)
@@ -105,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             IsSupplierStep = mode.ForSupplier;
             ModeId = mode.Id;
-            
+
             AddDomainEvent(new ModifiedEvent<Step>(this));
         }
 
@@ -117,7 +117,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             ResponsibleId = responsible.Id;
-            
+
             AddDomainEvent(new ModifiedEvent<Step>(this));
         }
     }

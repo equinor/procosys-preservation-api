@@ -64,9 +64,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
             _tfReq2_1 = new TagFunctionRequirement(TestPlant, 1, rdMock3.Object);
             _tf2WithReq.AddRequirement(_tfReq2_1);
-            
-            var tagFunctions = new List<TagFunction> {_tfWithoutReq, _tf1WithReq, _tf2WithReq};
-            
+
+            var tagFunctions = new List<TagFunction> { _tfWithoutReq, _tf1WithReq, _tf2WithReq };
+
             var dbSetMock = tagFunctions.AsQueryable().BuildMockDbSet();
 
             ContextHelper

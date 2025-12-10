@@ -16,31 +16,31 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.StepValidators
 
         public async Task<bool> ExistsAsync(int stepId, CancellationToken token)
             => await (from s in _context.QuerySet<Step>()
-                where s.Id == stepId
-                select s).AnyAsync(token);
+                      where s.Id == stepId
+                      select s).AnyAsync(token);
 
         public async Task<bool> IsVoidedAsync(int stepId, CancellationToken token)
         {
             var step = await (from s in _context.QuerySet<Step>()
-                where s.Id == stepId
-                select s).SingleOrDefaultAsync(token);
+                              where s.Id == stepId
+                              select s).SingleOrDefaultAsync(token);
             return step != null && step.IsVoided;
         }
 
         public async Task<bool> IsForSupplierAsync(int stepId, CancellationToken token)
         {
             var mode = await (from s in _context.QuerySet<Step>()
-                join m in _context.QuerySet<Mode>() on s.ModeId equals m.Id
-                where s.Id == stepId
-                select m).SingleOrDefaultAsync(token);
+                              join m in _context.QuerySet<Mode>() on s.ModeId equals m.Id
+                              where s.Id == stepId
+                              select m).SingleOrDefaultAsync(token);
             return mode != null && mode.ForSupplier;
         }
 
         public async Task<bool> HasModeAsync(int modeId, int stepId, CancellationToken token)
         {
             var step = await (from s in _context.QuerySet<Step>()
-                where s.Id == stepId
-                select s).SingleOrDefaultAsync(token);
+                              where s.Id == stepId
+                              select s).SingleOrDefaultAsync(token);
             return step != null && step.ModeId == modeId;
         }
     }

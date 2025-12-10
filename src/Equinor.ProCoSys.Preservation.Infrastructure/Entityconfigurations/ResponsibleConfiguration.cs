@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasIndex(x => x.Plant)
                 .HasDatabaseName("IX_Responsibles_Plant_ASC")
-                .IncludeProperties(x => new {x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, Title = x.Description});
+                .IncludeProperties(x => new { x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, Title = x.Description });
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
         public CreateTagsDtoValidator()
         {
             RuleFor(x => x).NotNull();
-            
+
             RuleFor(x => x.ProjectName)
                 .NotNull()
                 .NotEmpty()
@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             RuleForEach(x => x.TagNos)
                 .NotEmpty()
                 .MaximumLength(Tag.TagNoLengthMax);
-            
+
             RuleFor(x => x.Requirements)
                 .Must(BeUniqueRequirements)
                 .WithMessage("Requirement definitions must be unique!");
@@ -33,12 +33,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 
             RuleFor(x => x.Remark)
                 .MaximumLength(Tag.RemarkLengthMax);
-            
+
             RuleFor(x => x.StorageArea)
                 .MaximumLength(Tag.StorageAreaLengthMax);
 
             bool RequirementMustHavePositiveInterval(TagRequirementDto dto) => dto.IntervalWeeks > 0;
-                        
+
             bool BeUniqueRequirements(IEnumerable<TagRequirementDto> requirements)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();

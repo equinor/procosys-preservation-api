@@ -7,5 +7,5 @@ namespace Equinor.ProCoSys.Preservation.Command.Events;
 [EntityNameStep]
 public class StepDeleteEvent : DeleteEvent<Step>
 {
-    public StepDeleteEvent(Guid guid, string plant) : base(guid, plant, null) {}
+    public StepDeleteEvent(Guid guid, string plant) : base(guid, plant, null) { }
 }

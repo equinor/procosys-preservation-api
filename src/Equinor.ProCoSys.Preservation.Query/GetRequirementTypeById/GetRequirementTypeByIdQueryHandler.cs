@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Common;
+using Equinor.ProCoSys.Common.Misc;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
@@ -23,8 +23,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetRequirementTypeById
             var reqType = await (from rt in _context.QuerySet<RequirementType>()
                     .Include(rt => rt.RequirementDefinitions)
                     .ThenInclude(rd => rd.Fields)
-                where rt.Id == request.Id
-                select rt).SingleOrDefaultAsync(cancellationToken);
+                                 where rt.Id == request.Id
+                                 select rt).SingleOrDefaultAsync(cancellationToken);
 
             if (reqType == null)
             {
@@ -34,17 +34,17 @@ namespace Equinor.ProCoSys.Preservation.Query.GetRequirementTypeById
             var requirementDefinitionIds = reqType.RequirementDefinitions.Select(r => r.Id);
 
             var tagRequirements = await (from tr in _context.QuerySet<TagRequirement>()
-                where requirementDefinitionIds.Contains(tr.RequirementDefinitionId)
-                select tr).ToListAsync(cancellationToken);
+                                         where requirementDefinitionIds.Contains(tr.RequirementDefinitionId)
+                                         select tr).ToListAsync(cancellationToken);
 
             var tagFunctionRequirements = await (from tfr in _context.QuerySet<TagFunctionRequirement>()
-                where requirementDefinitionIds.Contains(tfr.RequirementDefinitionId)
-                select tfr).ToListAsync(cancellationToken);
+                                                 where requirementDefinitionIds.Contains(tfr.RequirementDefinitionId)
+                                                 select tfr).ToListAsync(cancellationToken);
 
             var fieldIds = reqType.RequirementDefinitions.SelectMany(r => r.Fields).Select(f => f.Id);
             var fieldValues = await (from fv in _context.QuerySet<FieldValue>()
-                where fieldIds.Contains(fv.Id)
-                select fv).ToListAsync(cancellationToken);
+                                     where fieldIds.Contains(fv.Id)
+                                     select fv).ToListAsync(cancellationToken);
 
             var dto = new RequirementTypeDetailsDto(
                 reqType.Id,
