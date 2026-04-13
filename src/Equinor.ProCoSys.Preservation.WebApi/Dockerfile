@@ -17,7 +17,7 @@ WORKDIR "/src/Equinor.ProCoSys.Preservation.WebApi"
 
 # Build
 ENV DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER=0
-ENV NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED true
+ENV NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED=true
 ARG FEED_ACCESSTOKEN
 RUN echo $FEED_ACCESSTOKEN
 ENV VSS_NUGET_EXTERNAL_FEED_ENDPOINTS="{\"endpointCredentials\": [{\"endpoint\":\"https://statoildeveloper.pkgs.visualstudio.com/_packaging/ProCoSysOfficial/nuget/v3/index.json\", \"username\":\"docker\", \"password\":\"${FEED_ACCESSTOKEN}\"}]}"
@@ -48,7 +48,7 @@ RUN mkdir /app && chown apprunner.apprunner /app
 USER 9999
 
 # Set the port to 5000 since the default production port is 80 and on-root users cannot bind to this port
-ENV ASPNETCORE_URLS http://+:5000
+ENV ASPNETCORE_URLS=http://+:5000
 EXPOSE 5000
 WORKDIR /app
 

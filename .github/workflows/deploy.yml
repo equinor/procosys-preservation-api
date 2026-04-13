@@ -11,6 +11,10 @@ on:
         description: 'Radix environment to deploy to'
         required: false
         type: string
+      deploy-ref:
+        description: 'Optional git ref to deploy (used for rollback)'
+        required: false
+        type: string
 
 permissions:
   id-token: write
@@ -21,10 +25,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.github-environment }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.deploy-ref || github.sha }}
 
       - name: 'Login to Azure'
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
@@ -45,10 +51,12 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.github-environment }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.deploy-ref || github.sha }}
 
       - name: 'Login to Azure'
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
@@ -59,7 +67,7 @@ jobs:
         uses: ./.github/actions/generate-migration-script
 
       - name: Upload EF Migrations script Artifact 
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: migration-script
           path: ${{ steps.generate-migration-script.outputs.migration-script-path }}
@@ -72,13 +80,13 @@ jobs:
     environment: ${{ inputs.github-environment }}
     steps:
       - name: 'Login to Azure'
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           allow-no-subscriptions: true 
       
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v7
         with:
           name: migration-script
 
@@ -94,7 +102,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.github-environment }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.deploy-ref || github.sha }}
 
       - name: Get change ID
         id: get-change-id

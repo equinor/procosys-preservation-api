@@ -24,7 +24,7 @@ runs:
       uses: ./.github/actions/get-devops-token
 
     - name: Build and push Docker image
-      uses: docker/build-push-action@v6
+      uses: docker/build-push-action@v7
       with:
         context: ./src
         file: ./src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile
