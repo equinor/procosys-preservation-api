@@ -12,6 +12,7 @@ jobs:
   format-check:
     name: Verify formatting
     runs-on: ubuntu-latest
+    environment: dev
     strategy:
       matrix:
         project: [
@@ -38,7 +39,7 @@ jobs:
       - name: 'Login to Azure'
         uses: azure/login@v3
         with:
-          client-id: ${{ vars.EQUINOR_PROCOSYS_NON_PROD_DEVOPS_CLIENT_ID }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           allow-no-subscriptions: true
 
