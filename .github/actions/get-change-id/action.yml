@@ -13,6 +13,6 @@ runs:
       id: id-from-sha
       shell: bash
       run: |
-        CHANGE_ID=$(echo $GITHUB_SHA | cut -c1-7)
+        CHANGE_ID=$(git rev-parse --short=7 HEAD)
         echo "change-id=$CHANGE_ID" >> $GITHUB_OUTPUT
         echo "Change ID: $CHANGE_ID"

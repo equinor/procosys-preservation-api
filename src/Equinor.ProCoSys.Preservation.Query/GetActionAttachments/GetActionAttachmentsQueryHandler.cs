@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachments
             var action = await
                 (from a in _context.QuerySet<Action>()
                         .Include(t => t.Attachments)
-                     // also join tag to return null if request.TagId not exists
+                 // also join tag to return null if request.TagId not exists
                  join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
                  where tag.Id == request.TagId && a.Id == request.ActionId
                  select a).SingleOrDefaultAsync(cancellationToken);

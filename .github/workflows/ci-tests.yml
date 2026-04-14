@@ -24,10 +24,10 @@ jobs:
         ]
       fail-fast: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: 'Login to Azure'
-        uses: azure/login@v2
+        uses: azure/login@v3
         with:
           client-id: ${{ vars.EQUINOR_PROCOSYS_NON_PROD_DEVOPS_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
@@ -43,10 +43,23 @@ jobs:
           access-token: ${{ steps.get-devops-token.outputs.token }}
 
       - name: Setup dotnet 8
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '8.0.x'
 
       - name: Run tests - ${{ matrix.project }}
         run: |
           dotnet test ./src/tests/${{ matrix.project }} -c Release
+
+  all-tests-pass:
+    name: All tests pass
+    if: always()
+    needs: run-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate matrix result
+        run: |
+          if [ "${{ needs.run-test.result }}" != "success" ]; then
+            echo "One or more test jobs failed or were cancelled"
+            exit 1
+          fi

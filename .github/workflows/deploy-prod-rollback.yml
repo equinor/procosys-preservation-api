@@ -2,6 +2,11 @@ name: 🚀🏭 Deploy rollback to prod
 
 on:
   workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to rollback to (branch, tag or commit SHA)
+        required: true
+        type: string
 
 permissions:
   id-token: write
@@ -13,3 +18,4 @@ jobs:
     with:
       github-environment: prod-rollback
       radix-environment: prod
+      deploy-ref: ${{ inputs.ref }}

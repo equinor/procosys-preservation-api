@@ -22,7 +22,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionDetails
         {
             var dto = await
                 (from a in _context.QuerySet<Action>().Include(a => a.Attachments)
-                     // also join tag to return null if request.TagId not exists
+                 // also join tag to return null if request.TagId not exists
                  join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
                  join createdUser in _context.QuerySet<Person>()
                      on EF.Property<int>(a, "CreatedById") equals createdUser.Id

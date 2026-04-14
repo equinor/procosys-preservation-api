@@ -19,7 +19,7 @@ runs:
         access-token: ${{ steps.get-devops-token.outputs.token }}
 
     - name: Setup dotnet 8
-      uses: actions/setup-dotnet@v4
+      uses: actions/setup-dotnet@v5
       with:
         dotnet-version: '8.0.x'
 
