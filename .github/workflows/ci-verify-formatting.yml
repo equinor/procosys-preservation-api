@@ -12,7 +12,6 @@ jobs:
   format-check:
     name: Verify formatting
     runs-on: ubuntu-latest
-    environment: dev
     strategy:
       matrix:
         project: [
