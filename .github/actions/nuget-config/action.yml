@@ -11,8 +11,8 @@ runs:
     - name: Configure NuGet source
       shell: bash
       run: |
-        dotnet nuget add source --name ProCoSysOfficial \
+        dotnet nuget update source ProCoSysOfficial \
             --username statoildeveloper \
             --password ${{ inputs.access-token }} \
             --store-password-in-clear-text \
-            https://statoildeveloper.pkgs.visualstudio.com/_packaging/ProCoSysOfficial/nuget/v3/index.json
+            --configfile ./src/nuget.config

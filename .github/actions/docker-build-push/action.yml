@@ -2,14 +2,8 @@ name: Build and Push Docker Image
 description: 'Build and push Docker image to Azure Container Registry with a tag as the change ID. If the image already exists, it will not be rebuilt.'
 
 inputs:
-  client-id:
-    description: 'Identity client id'
-    required: true
-  tenant-id:
-    description: 'Equinor tenant id'
-    required: true
   tag:
-    description: 'Docker image tag build and push'
+    description: 'Docker image tag to build and push'
     required: true
 
 runs:
@@ -31,8 +25,6 @@ runs:
         push: true
         build-args: |
           FEED_ACCESSTOKEN=${{ steps.get-devops-token.outputs.token }}
-          AZURE_CLIENT_ID=${{ inputs.client-id }}
-          AZURE_TENANT_ID=${{ inputs.tenant-id }}
         tags: |
           procosys.azurecr.io/preservation/api:${{ inputs.tag }}
           procosys.azurecr.io/preservation/api:latest

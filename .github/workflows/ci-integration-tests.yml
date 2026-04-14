@@ -11,7 +11,7 @@ permissions:
 jobs:
   run-integration-test:
     name: Run integration tests
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     environment: dev
 
     steps:
