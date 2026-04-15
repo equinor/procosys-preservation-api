@@ -25,25 +25,25 @@ runs:
 
     # TODO remove --version when bug has been fixed
     # https://github.com/dotnet/efcore/issues/37125
-    - name: Setup EF Tools 
+    - name: Setup EF Tools
       shell: bash
-      run: | 
-        dotnet tool install --global dotnet-ef --version 9.0.11
+      run: |
+        dotnet tool install --global dotnet-ef --version 8.0.11
 
     - name: Configure user secrets
       shell: bash
       run: |
         # Set user secrets for API project
         cd ./src/Equinor.ProCoSys.Preservation.WebApi/
-        dotnet user-secrets set "ConnectionStrings:PreservationContext" "dummydata" # Need input
+        dotnet user-secrets set "ConnectionStrings:PreservationContext" "Server=localhost;Database=dummy;"
     
     - name: Migrate database
       shell: bash
       run: |
-        # Create migration script for MyDbContext
         dotnet ef migrations script \
-          --project "./src/Equinor.ProCoSys.Preservation.WebApi/Equinor.ProCoSys.Preservation.WebApi.csproj" \
+          --project "./src/Equinor.ProCoSys.Preservation.Infrastructure/Equinor.ProCoSys.Preservation.Infrastructure.csproj" \
           --startup-project "./src/Equinor.ProCoSys.Preservation.WebApi/Equinor.ProCoSys.Preservation.WebApi.csproj" \
+          --context PreservationContext \
           --output ./migration.sql --idempotent
 
     - name: Output migration path
